@@ -2091,7 +2091,7 @@ keybinds-numpad-4 = . (الضرب)
 keybinds-numpad-5 = (توقف)
 ui-options-0-hide-avatar-names = 0 = إخفاء أسماء الصورة
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = لا توجد فقاعات محادثة فوق شريط المحادثة
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " المجموعة:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1 - تحديد السعر:
 build-ui-general-127-bytes-maximum = 127 بايت كحد أقصى.
 ui-land-dialogs-2-sell-the-land-to = ٢ - بيع اﻷرض إلى:
@@ -4751,11 +4751,11 @@ ui-options-group-notices-in-chat = إشعارات المجموعة في الدر
 ui-options-group-notices-in-chat-hint = يكتب إشعار المجموعة أيضاً سطراً في محادثة المجموعة (فقط في نسخة المجموعة عندما لا تكون محادثتها مفتوحة)
 ui-options-group-notice-subjects-in-chat = مع مواضيعها ومؤلفيها
 ui-options-group-notice-subjects-in-chat-hint = يبدأ السطر بمن أرسل الإشعار وموضوع الإشهار، وإلا فهو مجرد نص للإشعار
-ui-options-group-snooze-duration = تنبيه الدردشة الجماعية
-ui-options-group-snooze-duration-hint = مدة إغلاق زر التأجيل لمحادثة مجموعة وتجاهل رسائلها، بالدقائق. الرسالة الأولى بعد ذلك تفتحها مرة أخرى. 0 فقط يغلقه حتى رسالته التالية.
-ui-options-group-snooze-suffix = { " دقيقة" }
-ui-options-group-snooze-ask = اسأل عن المدة عند كل تأخير
-ui-options-group-snooze-ask-hint = يسأل Snooze عن المدة، لهذه المحادثة الجماعية فقط، بدءًا من المدة أعلاه.
+ui-options-group-snooze-duration = مدة إيقاف دردشة المجموعة مؤقتًا
+ui-options-group-snooze-duration-hint = مدة إغلاق دردشة المجموعة وتجاهل رسائلها عند الإيقاف المؤقت، بالدقائق. تعيد أول رسالة بعد انتهاء المدة فتحها. القيمة 0 تغلق الدردشة حتى وصول الرسالة التالية فقط.
+ui-options-group-snooze-suffix = { " د" }
+ui-options-group-snooze-ask = اسأل عن المدة عند كل إيقاف مؤقت
+ui-options-group-snooze-ask-hint = يسأل الإيقاف المؤقت عن المدة لهذه الدردشة الجماعية فقط، مع اقتراح المدة أعلاه.
 ui-options-ignore-conferences = تجاهل المؤتمرات
 ui-options-ignore-conferences-hint = اترك كل مؤتمر (محادثة مخصصة) تم دعوتك إليه، دون فتحه. لا تتأثر المحادثات الجماعية.
 ui-options-ignore-conferences-report = تقرير المؤتمرات التي تم تجاهلها
@@ -5971,7 +5971,7 @@ ui-chat-join-call = الانضمام
 ui-chat-members-moderators = مديرو المناقشات
 ui-chat-members-participants = متصل
 ui-chat-members-invited = مدعوون
-ui-chat-members-offline = خارج الشبكة
+ui-chat-members-offline = غير متصل
 ui-chat-members-present-only = تتضمن قائمة مجموعة الدردشة فقط الأعضاء الذين هم في ذلك.
 ui-chat-typing-one = { $name } هو يكتب...
 ui-chat-typing-two = { $a } و { $b } أنت تطبع...
@@ -5979,7 +5979,7 @@ ui-chat-typing-many = عدة أشخاص يكتبون
 ui-chat-tag-object = الغرض
 ui-chat-tag-moderator = الشكل
 ui-chat-tag-shouts = صراخ
-ui-chat-tag-whispers = همسات
+ui-chat-tag-whispers = همس
 ui-chat-today-at = اليوم، الساعة 00/15 { $time }
 ui-chat-yesterday-at = أمس الساعة { $time }
 ui-chat-date-at = { $date } عند { $time }
@@ -10580,7 +10580,14 @@ script-edit-outdent = تقليل المدخل (Shift+Tab)
 script-selection-edit-failed = لا يمكن تحرير: المصدر كبير جداً أو تعليق الكتلة موجود. استخدم // للتعليقات المتداخلة.
 script-fold-collapse = كتلة الانهيار
 script-fold-expand = توسيع الكتلة
-script-fold-lines = الخطوط
+script-fold-line-count =
+    { $count ->
+        [one] سطر واحد
+        [two] سطران
+        [few] { $count } أسطر
+        [many] { $count } سطرًا
+       *[other] { $count } سطر
+    }
 script-fold-all = تقليص الجميع
 script-expand-all = توسيع الجميع
 loading-residents =
@@ -10679,8 +10686,8 @@ people-band-whisper = همس · { $range } m
 people-band-say = تحدث · { $range } m
 people-band-shout = صراخ · { $range } m
 people-band-beyond = خارج النطاق
-people-seen-now = أقل من دقيقة واحدة
-people-seen-minutes = { $n } دقيقة
+people-seen-now = < 1 د
+people-seen-minutes = { $n } د
 people-seen-hours = { $n } h
 people-sheet-im = IM
 people-sheet-i-grant = ما أمنحه { $name }
@@ -10728,7 +10735,7 @@ people-groups-active-tag = نشطة
 people-groups-active = المجموعة النشطة
 people-groups-member = عضو
 people-groups-title = اللقب: { $title }
-people-groups-online = { $count } على شبكة الإنترنت
+people-groups-online = { $count } على اتصال
 people-groups-chat-off = الدردشة محظورة
 people-groups-notices =
     { $count ->
@@ -10759,7 +10766,7 @@ people-sets-people =
         [one] { $count } شخص
        *[other] { $count } عدد الأشخاص
     }
-people-sets-online = { $count } على شبكة الإنترنت
+people-sets-online = { $count } على اتصال
 people-sets-no-match = لا أحد هنا يناسب البحث
 people-sets-add-people = أضف أشخاص
 people-sets-quick-sort = الترتيب السريع
@@ -10807,11 +10814,11 @@ ui-options-camera-reset-all = إعادة الكاميرا
 ui-options-camera-reset-all-tip = يعيد كل إعدادات هذه الصفحة إلى حالتها الافتراضية: الرؤية الخلفية، موقع الكاميرا ونقطة التركيز، زاوية الرؤيّة، المسافة، التسوية، الحدود ونظرة الفأرة.
 ui-chat-close-conversation = محادثة وثيقة
 ui-chat-close-conversation-leave = محادثة خاصة (يغادر الجلسة)
-ui-chat-snooze = توقف
-ui-chat-snooze-tip = تأجيل: أغلق هذه المحادثة الجماعية وتجاهل رسائلها لفترة من الوقت
-ui-chat-snooze-title = توقف { $group }
-ui-chat-snooze-prompt = الوقت بالدقائق لتأجيل هذه المحادثة الجماعية:
-ui-chat-snooze-invalid = أدخل عدداً كاملاً من الدقائق.
+ui-chat-snooze = إيقاف مؤقت
+ui-chat-snooze-tip = أغلق دردشة المجموعة وتجاهل رسائلها لفترة مؤقتة.
+ui-chat-snooze-title = إيقاف دردشة { $group } مؤقتًا
+ui-chat-snooze-prompt = مدة إيقاف دردشة هذه المجموعة مؤقتًا بالدقائق:
+ui-chat-snooze-invalid = أدخل عددًا صحيحًا من الدقائق.
 ui-chat-menu-activate-group = تنشيط المجموعة
 ui-options-snap-windows = نوافذ سريعة
 ui-options-snap-windows-help = اضغط Alt أثناء تحريك نافذة لوضعها على نافذه أخرى ، شريط أو حافة الشاشة. بدون Alt ، لا يخلق التحريك أي ملحقات. النوافذ الملحقة تتحرك معاً؛ Alt يفصل النافذه التي تسحبها ويسمح لك بوضعها في مكان آخر. تغيير الحجم يتم بشكل تلقائي؛ Alt يعطل التثبيت خلال عملية إعادة الحجم.

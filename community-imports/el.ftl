@@ -2080,7 +2080,7 @@ keybinds-numpad-4 = - Τι;
 keybinds-numpad-5 = - Τι;
 ui-options-0-hide-avatar-names = 0 = απόκρυψη των ονομάτων των ειδώλων
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = δεν υπάρχουν φυσαλίδες συνομιλίας πάνω από τη γραμμή συνομιλιών
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Ομάδα:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. Ορίστε μια τιμή:
 build-ui-general-127-bytes-maximum = 127 μέγιστο.
 ui-land-dialogs-2-sell-the-land-to = 2. Πουλήστε το οικόπεδο σε:
@@ -4740,11 +4740,11 @@ ui-options-group-notices-in-chat = Ομαδικές ειδοποιήσεις σ�
 ui-options-group-notices-in-chat-hint = Μια ομαδική ανακοίνωση γράφει επίσης μια γραμμή στη συνομιλία της ομάδας (μόνο στην απομαγνητοφώνηση της ομάδα, όταν η συνομιλίας δεν είναι ανοιχτή)
 ui-options-group-notice-subjects-in-chat = Με τα θέματα και τους συγγραφείς τους
 ui-options-group-notice-subjects-in-chat-hint = Η γραμμή ξεκινά με το ποιος έστειλε την ανακοίνωση και το θέμα της, διαφορετικά είναι μόνο το κείμενο της ανακοίνωσης
-ui-options-group-snooze-duration = Αναβολή ομαδικής συνομιλίας
-ui-options-group-snooze-duration-hint = Πόσο καιρό το κουμπί αναβολής μιας ομαδικής συνομιλίας την κλείνει και αγνοεί τα μηνύματά της, σε λεπτά. Το πρώτο μήνυμα μετά από αυτό την ανοίγει ξανά.0 μόνο κλείνουν μέχρι το επόμενο μήνυμά του.
-ui-options-group-snooze-suffix = { " λεπτό" }
-ui-options-group-snooze-ask = Ρωτήστε τη διάρκεια σε κάθε αναβολή
-ui-options-group-snooze-ask-hint = Η αναβολή ρωτά για πόσο χρονικό διάστημα, μόνο για αυτήν την ομαδική συνομιλία, ξεκινώντας από τη διάρκεια που αναφέρεται παραπάνω.
+ui-options-group-snooze-duration = Διάρκεια παύσης ομαδικής συνομιλίας
+ui-options-group-snooze-duration-hint = Ο χρόνος, σε λεπτά, για τον οποίο η παύση κλείνει την ομαδική συνομιλία και παραβλέπει τα μηνύματά της. Το πρώτο μήνυμα μετά τη λήξη την ανοίγει ξανά. Το 0 την κλείνει μόνο μέχρι το επόμενο μήνυμα.
+ui-options-group-snooze-suffix = { " λεπ." }
+ui-options-group-snooze-ask = Ερώτηση για τη διάρκεια κάθε φορά
+ui-options-group-snooze-ask-hint = Κατά την παύση ζητείται η διάρκεια μόνο για τη συγκεκριμένη ομαδική συνομιλία, με αρχική τιμή τη διάρκεια που ορίζεται παραπάνω.
 ui-options-ignore-conferences = Παράβλεψη των συνεδρίων
 ui-options-ignore-conferences-hint = Αποχωρήστε από κάθε διάσκεψη (συνομιλία) στην οποία έχετε προσκληθεί, χωρίς να την ανοίξετε Οι ομαδικές συνομιλίες δεν επηρεάζονται.
 ui-options-ignore-conferences-report = Αναφορά αγνοημένων συνεδρίων
@@ -5968,7 +5968,7 @@ ui-chat-typing-many = Πολλοί άνθρωποι πληκτρολογούν�
 ui-chat-tag-object = Αντικείμενο
 ui-chat-tag-moderator = Λειτουργία
 ui-chat-tag-shouts = Φωνές
-ui-chat-tag-whispers = Ψίθυροι
+ui-chat-tag-whispers = Ψίθυρος
 ui-chat-today-at = Σήμερα στις 12:00 { $time }
 ui-chat-yesterday-at = χθες στις 12:00 { $time }
 ui-chat-date-at = { $date } και { $time }
@@ -10567,7 +10567,11 @@ script-edit-outdent = Μείωση εσοχής (Πλήκτρο διαστήμα
 script-selection-edit-failed = Δεν είναι δυνατή η επεξεργασία: πηγή πολύ μεγάλη ή υπάρχον σχόλιο μπλοκ. Χρησιμοποιήστε // για ένθετα σχόλια.
 script-fold-collapse = Μπλοκ κατάρρευσης
 script-fold-expand = Αναπτύξτε το μπλοκ
-script-fold-lines = γραμμές
+script-fold-line-count =
+    { $count ->
+        [one] { $count } γραμμή
+       *[other] { $count } γραμμές
+    }
 script-fold-all = Σύμπτυξη όλων των
 script-expand-all = Αναπτύξτε όλα τα
 loading-residents =
@@ -10662,8 +10666,8 @@ people-band-whisper = Ψίθυρος · { $range } m
 people-band-say = Ομιλία · { $range } m
 people-band-shout = Φωνή · { $range } m
 people-band-beyond = Εκτός εμβέλειας
-people-seen-now = < 1 λεπτό
-people-seen-minutes = { $n } λεπτό
+people-seen-now = < 1 λεπ.
+people-seen-minutes = { $n } λεπ.
 people-seen-hours = { $n } h
 people-sheet-im = IM
 people-sheet-i-grant = Αυτό που εγγυώμαι { $name }
@@ -10711,7 +10715,7 @@ people-groups-active-tag = ενεργό
 people-groups-active = Ενεργή ομάδα
 people-groups-member = Μέλος
 people-groups-title = Τίτλος: { $title }
-people-groups-online = { $count } Διαδικτυακά
+people-groups-online = { $count } σε σύνδεση
 people-groups-chat-off = Η συνομιλία μπλοκαρίστηκε
 people-groups-notices =
     { $count ->
@@ -10742,7 +10746,7 @@ people-sets-people =
         [one] { $count } άτομο
        *[other] { $count } άτομα
     }
-people-sets-online = { $count } Διαδικτυακά
+people-sets-online = { $count } σε σύνδεση
 people-sets-no-match = Κανείς εδώ δεν ταιριάζει με την αναζήτηση.
 people-sets-add-people = Προσθήκη ατόμων
 people-sets-quick-sort = Γρήγορη ταξινόμηση
@@ -10790,11 +10794,11 @@ ui-options-camera-reset-all = Επαναφορά της κάμερας
 ui-options-camera-reset-all-tip = Επαναφέρει κάθε ρύθμιση αυτής της σελίδας στην προεπιλεγμένη: πίσω όψη, θέση κάμερας και σημείο εστίασης, γωνία θέασης, απόσταση, εξομάλυνση, όρια και εμφάνιση ποντικιού.
 ui-chat-close-conversation = Στενή συνομιλία
 ui-chat-close-conversation-leave = Κλείσιμο συνομιλίας (αποχώρηση από την περίοδο λειτουργίας)
-ui-chat-snooze = Αναβολή
-ui-chat-snooze-tip = Αναβολή: κλείστε αυτήν την ομαδική συνομιλία και αγνοήστε τα μηνύματά της για λίγο
-ui-chat-snooze-title = Αναβολή { $group }
-ui-chat-snooze-prompt = Χρόνος σε λεπτά για αναβολή αυτής της ομαδικής συνομιλίας:
-ui-chat-snooze-invalid = Πληκτρολογήστε έναν ακέραιο αριθμό λεπτών.
+ui-chat-snooze = Παύση
+ui-chat-snooze-tip = Κλείσιμο της ομαδικής συνομιλίας και προσωρινή παράβλεψη των μηνυμάτων της.
+ui-chat-snooze-title = Παύση συνομιλίας για την ομάδα { $group }
+ui-chat-snooze-prompt = Διάρκεια παύσης αυτής της ομαδικής συνομιλίας σε λεπτά:
+ui-chat-snooze-invalid = Εισαγάγετε ακέραιο αριθμό λεπτών.
 ui-chat-menu-activate-group = Ενεργοποίηση ομάδας
 ui-options-snap-windows = Παράθυρα άμεσης ώθησης
 ui-options-snap-windows-help = Κρατήστε πατημένο το πλήκτρο ενώ μετακινείτε ένα παράθυρο για να το προσαρμόσετε σε άλλο παράθυρα, μια γραμμή ή μια άκρη της οθόνης. Χωρίς η μετακίνηση δεν δημιουργεί επισύναψη. Τα συνδεδεμένα παράθορα μετακινούνται μαζί. Το αποσυνδέει το παράθερο που σύρετε και σας επιτρέπει να το συνδέσετε σε κάποιο άλλο σημείο. Η αλλαγή μεγέθους προσαρμοστεί αυτόματα.

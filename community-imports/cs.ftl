@@ -2085,7 +2085,7 @@ keybinds-numpad-4 = - Co to děláš?
 keybinds-numpad-5 = - Ne, ne.
 ui-options-0-hide-avatar-names = 0 = skrýt jména avatarů
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = žádné chat bubliny nad lištou chatu
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Skupina:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. Nastavte cenu:
 build-ui-general-127-bytes-maximum = Maximálně 127 bajtů.
 ui-land-dialogs-2-sell-the-land-to = 2. Prodejte pozemky:
@@ -4745,11 +4745,11 @@ ui-options-group-notices-in-chat = Skupinové oznámení ve skupinovém chatu
 ui-options-group-notices-in-chat-hint = Skupinové oznámení také zapíše řádek do skupinového chatu (pouze v přepisu skupiny, když není chat otevřen)
 ui-options-group-notice-subjects-in-chat = S jejich předměty a autory
 ui-options-group-notice-subjects-in-chat-hint = Řádek začíná tím, kdo oznámení odeslal a jeho předmětem, jinak je to jen text oznámenia
-ui-options-group-snooze-duration = Skupinový chat snooze
-ui-options-group-snooze-duration-hint = Jak dlouho tlačítko Snooze skupinového chatu zavře a ignoruje jeho zprávy, v minutách. První zpráva poté ji otevře znovu. 0 pouze zavře až do další zprávu.
+ui-options-group-snooze-duration = Doba pozastavení skupinového chatu
+ui-options-group-snooze-duration-hint = Počet minut, po které pozastavení zavře skupinový chat a ignoruje jeho zprávy. První zpráva po uplynutí doby ho znovu otevře. Hodnota 0 ho zavře jen do příští zprávy.
 ui-options-group-snooze-suffix = { " min" }
-ui-options-group-snooze-ask = Zeptat se na dobu trvání při každém odložení
-ui-options-group-snooze-ask-hint = Snooze se zeptá, jak dlouho, pouze pro tento skupinový chat, počínaje výše uvedenou dobou trvání.
+ui-options-group-snooze-ask = Pokaždé se zeptat na dobu pozastavení
+ui-options-group-snooze-ask-hint = Při pozastavení se zobrazí dotaz na dobu jen pro tento chat. Předvyplní se hodnota uvedená výše.
 ui-options-ignore-conferences = Ignorovat konference
 ui-options-ignore-conferences-hint = Opusťte všechny konference (chaty ad hoc), na které jste pozváni, aniž byste je otevřeli. Skupinové chaty nejsou ovlivněny.
 ui-options-ignore-conferences-report = Nahlásit ignorované konference
@@ -5965,7 +5965,7 @@ ui-chat-join-call = Join
 ui-chat-members-moderators = Moderátoři
 ui-chat-members-participants = Online
 ui-chat-members-invited = Pozvánka
-ui-chat-members-offline = Offline
+ui-chat-members-offline = Nepřipojení
 ui-chat-members-present-only = Skupinový chat zobrazuje pouze členy, kteří jsou v něm.
 ui-chat-typing-one = { $name } Ještě se píše…
 ui-chat-typing-two = { $a } a { $b } Vy právě píšete…
@@ -5973,7 +5973,7 @@ ui-chat-typing-many = Několik lidí píše…
 ui-chat-tag-object = Objekt
 ui-chat-tag-moderator = Mod
 ui-chat-tag-shouts = Shouts
-ui-chat-tag-whispers = Whispers
+ui-chat-tag-whispers = Šeptá
 ui-chat-today-at = dnes v 18:00 { $time }
 ui-chat-yesterday-at = včera v 19:05 { $time }
 ui-chat-date-at = { $date } at { $time }
@@ -10575,7 +10575,13 @@ script-edit-outdent = Zmenšení odsazení (Shift+Tab)
 script-selection-edit-failed = Nelze editovat: zdroj je příliš velký nebo existující blok komentáře. Použijte // pro vnořené komentář.
 script-fold-collapse = Collapse block
 script-fold-expand = Rozbalovací blok
-script-fold-lines = řádky
+script-fold-line-count =
+    { $count ->
+        [one] { $count } řádek
+        [few] { $count } řádky
+        [many] { $count } řádku
+       *[other] { $count } řádků
+    }
 script-fold-all = Sbalit vše
 script-expand-all = Rozbalit vše
 loading-residents =
@@ -10800,11 +10806,11 @@ ui-options-camera-reset-all = Resetování fotoaparátu
 ui-options-camera-reset-all-tip = Nastaví všechna nastavení této stránky zpět na výchozí hodnoty: pohled zezadu, poloha kamery a zaostření, úhel pohledu, vzdálenost, vyhlazení, limity a myš.
 ui-chat-close-conversation = Close conversation
 ui-chat-close-conversation-leave = Zavřít konverzaci (opustí relaci)
-ui-chat-snooze = Snooze
-ui-chat-snooze-tip = Odložení: zavřete tento skupinový chat a na chvíli ignorujte jeho zprávy
-ui-chat-snooze-title = Snooze { $group }
-ui-chat-snooze-prompt = Čas v minutách pro odložení tohoto skupinového chatu:
-ui-chat-snooze-invalid = Zadejte celé číslo minut.
+ui-chat-snooze = Pozastavit
+ui-chat-snooze-tip = Zavřít skupinový chat a dočasně ignorovat jeho zprávy.
+ui-chat-snooze-title = Pozastavit chat skupiny { $group }
+ui-chat-snooze-prompt = Doba pozastavení tohoto skupinového chatu v minutách:
+ui-chat-snooze-invalid = Zadejte celý počet minut.
 ui-chat-menu-activate-group = Aktivovat skupinu
 ui-options-snap-windows = Snap windows
 ui-options-snap-windows-help = Podržením Alt při přesouvání okna jej přichytíte k jinému oknu, panelu nebo okraji obrazovky. Bez Alt přesun nevytvoří žádnou přílohu. Připojená okna se přesouvají společně; Alt oddělí přetažené okno a umožní vám připojit ho jinde. Změna velikosti se přichytne automaticky; Alt vypne přichycení během změny velikosti.

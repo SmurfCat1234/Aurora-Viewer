@@ -2073,7 +2073,7 @@ keybinds-numpad-4 = (נושף)
 keybinds-numpad-5 = -לא, לא, לא.
 ui-options-0-hide-avatar-names = 0 = להסתיר את שמות האווטאר
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = אין בועות צ' אט מעל סרגל הצ' ט
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " קבוצה:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. קבע מחיר:
 build-ui-general-127-bytes-maximum = 127 בתים מקסימום.
 ui-land-dialogs-2-sell-the-land-to = 2. למכור את הקרקע ל:
@@ -4733,11 +4733,11 @@ ui-options-group-notices-in-chat = הודעת קבוצה בשיח הקבוצתי
 ui-options-group-notices-in-chat-hint = הודעה של קבוצה גם כותבת שורה בצ'אט של הקבוצה שלה (רק בתעתיק הצ'אטים כשהם לא פתוחים)
 ui-options-group-notice-subjects-in-chat = עם הנושאים והסופרים שלהם
 ui-options-group-notice-subjects-in-chat-hint = השורה מתחילה עם מי שלח את ההודעה והנושא שלה, אחרת זה רק הטקסט של ההצהרה
-ui-options-group-snooze-duration = קבוצת שיחות
-ui-options-group-snooze-duration-hint = כמה זמן הכפתור "הדחייה" של צ'אט קבוצתי סגור אותו ומתעלם מההודעות שלו, בדקות. ההודעה הראשונה לאחר מכן תפתח אותו שוב. 0 רק סוגר אותו עד להודעה הבאה שלו.
-ui-options-group-snooze-suffix = { " דקות" }
-ui-options-group-snooze-ask = שאל את משך הזמן של כל שינה
-ui-options-group-snooze-ask-hint = Snooze שואל כמה זמן, רק לצ'אט הקבוצתי הזה, מתחיל מהמשך הזמן המוצג למעלה.
+ui-options-group-snooze-duration = משך השהיית צ׳אט קבוצתי
+ui-options-group-snooze-duration-hint = משך הזמן בדקות שבו הצ׳אט הקבוצתי סגור והודעותיו אינן מוצגות. ההודעה הראשונה לאחר סיום ההשהיה פותחת אותו מחדש. 0 סוגר אותו רק עד להודעה הבאה.
+ui-options-group-snooze-suffix = { " דק׳" }
+ui-options-group-snooze-ask = לשאול בכל פעם מה משך ההשהיה
+ui-options-group-snooze-ask-hint = בעת ההשהיה נשאלים על המשך עבור הצ׳אט הקבוצתי הזה בלבד. הערך שמופיע למעלה מוזן מראש.
 ui-options-ignore-conferences = התעלם מוועידות
 ui-options-ignore-conferences-hint = עזוב כל ועידת (שיחה ad hoc) שאתה מוזמן אליה, מבלי לפתוח אותה. שיחות קבוצתיות לא מושפעות.
 ui-options-ignore-conferences-report = דיווח על ועידות מתעלמות
@@ -5953,7 +5953,7 @@ ui-chat-join-call = הצטרף
 ui-chat-members-moderators = מארגנים
 ui-chat-members-participants = מחוברים
 ui-chat-members-invited = מוזמנים
-ui-chat-members-offline = מחוץ לרשת
+ui-chat-members-offline = לא מחוברים
 ui-chat-members-present-only = צ'אט של קבוצה מרשימה רק את החברים שהם בתוכה.
 ui-chat-typing-one = { $name } הוא מקליד...
 ui-chat-typing-two = { $a } ו { $b } אתה מקליד...
@@ -5961,7 +5961,7 @@ ui-chat-typing-many = כמה אנשים מקלידים...
 ui-chat-tag-object = אובייקט
 ui-chat-tag-moderator = מצב
 ui-chat-tag-shouts = צעקות.
-ui-chat-tag-whispers = לוחשות.
+ui-chat-tag-whispers = לחישה
 ui-chat-today-at = היום בשעה { $time }
 ui-chat-yesterday-at = אתמול בשעה { $time }
 ui-chat-date-at = { $date } ב { $time }
@@ -10565,7 +10565,11 @@ script-edit-outdent = הקטנת ההטיה (Shift+Tab)
 script-selection-edit-failed = לא ניתן לערוך: מקור גדול מדי או הערה בבלוקים קיימים. השתמש ב // להערות מוטמעות.
 script-fold-collapse = התכווץ
 script-fold-expand = הרחב את הבלוק
-script-fold-lines = שורות
+script-fold-line-count =
+    { $count ->
+        [one] { $count } שורה
+       *[other] { $count } שורות
+    }
 script-fold-all = תפוס את כולם
 script-expand-all = הרחב את כולם
 loading-residents =
@@ -10661,8 +10665,8 @@ people-band-whisper = לחישה · { $range } m
 people-band-say = דיבור רגיל · { $range } m
 people-band-shout = צעקה · { $range } m
 people-band-beyond = מחוץ לטווח
-people-seen-now = דקה
-people-seen-minutes = { $n } דקות
+people-seen-now = < 1 דק׳
+people-seen-minutes = { $n } דק׳
 people-seen-hours = { $n } h
 people-sheet-im = IM
 people-sheet-i-grant = מה שאני מקבל { $name }
@@ -10710,7 +10714,7 @@ people-groups-active-tag = פעיל
 people-groups-active = קבוצה פעילה
 people-groups-member = חבר
 people-groups-title = שם: { $title }
-people-groups-online = { $count } ברשת
+people-groups-online = { $count } מחוברים
 people-groups-chat-off = שיחה חסומה
 people-groups-notices =
     { $count ->
@@ -10741,7 +10745,7 @@ people-sets-people =
         [one] { $count } אדם
        *[other] { $count } אנשים
     }
-people-sets-online = { $count } ברשת
+people-sets-online = { $count } מחוברים
 people-sets-no-match = אף אחד כאן לא מתאים לחיפוש.
 people-sets-add-people = הוסף אנשים
 people-sets-quick-sort = מיון מהיר
@@ -10789,11 +10793,11 @@ ui-options-camera-reset-all = אפס את המצלמה.
 ui-options-camera-reset-all-tip = מחזיר את כל ההגדרות של הדף הזה למצב ברירת המחדל: תצוגה אחורית, מיקום המצלמה ונקודת המיקוד, זווית הצפייה, המרחק, הלחימה, הגבולות ומראה העכבר.
 ui-chat-close-conversation = שיחה סגורה
 ui-chat-close-conversation-leave = סגור שיחה (פוטר מהישיבה)
-ui-chat-snooze = תירגע.
-ui-chat-snooze-tip = הודעה חדשה
-ui-chat-snooze-title = תירגע. { $group }
-ui-chat-snooze-prompt = זמן בדקות להדחה של שיחת הקבוצה הזו:
-ui-chat-snooze-invalid = הזן מספר שלם של דקות.
+ui-chat-snooze = השהיה
+ui-chat-snooze-tip = סגירת הצ׳אט הקבוצתי והתעלמות זמנית מההודעות שלו.
+ui-chat-snooze-title = השהיית הצ׳אט של { $group }
+ui-chat-snooze-prompt = משך ההשהיה של הצ׳אט הקבוצתי הזה בדקות:
+ui-chat-snooze-invalid = יש להזין מספר שלם של דקות.
 ui-chat-menu-activate-group = הפעל קבוצה
 ui-options-snap-windows = חלונות
 ui-options-snap-windows-help = החזיק את מקש Alt בזמן הזזת חלון כדי להצמיד אותו לחלון אחר, סרגל או קצה מסך. ללא מקש alt, הזזה לא יוצרת צירוף. חלונות צמודים נעים יחד; מקש alt מפריד את החלון שאתה משליך ומאפשר לך לצייד אותו במקום אחר. שינוי גודל מצמיד באופן אוטומטי; מקלדת Alt מפסיקה את הצמדה במהלך שינוי גודלו.

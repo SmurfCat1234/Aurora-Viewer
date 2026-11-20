@@ -2075,7 +2075,7 @@ keybinds-numpad-4 = . (Nummernblock)
 keybinds-numpad-5 = / (Nummernblock)
 ui-options-0-hide-avatar-names = 0 = Avatar-Namen ausblenden
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = keine Chat-Blasen über der Chat-Leiste
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violetter Wolf|0\u000A2 " }{ $value1 }{ " Spam-Box|0\u000A0 " }{ $value2 }{ " Werbetafel|\u000A0 " }{ $value3 }{ " Gruppe:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violetter Wolf|0\u000A2 " }{ $value1 }{ " Spam-Box|0\u000A0 " }{ $value2 }{ " Werbetafel|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. Legen Sie einen Preis fest:
 build-ui-general-127-bytes-maximum = Maximal 127 Byte.
 ui-land-dialogs-2-sell-the-land-to = 2. Verkaufen Sie das Land an:
@@ -2806,7 +2806,7 @@ ui-appearance-items-left-forearm = Linker Unterarm
 ui-options-avatars = Avatare
 ui-options-loading-avatars = Avatare werden geladen
 ui-options-avatar-cache = Avatare aus dem Cache
-ui-options-avatar-cache-help = Bis die Region Aussehen und getragene Objekte übermittelt, zeigt Aurora Körperform, Haut und Objekte, wie sie zuletzt zu sehen waren. Die Animationen Ihrer eigenen Objekte auf Ihrem Avatar bleiben sichtbar. Sobald die Region die Daten sendet, erscheint das aktuelle Aussehen. Der klassische Viewer zeigt bis dahin eine Wolke.
+ui-options-avatar-cache-help = Während Aussehen und getragene Objekte eines Avatars unterwegs sind, werden seine Form, Haut und Objekte so gezeichnet, wie sie beim letzten Mal aussahen (mit den Animationen, die Ihre eigenen Objekte auf Ihnen abspielen), danach die der Region (nur in Aurora; der Legacy Viewer zeigt eine Wolke, bis die Region sie sendet)
 ui-options-fully-rendered-avatars = Vollständig gerenderte Avatare
 ui-perf-avatars-and-camera = Avatare und Kamera
 ui-sound-typing-avatars = Tippende Avatare
@@ -7056,8 +7056,8 @@ ui-options-collision-sounds = Kollisionsgeräusche
 ui-options-interface-sounds = Interface-Sounds
 ui-options-gesture-sounds = Gestengeräusche
 ui-options-sounds-played-by-other-avatars-gestures = Geräusche, die durch die Gesten anderer Avatare abgespielt werden
-ui-options-media-sounds-ear = Hörposition für Medien und Geräusche
-ui-options-media-sounds-ear-help = Weltgeräusche und Medien sind an der Kamera oder am Standort Ihres Avatars zu hören, unabhängig davon, wohin Sie die Kamera bewegen. Für den Sprachchat gibt es eine eigene Einstellung.
+ui-options-media-sounds-ear = Medien und Klänge hören von
+ui-options-media-sounds-ear-help = Klänge der Welt und Medien werden an der Kamera gehört oder an Ihrem Avatar, wo auch immer die Kamera ist. Voice hat eine eigene Einstellung.
 ui-options-sound-doppler = Dopplereffekt
 ui-options-sound-doppler-help = Ein bewegtes Geräusch klingt beim Näherkommen höher und beim Entfernen tiefer, wie bei einem vorbeifahrenden Auto. 1 entspricht dem Legacy Viewer, 0 schaltet den Effekt aus, 2 verdoppelt ihn.
 ui-options-unmute-ambient-after-teleport = Umgebungsgeräusche nach einem Teleport wieder einschalten
@@ -8325,6 +8325,17 @@ photo-lut-imported-many =
     }
 photo-lut-pack = Von { $creator }
 photo-lut-pack-tip = Von { $creator } erstellte und mit jedem Aurora-Benutzer geteilte LUTs
+world-look-title = Weltfilter
+world-look-help = Filter und LUTs dauerhaft auf der 3D-Ansicht, getrennt von denen der Fotos. Die Oberfläche wird nie eingefärbt.
+world-look-on = Filter auf der Welt anzeigen
+world-look-note = Auf die 3D-Ansicht gelegt, unter der Oberfläche. Fotos und Filme behalten die Filter des Fotofensters.
+world-look-photo-open = Das Fotofenster oder die Regie ist offen: Stattdessen werden deren eigene Filter angezeigt.
+ui-options-world-look = Weltfilter
+ui-options-world-look-on = Filter auf der Welt
+ui-options-world-look-on-help = Legt die im Fenster Weltfilter gewählten Filter und LUTs dauerhaft auf die 3D-Ansicht. Fotos und Filme behalten ihre eigenen.
+ui-options-world-look-choose = Gewählte Filter
+ui-options-world-look-choose-help = Öffnet das Fenster Weltfilter: dieselben Filter und LUTs wie im Fotomodus, mit eigenen Einstellungen.
+ui-options-world-look-open = Auswählen…
 photo-lut-mine = Meine LUTs
 photo-lut-failed = LUT nicht gelesen: { $error }
 photo-look-a-fine-grain = Feine Körnung
@@ -10566,7 +10577,11 @@ script-edit-outdent = Einzug verkleinern (Umschalt+Tab)
 script-selection-edit-failed = Bearbeitung nicht möglich: Quelle zu groß oder vorhandener Blockkommentar. Verwenden Sie // für verschachtelte Kommentare.
 script-fold-collapse = Block einklappen
 script-fold-expand = Block ausklappen
-script-fold-lines = Zeilen
+script-fold-line-count =
+    { $count ->
+        [one] { $count } Zeile
+        *[other] { $count } Zeilen
+    }
 script-fold-all = Alles einklappen
 script-expand-all = Alle ausklappen
 loading-residents =
@@ -15459,10 +15474,10 @@ ui-weather-northern-lights-display = Helles Polarlicht
 ui-weather-northern-lights-night = Nur nach Sonnenuntergang sichtbar.
 ui-weather-clean-up = Aufräumen
 ui-weather-snow-fill = Mit Schnee bedecken
-ui-weather-enabled-tip = Aurora-Wetter zeigt Regen oder Schnee, Wind, Donner und Polarlicht nach den Einstellungen unten. Beim Ausschalten verschwinden die Effekte, und die Einstellungen bleiben erhalten.
+ui-weather-enabled-tip = Aurora-Wetter an: Regen oder Schnee, Wind, Donner und die Nordlichter wie unten eingestellt. Aus, wird nichts davon gezeichnet; die Einstellungen bleiben erhalten
 ui-weather-now-off = Wetter aus
-ui-weather-precipitation-on-tip = Regen oder Schnee fällt nach den Einstellungen unten. Bei ausgeschaltetem Niederschlag gibt es auch keinen Donner.
-ui-weather-wind-on-tip = Der Wind treibt Regen und Schnee und ist draußen zu hören. Bei ausgeschaltetem Wind bleibt die Luft ruhig.
+ui-weather-precipitation-on-tip = Regen oder Schnee fällt wie unten eingestellt; aus, fällt nichts und es gibt keinen Donner
+ui-weather-wind-on-tip = Der Wind des Wetters weht den Regen und Schnee und ist im Freien zu hören; aus, ist die Luft ruhig
 ui-weather-wind-follow-region = Wind der Region
 picker-pipette-hint = Klicken Sie auf eine Objektfläche, um ihre Textur oder ihr Material aus Ihrem Inventar auszuwählen.
 picker-pipette-no-texture = In Ihrem Inventar wurde keine kopierbare Textur gefunden.
@@ -15848,18 +15863,5 @@ game-control-action-truck-right = Kamera nach rechts →
 game-control-action-boom-up = Kamera anheben ↑
 game-control-action-boom-down = Kamera absenken ↓
 game-control-action-escape = Esc
-
 picker-local-newest = Neueste zuerst
 picker-local-name = Name A–Z
-
-world-look-title = Weltfilter
-world-look-help = Filter und LUTs für die 3D-Ansicht mit eigenen Einstellungen für Fotos. Die Farben der Oberfläche bleiben unverändert.
-world-look-on = Filter in der Welt anzeigen
-world-look-note = Die Filter wirken auf die 3D-Ansicht unter der Oberfläche. Fotos und Filme behalten die Filter aus dem Fotofenster.
-world-look-photo-open = Das Fotofenster oder der Regisseur ist geöffnet. Es werden dessen Filter angezeigt.
-ui-options-world-look = Weltfilter
-ui-options-world-look-on = Filter in der Welt
-ui-options-world-look-on-help = Wendet die im Fenster „Weltfilter“ gewählten Filter und LUTs dauerhaft auf die 3D-Ansicht an. Fotos und Filme behalten ihre eigenen Filter.
-ui-options-world-look-choose = Ausgewählte Filter
-ui-options-world-look-choose-help = Öffnet das Fenster „Weltfilter“ mit denselben Filtern und LUTs wie im Fotomodus und eigenen Einstellungen.
-ui-options-world-look-open = Auswählen…

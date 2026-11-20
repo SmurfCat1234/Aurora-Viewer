@@ -2080,7 +2080,7 @@ keybinds-numpad-4 = . (numpad)
 keybinds-numpad-5 = / (numpad)
 ui-options-0-hide-avatar-names = 0 = itago ang mga pangalan ng avatar
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = walang mga bubble sa chat sa itaas ng chat bar
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Grupo:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. Magtakda ng presyo:
 build-ui-general-127-bytes-maximum = 127 ang namatay.
 ui-land-dialogs-2-sell-the-land-to = 2. Ibenta ang lupa sa:
@@ -4740,11 +4740,11 @@ ui-options-group-notices-in-chat = Mga abiso ng grupo sa group chat
 ui-options-group-notices-in-chat-hint = Ang isang grupong abiso ay sumulat din ng linya sa chat ng grupo nito (sa transcript lamang ng grupo kapag hindi ito bukas)
 ui-options-group-notice-subjects-in-chat = Sa kanilang mga paksa at may-akda
 ui-options-group-notice-subjects-in-chat-hint = Ang linya ay nagsisimula sa sino ang nagpadala ng abiso at ang paksa nito, kung hindi man ito ay lamang ang text ng abisong
-ui-options-group-snooze-duration = Pag-snooze ng grupong chat
-ui-options-group-snooze-duration-hint = Gaano katagal ang Snooze button ng isang group chat na isinasara ito at hindi pinapansin ang mga mensahe nito, sa minuto. Ang unang mensahe pagkatapos na binuksan muli ito.0na lamang sarado ito hanggang sa susunod na mensahe nito.
+ui-options-group-snooze-duration = Tagal ng pag-pause ng group chat
+ui-options-group-snooze-duration-hint = Bilang ng minutong isasara ang group chat at hindi papansinin ang mga mensahe nito. Muli itong bubuksan ng unang mensahe pagkatapos ng pause. Kapag 0, nakasara lang ito hanggang sa susunod na mensahe.
 ui-options-group-snooze-suffix = { " min" }
-ui-options-group-snooze-ask = Tanong ang tagal sa bawat snooze
-ui-options-group-snooze-ask-hint = Tinanong ng Snooze kung gaano katagal, para sa group chat na ito lamang, simula sa tagal sa itaas.
+ui-options-group-snooze-ask = Itanong ang tagal sa bawat pag-pause
+ui-options-group-snooze-ask-hint = Sa pag-pause, tatanungin ang tagal para sa group chat na ito lamang. Ang tagal sa itaas ang unang lalabas sa field.
 ui-options-ignore-conferences = I-ignore ang mga conference
 ui-options-ignore-conferences-hint = Mag-iwan ng bawat conference (ad hoc chat) na iyong inimbitahan, nang hindi ito binubukas. Hindi naaapektuhan ang mga group chat.
 ui-options-ignore-conferences-report = Mag-ulat ng hindi pinapansin na mga conference
@@ -5960,7 +5960,7 @@ ui-chat-join-call = Mag-sign in
 ui-chat-members-moderators = Mga Moderador
 ui-chat-members-participants = Online
 ui-chat-members-invited = Inimbitahan
-ui-chat-members-offline = Hindi nakakonekta
+ui-chat-members-offline = Hindi online
 ui-chat-members-present-only = Ang chat ng grupo ay naglalaman lamang ng mga miyembro na nasa loob nito.
 ui-chat-typing-one = { $name } ay pag-type…
 ui-chat-typing-two = { $a } at { $b } ay typing…
@@ -5968,7 +5968,7 @@ ui-chat-typing-many = Maraming tao ang nag-type…
 ui-chat-tag-object = Object
 ui-chat-tag-moderator = Mode
 ui-chat-tag-shouts = Mga tinig
-ui-chat-tag-whispers = Mga pangungusap
+ui-chat-tag-whispers = Bulong
 ui-chat-today-at = ngayon sa { $time }
 ui-chat-yesterday-at = kahapon sa { $time }
 ui-chat-date-at = { $date } at { $time }
@@ -10569,7 +10569,11 @@ script-edit-outdent = Bawasan ang pag-indent (Shift+Tab)
 script-selection-edit-failed = Hindi mai-edit: source masyadong malaki o umiiral na block komento. Gamitin // para sa nested mga komento.
 script-fold-collapse = Pag-urong ng bloke
 script-fold-expand = Palawakin ang bloke
-script-fold-lines = linya
+script-fold-line-count =
+    { $count ->
+        [one] { $count } linya
+       *[other] { $count } na linya
+    }
 script-fold-all = I-collapse ang lahat
 script-expand-all = I-expand ang lahat
 loading-residents =
@@ -10664,7 +10668,7 @@ people-band-whisper = Bulong · { $range } m
 people-band-say = Karaniwang usapan · { $range } m
 people-band-shout = Sigaw · { $range } m
 people-band-beyond = Lampas sa abot
-people-seen-now = < 1 minuto
+people-seen-now = < 1 min
 people-seen-minutes = { $n } min
 people-seen-hours = { $n } h
 people-sheet-im = IM
@@ -10713,7 +10717,7 @@ people-groups-active-tag = aktibo
 people-groups-active = Aktibong grupo
 people-groups-member = Member
 people-groups-title = Pangalan: { $title }
-people-groups-online = { $count } online
+people-groups-online = { $count } ang online
 people-groups-chat-off = chat blocked
 people-groups-notices =
     { $count ->
@@ -10744,7 +10748,7 @@ people-sets-people =
         [one] { $count } tao
        *[other] { $count } tao
     }
-people-sets-online = { $count } online
+people-sets-online = { $count } ang online
 people-sets-no-match = Walang tao dito ang tumutugma sa paghahanap.
 people-sets-add-people = Magdagdag ng mga tao
 people-sets-quick-sort = Mabilis na pag-uuri
@@ -10792,11 +10796,11 @@ ui-options-camera-reset-all = I-reset ang kamera
 ui-options-camera-reset-all-tip = Nagtataglay ng bawat setting ng pahinang ito pabalik sa default nito: rear view, posisyon ng kamera at focus point, viewing angle, distansya, smoothing, limitasyon at mouselook.
 ui-chat-close-conversation = Magsara ng pag-uusap
 ui-chat-close-conversation-leave = Magsara ng pag-uusap (naiwan ang session)
-ui-chat-snooze = Pag-urong
-ui-chat-snooze-tip = Snooze: isara ang chat na ito at huwag pansinin ang mga mensahe nito sa loob ng ilang sandali
-ui-chat-snooze-title = Pag-urong { $group }
-ui-chat-snooze-prompt = Oras sa minuto upang i-snooze ang grupong chat na ito:
-ui-chat-snooze-invalid = Ipasok ang isang buong bilang ng mga minuto.
+ui-chat-snooze = I-pause
+ui-chat-snooze-tip = Isara ang group chat at pansamantalang huwag pansinin ang mga mensahe nito.
+ui-chat-snooze-title = I-pause ang chat ng { $group }
+ui-chat-snooze-prompt = Ilang minuto ipo-pause ang group chat na ito?
+ui-chat-snooze-invalid = Maglagay ng buong bilang ng minuto.
 ui-chat-menu-activate-group = I-activate ang grupo
 ui-options-snap-windows = I-snap ang mga window
 ui-options-snap-windows-help = I-hold ang Alt habang inilipat ang isang window upang i-snap ito sa ibang window, bar o gilid ng screen. Kung walang Alt, hindi gumagawa ng attachment ang paglipat. Ang mga naka-attach na window ay magkasama; pinahihiwalay ng Alt ang window na iyong dinadala at pinapayagan kang mag-attache sa ibang lugar. Awtomatikong nag-snapping ang pag-resize; Hindi pinapayagan ng Alt na mag-snapp sa panahon ng pagbabago ng laki.

@@ -2080,7 +2080,7 @@ keybinds-numpad-4 = - Mitä?
 keybinds-numpad-5 = - Ei.
 ui-options-0-hide-avatar-names = 0 = piilota avatarin nimet
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = ei chat-kuplia chat-palkin yläpuolella
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Ryhmä:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. Aseta hinta:
 build-ui-general-127-bytes-maximum = Enintään 127 tavua.
 ui-land-dialogs-2-sell-the-land-to = 2. Myydä maa:
@@ -4740,11 +4740,11 @@ ui-options-group-notices-in-chat = Ryhmäilmoitukset ryhmäkeskustelussa
 ui-options-group-notices-in-chat-hint = Ryhmäilmoitus kirjoittaa myös rivin ryhmänsä chattiin (vain ryhmän transkriptiin, kun sen chat ei ole auki)
 ui-options-group-notice-subjects-in-chat = Aiheidensa ja tekijöidensä kanssa
 ui-options-group-notice-subjects-in-chat-hint = Rivi alkaa ilmoituksen lähettäjästä ja sen aiheesta, muuten se on vain ilmoituksen teksti
-ui-options-group-snooze-duration = Ryhmächatissa snooze
-ui-options-group-snooze-duration-hint = Kuinka kauan ryhmäkeskustelun torkku-painike sulkee sen ja ohittaa viestit, minuutteina. Ensimmäinen viesti sen jälkeen avaa sen uudelleen. 0 vain sulkee ryhmäkeskustelun seuraavaan viestiin asti.
+ui-options-group-snooze-duration = Ryhmäkeskustelun tauon kesto
+ui-options-group-snooze-duration-hint = Aika minuutteina, jonka ryhmäkeskustelu pysyy suljettuna ja sen viestit ohitetaan. Ensimmäinen viesti tauon jälkeen avaa sen uudelleen. Arvo 0 sulkee sen vain seuraavaan viestiin asti.
 ui-options-group-snooze-suffix = { " min" }
-ui-options-group-snooze-ask = Kysy kesto jokaisen torkkuun yhteydessä
-ui-options-group-snooze-ask-hint = Torkku kysyy, kuinka kauan torkku kestää vain tässä ryhmäkeskustelussa, alkaen yllä olevasta kestosta.
+ui-options-group-snooze-ask = Kysy tauon kesto joka kerta
+ui-options-group-snooze-ask-hint = Tauon kesto kysytään vain tälle ryhmäkeskustelulle. Kentässä näkyy aluksi yllä oleva arvo.
 ui-options-ignore-conferences = Ohita konferenssit
 ui-options-ignore-conferences-hint = Poistu jokaisesta konferenssista (ad hoc -keskustelu), johon sinut on kutsuttu, avaamatta sitä. Ryhmäkeskustelut eivät muutu.
 ui-options-ignore-conferences-report = Ilmoita huomiotta jätetyistä konferensseista
@@ -5960,7 +5960,7 @@ ui-chat-join-call = Liity
 ui-chat-members-moderators = Valvojat
 ui-chat-members-participants = Paikalla
 ui-chat-members-invited = Kutsuttu
-ui-chat-members-offline = Offline
+ui-chat-members-offline = Ei paikalla
 ui-chat-members-present-only = Ryhmän keskusteluun luetellaan vain jäsenet, jotka ovat siinä.
 ui-chat-typing-one = { $name } Hän kirjoittaa…
 ui-chat-typing-two = { $a } ja { $b } Olet kirjoittamassa...
@@ -5968,7 +5968,7 @@ ui-chat-typing-many = Useat ihmiset kirjoittavat…
 ui-chat-tag-object = Kohde
 ui-chat-tag-moderator = Tila
 ui-chat-tag-shouts = Huutoja
-ui-chat-tag-whispers = Kuiskaukset
+ui-chat-tag-whispers = Kuiskaa
 ui-chat-today-at = Tänään klo 18.00 { $time }
 ui-chat-yesterday-at = eilen klo 19 { $time }
 ui-chat-date-at = { $date } 10 mg/ vrk { $time }
@@ -10569,7 +10569,11 @@ script-edit-outdent = Pienennä sisennystä (Vaihto+Sarkain)
 script-selection-edit-failed = Ei voi muokata: lähde liian suuri tai olemassa oleva lohkokommentti. Käytä // sisäkkäisiin kommentteihin.
 script-fold-collapse = Kutista lohko
 script-fold-expand = Laajenna lohko
-script-fold-lines = rivit
+script-fold-line-count =
+    { $count ->
+        [one] { $count } rivi
+       *[other] { $count } riviä
+    }
 script-fold-all = Kutista kaikki
 script-expand-all = Laajenna kaikki
 loading-residents =
@@ -10713,7 +10717,7 @@ people-groups-active-tag = aktiivinen
 people-groups-active = Aktiivinen ryhmä
 people-groups-member = Jäsen
 people-groups-title = Otsikko: { $title }
-people-groups-online = { $count } verkossa
+people-groups-online = { $count } paikalla
 people-groups-chat-off = Chatti on estetty
 people-groups-notices =
     { $count ->
@@ -10744,7 +10748,7 @@ people-sets-people =
         [one] { $count } henkilö
        *[other] { $count } henkilöä
     }
-people-sets-online = { $count } verkossa
+people-sets-online = { $count } paikalla
 people-sets-no-match = Kukaan täällä ei vastaa hakuasi.
 people-sets-add-people = Lisää ihmisiä
 people-sets-quick-sort = Nopea lajittelu
@@ -10792,11 +10796,11 @@ ui-options-camera-reset-all = Kameran nollaaminen
 ui-options-camera-reset-all-tip = Palauttaa kaikki tämän sivun asetukset oletusasetuksiinsa: takanäkymä, kameran sijainti ja tarkennuspiste, katselukulma, etäisyys, tasoitus, rajat ja hiiren näkö.
 ui-chat-close-conversation = Sulje keskustelu
 ui-chat-close-conversation-leave = Sulje keskustelu (poistuu istunnosta)
-ui-chat-snooze = Torkku
-ui-chat-snooze-tip = Torkku: sulje tämä ryhmäkeskustelu ja jätä sen viestit väliin hetkeksi
-ui-chat-snooze-title = Torkku { $group }
-ui-chat-snooze-prompt = Ryhmächatin torkkuaika minuutteina:
-ui-chat-snooze-invalid = Kirjoita kokonaismäärä minuutteja.
+ui-chat-snooze = Keskeytä
+ui-chat-snooze-tip = Sulje ryhmäkeskustelu ja ohita sen viestit tilapäisesti.
+ui-chat-snooze-title = Keskeytä ryhmän { $group } keskustelu
+ui-chat-snooze-prompt = Tämän ryhmäkeskustelun tauon kesto minuutteina:
+ui-chat-snooze-invalid = Anna minuutit kokonaislukuna.
 ui-chat-menu-activate-group = Aktivoi ryhmä
 ui-options-snap-windows = Snap-ikkunat
 ui-options-snap-windows-help = Pidä Alt-näppäintä painettuna siirtäessäsi ikkunaa, jotta se kiinnittyy toiseen ikkunaan, palkkiin tai näytön reunaan. Ilman Alt-painiketta siirtäminen ei luo liitäntää. Liitettynä olevat ikkunat liikkuvat yhdessä; Alt irrottaa vedetyn ikkunan ja antaa sinun kiinnittää sen muualle. Koon muuttaminen kiinnittyi automaattisesti; Alt poistaa kiinnittämisen käytöstä koon muuttamisen aikana.

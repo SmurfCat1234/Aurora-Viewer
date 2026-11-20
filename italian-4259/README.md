@@ -1,10 +1,7 @@
-# Italian catalog update for Aurora Viewer
+# Italian catalog for Aurora Viewer
 
-[Issue #4259](https://github.com/Aurora-Viewer/Aurora-Viewer/issues/4259) contains the full Italian catalog contributed by [00JackWild00](https://github.com/00JackWild00). The source message IDs in the attachment match the English catalog at [`c382aea0`](https://github.com/Aurora-Viewer/Aurora-Viewer/commit/c382aea0). The update targets [`3fe6a320`](https://github.com/Aurora-Viewer/Aurora-Viewer/commit/3fe6a320).
+Italian was brought into Aurora in [#4374](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4374), building on the full catalog contributed by [00JackWild00](https://github.com/00JackWild00) in [#4259](https://github.com/Aurora-Viewer/Aurora-Viewer/issues/4259).
 
-- `it-delta-3fe6a320.ftl` adds 282 new messages and updates 11 existing messages. The additions cover language import, game controls, Weather, World filters, audio, the second camera and the avatar attachment inspector.
-- `removed-keys.txt` lists the 244 IDs retired upstream. This includes the previous chat and script-info IDs and retired region weather and environment controls.
-- Apply the delta by message ID to the issue attachment's `it.ftl` and delete the retired IDs. Keep the resulting filename as `it.ftl` for Viewer import.
-- The resulting 15,044 active messages passed Fluent rendering checks. The delta follows the attachment's terminology and address form. The project's formal-address guidance still needs to be reconciled with the original catalog during Italian review.
+Choose Italiano in the Viewer's language list. The optional [it.ftl](it.ftl) import is the bundled catalog with the Photo wording refinements proposed in [#4335](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4335), validated against upstream fad2fde6. It has all 15,044 active keys.
 
-The delta is available to support the Italian contribution described in #4259. The Spanish review continues in [draft #4335](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4335).
+The earlier delta files and retired-key list document the work before Italian became built in.

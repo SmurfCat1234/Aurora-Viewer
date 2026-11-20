@@ -2083,7 +2083,7 @@ keybinds-numpad-4 = . (Puşcat)
 keybinds-numpad-5 = / (numărătoare inversă)
 ui-options-0-hide-avatar-names = 0 = ascunde numele avatarului
 ui-options-0-no-chat-bubbles-above-the-chat-bar = 0 = nu există bule de chat deasupra barei de chat
-demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Grupa:" }{ $value4 }{ "|\u000A" }
+demo-1-violet-wolf-0-2-spam-box-0-0 = { "1 " }{ $value0 }{ " Violet Wolf|0\u000A2 " }{ $value1 }{ " Spam box|0\u000A0 " }{ $value2 }{ " Advertising board|\u000A0 " }{ $value3 }{ " Group:" }{ $value4 }{ "|\u000A" }
 ui-land-dialogs-1-set-a-price = 1. Stabiliți un preț:
 build-ui-general-127-bytes-maximum = Maxim 127 octeţi.
 ui-land-dialogs-2-sell-the-land-to = 2. Vindeţi terenul către:
@@ -4750,11 +4750,11 @@ ui-options-group-notices-in-chat = Notificări de grup în chat-ul de grup
 ui-options-group-notices-in-chat-hint = O notificare de grup scrie, de asemenea, o linie în chat-ul grupului său (numai în transcrierea grupului atunci când chat-urile sale nu sunt deschise)
 ui-options-group-notice-subjects-in-chat = Cu subiecții și autorii lor
 ui-options-group-notice-subjects-in-chat-hint = Linia începe cu cine a trimis notificarea și subiectul acesteia, altfel este doar textul notificării
-ui-options-group-snooze-duration = Group chat snooze
-ui-options-group-snooze-duration-hint = Cât timp butonul Snooze al unui chat de grup îl închide și ignoră mesajele sale, în minute. Primul mesaj după aceea îl deschide din nou. 0 îl închis doar până la următorul mesaj.
+ui-options-group-snooze-duration = Durata pauzei conversației de grup
+ui-options-group-snooze-duration-hint = Numărul de minute în care conversația de grup rămâne închisă, iar mesajele ei sunt ignorate. Primul mesaj după pauză o redeschide. Valoarea 0 o închide doar până la următorul mesaj.
 ui-options-group-snooze-suffix = { " min" }
-ui-options-group-snooze-ask = Întreabă durata la fiecare amânare
-ui-options-group-snooze-ask-hint = Snooze întreabă cât timp, doar pentru acest chat de grup, începând cu durata de mai sus.
+ui-options-group-snooze-ask = Întreabă durata la fiecare pauză
+ui-options-group-snooze-ask-hint = La punerea pe pauză se cere durata doar pentru această conversație de grup. Câmpul este completat inițial cu durata de mai sus.
 ui-options-ignore-conferences = Ignoră conferințele
 ui-options-ignore-conferences-hint = Părăsiți fiecare conferință (chat ad hoc) la care sunteți invitat, fără a o deschide.Chaturile de grup nu sunt afectate.
 ui-options-ignore-conferences-report = Raportați conferințele ignorate
@@ -5970,7 +5970,7 @@ ui-chat-join-call = Alăturați-vă
 ui-chat-members-moderators = Moderatori
 ui-chat-members-participants = Online
 ui-chat-members-invited = Invitat
-ui-chat-members-offline = Offline
+ui-chat-members-offline = Deconectați
 ui-chat-members-present-only = Chatul unui grup listează doar membrii care sunt în el.
 ui-chat-typing-one = { $name } Se tastează...
 ui-chat-typing-two = { $a } și { $b } Sunteţi în tastatură…
@@ -5978,7 +5978,7 @@ ui-chat-typing-many = Mai multe persoane tastează…
 ui-chat-tag-object = Obiect
 ui-chat-tag-moderator = Mod
 ui-chat-tag-shouts = Strigăte
-ui-chat-tag-whispers = Şoapte.
+ui-chat-tag-whispers = Șoaptă
 ui-chat-today-at = Astăzi la ora 19:00 { $time }
 ui-chat-yesterday-at = ieri la ora 12:00 { $time }
 ui-chat-date-at = { $date } la { $time }
@@ -10580,7 +10580,12 @@ script-edit-outdent = Micșorați indentarea (Shift+Tab)
 script-selection-edit-failed = Nu se poate edita: sursa prea mare sau comentariul blocului existent. Utilizați // pentru comentariile imbricate.
 script-fold-collapse = Collapse block
 script-fold-expand = Extinde blocul
-script-fold-lines = linii
+script-fold-line-count =
+    { $count ->
+        [one] { $count } rând
+        [few] { $count } rânduri
+       *[other] { $count } de rânduri
+    }
 script-fold-all = Retrage toate
 script-expand-all = Extinde toate
 loading-residents =
@@ -10725,7 +10730,7 @@ people-groups-active-tag = activ
 people-groups-active = Grupul activ
 people-groups-member = Membru
 people-groups-title = Titlu: { $title }
-people-groups-online = { $count } online
+people-groups-online = { $count } conectați
 people-groups-chat-off = Chat-ul este blocat
 people-groups-notices =
     { $count ->
@@ -10756,7 +10761,7 @@ people-sets-people =
         [one] { $count } persoană
        *[other] { $count } persoane
     }
-people-sets-online = { $count } online
+people-sets-online = { $count } conectați
 people-sets-no-match = Nimeni aici nu corespunde căutării.
 people-sets-add-people = Adăugați persoane
 people-sets-quick-sort = Sortare rapidă
@@ -10804,10 +10809,10 @@ ui-options-camera-reset-all = Resetarea aparatului foto
 ui-options-camera-reset-all-tip = Pune fiecare setare a acestei pagini înapoi la valoarea implicită: vedere din spate, poziția camerei și punctul de focalizare, unghiul de vizualizare și distanța.
 ui-chat-close-conversation = Închideți conversația
 ui-chat-close-conversation-leave = Închideți conversația (ieșiți din sesiune)
-ui-chat-snooze = Amânare
-ui-chat-snooze-tip = Amânare: închide acest chat de grup și ignoră mesajele pentru o vreme
-ui-chat-snooze-title = Amânare { $group }
-ui-chat-snooze-prompt = Timp în minute pentru a amâna acest chat de grup:
+ui-chat-snooze = Pauză
+ui-chat-snooze-tip = Închide conversația de grup și ignoră temporar mesajele ei.
+ui-chat-snooze-title = Pune pe pauză conversația { $group }
+ui-chat-snooze-prompt = Câte minute să fie pusă pe pauză această conversație de grup?
 ui-chat-snooze-invalid = Introduceți un număr întreg de minute.
 ui-chat-menu-activate-group = Activează grupul
 ui-options-snap-windows = Snap ferestrele
