@@ -6,7 +6,6 @@ Chat	ui-chat-key-ooc	cs, da, fi, id, ms, ro, vi	7	for ((OOC))
 Preferences	ui-options-aurora-outfit-gallery-aurora	cs, da, fil, id, nl, ro, sv	7	Showcase
 Preferences	ui-options-proxy	cs, da, fil, id, nl, ro, sv	7	Proxy
 People	radar-col-range-short	cs, da, ms, nl, ro, sv	6	Dist.
-People	ui-contacts-teleport	cs, fi, id, ms, nl, ur	6	Teleport...
 Preferences	ui-options-camera-joint-torso	da, fil, id, ms, nl, sv	6	Torso
 Preferences	ui-options-emitter	da, fil, id, ms, nl, sv	6	Emitter
 Preferences	ui-options-rigged-click-animesh	cs, da, fi, id, ms, nl	6	Animesh
@@ -17,7 +16,6 @@ Preferences	ui-options-commands-platform	da, fil, id, ms, nl	5	Platform
 Preferences	ui-options-khronos-pbr-neutral	cs, da, id, ms, sv	5	Khronos PBR Neutral
 Preferences	ui-options-night-sky-legacy	cs, fil, id, nl, ro	5	Legacy
 Preferences	ui-options-prim-media	cs, da, fi, ro, sv	5	Prim media
-People	people-groups-chat-off	fil, id, ms, vi	4	chat blocked
 Preferences	ui-options-blend-order-standard	cs, da, ro, sv	4	Standard
 Preferences	ui-options-chat-logs-import-confirm	cs, da, ms, ro	4	Import
 Preferences	ui-options-crosshair-cross	da, fil, id, ms	4	Cross
@@ -107,7 +105,6 @@ Preferences	ui-options-overlays	id, nl	2	Overlays
 Preferences	ui-options-plugins	da, nl	2	Plugins
 Preferences	ui-options-preset-custom	cs, fil	2	Custom
 Preferences	ui-options-render-scale	cs, fil	2	3D render scale
-Preferences	ui-options-reset-confirm	cs, id	2	Reset
 Preferences	ui-options-reset-section-title	cs, id	2	Reset ?
 Preferences	ui-options-section-extras	cs, ro	2	Extras
 Preferences	ui-options-section-system	da, sv	2	System
