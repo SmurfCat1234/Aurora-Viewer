@@ -2,7 +2,9 @@
 
 These optional Fluent catalogs continue the localization work recorded in [Aurora Viewer PR #4220](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4220). German, Brazilian Portuguese, Russian and both Chinese catalogs are now built into upstream Aurora through [#4315](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4315).
 
-The Spanish file covers all 15,030 active English messages at [upstream commit `64246c75`](https://github.com/Aurora-Viewer/Aurora-Viewer/commit/64246c7501b1c8b071d7dbe478530d74431ea232), including 5,003 individually reviewed messages. This pass covers People, resident profiles, Places, Search and Conversations. The remaining drafts reflect an earlier 0.9.12 beta baseline. Missing strings in those drafts use English, and their coverage of current features will be checked during each language's own review.
+The Spanish file covers all 15,032 active English messages at [upstream commit `afc7d8c4`](https://github.com/Aurora-Viewer/Aurora-Viewer/commit/afc7d8c4d189fe3ac57d39844cd1e9296b44ee11), including 5,156 individually reviewed messages. This pass adds Appearance and the audio listening position. The other new-language drafts reflect an earlier 0.9.12 beta baseline. Missing strings in those drafts use English.
+
+The [bundled refresh files](bundled-refresh) are importable copies of the five upstream community catalogs. Each adds nine current weather, avatar-cache and audio messages to the corresponding upstream catalog. These files are for release review.
 
 To try one, download the raw `.ftl` file, keep its filename, and choose it under **Preferences → Language and updates → Use a language file (.ftl)**. Restart Aurora. Clear the checkbox and restart to return to the built-in language selection. The existing importer and English fallback are described in [#4187](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4187) and [#4196](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4196).
 
