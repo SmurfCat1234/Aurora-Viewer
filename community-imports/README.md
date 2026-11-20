@@ -6,7 +6,7 @@ These 26 opt-in Fluent catalogs target Aurora Viewer at `3fe6a320`. Each file pa
 2. In Aurora Viewer, open **Preferences → Language and updates** and turn on **Use a language file (.ftl)**.
 3. Select the file and restart the Viewer. Leave its filename unchanged so Fluent can select the right locale.
 
-The Viewer uses its current English message when a translation is missing. The additional previews keep Linden Lab’s copyright-report notice in English pending a review of the policy wording. Right-to-left reading order and layout still need acceptance.
+All of the current English message IDs are present. The Viewer uses the English message when a future key is missing or a translation cannot render. The copyright-report notice has draft translations that preserve the original links and reporting steps. Wording and right-to-left layout still need acceptance.
 
 For the next release, run Aurora’s `catalog_delta` example against the old and new English files. That produces added, changed, and retired message IDs. Run the Fluent checks again after applying the delta. Use the audit reports and representative Windows offline screens to check the wording changes. [Aurora translator guide](https://github.com/Aurora-Viewer/Aurora-Viewer/blob/3fe6a320/docs/TRANSLATING.md)
 
