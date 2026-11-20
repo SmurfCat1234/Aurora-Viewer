@@ -60,12 +60,12 @@
     "es": {
       "active_keys": 15044,
       "preferences_keys": 2356,
-      "reviewed": 6605,
+      "reviewed": 6610,
       "english_fallbacks": 0,
       "retired_keys": 0,
       "reference_mismatches": 0,
       "text_flags": 15,
-      "sha256": "8c7ef4c50443bdd80b3ae75d8143b5a5e3a67d6089d3890b1ce545206e1b2a1c",
+      "sha256": "c0ac147332649821f3ea5eb9db566378a1d860873322170591aeda694fefd4f7",
       "fluent_render": "passed"
     },
     "fa": {
