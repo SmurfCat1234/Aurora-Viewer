@@ -137,12 +137,12 @@
     "ko": {
       "active_keys": 15044,
       "preferences_keys": 2356,
-      "reviewed": 697,
+      "reviewed": 738,
       "english_fallbacks": 0,
       "retired_keys": 0,
       "reference_mismatches": 0,
       "text_flags": 91,
-      "sha256": "283210943c849a4ac385ea3fba54101b549e255e8e4d04e526d1b101785d1c50",
+      "sha256": "0eac066f267e4fa029c9fe918739c3e1040b348202ebdc5f1e8b6586d163d15a",
       "fluent_render": "passed"
     },
     "ms": {
@@ -292,6 +292,7 @@
   "base": "fad2fde6",
   "bundled_copies": [
     "es",
+    "ko",
     "nb",
     "pl",
     "pt-PT",
