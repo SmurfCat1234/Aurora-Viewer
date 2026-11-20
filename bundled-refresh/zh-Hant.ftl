@@ -15668,3 +15668,18 @@ game-control-action-truck-right = 相機右移 →
 game-control-action-boom-up = 相機上移 ↑
 game-control-action-boom-down = 相機下移 ↓
 game-control-action-escape = Esc
+
+picker-local-newest = 最新優先
+picker-local-name = 按名稱排序（A–Z）
+
+world-look-title = 世界濾鏡
+world-look-help = 持續為 3D 檢視套用濾鏡及 LUT，與相片濾鏡分開設定。介面的色彩維持原樣。
+world-look-on = 在世界中顯示濾鏡
+world-look-note = 濾鏡套用於介面下方的 3D 檢視。相片及影片仍使用拍照視窗的濾鏡。
+world-look-photo-open = 拍照視窗或導演工具已開啟。目前顯示該視窗的濾鏡。
+ui-options-world-look = 世界濾鏡
+ui-options-world-look-on = 在世界中套用濾鏡
+ui-options-world-look-on-help = 持續為 3D 檢視套用在「世界濾鏡」視窗中選取的濾鏡及 LUT。相片及影片仍使用各自的濾鏡。
+ui-options-world-look-choose = 已選濾鏡
+ui-options-world-look-choose-help = 開啟「世界濾鏡」視窗。它使用與拍照模式相同的濾鏡及 LUT，並個別儲存設定。
+ui-options-world-look-open = 選擇…

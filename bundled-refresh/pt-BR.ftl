@@ -15848,3 +15848,18 @@ game-control-action-truck-right = Mover câmera à direita →
 game-control-action-boom-up = Subir câmera ↑
 game-control-action-boom-down = Descer câmera ↓
 game-control-action-escape = Esc
+
+picker-local-newest = Mais recentes primeiro
+picker-local-name = Nome de A a Z
+
+world-look-title = Filtros do mundo
+world-look-help = Aplica filtros e LUTs à visão 3D o tempo todo, com ajustes independentes dos usados nas fotos. As cores da interface não mudam.
+world-look-on = Mostrar filtros no mundo
+world-look-note = Os filtros são aplicados à visão 3D, abaixo da interface. Fotos e vídeos mantêm os filtros da janela Foto.
+world-look-photo-open = A janela Foto ou o Diretor está aberto. Os filtros dessa janela são exibidos no momento.
+ui-options-world-look = Filtros do mundo
+ui-options-world-look-on = Filtros no mundo
+ui-options-world-look-on-help = Aplica à visão 3D, o tempo todo, os filtros e LUTs escolhidos na janela Filtros do mundo. Fotos e vídeos mantêm seus próprios filtros.
+ui-options-world-look-choose = Filtros escolhidos
+ui-options-world-look-choose-help = Abre a janela Filtros do mundo, com os mesmos filtros e LUTs do modo Foto e ajustes próprios.
+ui-options-world-look-open = Escolher…

@@ -16200,3 +16200,18 @@ game-control-action-truck-right = Сдвинуть камеру вправо →
 game-control-action-boom-up = Поднять камеру ↑
 game-control-action-boom-down = Опустить камеру ↓
 game-control-action-escape = Esc
+
+picker-local-newest = Сначала новые
+picker-local-name = По имени от А до Я
+
+world-look-title = Фильтры мира
+world-look-help = Фильтры и LUT постоянно действуют в 3D-виде. У фотографий свои настройки. Цвета интерфейса не меняются.
+world-look-on = Показывать фильтры в мире
+world-look-note = Фильтры применяются к 3D-виду под интерфейсом. Для фотографий и видео используются фильтры из окна фото.
+world-look-photo-open = Открыто окно фото или режиссёра. Сейчас используются фильтры этого окна.
+ui-options-world-look = Фильтры мира
+ui-options-world-look-on = Фильтры в мире
+ui-options-world-look-on-help = Постоянно применяет к 3D-виду фильтры и LUT, выбранные в окне «Фильтры мира». У фотографий и видео остаются свои фильтры.
+ui-options-world-look-choose = Выбранные фильтры
+ui-options-world-look-choose-help = Открывает окно «Фильтры мира» с теми же фильтрами и LUT, что и в режиме фото, и с отдельными настройками.
+ui-options-world-look-open = Выбрать…
