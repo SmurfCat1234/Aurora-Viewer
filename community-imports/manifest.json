@@ -1,0 +1,293 @@
+{
+  "english_keys": 15045,
+  "preferences_keys": 2356,
+  "locales": {
+    "ar": {
+      "active_keys": 15042,
+      "preferences_keys": 2356,
+      "reviewed": 153,
+      "english_fallbacks": 3,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 90,
+      "sha256": "ab3b1492a71b577345074d7eb7ca1b353bb973c58c19ffa83f4a6f533b2a6ec9",
+      "fluent_render": "passed"
+    },
+    "bn": {
+      "active_keys": 15036,
+      "preferences_keys": 2355,
+      "reviewed": 9,
+      "english_fallbacks": 9,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 91,
+      "sha256": "6cf0419a664f82548030ebd52477bf04f9ea9c17cb563e57676f362ac5b14527",
+      "fluent_render": "passed"
+    },
+    "cs": {
+      "active_keys": 15040,
+      "preferences_keys": 2356,
+      "reviewed": 12,
+      "english_fallbacks": 5,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 152,
+      "sha256": "d7995556ad08f34ef0b4ef0a54dd2d3e020d3381b6413e28fa3678d820ee6304",
+      "fluent_render": "passed"
+    },
+    "da": {
+      "active_keys": 15038,
+      "preferences_keys": 2356,
+      "reviewed": 9,
+      "english_fallbacks": 7,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 110,
+      "sha256": "ca3821199dbc32d2e19a33e5a6c5156abe0c10f4e663c041af50cfa7b5f998a3",
+      "fluent_render": "passed"
+    },
+    "el": {
+      "active_keys": 15039,
+      "preferences_keys": 2356,
+      "reviewed": 18,
+      "english_fallbacks": 6,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 129,
+      "sha256": "39d1a9ced6e25ea71379c8e6deb45d32edd0468f79ea9e045c7b4a8117b4a629",
+      "fluent_render": "passed"
+    },
+    "es": {
+      "active_keys": 15045,
+      "preferences_keys": 2356,
+      "reviewed": 6380,
+      "english_fallbacks": 0,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 32,
+      "sha256": "778972dba75727defa012b2d93776e5dcb2f88f74fe3e2835ea5ccb53f61dba7",
+      "fluent_render": "passed"
+    },
+    "fa": {
+      "active_keys": 15037,
+      "preferences_keys": 2355,
+      "reviewed": 9,
+      "english_fallbacks": 8,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 91,
+      "sha256": "def7174747ba55bf4ae7d6f4aefa1c245c75f2348d3002132b24defc91124138",
+      "fluent_render": "passed"
+    },
+    "fi": {
+      "active_keys": 15040,
+      "preferences_keys": 2356,
+      "reviewed": 9,
+      "english_fallbacks": 5,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 112,
+      "sha256": "7fc790efe0a50df874640c09bf6272a274907492c34108ca243cf6ead69f832e",
+      "fluent_render": "passed"
+    },
+    "fil": {
+      "active_keys": 15037,
+      "preferences_keys": 2355,
+      "reviewed": 9,
+      "english_fallbacks": 8,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 155,
+      "sha256": "36caca7e30c4e6ee6001678d594aa2a9638806a44b8fac2cd8defc5ea4b83ffa",
+      "fluent_render": "passed"
+    },
+    "he": {
+      "active_keys": 15036,
+      "preferences_keys": 2355,
+      "reviewed": 59,
+      "english_fallbacks": 9,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 91,
+      "sha256": "17a86d73783481ba2293599c7c5bd192b8174fb3163724192d2e481592abae2b",
+      "fluent_render": "passed"
+    },
+    "hi": {
+      "active_keys": 15039,
+      "preferences_keys": 2356,
+      "reviewed": 199,
+      "english_fallbacks": 6,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 104,
+      "sha256": "5a7dcc0c9bcbed09099efe5b643551b3e2c86e7d5e2a54acfa3ad5a66f65c63b",
+      "fluent_render": "passed"
+    },
+    "id": {
+      "active_keys": 15038,
+      "preferences_keys": 2356,
+      "reviewed": 68,
+      "english_fallbacks": 7,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 190,
+      "sha256": "d49ff6b4588e4944c514724f43b3189017ac4d5be5e759489d914a389006c0fa",
+      "fluent_render": "passed"
+    },
+    "ko": {
+      "active_keys": 15043,
+      "preferences_keys": 2356,
+      "reviewed": 619,
+      "english_fallbacks": 2,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 95,
+      "sha256": "ee018039c10b989cbffa45d45c1aade1c9f78834a69fc81eaa33280cee87c292",
+      "fluent_render": "passed"
+    },
+    "ms": {
+      "active_keys": 15039,
+      "preferences_keys": 2355,
+      "reviewed": 9,
+      "english_fallbacks": 6,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 122,
+      "sha256": "dc86e0ce6954e4e7f4b730eb6a699f31db99a0c247d74edd653b7d927dc56e6c",
+      "fluent_render": "passed"
+    },
+    "nb": {
+      "active_keys": 15039,
+      "preferences_keys": 2356,
+      "reviewed": 9,
+      "english_fallbacks": 6,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 101,
+      "sha256": "e7c20aa1751c83d963d181f00d7a4bf2e849f1e49fec59e244fa6334d4d15f1b",
+      "fluent_render": "passed"
+    },
+    "nl": {
+      "active_keys": 15037,
+      "preferences_keys": 2356,
+      "reviewed": 210,
+      "english_fallbacks": 8,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 132,
+      "sha256": "b84eff4f38832c5026fb4c1d4fc98adc4e2b794c2e6f3b226e328cd7f15307eb",
+      "fluent_render": "passed"
+    },
+    "pl": {
+      "active_keys": 15037,
+      "preferences_keys": 2356,
+      "reviewed": 82,
+      "english_fallbacks": 8,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 188,
+      "sha256": "591cf99691cf163b8826110f750fd315e2f443c82e9fe3ec135fbe1d2fb23f95",
+      "fluent_render": "passed"
+    },
+    "pt-PT": {
+      "active_keys": 15036,
+      "preferences_keys": 2356,
+      "reviewed": 210,
+      "english_fallbacks": 9,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 123,
+      "sha256": "23711b043fc1bd2f1cd237a61d6900060d544e64e198ba56168b4de6bd25a0c8",
+      "fluent_render": "passed"
+    },
+    "ro": {
+      "active_keys": 15040,
+      "preferences_keys": 2356,
+      "reviewed": 129,
+      "english_fallbacks": 5,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 108,
+      "sha256": "6320940bed12f7a3e5818dad9f985487b1b8b11ed6c52ea524b3472c130c32d1",
+      "fluent_render": "passed"
+    },
+    "sv": {
+      "active_keys": 15042,
+      "preferences_keys": 2356,
+      "reviewed": 55,
+      "english_fallbacks": 3,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 113,
+      "sha256": "307b0f48286f022cc3579b872be3bb53684326d350989a355504b4e9f5be5ec8",
+      "fluent_render": "passed"
+    },
+    "ta": {
+      "active_keys": 15036,
+      "preferences_keys": 2355,
+      "reviewed": 9,
+      "english_fallbacks": 9,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 89,
+      "sha256": "d3cf82c90c7d946377bf96bc017919e23e1081068d01f808aedd781a1d1d8b70",
+      "fluent_render": "passed"
+    },
+    "th": {
+      "active_keys": 15038,
+      "preferences_keys": 2356,
+      "reviewed": 33,
+      "english_fallbacks": 7,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 88,
+      "sha256": "efc6399b7b6a70b9052f6fe8c3311a788e2073a8e6c7a3c267a29b52fcf865f6",
+      "fluent_render": "passed"
+    },
+    "tr": {
+      "active_keys": 15039,
+      "preferences_keys": 2356,
+      "reviewed": 131,
+      "english_fallbacks": 6,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 114,
+      "sha256": "308997a84a030822d7ea1f76997043ae2ac12bef6e17f80fd73251e3134c735f",
+      "fluent_render": "passed"
+    },
+    "uk": {
+      "active_keys": 15034,
+      "preferences_keys": 2354,
+      "reviewed": 9,
+      "english_fallbacks": 11,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 89,
+      "sha256": "98da46e71390e607869dfea0302a4901ed2a567edb0f2e6e7bb08c42bbd5ea8c",
+      "fluent_render": "passed"
+    },
+    "ur": {
+      "active_keys": 15038,
+      "preferences_keys": 2356,
+      "reviewed": 9,
+      "english_fallbacks": 7,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 97,
+      "sha256": "d1dcf1857a17028ed64da5f6aa7f5c91db5c02f3a3d592483da3aced024c6a1a",
+      "fluent_render": "passed"
+    },
+    "vi": {
+      "active_keys": 15042,
+      "preferences_keys": 2356,
+      "reviewed": 200,
+      "english_fallbacks": 3,
+      "retired_keys": 0,
+      "reference_mismatches": 0,
+      "text_flags": 154,
+      "sha256": "3c458421ef3ad6c38cd498bdefe73427db342f7079e4ae4d408b0d236cc27623",
+      "fluent_render": "passed"
+    }
+  },
+  "base": "2ca847e5"
+}
