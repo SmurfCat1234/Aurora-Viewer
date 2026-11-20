@@ -12,4 +12,6 @@ For the next release, run Aurora’s `catalog_delta` example against the old and
 
 The validation manifest has the English baseline, coverage and counts by language, plus SHA-256 values with LF line endings. The review packs and discussion are tracked in [draft #4335](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4335). Italian is tracked separately in [#4259](https://github.com/Aurora-Viewer/Aurora-Viewer/issues/4259).
 
+The [wording worklist](quality/wording-priority.tsv) groups exact English matches by message across the previews. Use it with the source screen to decide which phrases need translation.
+
 See [the draft PR screenshots](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4335#screenshots-and-checks) for representative Windows offline checks.

@@ -1,0 +1,374 @@
+Area	Message ID	Matching preview locales	Locale count	English text to review
+Preferences	ui-options-click-change-right-click-clear-also-used-by	ar, bn, cs, da, el, fa, fi, fil, he, hi, id, ko, ms, nb, nl, pl, pt-PT, ro, sv, ta, th, tr, uk, ur, vi	25	Click: change · Right-click: clear\u000AAlso used by:
+Preferences	ui-options-commands-cmd-dice-count-face-count-modifier-type-value-examples	ar, bn, cs, da, el, fa, fi, fil, he, hi, id, ko, ms, nb, nl, pl, pt-PT, ro, sv, ta, th, tr, uk, ur, vi	25	cmd [dice count] [face count] [modifier type] [value]. Examples: cmd 1 20, cmd 2 40 + 5. With no arguments: a six-sided die
+Preferences	ui-options-folder-containing-llplugin-blank-aurora-s-own-plugins	ar, bn, cs, da, el, fa, fi, fil, he, hi, id, ko, ms, nb, nl, pl, pt-PT, ro, sv, ta, th, tr, uk, ur, vi	25	Folder containing llplugin\ and SLPlugin, for example that of another installed viewer (blank: Aurora's own plugins)
+Preferences	ui-options-preset-deluxe	cs, da, fi, fil, id, ms, nb, nl, pl, pt-PT, ro, sv, tr, vi	14	Deluxe
+People	people-seen-minutes	cs, da, fi, fil, id, ms, nb, nl, pl, pt-PT, ro, sv, vi	13	min
+Preferences	ui-options-group-snooze-suffix	cs, da, fi, fil, id, ms, nb, nl, pl, pt-PT, ro, sv, vi	13	min
+Preferences	ui-options-customize-animation	da, fi, fil, id, ms, nl, pl, pt-PT, ro, sv, tr, vi	12	A-Pose
+Chat	ui-chat-emoji	da, fi, fil, id, ms, nb, nl, pt-PT, ro, sv, tr	11	Emoji
+Chat	ui-chat-preview-clip	cs, da, fi, fil, id, ms, nb, nl, ro, sv, tr	11	Video
+Chat	ui-chat-key-ooc	cs, da, fi, id, ms, nb, pl, ro, tr, vi	10	for ((OOC))
+People	people-seen-now	cs, da, fi, ms, nb, nl, pl, pt-PT, ro, sv	10	< 1 min
+People	radar-col-range-short	cs, da, ms, nb, nl, pl, pt-PT, ro, sv, tr	10	Dist.
+Preferences	ui-options-bloom	cs, da, fi, fil, id, ms, nb, pl, pt-PT, sv	10	Bloom
+Preferences	ui-options-camera-joint-torso	da, fil, id, ms, nb, nl, pl, pt-PT, sv, tr	10	Torso
+Preferences	ui-options-crosshair-gap	cs, da, fi, fil, id, ms, nl, pl, pt-PT, sv	10	Gap
+Preferences	ui-options-font-style-normal	da, fil, id, ms, nb, pl, pt-PT, ro, sv, tr	10	Normal
+Preferences	ui-options-proxy-port	cs, da, fil, id, ms, nb, pl, ro, sv, tr	10	Port
+Chat	ui-chat-members-participants	cs, da, fil, id, nl, pl, pt-PT, ro, sv	9	Online
+Chat	ui-chat-status-online	cs, da, fil, id, nl, pl, pt-PT, ro, sv	9	Online
+People	people-sets-online-only	cs, da, fil, id, nl, pl, pt-PT, ro, sv	9	Online
+People	ui-contacts-status	cs, da, es, id, ms, nb, nl, pl, sv	9	Status
+Preferences	ui-options-aurora-outfit-gallery-aurora	cs, da, fil, id, nl, pl, pt-PT, ro, sv	9	Showcase
+Preferences	ui-options-commands-media	fi, fil, id, ms, nb, nl, pl, ro, sv	9	Media
+Preferences	ui-options-proxy	cs, da, fil, id, nl, pl, pt-PT, ro, sv	9	Proxy
+Preferences	ui-options-rigged-click-animesh	cs, da, fi, id, ms, nb, nl, pl, pt-PT	9	Animesh
+People	people-groups-online	cs, da, fil, id, nl, pl, ro, sv	8	online
+People	people-sets-online	cs, da, fil, id, nl, pl, ro, sv	8	online
+People	ui-contacts-teleport	cs, fi, id, ms, nl, pt-PT, tr, ur	8	Teleport...
+Preferences	ui-options-anti-aliasing	da, fil, id, ms, nl, pt-PT, ro, tr	8	Anti-aliasing
+Preferences	ui-options-fsr-native-aa	cs, fi, fil, id, nl, pl, ro, sv	8	Native AA (100%)
+Preferences	ui-options-page-media	fi, fil, id, ms, nb, pl, ro, sv	8	Media
+Preferences	ui-options-push-to-talk	cs, da, fi, nl, pl, pt-PT, ro, sv	8	Push-to-talk
+Chat	ui-chat-members-offline	cs, da, fi, nl, pl, pt-PT, ro	7	Offline
+Chat	ui-chat-tag-whispers	cs, da, id, ms, nb, pl, pt-PT	7	Whispers
+People	people-groups-info	cs, da, fi, nb, nl, pl, sv	7	Info
+Preferences	ui-options-emitter	da, fil, id, ms, nb, nl, sv	7	Emitter
+Preferences	ui-options-wireframe	fil, id, ms, nl, pl, pt-PT, tr	7	Wireframe
+Chat	ui-chat-snooze	cs, da, id, nb, pl, sv	6	Snooze
+Chat	ui-chat-snooze-title	cs, da, id, nb, pl, sv	6	Snooze
+Preferences	ui-options-ao-legacy	cs, fil, id, nl, pl, ro	6	Legacy
+Preferences	ui-options-aurora-animation-clock-legacy	cs, fil, id, nl, pl, ro	6	Legacy
+Preferences	ui-options-blend-order-standard	cs, da, nb, pl, ro, sv	6	Standard
+Preferences	ui-options-commands-platform	da, fil, id, ms, nl, tr	6	Platform
+Preferences	ui-options-crosshair-legacy	cs, fil, id, nl, pl, ro	6	Legacy
+Preferences	ui-options-hud-media	cs, fi, nl, pl, pt-PT, sv	6	HUD media
+Preferences	ui-options-khronos-pbr-neutral	cs, da, id, ms, pl, sv	6	Khronos PBR Neutral
+Preferences	ui-options-link-previews-medium	da, fil, nb, nl, pl, sv	6	Medium
+Preferences	ui-options-night-sky-legacy	cs, fil, id, nl, pl, ro	6	Legacy
+Preferences	ui-options-preset-medium	da, fil, nb, nl, pl, sv	6	Medium
+Preferences	ui-options-prim-media	cs, da, fi, pl, ro, sv	6	Prim media
+Chat	ui-chat-tag-moderator	cs, ms, pl, ro, tr	5	Mod
+People	radar-opt-range	da, fil, id, nb, tr	5	Radius
+Preferences	ui-options-blend-order-fast	cs, da, nb, pl, sv	5	Fast
+Preferences	ui-options-build-flesh	cs, id, ms, nb, pl	5	Flesh
+Preferences	ui-options-chat-logs-import-confirm	cs, da, ms, pl, ro	5	Import
+Preferences	ui-options-crosshair-cross	da, fil, id, ms, pl	5	Cross
+Preferences	ui-options-crosshair-dot	cs, da, fil, nb, pl	5	Dot
+Preferences	ui-options-dof-focus-pointer	cs, da, fil, nl, pl	5	Pointer
+Preferences	ui-options-folder	fil, id, ms, pl, ro	5	Folder
+Preferences	ui-options-gifs-rating-relaxed	cs, id, nl, pl, pt-PT	5	Relaxed
+Preferences	ui-options-layout	cs, da, fil, pl, sv	5	Layout
+Preferences	ui-options-night-sky-place-paris	da, fil, ms, pl, pt-PT	5	Paris
+People	people-groups-chat-off	fil, id, ms, vi	4	chat blocked
+People	radar-col-seen	cs, nb, pl, sv	4	Seen for
+Preferences	ui-options-aurora-beams-thread	cs, fil, nl, pl	4	Thread
+Preferences	ui-options-auto-media	cs, fi, pl, sv	4	Auto media
+Preferences	ui-options-blend-order-full	cs, nb, pl, sv	4	Full
+Preferences	ui-options-build-material	id, pt-PT, ro, sv	4	Material
+Preferences	ui-options-dof-focus	cs, nl, pl, ro	4	Focus
+Preferences	ui-options-font	cs, fil, pl, ro	4	Font
+Preferences	ui-options-glow	cs, da, pl, ro	4	Glow
+Preferences	ui-options-hover-tips-form	da, fil, nb, sv	4	Form
+Preferences	ui-options-manual	id, ms, pt-PT, ro	4	Manual
+Preferences	ui-options-mouse	fil, id, pt-PT, ro	4	Mouse
+Preferences	ui-options-music-fade-in	cs, nl, pl, pt-PT	4	Fade in
+Preferences	ui-options-night-sky-latitude	fil, id, ms, pt-PT	4	Latitude
+Preferences	ui-options-night-sky-place-los-angeles	cs, fil, id, pl	4	Los Angeles
+Preferences	ui-options-night-sky-place-oslo	cs, fil, id, pl	4	Oslo
+Preferences	ui-options-night-sky-place-rio	cs, id, pl, pt-PT	4	Rio de Janeiro
+Preferences	ui-options-night-sky-place-sydney	cs, fil, id, pl	4	Sydney
+Preferences	ui-options-proxy-socks	cs, da, nl, tr	4	SOCKS 5 proxy
+Preferences	ui-options-section-system	da, nb, pl, sv	4	System
+Preferences	ui-options-tone-mapping-mix	cs, da, pl, pt-PT	4	Tone mapping mix
+Chat	ui-chat-applink-parcel-error	fil, id, pl	3	error
+Chat	ui-chat-gif	he, pt-PT, ur	3	GIFs
+Chat	ui-chat-tag-shouts	cs, nl, pl	3	Shouts
+People	radar-opt-age-alert	cs, fil, pl	3	Age alert
+People	ui-people-filter	id, nb, nl	3	Filter
+Preferences	ui-options-aurora-compact	fil, nl, ro	3	Compact
+Preferences	ui-options-aurora-halo	cs, fil, pl	3	Halo
+Preferences	ui-options-aurora-look-at	cs, nl, pl	3	Look-at targets
+Preferences	ui-options-auto-replace-filter-hint	id, nb, nl	3	Filter
+Preferences	ui-options-blend-order-stochastic	fil, pl, ro	3	Stochastic
+Preferences	ui-options-blocked-chat-collapsed	cs, pl, pt-PT	3	Collapsed
+Preferences	ui-options-blocked-chat-greyed	cs, id, pl	3	Greyed
+Preferences	ui-options-camera-joint-pelvis	id, ms, ro	3	Pelvis
+Preferences	ui-options-content-general	cs, pl, ro	3	General
+Preferences	ui-options-direct	nl, pl, ro	3	Direct
+Preferences	ui-options-dof-aperture	fil, pl, tr	3	Aperture
+Preferences	ui-options-filter	id, nb, nl	3	Filter
+Preferences	ui-options-frame-limit	cs, pl, tr	3	Limit
+Preferences	ui-options-freeze-culling	cs, id, pl	3	Freeze culling
+Preferences	ui-options-gifs	he, pt-PT, ur	3	GIFs
+Preferences	ui-options-gifs-rating-strict	cs, pl, ro	3	Strict
+Preferences	ui-options-look-at-targets	cs, nl, pl	3	Look-at targets
+Preferences	ui-options-media-filter-list	nl, pl, pt-PT	3	Sites
+Preferences	ui-options-music-fade-out	cs, nl, pl	3	Fade out
+Preferences	ui-options-night-sky-place-cape-town	fil, id, ms	3	Cape Town
+Preferences	ui-options-night-sky-place-custom	cs, fil, pl	3	Custom
+Preferences	ui-options-night-sky-place-lisbon	fil, id, ms	3	Lisbon
+Preferences	ui-options-night-sky-place-london	id, ms, sv	3	London
+Preferences	ui-options-night-sky-place-new-york	cs, da, ms	3	New York
+Preferences	ui-options-night-sky-place-tokyo	fil, id, ms	3	Tokyo
+Preferences	ui-options-plates-friend-tint	cs, pl, pt-PT	3	Tint friends' plates
+Preferences	ui-options-plugins	da, nl, pt-PT	3	Plugins
+Preferences	ui-options-preset-custom	cs, fil, pl	3	Custom
+Preferences	ui-options-reset-section-title	cs, id, pl	3	Reset ?
+Preferences	ui-options-stream-title	id, tr, vi	3	Music title
+Preferences	ui-options-text-color	cs, ro, sv	3	Text
+Preferences	ui-options-texture-resolution-pixels	da, nl, pt-PT	3	pixels
+Preferences	ui-options-ultra-full	id, nb, sv	3	Ultra (full)
+Preferences	ui-options-video-subtitles	fil, id, ms	3	Subtitles
+Preferences	ui-options-vision	da, pl, sv	3	Vision
+Chat	ui-chat-call-expand	cs, pl	2	Expand
+Chat	ui-chat-call-mute-for-me	fi, id	2	Mute for me
+Chat	ui-chat-join-call	cs, pl	2	Join
+Chat	ui-chat-offer-kept	cs, pl	2	Kept
+Chat	ui-chat-preview-show	cs, pl	2	Show
+Chat	ui-chat-preview-too-large-unknown	cs, pl	2	Picture over
+Chat	ui-chat-send	da, nb	2	Send (Enter)
+Chat	ui-chat-tag-object	fil, nl	2	Object
+People	radar-col-seen-short	da, sv	2	Seen
+People	ui-contacts-information	da, sv	2	Information
+Preferences	ui-options-ambient-occlusion	id, sv	2	Ambient occlusion
+Preferences	ui-options-aurora-bridge	nb, sv	2	Aurora bridge
+Preferences	ui-options-aurora-gaze	pl, pt-PT	2	Gaze
+Preferences	ui-options-aurora-move-hologram-off	cs, pl	2	Off
+Preferences	ui-options-aurora-name-tags	pl, pt-PT	2	Avatar name tags
+Preferences	ui-options-aurora-outfit-gallery	fil, pl	2	Outfit gallery
+Preferences	ui-options-aurora-own-motion-instant	cs, pl	2	Instant
+Preferences	ui-options-aurora-photo-panel	cs, fil	2	Aurora panel
+Preferences	ui-options-aurora-photo-viewfinder	fil, id	2	Viewfinder
+Preferences	ui-options-aurora-restart-card	fil, ro	2	Card
+Preferences	ui-options-aurora-vf-controls-always	cs, pl	2	Always
+Preferences	ui-options-aurora-water	cs, pl	2	Aurora water
+Preferences	ui-options-auto-music	cs, pl	2	Auto music
+Preferences	ui-options-auto-play-hud-media-mediaautoplayhuds	id, sv	2	Auto-play HUD media (MediaAutoPlayHuds)
+Preferences	ui-options-auto-replace-save-keyword	cs, pl	2	Save
+Preferences	ui-options-auto-texture-memory	fil, pl	2	Auto texture memory
+Preferences	ui-options-avatar-physics-detail	nl, pl	2	Avatar physics detail
+Preferences	ui-options-away	cs, pl	2	Away
+Preferences	ui-options-away-disabled	cs, pl	2	Disabled
+Preferences	ui-options-bars	nl, pl	2	Bars
+Preferences	ui-options-camera-preset	fil, pl	2	Preset
+Preferences	ui-options-chat-logs-clear-confirm	cs, pl	2	Clear
+Preferences	ui-options-chat-logs-erase-confirm	cs, pl	2	Erase
+Preferences	ui-options-commands-clear-chat	nl, pl	2	Clear chat
+Preferences	ui-options-contact-markers	nl, pt-PT	2	Contact set markers
+Preferences	ui-options-crosshair	fil, id	2	Crosshair
+Preferences	ui-options-crosshair-circle	fil, nl	2	Circle
+Preferences	ui-options-disabled	cs, pl	2	Disabled
+Preferences	ui-options-disabled-2	cs, pl	2	Disabled
+Preferences	ui-options-disabled-3	cs, pl	2	Disabled
+Preferences	ui-options-disk-cache	cs, fil	2	Disk cache
+Preferences	ui-options-dof-focus-camera	nl, vi	2	Camera
+Preferences	ui-options-edge-bottom	cs, pl	2	Bottom
+Preferences	ui-options-edge-left	cs, pl	2	Left
+Preferences	ui-options-environment-fade	cs, pl	2	Environment fade
+Preferences	ui-options-floating-text-background-hovered	cs, nl	2	Hovered object
+Preferences	ui-options-floating-text-background-off	cs, pl	2	Off
+Preferences	ui-options-floating-text-fade-distance	cs, pl	2	Fade distance
+Preferences	ui-options-font-style-italic	fil, ro	2	Italic
+Preferences	ui-options-im-tab-order-kinds	id, pl	2	Order
+Preferences	ui-options-interface-scale	cs, fil	2	Interface scale
+Preferences	ui-options-keyboard	fil, nl	2	Keyboard
+Preferences	ui-options-logs	cs, pl	2	Logs
+Preferences	ui-options-media-filter	fil, id	2	Media filter
+Preferences	ui-options-medium-12	nb, nl	2	Medium (½)
+Preferences	ui-options-motion	da, sv	2	Motion
+Preferences	ui-options-name-tags	pl, pt-PT	2	Avatar name tags
+Preferences	ui-options-night-sky-hour-region	cs, id	2	Region's sun
+Preferences	ui-options-night-sky-place-equator	fil, nl	2	Equator
+Preferences	ui-options-object-ims	fil, pl	2	Object IMs
+Preferences	ui-options-opacity-bars	nl, pl	2	Bars
+Preferences	ui-options-opacity-pie	da, pl	2	Pie menu
+Preferences	ui-options-overlays	id, nl	2	Overlays
+Preferences	ui-options-payment-opens-anyone	cs, pl	2	Anyone
+Preferences	ui-options-per-sound-choices	cs, pl	2	Per-sound choices
+Preferences	ui-options-proxy-save	cs, pl	2	Save
+Preferences	ui-options-reflections	cs, pl	2	Reflections
+Preferences	ui-options-region-restart	cs, pl	2	Region restart
+Preferences	ui-options-render-scale	cs, fil	2	3D render scale
+Preferences	ui-options-reset-confirm	cs, id	2	Reset
+Preferences	ui-options-section-extras	cs, ro	2	Extras
+Preferences	ui-options-skin-folder	cs, fi	2	Skin folder
+Preferences	ui-options-sky-only	cs, pl	2	Sky only
+Preferences	ui-options-specular-aa	nl, sv	2	Specular anti-aliasing
+Preferences	ui-options-stream-title-off	cs, pl	2	Nowhere
+Preferences	ui-options-tab-startup	cs, pl	2	Startup
+Preferences	ui-options-toggle	cs, pl	2	Toggle
+Chat	conversation-log-nearby-transcript	pt-PT	1	View nearby chat transcript…
+Chat	ui-chat-applink-object-profile	fil	1	Object profile…
+Chat	ui-chat-call-live	pl	1	Connected
+Chat	ui-chat-channel	fil	1	Channel
+Chat	ui-chat-click-to-learn-more-about-this-place	vi	1	Click to learn more about this place
+Chat	ui-chat-close-conversation	cs	1	Close conversation
+Chat	ui-chat-gif-favorites	cs	1	Favorites
+Chat	ui-chat-gif-search	pl	1	Search
+Chat	ui-chat-key-channel	id	1	/5 channel
+Chat	ui-chat-members-invited	pl	1	Invited
+Chat	ui-chat-members-moderators	nl	1	Moderators
+Chat	ui-chat-moderator-click-profile	tr	1	Moderator · click: profile
+Chat	ui-chat-more	pl	1	More
+Chat	ui-chat-preview-enlarge-help	id	1	Wheel: zoom · Drag: move · Double-click: fit · Esc: close
+Chat	ui-chat-preview-player	fil	1	Player
+Chat	ui-chat-preview-video	cs	1	YouTube video
+Chat	ui-chat-quote-message	fil	1	Quote
+Chat	ui-chat-start-group	fil	1	Group chat
+Chat	ui-chat-volume-tip	pt-PT	1	Nearby chat volume
+Chat	ui-chat-yesterday	pl	1	Yesterday
+People	people-blocked-all	pl	1	Everything
+People	people-blocked-block	sv	1	Block
+People	people-friends-online	id	1	Online ·
+People	people-groups-invite	pl	1	Invite
+People	people-groups-member	fil	1	Member
+People	people-groups-pinned	pl	1	Pinned
+People	people-sets-quick-sort	pl	1	Quick sort
+People	people-sets-selected	cs	1	selected
+People	people-sheet-nickname-hint	fil	1	Nickname…
+People	radar-chat-leave	pt-PT	1	left chat range.
+People	radar-col-typing	pl	1	Typing
+People	radar-name-user	pl	1	Username
+People	radar-opt-report-to	cs	1	Report to
+People	ui-contacts-create	pl	1	Create
+People	ui-people-instant-message-im	fil	1	Instant message (IM)
+People	ui-people-online	da	1	Online ( )
+Preferences	ui-options-audio-output	fil	1	Audio output
+Preferences	ui-options-aurora-animated-bell	fil	1	Animated bell
+Preferences	ui-options-aurora-avatar-plates	id	1	Avatar plates
+Preferences	ui-options-aurora-bubbles	pl	1	Bubbles
+Preferences	ui-options-aurora-chat-lines	pt-PT	1	Nearby chat lines
+Preferences	ui-options-aurora-classic	pt-PT	1	Classic (Legacy)
+Preferences	ui-options-aurora-clouds	cs	1	Clouds
+Preferences	ui-options-aurora-clouds-flat	fil	1	Flat layer
+Preferences	ui-options-aurora-clouds-volumetric	fil	1	Volumetric
+Preferences	ui-options-aurora-crosshair	id	1	Crosshair (Legacy)
+Preferences	ui-options-aurora-destinations-classic	fil	1	Web page (Legacy)
+Preferences	ui-options-aurora-ground-feet	pt-PT	1	Use Aurora foot placement
+Preferences	ui-options-aurora-outfit-gallery-classic	pt-PT	1	Tiles (Legacy)
+Preferences	ui-options-aurora-own-motion-server	id	1	Simulator (Legacy)
+Preferences	ui-options-aurora-places	pl	1	Places
+Preferences	ui-options-aurora-plates	id	1	Plates
+Preferences	ui-options-aurora-restart-alert	pl	1	Restart alert
+Preferences	ui-options-aurora-rez-effect-aurora	nl	1	Effect
+Preferences	ui-options-aurora-toasts	pt-PT	1	Toasts (Legacy)
+Preferences	ui-options-aurora-vf-controls-hidden	pl	1	Hidden
+Preferences	ui-options-aurora-world-map-side	fil	1	Side panel (Legacy)
+Preferences	ui-options-auto-replace-keyword-hint	fil	1	Keyword
+Preferences	ui-options-away-after	pl	1	Away after
+Preferences	ui-options-backup	da	1	Backup
+Preferences	ui-options-backup-part-layout	tr	1	Windows' layout
+Preferences	ui-options-blend-order-balanced	pl	1	Balanced
+Preferences	ui-options-blend-order-high	pl	1	High
+Preferences	ui-options-blocked-chat-hidden	pl	1	Hidden
+Preferences	ui-options-bloom-strength	cs	1	Bloom strength
+Preferences	ui-options-browser-home-page	fil	1	Browser home page
+Preferences	ui-options-calls	pl	1	Calls
+Preferences	ui-options-camera-click-my-avatar-keep-camera	vi	1	Click my avatar: keep camera
+Preferences	ui-options-camera-combat	id	1	Combat aids
+Preferences	ui-options-camera-combat-markers	fil	1	Target markers
+Preferences	ui-options-camera-joint-chest	fil	1	Chest
+Preferences	ui-options-camera-joint-head	pl	1	Head
+Preferences	ui-options-camera-joint-left-collar	pl	1	Left collar
+Preferences	ui-options-camera-joint-left-toe	pl	1	Left toe
+Preferences	ui-options-camera-smoothing	pl	1	Smoothing
+Preferences	ui-options-camera-vr-view-first-person	pl	1	First Person
+Preferences	ui-options-chat-bar	cs	1	Chat bar
+Preferences	ui-options-chat-mentions	pl	1	Chat mentions
+Preferences	ui-options-chat-thumbnails-off	pl	1	Hidden
+Preferences	ui-options-cloud-bar	cs	1	Cloud + bar
+Preferences	ui-options-commands-at-camera	pl	1	At camera
+Preferences	ui-options-commands-calculator	ro	1	Calculator
+Preferences	ui-options-commands-channel	fil	1	Channel
+Preferences	ui-options-commands-chat-bar	cs	1	Chat bar
+Preferences	ui-options-commands-copy-camera	vi	1	Copy camera
+Preferences	ui-options-commands-dice-roll	fil	1	Dice roll
+Preferences	ui-options-commands-teleport-to-a-region-region-x-y-z-for	vi	1	Teleport to a region (region|x y z for a position)
+Preferences	ui-options-complexity-notices	pl	1	Complexity notices
+Preferences	ui-options-contact-marker-anchor-body	fil	1	Chest
+Preferences	ui-options-content	pl	1	Content
+Preferences	ui-options-crash-github-forget	pl	1	Forget
+Preferences	ui-options-crosshair-image	cs	1	Crosshair image
+Preferences	ui-options-crosshair-outline	pt-PT	1	Dark outline
+Preferences	ui-options-crosshair-shape	pl	1	Shape
+Preferences	ui-options-crosshair-size	pl	1	Size
+Preferences	ui-options-default	fil	1	(default)
+Preferences	ui-options-dof-focal-length	fil	1	Focal length
+Preferences	ui-options-dof-focus-locked	pl	1	Locked
+Preferences	ui-options-dof-transition	pl	1	Focus transition
+Preferences	ui-options-draw-distance-stepping	pl	1	Progressive draw distance
+Preferences	ui-options-edge-right	pl	1	Right
+Preferences	ui-options-errors	pl	1	Errors
+Preferences	ui-options-floating-text-fade-range	pl	1	Fade range
+Preferences	ui-options-font-style-bold	pl	1	Bold
+Preferences	ui-options-fonts	pl	1	Fonts
+Preferences	ui-options-fsr-quality	fil	1	FSR mode
+Preferences	ui-options-fsr-ultra-performance	pt-PT	1	Ultra performance (33%)
+Preferences	ui-options-gifs-key	fil	1	key
+Preferences	ui-options-gifs-key-placeholder	fil	1	API key
+Preferences	ui-options-gifs-rating-moderate	fil	1	Moderate
+Preferences	ui-options-graphics	fil	1	Graphics
+Preferences	ui-options-graphics-card	fil	1	Graphics card
+Preferences	ui-options-group-snooze-duration	ro	1	Group chat snooze
+Preferences	ui-options-group-titles-all	pl	1	All
+Preferences	ui-options-group-titles-none	pl	1	None
+Preferences	ui-options-high	pl	1	High
+Preferences	ui-options-hover-tips-all	pl	1	All
+Preferences	ui-options-hover-tips-interactive	fil	1	Interactive
+Preferences	ui-options-im-tab-names-username	pl	1	Username
+Preferences	ui-options-in-reject-teleports-mode	nl	1	In Reject teleports mode:
+Preferences	ui-options-integrated-graphics	fil	1	Integrated graphics
+Preferences	ui-options-link-previews	pl	1	Link previews
+Preferences	ui-options-link-previews-large	pl	1	Large
+Preferences	ui-options-link-previews-small	pl	1	Small
+Preferences	ui-options-low	pl	1	Low
+Preferences	ui-options-manual-terrain	id	1	Manual + terrain
+Preferences	ui-options-microphone	vi	1	Microphone
+Preferences	ui-options-music-fade	pl	1	Fade the parcel music
+Preferences	ui-options-network	fil	1	Network
+Preferences	ui-options-night-sky-hour-real	fil	1	Real time
+Preferences	ui-options-night-sky-longitude	pt-PT	1	Longitude
+Preferences	ui-options-objects	fil	1	Objects
+Preferences	ui-options-occlusion	ms	1	Occlusion
+Preferences	ui-options-opacity	fil	1	Opacity
+Preferences	ui-options-opacity-console	pt-PT	1	Nearby chat lines
+Preferences	ui-options-opacity-menus	pt-PT	1	Menus
+Preferences	ui-options-opacity-minimap	fil	1	Mini-map background
+Preferences	ui-options-perceptual-volume	fil	1	Perceptual volume sliders
+Preferences	ui-options-pie-menu	fil	1	Pie menu (radial)
+Preferences	ui-options-plate-click-nothing	pl	1	Nothing
+Preferences	ui-options-playback	pl	1	Playback
+Preferences	ui-options-position-bottom-center	cs	1	Bottom middle
+Preferences	ui-options-position-top-center	cs	1	Top middle
+Preferences	ui-options-preset-high	pl	1	High
+Preferences	ui-options-preset-low	pl	1	Low
+Preferences	ui-options-presets	pl	1	Presets
+Preferences	ui-options-probe-count	id	1	Probe count
+Preferences	ui-options-projector-shadows	fil	1	Projector shadows
+Preferences	ui-options-proxy-address	fil	1	Address
+Preferences	ui-options-proxy-credentials	nl	1	Credentials
+Preferences	ui-options-reading	pl	1	Reading
+Preferences	ui-options-region-restart-shake-alert	cs	1	The alert
+Preferences	ui-options-region-restart-shake-none	pl	1	None
+Preferences	ui-options-reset-page	cs	1	Reset …
+Preferences	ui-options-restore	pl	1	Restore
+Preferences	ui-options-screen-space-reflections-ssr	fil	1	Screen-space reflections (SSR)
+Preferences	ui-options-script-dialog-limit-unlimited	pl	1	Unlimited
+Preferences	ui-options-search-title	pl	1	Search
+Preferences	ui-options-session-log	cs	1	Session log
+Preferences	ui-options-show-time	cs	1	Show time
+Preferences	ui-options-sl-mirror-probes-render-resolution-low-by-default	vi	1	SL mirror probes; render resolution (Low by default)
+Preferences	ui-options-smoothness	tr	1	Smoothness
+Preferences	ui-options-snap-windows	cs	1	Snap windows
+Preferences	ui-options-stream-title-channel	fil	1	Channel
+Preferences	ui-options-stream-title-toast	pl	1	Notice
+Preferences	ui-options-tab-spelling	nl	1	Spelling
+Preferences	ui-options-toasts	nb	1	Toasts
+Preferences	ui-options-tone-mapping	nl	1	Tone mapping
+Preferences	ui-options-transparency	fil	1	Transparency
+Preferences	ui-options-typing	pl	1	Typing
+Preferences	ui-options-unlimited	pl	1	Unlimited
+Preferences	ui-options-url-path	fil	1	URL path
+Preferences	ui-options-web-browser	fil	1	Web browser
