@@ -2596,7 +2596,27 @@ splash-update-installing = กำลังติดตั้งการปร�
 splash-update-cache = กำลังลบแคช...
 splash-update-launching = กำลังเริ่มรุ่นใหม่...
 app-aurora-viewer-unable-to-initialize-metal = { "เครื่องมือดู Aurora: ไม่สามารถเริ่ม Metal ได้: " }{ $e }
+app-graphics-start-memory-full =
+    การ์ดกราฟิกไม่มีหน่วยความจำวิดีโอสำหรับใช้กับตัวดู Aurora เหลืออยู่: โปรแกรมอื่นกำลังใช้อยู่
+
+    ลองดูสิ
+    ปิดโปรแกรมที่ใช้การ์ดกราฟิก (ตัวดูอื่น ๆ, เกม, วิดีโอ หรือ เครื่องมือแก้ไขภาพ3มิติ) แล้วเริ่มโปรแกรม Aurora Viewer ใหม่อีกครั้ง
+    บนแล็ปท็อปที่มีกราฟิกการ์ดสองตัว ตรวจสอบว่า Aurora Viewer ทำงานอยู่บนเครื่องใด
+
+    ปูมบันทึกของการเริ่มต้นนี้: { $log }
 app-graphics-start-failed-title = ไม่สามารถเริ่มโปรแกรม Aurora Viewer ได้
+app-graphics-start-failed =
+    ตัวดู Aurora ไม่สามารถเปิดการ์ดกราฟิกเพื่อวาดหน้าต่างได้
+
+    ลองดูสิ
+    ปรับปรุงไดรเวอร์ของกราฟิกการ์ด
+    บนคอมพิวเตอร์ที่มีการ์ดกราฟิกสองตัว ตรวจสอบว่าทั้งสองเครื่องถูกเปิดใช้งานในระบบจัดการอุปกรณ์ และจอภาพถูกเชื่อมต่อกับการ์ดเหนือที่ควรจะใช้ในการวาดภาพ
+    • บนแล็ปท็อปที่มีกราฟิก AMD และ NVIDIA, ปรับปรุงไดรเวอร์ AMD จากเว็บไซต์ของ AMD รวมถึงไดรฟ์ NVIdia;
+    เริ่มเครื่องใหม่
+
+    รายละเอียด: { $e }
+
+    ปูมบันทึกของการเริ่มต้นนี้: { $log }
 app-gpu-stall-title = ตัวดู Aurora: กราฟิกการ์ดไม่ตอบสนอง
 app-gpu-stall = การ์ดกราฟิกยังไม่ได้ทำอิมเมจเสร็จสมบูรณ์ { $seconds } the card responds again, Aurora will reset itself. If you are logged in to your account, you will see the following message: “Aurora is not able to draw any graphics” or “The graphics driver has been reset”. If you haveavideo card, you can use the following steps to reset the graphics card driver:• restart the computer;• reboot the computer. If Aurora does not respond, you may be prompted by the following error message:“Aurore is not capable of drawing graphics because it is not connected to the internet.”What to doWhat to tryWhat to testWhat to attemptWhat to checkWhat to fixWhat to tellWhy do I need help?What do I do?What to say?What can I do to help? What to do:What to look for?What should I do: What to try:What can i do? What can I try?What must I do!What to avoid:What should i do:Which should I try:Why should I not try?Which things should I avoid?What could I try to do?Why not try to help me?What I can do?How to do it?What you can do:How to fix it?How do I fix it:What do you do:If you want to fix this problem?What are you trying to do to fix the issue?What is the solution?What will you do?Who can help me with this?What does Aurora do?what can I help with this issue? What do you try?How can I fix this issue:What you should try:• Keep waiting? Yes Keep awaiting? Yes keep waiting; No Keep Waiting?Yes Keep waiting? Yes No ApplyWhat to Do? Keep watching
 app-gpu-recovered-title = การ์ดกราฟิกถูกตั้งค่าใหม่แล้ว
@@ -6398,6 +6418,9 @@ region-restart-toast-seconds =
        *[other] วินาที
     }ถ้าคุณอยู่ในพื้นที่นี้ ตอนที่มันปิด คุณจะถูกล็อกออก
 region-restart-disconnected = { $region } เริ่มใหม่: การเชื่อมต่อถูกปิด
+region-restart-legacy-text =
+    ภูมิภาคที่คุณอยู่ในขณะนี้ ({ $region }) กำลังจะเริ่มใหม่
+    หากคุณยังอยู่ในภูมิภาคนี้ ระบบจะนำคุณออกจากระบบ
 region-restart-legacy-seconds = วินาทีก่อนเริ่มการทำงานใหม่
 region-restart-legacy-landmarks = จุดหมายปลายทางของฉัน
 region-restart-legacy-teleport = พาไปยังจุดหมายปลายทาง
@@ -10028,6 +10051,10 @@ update-intro = เวอร์ชั่นใหม่ของออโรร�
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = ข่าว
+update-demo-notes =
+    ส่วนติดต่อผู้ใช้ที่น่ารักกว่าเดิม เป็นภาษาอังกฤษและฝรั่งเศส
+    ความมั่นคงและประสิทธิภาพที่ปรับปรุง
+    ตรวจสอบการติดตั้งด้วยการย้อนกลับหากเริ่มงานล้มเหลว
 update-downloading = กำลังดาวน์โหลด...
 update-transfer = { $downloaded } / { $total } MB
 update-ready = การดาวน์โหลดเสร็จสมบูรณ์แล้ว
@@ -12232,6 +12259,10 @@ ui-group-create-rating = เนื้อหา
 ui-group-create-rating-to-choose = จัดอันดับให้เลือก
 ui-group-create-you-owner = คุณเจ้าของ
 ui-group-create-moderate-question = กลุ่มนี้มีเนื้อหาที่เหมาะสมหรือไม่?
+ui-group-create-cost =
+    การสร้างกลุ่มนี้มีค่าใช้จ่าย L${ $cost }
+    กลุ่มต้องมีสมาชิกมากกว่าหนึ่งคน มิฉะนั้นกลุ่มจะถูกลบถาวร
+    โปรดเชิญสมาชิกภายใน 48 ชั่วโมง
 ui-group-create-refused = ไม่สามารถสร้างกลุ่มได้
 ui-group-create-fee-title = ค่าสร้าง
 ui-group-create-fee-line = การสร้างกลุ่มใช้ค่า L$ { $cost }.
@@ -13391,6 +13422,10 @@ movement-pass-reached = เป้าหมายผ่านไปแล้ว
 movement-pass-not-reached = ผ่านล้มเหลว: เป้าหมายไม่ถึงก่อนที่เครื่องยนต์จะหยุด
 movement-pass-cancelled = ยกเลิกการเดินทาง
 movement-pass-no-result = ไม่มีผลการผ่านสุดท้ายที่ได้รับ คำสั่งส่งไม่ยืนยันการเคลื่อนไหว
+movement-pass-feedback =
+    { $state }
+    ค่าอักขระ { $progress } ระยะทางไปยังเป้าหมาย: { $remaining } m
+    ความเร็วสูงสุดในการส่งสำเนาไปยังหน้า: { $speed } m/s
 movement-disabled = ปิดการใช้งานตัวเสริมการเคลื่อนไหว
 movement-physics-unavailable = ไม่มี Bridge อยู่ - การช่วยเหลือทางฟิสิกส์ถูกยกเลิก
 movement-pass-not-sent = ไม่มีการส่งข้อมูล: { $reason }

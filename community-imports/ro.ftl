@@ -2599,7 +2599,27 @@ splash-update-installing = Se instalează actualizarea…
 splash-update-cache = Se curăță cache-ul...
 splash-update-launching = Se pornește noua versiune…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: nu se poate inițializa Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Nu mai există memorie video disponibilă pentru Aurora Viewer. Este ocupată de alt program.
+
+    Ce puteți încerca:
+    • închideți aplicațiile care folosesc placa video, cum ar fi alt viewer, un joc sau un editor video ori 3D, apoi porniți din nou Aurora Viewer;
+    • dacă laptopul are două plăci video, verificați pe care o folosește Aurora Viewer.
+
+    Jurnalul acestei porniri: { $log }
 app-graphics-start-failed-title = Aurora Viewer nu poate porni
+app-graphics-start-failed =
+    Aurora Viewer nu a putut inițializa placa video necesară pentru afișarea ferestrei.
+
+    Ce puteți încerca:
+    • actualizați driverul plăcii video;
+    • dacă aveți două plăci video, verificați în Manager dispozitive dacă sunt ambele activate și dacă monitorul este conectat la placa folosită pentru afișare;
+    • pe un laptop cu grafică AMD și NVIDIA, actualizați driverul AMD de pe site-ul AMD și actualizați și driverul NVIDIA;
+    • reporniți calculatorul.
+
+    Detalii: { $e }
+
+    Jurnalul acestei porniri: { $log }
 app-gpu-stall-title = Aurora Viewer: placa grafică nu răspunde
 app-gpu-stall = Placa grafică nu a terminat o imagine pentru { $seconds } you are logged in to your account, you will see the following message: “Aurora is not running properly” or “The graphics card driver has been reset”. If you are not logged into your account and Aurora is still running correctly, you can try to restart the computer. If Aurora is not working properly, it may be due to a problem with the graphics driver. If the card is not responding, you may have to reboot the computer and try again. If it does not respond, you should try to reset the card. What to do? Yes No.What to doWhat to try:• Keep waiting? Yes keep waiting; NoWhy is Aurora not answering? Why is it not answered?What to test:• Does Aurora not respond?Why does Aurora not reply?What can I do?What do I do if I am not answer?What should I do:What to attempt:• Wait? Yes waits; No Keep watching? Yes Keep waiting?Yes Keep awaiting?No Keep expecting? Yes Wait waiting?NoWhat can be done:What can you do?Which can I try?What cannot I do when I am waiting?What must I try:What do i do?How to fix it?What does I do to fix this?What I can do? What to try?When I do it? What do I try to fix?What is the best solution?What you can do:Why do I not respond to Aurora?What could I do for you?What are you trying to do:• What do you want to do,What do you need to do to resolve this issue?What will you do:You can do it yourself.What can we do?If you don’t know
 app-gpu-recovered-title = Placa grafică a fost resetată
@@ -2609,6 +2629,14 @@ app-vr-runtime-closed-title = Software VR închis
 app-vr-runtime-closed = Software-ul tău VR (SteamVR, de exemplu) a fost închis. Aurora și-a redeschis fereastra fără el: ai rămas conectat, iar lumea se reîncarcă într-o clipă. VR va reveni la următoarea pornire a lui Aurora.
 app-vr-runtime-closed-at-start = Software-ul tău VR (SteamVR, de exemplu) a fost închis. Aurora și-a redeschis fereastra fără ea: ai rămas conectat și lumea se reîncarcă într-o clipă. VR revine la următoarea pornire a Aurora. Aurora încarcă software-ul VR la fiecare pornire: pentru a opri acest lucru, dezactivează Preferences › Camera › VR › Set up VR at startup.
 app-gpu-lost-title = Aurora Viewer: placa grafică a fost pierdută
+app-gpu-lost =
+    Aurora a pierdut accesul la placa video. Driverul s-ar fi putut reseta dacă afișarea unui cadru a durat prea mult sau dacă memoria video s-a umplut. Placa ar fi putut fi și deconectată sau preluată de alt program. Când apăsați OK, Aurora vă deconectează în siguranță și se închide.
+
+    Ce puteți încerca:
+    • actualizați driverul plăcii video;
+    • reduceți dimensiunea fotografiilor foarte mari sau calitatea grafică;
+    • închideți celelalte programe care solicită intens placa video;
+    • la următoarea pornire, alegeți setările grafice sigure oferite de Aurora.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora nu are încă o suprascriere a animației (AO).
 cmdline-mod-use-hover-height-in-appearance = Ajustează înălțimea de hover a avatarului prin Aspect → Hover Height.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora vă recomandă să nu deschideți acest link, dacă vă cere să vă conectați sau să plătiți, este foarte probabil o înșelătorie: nu dați niciodată parola sau informațiile de plată.
@@ -11244,6 +11272,7 @@ marketplace-listings-not-merchant-title = Oricine poate vinde obiecte în Market
 marketplace-listings-not-merchant = Dacă doriți să deveniți comerciant, va trebui să creați un magazin Marketplace.
 marketplace-listings-create-store = Crearea unui magazin Marketplace
 marketplace-listings-error-title = Erori de Marketplace.
+marketplace-listings-error = A apărut o eroare la deschiderea listării Marketplace. Dacă primiţi în continuare acest mesaj, vă rugăm să contactaţi Second Life suport pentru asistenţă la https://support.secondlife.com
 marketplace-listings-connection-error = Dacă continui să primești acest mesaj, te rugăm să contactezi serviciul de asistență Second Life pentru asistență la https://support.secondlife.com
 marketplace-listings-connection-error-reason = Nu s-a putut conecta. Motivul: { $reason }Dacă continui să primești acest mesaj, te rugăm să contactezi Second Life support pentru asistență la https://support.secondlife.com
 marketplace-listings-empty-title = Dosarul dvs. Marketplace Listings este gol.

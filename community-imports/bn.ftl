@@ -2596,7 +2596,27 @@ splash-update-installing = হালনাগাদ ইনস্টল করা
 splash-update-cache = ক্যাশ ফাঁকা করা হচ্ছে…
 splash-update-launching = নতুন সংস্করণ আরম্ভ করা হচ্ছে...
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora প্রদর্শক: Metal শুরু করতে ব্যর্থ: " }{ $e }
+app-graphics-start-memory-full =
+    Aurora Viewer-এর জন্য গ্রাফিক্স কার্ডের ভিডিও মেমরি অবশিষ্ট নেই: এটি অন্য একটি প্রোগ্রাম দ্বারা দখল করা হয়েছে।
+
+    কি চেষ্টা করতে হবে:
+    • গ্রাফিক্স কার্ড ব্যবহারকারী প্রোগ্রাম বন্ধ করুন (অন্য প্রদর্শক, খেলা, ভিডিও বা ত্রিমাত্রিক সম্পাদক), তারপর Aurora Viewer পুনরায় আরম্ভ করুন;
+    • দুইটি গ্রাফিক্স কার্ড সহ একটি ল্যাপটপে, পরীক্ষা করুন কোন একটি Aurora Viewer চালানো হচ্ছে।
+
+    এই আরম্ভের লগ: { $log }
 app-graphics-start-failed-title = Aurora প্রদর্শক আরম্ভ করা যায়নি
+app-graphics-start-failed =
+    Aurora প্রদর্শক একটি গ্রাফিক্স কার্ড খুলতে এবং এর উইন্ডো আঁকার জন্য ব্যর্থ।
+
+    কি চেষ্টা করতে হবে:
+    • গ্রাফিক্স কার্ড ড্রাইভার আপডেট;
+    • দুটি গ্রাফিক্স কার্ড সহ একটি পিসি-তে, পরীক্ষা করুন যে ডিভাইস ম্যানেজারে উভয়টি সক্রিয় করা হয়েছে এবং যে মোনিটরটি কার্ডের সাথে সংযুক্ত রয়েছে যা আঁকতে হবে;
+    • এএমডি এবং এনভিডিএ গ্রাফিক্স সহ একটি ল্যাপটপে, এএমডব্লিউ ওয়েবসাইটের মাধ্যমে এএমডেবল ড্রাইভার আপডেট করুন এবং এনভিডিয়া ড্রাইভও আপডেটে রাখুন;
+    পিসি পুনরায় আরম্ভ করুন ।
+
+    বিস্তারিত বিবরণ: { $e }
+
+    এই আরম্ভের লগ: { $log }
 app-gpu-stall-title = Aurora প্রদর্শক: গ্রাফিক্স কার্ড সাড়া দিচ্ছে না
 app-gpu-stall = গ্রাফিক্স কার্ডের জন্য ছবির কাজ শেষ হয়নি { $seconds } you are logged out, Aurora will start again. If you are not logged in, Aurora is still running. If it is logged into, Aurora starts again. When you are rebooted, Aurora restarts and shows the following message: “Aurora has been logged off” or “Aura has been unable to log in”. If you have logged on, Aurora appears in the window of your computer. If Aurora is logging in, it will show the following messages:• Aurora is not logging on;• Aurora has not locked in;• No Aurora is running.What to doKeep waiting?What to try:What to test:What do you try:• Keep waiting!Yes keep waiting;No What to do:• Do you want to continue?What do I do?What can I do:What can you do:Why?What should I do to avoid this problem?What does I do if I am logged outside?What is the solution:What is it?What are the solutions?What you can do:How to fix it?Why do I try to fix this problem:What should you do?Which is the best solution?What must I do when I get this problem.What can be done:What does it work?What I can do to fix?What cannot I doWhat to attempt:What I do not do: What do I need to do? What to try?What i can do?How to do it? What do you do to prevent this problem from happening?What could I do for this problem, what can I try? What can I help?What will I do, if I do it properly?What would I doIf I do this, I will do it correctly?When I do that, I can use the following methods:
 app-gpu-recovered-title = গ্রাফিক্স কার্ড পুনরায় সেট করা হয়েছে
@@ -2606,6 +2626,14 @@ app-vr-runtime-closed-title = VR সফটওয়্যার বন্ধ কর
 app-vr-runtime-closed = আপনার VR সফটওয়্যার (উদাহরণস্বরূপ SteamVR) বন্ধ করা হয়েছে। Aurora এর উইন্ডোটি এটি ছাড়াই পুনরায় খোলা হয়েছে: আপনি লগ-ইন করে থাকলেন এবং পৃথিবী কিছুক্ষণের মধ্যে আবার লোড হবে। Aurora পরবর্তীবার আরম্ভ হলে VR ফিরে আসবে।
 app-vr-runtime-closed-at-start = আপনার VR সফটওয়্যার (উদাহরণস্বরূপ SteamVR) বন্ধ করা হয়েছে। Aurora এর উইন্ডোটি এটি ছাড়াই পুনরায় খুলেছে: আপনি লগ-ইন করে থাকলেন এবং পৃথিবী কিছুক্ষণের মধ্যে আবার লোড হবে। পরবর্তী Aurora চালু হলে VR ফিরে আসবে। Aurora প্রতিটি চালু হওয়ার সময় আপনার VR সাফটওয়ার লোড করবে: এই কাজ বন্ধ করতে পছন্দ › ক্যামেরা › VR › আরম্ভকালে VR কনফিগার করুন নিষ্ক্রিয় করুন।
 app-gpu-lost-title = Aurora প্রদর্শক: গ্রাফিক্স কার্ড হারিয়ে গেছে
+app-gpu-lost =
+    Aurora-র জন্য গ্রাফিক্স কার্ড কাজ করা বন্ধ করেছে: এর ড্রাইভার পুনরায় সেট করা হয়েছে (একটি ছবি আঁকার জন্য অনেক সময় লেগেছে, অথবা ভিডিও মেমরি ভরে গেছে), অথবা কার্ডটি অপসারণ করা হয়েছে অথবা অন্য একটি প্রোগ্রাম দ্বারা গ্রহণ করা হয়েছে। আর কিছুই আঁকা যাবে না: ঠিক আছে চাপলে Aurora বন্ধ হয়ে যাবে (আপনি সঠিকভাবে লগ-আউট হয়েছেন)।
+
+    কি চেষ্টা করতে হবে:
+    • গ্রাফিক্স কার্ড ড্রাইভার আপডেট;
+    • খুব বড় ছবির আকার কমিয়ে আনুন, অথবা গ্রাফিক্সের গুণমান কমিয়ে নিন;
+    • অন্যান্য প্রোগ্রাম বন্ধ করুন যে গ্রাফিক্স কার্ড অনেক ব্যবহার করে;
+    • পরবর্তীবার শুরু করার সময় Aurora-র যে নিরাপদ গ্রাফিক্স প্রদান করবে তা বেছে নিন।
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora-র এখনো অ্যানিমেশন ওভাররাইডার (AO) নেই।
 cmdline-mod-use-hover-height-in-appearance = আপনার অ্যাভাটারের উপরে মাউস রেখে দেখার উচ্চতা পরিবর্তন করুন।
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora এই লিঙ্কটি খোলার পরামর্শ দেয় না। এটি যদি আপনাকে লগ-ইন অথবা অর্থ প্রদান করতে বলে, তাহলে সম্ভবত এটি একটি প্রতারণা: কখনো আপনার পাসওয়ার্ড অথবা টাকা প্রদান সংক্রান্ত তথ্য প্রদান করবেন না।
@@ -6730,6 +6758,7 @@ build-ui-texture-repeats-meter = পুনরাবৃত্তি/ মিটা
 ui-options-network-and-cache = নেটওয়ার্ক এবং ক্যাশ
 ui-options-web-browser = ওয়েব ব্রাউজার
 ui-options-browser-home-page = ব্রাউজার হোম পেজ
+ui-options-browser-home-page-help = ওয়েব ব্রাউজার টুলবার বাটন যে পাতাটি খুলবে । ফাঁকা: https://duckduckgo.com.
 ui-options-browser-javascript = জাভাস্ক্রিপ্ট
 ui-options-browser-javascript-help = অভ্যন্তরীণ ব্রাউজার, বস্তু ও প্যাকেজের মিডিয়া, প্রোফাইল এবং অনুসন্ধান- এ জাভাস্ক্রিপ্ট ব্যবহার করা হবে। নিষ্ক্রিয়: অনুসন্ধানের কাজ আর চলবে না এবং অনেক পৃষ্ঠার কাজ বন্ধ হয়ে যাবে। পরবর্তীতে খোলা পৃষ্ঠাগুলিতে প্রয়োগ করা হবে
 ui-options-browser-behavior = পছন্দের ব্রাউজার
@@ -7834,6 +7863,7 @@ demo-bubbles-local-1 = নতুন প্লাজা ফ্লোর তৈর
 demo-bubbles-local-2 = আজ রাতের আগে এসে দেখুন।
 demo-bubbles-local-3 = প্ল্যাজাতে স্বাগতম, এখানেই আপনার ভ্রমণ শুরু হবে।
 demo-chat-lines-emote = /আমি সবাইকে হাততালি দিচ্ছি 👋
+demo-chat-lines-long = এই ভ্রমণ শুরু হয় ফোঁটা থেকে, তারপর আমরা গ্যালারি এবং ছাদের বাগানে যাই। এই প্ল্যাজাটির মানচিত্র এখানে https://example.com/plaza-map যদি তুমি পথে হারিয়ে যাও।
 demo-chat-lines-shout = দরজা খোলা ৫ মিনিট!
 demo-muted-chat-near-1 = আজ রাতে কে আসছে?
 demo-muted-chat-blocked-1 = HEY EVERYONE
@@ -7860,12 +7890,14 @@ demo-object-chat-door = গ্যালারি দরজা
 demo-object-chat-door-text = / আমি দরজা খুলে দিলাম।
 demo-object-chat-script-error = স্ক্রিপ্ট চালানোর সময় ত্রুটি: স্ট্যাক-হিপ সংঘর্ষ
 demo-object-chat-vendor = প্লেজা ভেন্ডার
+demo-object-chat-direct = আপনার উপহার প্রস্তুত: প্ল্যাজাটির মানচিত্র এখানে https://example.com/plaza-map
 demo-rez-style-grid = গ্রিড
 demo-rez-style-scan = ২ · স্ক্যান লাইন
 demo-rez-style-wire = ৩ · ওয়াইরাফ্রেম
 demo-aurora-group-1 = সবাইকে ধন্যবাদ, আজ রাতে আমরা একটি প্ল্যাজা নির্মাণ করবো।
 demo-aurora-group-2 = আমি টেক্সচার নিয়ে আসছি।
 demo-aurora-group-3 = এবং জলাশয়ের জন্য স্লো প্যাক
+demo-aurora-group-4 = এখানে দেখা হবে: http://maps.secondlife.com/secondlife/Aurora%20Demo/128/130/30 - আমি একটি মার্কার স্থাপন করছি
 demo-aurora-group-5 = আমি আলোগুলো নেব 💡
 demo-aurora-mention = হেই { $name }তুমি কি আজ রাতে আসবে?
 demo-aurora-loup = তবে, এটাকে মোকাপ এর মত দেখানোর কোন সুযোগ আছে কি?
@@ -13500,6 +13532,29 @@ bridge-object-info-loading = অরোরা ব্রিজের মাধ্�
 bridge-object-info-region = বস্তুর তথ্য শুধুমাত্র আপনার বর্তমান অঞ্চলের বস্তুর জন্যই পাওয়া যাবে ।
 bridge-object-info-failed = বস্তুর তথ্য পাওয়া যাচ্ছে না: { $reason }
 bridge-object-info-group-owned = গ্রুপ- মালিকানাধীন
+bridge-object-info-result =
+    বস্তুর তথ্য “{ $name }”:
+    বস্তুর আইডি: { $object }
+    বিবরণ: { $description }
+    মূল প্রিম: { $root }
+    প্রিমের সংখ্যা: { $prims }
+    জমির ওপর প্রভাব: { $impact }
+    ইনভেন্টরির আইটেম: { $inventory }
+    বেগ: { $velocity } m/s
+    অবস্থান: { $position } ({ $distance } m)
+    ঘূর্ণন: { $rotation } ({ $degrees }°)
+    কৌণিক বেগ: { $angular } rad/s
+    সৃষ্টিকর্তা: { $creator }
+    মালিক: { $owner }
+    আগের মালিক: { $previous }
+    যিনি জগতে স্থাপন করেছেন: { $rezzer }
+    গ্রুপ: { $group }
+    তৈরির সময়: { $created }
+    জগতে স্থাপনের সময়: { $rezzed }
+    পথনির্ণয়ের ধরন: { $pathfinding }
+    সংযুক্তির স্থান: { $attachment }
+    অস্থায়ীভাবে সংযুক্ত: { $temporary }
+    আপনার বর্তমান অবস্থান: { $observer }
 bridge-query-timeout = ব্রিজ থেকে সময়মতো অনুরোধকৃত তথ্য পাওয়া যায়নি । আবার চেষ্টা করুন ।
 bridge-query-interrupted = তথ্যের অনুরোধটি একটি অঞ্চল বা ব্রিজ সংযোগ পরিবর্তন দ্বারা বিঘ্নিত হয়েছে । আবার চেষ্টা করুন ।
 ao-bootstrap-interrupted = #Aurora-তে একটি অসমাপ্ত AO ইমপোর্ট ইতিমধ্যেই বিদ্যমান। পুনরায় চেষ্টা করার পূর্বে এটি ইনভেস্টমেন্টে পরীক্ষা করুন।

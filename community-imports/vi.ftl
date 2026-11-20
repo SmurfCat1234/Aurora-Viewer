@@ -1724,6 +1724,22 @@ notecard-markdown-demo =
     you have a notecard, you can save it as a PDF file.- Save from any view with **Ctrl+S**.- Embedded items remain part of the notecard.- Keep original text when switching views.- Create a new notecard with *Italic*, *strikethrough* and `code`.<A>A> A>A##A#*A#>A*A*## A*A**A#A*> A* A*#A>#A A#A|A# A# A|A|#A<A< A># A> A< A<#A</A>> A#> A</A><A> >A> <A>*A<*A><B>A</B>>A<B<B><B>#B> A|B|#B###> #A# B# A<B#>B# A</B></B> # A# B<B</B><A><B><b>A>>A</b>##<b> A>>A<b</b><b]A>
 
     { "[" }```textA plain code block```](https://aurora-viewer.org)[```TextA plain Code Block``````'````A plain coding block``''''''``''```\_n\_n```A plain html block`'`'''```a simple code block\_n''\_n\t[``textA``]``*``
+notecard-lsl-demo =
+    # LSL trong một tấm giấy ghi chú
+    Dùng cái này. **LSL** Nhấn nút, sau đó gõ như trong trình biên tập văn lệnh.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = Có quá nhiều tài liệu đang được tải. Hãy thử lại sau.
 inventory-preview-timeout = Thời gian tải tài liệu đã hết. Mở lại để thử lại.
 notecard-text-too-large = Một notecard không thể vượt quá 65.536 byte văn bản.
@@ -2570,6 +2586,18 @@ app-graphics-start-memory-full =
 
     Nhật ký lần khởi động này: { $log }
 app-graphics-start-failed-title = Không thể khởi động trình xem Aurora
+app-graphics-start-failed =
+    Aurora Viewer không thể mở một thẻ đồ họa để vẽ cửa sổ của nó.
+
+    Để thử cái gì:
+    Cập nhật trình điều khiển thẻ đồ họa
+    • trên máy tính có hai thẻ đồ họa, kiểm tra xem cả hai đều được bật trong Trình quản lý thiết bị, và màn hình đã được cắm vào thẻ vẽ;
+    • trên một máy tính xách tay với đồ họa AMD và NVIDIA, cập nhật trình điều khiển AMD từ trang web của AMD cũng như trình điều hành NVIdia;
+    • khởi động lại máy tính.
+
+    Chi tiết: { $e }
+
+    Bản ghi của khởi động này: { $log }
 app-gpu-stall-title = Trình xem Aurora: thẻ đồ họa không đáp ứng
 app-gpu-stall = Card đồ họa chưa hoàn thành hình ảnh cho { $seconds } the card responds again, Aurora starts again. If you are logged in to your account, you will see this message: “Aurora is unable to draw any graphics” or “Aura is not able to draw graphics”. If you’re logged out, you’ll see a message like this: “The graphics card driver has been reset.” If you haven’t logged into your account yet, you can try the following steps:• restart the computer;• restarts Aurora;• reboots Aurora; • restarts the card;• starts Aurora.What to try:• Keep waiting? Yes keeps waiting; NoWhat to do:• restart the computer and restart Aurora. What to do?What to test:• Restart Aurora; What to try?• Reboot Aurora;Why does Aurora not reboot? Why does it fail?What can be done?What should I do?Why should I try to reboot Aurora?What do I do:Why do I reboot the computer?What is possible?What does Aurora do?How do I fix it?What I can do:What to attempt:What can I do to resolve this problem?What you can do to fix it:What do you try:Which is the best way to fix this problem:• Do you want to continue?What are you going to do to avoid this issue?What will you try to fix?What would you do?what to try to do it?Which to do you need to do, if you don’t want to do this?What must you do: What to think about:• what to do when you get this error?What could you do to prevent it? What can you do if you have this problem with Aurora? What do you doWh
 app-gpu-recovered-title = Card đồ họa đã được khởi động lại

@@ -1719,6 +1719,37 @@ notecard-markdown-help = मार्कडाउन मदद
 notecard-markdown-help-code = स्क्रिप्ट संपादक के रंगों के लिए एक `` `lsl ब्लॉक इस्तेमाल करें. संपादन में: टैब इंडेन्ट्स, शिफ़्ट+टाब आउटेन्ट्स, इन्टर एलएसएल इन्डेंटिंग को बनाए रखता है तथा बन्द ब्रेक को उनके ओपनर के साथ पंक्तिबद्ध करता है. कंट्रोल+K टिप्पणियाँ चुने गए एलएसल पंक्तियों को; कंट्रोल + Shift+K ब्लॉक टिप्पणी टॉगल करता है चिपकाया गया पाठ अपरिवर्तित रहता है.
 notecard-markdown-help-intro = बटन स्रोत संपादित करते हैं तथा पूर्वावलोकन आपके परिवर्तनों का अनुसरण करता है. शैली, शीर्षक, सूची या उद्धरण को मिटाने के लिए फिर क्लिक करें. कंट्रोल+Z पहले जैसा करता है, कंट्रोल +Y फिर से करता है
 notecard-markdown-help-extra = शीर्षक: # through ###### रिक्त पंक्ति के साथ अनुच्छेद अलग करें. तालिकाओं के लिए, स्तम्भ को | से अलग करें तथा एक शीर्षक पंक्ति जोड़ें जैसे कि | --- | ---. छवियाँ अपना ऑल्ट पाठ दिखाएँ; एचटीएमएल पाठ रहता है. सहेजने पर संलग्नक सुरक्षित रहेंगे (Ctrl+S).
+notecard-markdown-demo =
+    # ऑरोरा में आपका स्वागत है
+    एक नोटकार्ड के साथ **गहरा**, * इटालिक *, ~~रेखांकित~~ और `code`.
+
+    ## आपकी टिप्पणियाँ
+    दृश्य स्विच करने पर मूल पाठ बनाए रखें.
+    - किसी भी दृश्य से इस के साथ सहेजें **Ctrl+S**.
+
+    > एम्बेडेड वस्तुएँ नोटकार्ड का हिस्सा बनी रहती हैं.
+
+    { "[" }ऑरोरा प्रदर्शक] (https://aurora-viewer.org)
+
+    पाठ
+    एक सादा कोड ब्लॉक
+    ```
+notecard-lsl-demo =
+    # नोटकार्ड में एलएसएल
+    प्रयोग करें **LSL** स्क्रिप्ट संपादक में टाइप करें
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = बहुत से दस्तावेज़ लोड हो रहे हैं. कृपया थोड़ी देर में फिर कोशिश करें.
 inventory-preview-timeout = दस्तावेज़ लोड करने में समय समाप्त. फिर कोशिश करने के लिए इसे फिर से खोलें.
 notecard-text-too-large = एक नोटकार्ड पाठ के 65,536 बाइट्स से अधिक नहीं हो सकता है।
@@ -2561,6 +2592,18 @@ app-graphics-start-memory-full =
 
     इस बार के स्टार्टअप का लॉग: { $log }
 app-graphics-start-failed-title = ऑरोरा प्रदर्शक प्रारंभ नहीं कर सका
+app-graphics-start-failed =
+    ऑरोरा प्रदर्शक विंडो को रेखांकित करने के लिए ग्राफिक कार्ड खोल नहीं सका.
+
+    कोशिश करने के लिए क्या:
+    • ग्राफिक्स कार्ड ड्राइवर अद्यतन करें;
+    दो ग्राफिक्स कार्ड के साथ पीसी पर, जाँचें कि दोनों उपकरण प्रबंधक में सक्षम हैं, और मॉनीटर कार्ड में प्लग किया गया है जो ड्रॉप करना चाहिए;
+    • एएमडी और एनवीडिया ग्राफिक्स के साथ लैपटॉप पर, एएमडब्ल्यू की वेबसाइट से एएमडि ड्राइवर को अपडेट करें, साथ ही एनवीडियो ड्राइव;
+    पीसी फिर से प्रारंभ करें.
+
+    विवरण: { $e }
+
+    इस प्रारंभ का लॉग: { $log }
 app-gpu-stall-title = ऑरोरा प्रदर्शक: ग्राफिक्स कार्ड जवाब नहीं दे रहा है
 app-gpu-stall = ग्राफिक्स कार्ड ने इसके लिए छवि को पूरा नहीं किया है { $seconds } you are logged in to Aurora, you will see the following message: “Aurora is not able to draw any graphics” or “The graphics card driver has been reset”. If you are not logged out, you can try to restart the computer and try again. If you do not have the graphics driver reset, you may be unable to draw anything until the card answers again. When you are rebooted, you see this message: "Aurore is not capable of drawing graphics" or "Aura is not ready to draw graphics". What to do?What to doKeep waiting?Yes Keep waiting;NoWhat to try:• waitafew seconds• Keep watchingWhat to attempt:• Apply to the systemWhat to test:• Restart the computerWhen you reboot Aurora, it shows the following error message:• What to try?• Getting startedHow to get startedWhy do I need help?What do I want to do:What do you want to try to get help?Why don't I want help? What do I have to do??What to fix?What can I do?Which is the best solution?What should I do:• Do I wait? Yes Keep wait? No Keep awaiting? Yes keep waiting; NoWhat to avoid:• Don't wait too long? NoWhat do i do? Keep expecting? What to attempt?What does I do to avoid?What I can do? What can I try?What is the problem?What you can do:Which do I try to fix it?What must I try:What can you do:How to fix this problem?When to try it:What to make it work?What are the possible solutions:•Keep waiting!What
 app-gpu-recovered-title = ग्राफिक्स कार्ड रीसेट किया गया था
@@ -6358,6 +6401,9 @@ region-restart-toast-seconds =
        *[other] सेकण्ड
     }. यदि आप इस क्षेत्र में रहते हैं जब यह बन्द हो जाता है, तो आप लॉगआउट हो जाएँगे.
 region-restart-disconnected = { $region } रीस्टार्ट: कनेक्शन बन्द किया गया.
+region-restart-legacy-text =
+    आप जिस क्षेत्र में हैं ({ $region }), वह जल्द ही फिर से शुरू होगा।
+    यदि आप इसी क्षेत्र में रहते हैं, तो आपका लॉग आउट हो जाएगा।
 region-restart-legacy-seconds = फिर से प्रारंभ होने तक सेकण्ड
 region-restart-legacy-landmarks = मेरे स्थलचिह्न
 region-restart-legacy-teleport = लैंडमार्क में दूरस्थ स्थानांतरण
@@ -9988,6 +10034,10 @@ update-intro = ऑरोरा का एक नया संस्करण त
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = क्या नया है
+update-demo-notes =
+    • अंग्रेजी और फ्रेंच में अधिक स्वागत योग्य इंटरफेस।
+    • स्थिरता और प्रदर्शन में सुधार
+    • यदि प्रारंभ असफल हो तो रोलबैक के साथ सत्यापित संस्थापना.
 update-downloading = डाउनलोड जारी है...
 update-transfer = { $downloaded } / { $total } MB
 update-ready = डाउनलोड पूर्ण.

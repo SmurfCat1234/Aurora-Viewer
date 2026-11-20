@@ -2596,7 +2596,27 @@ splash-update-installing = Installerer oppdateringen …
 splash-update-cache = Tømmer mellomlageret …
 splash-update-launching = Starter den nye versjonen …
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: klarer ikke å initialisere Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Grafikkortet har ikke videominne igjen for Aurora Viewer: et annet program holder det.
+
+    Hva du kan prøve:
+    • lukk programmene som bruker grafikkortet (en annen seer, et spill, en video eller 3D-editor), og start Aurora Viewer igjen;
+    • på en bærbar datamaskin med to grafikkort, sjekk hvilken Aurora Viewer kjører på.
+
+    Loggen for denne starten: { $log }
 app-graphics-start-failed-title = Aurora Viewer kan ikke starte
+app-graphics-start-failed =
+    Aurora Viewer kunne ikke åpne et grafikkort for å tegne vinduet.
+
+    Hva du kan prøve:
+    • oppdatere grafikkortdriveren;
+    • på en PC med to grafikkort, kontroller at begge er aktivert i Enhetsbehandling, og at skjermen er koblet til kortet som skal tegne;
+    • på en bærbar datamaskin med AMD og NVIDIA grafikk, oppdatere AMD-driveren fra AMDs nettsted samt NVIdia driver;
+    • starte PC-en på nytt.
+
+    Detaljer: { $e }
+
+    Loggen for denne starten: { $log }
 app-gpu-stall-title = Aurora Viewer: skjermkortet svarer ikke
 app-gpu-stall = Grafikkortet har ikke fullført et bilde for { $seconds } the card is not responding, you can try to reset it. If Aurora does not respond, you may have a problem with the graphics driver. If you are logged out, you will be prompted to enter your password and then you will see the following message: “Aurora has been logged off” or “Aura has been unable to connect to the server”. If you have a computer that is logged on to the network, you should check the following information:• if you are not logged in, please enter your username and password;• if your computer is locked, what do you do?What to try:• Keep waiting? Yes keep waiting; NoWhat to do:• wait a little: Yes waits.What to test:• What to do? Yes wait; No Keep wait? Yes Keep awaiting? Yes stay waiting;No Keep watching? Yes hold on; No keep waiting.What do you try:What to check:• Wait? Yes Wait;NoWhat to attempt:• Stay waiting? No wait;No wait;Yes wait;What to avoid:• Do not wait? No do not wait;Do not waitWhat to make:What do I do?Why do I don’t do? What to try?What do i do?How to fix:• How to fix?What can I do:What can i do:Why can I fix this?What should I do to fix this:What should i doWhat to fixWhat to change:What must I doWhat can be done:What does I do for to fix it?What does i doWhy should I try?Which is the best solution?What is the most effective solution?When to try to restore Aurora?What you can do: • Keep Waiting
 app-gpu-recovered-title = Grafikkortet ble tilbakestilt
@@ -2606,6 +2626,14 @@ app-vr-runtime-closed-title = VR-programvare stengt
 app-vr-runtime-closed = Din VR-programvare (SteamVR, for eksempel) ble lukket. Aurora åpnet vinduet uten det: du forble logget inn, og verden lastes om på et øyeblikk. VR kommer tilbake neste gang Aurora starter.
 app-vr-runtime-closed-at-start = VR-programvaren din (SteamVR, for eksempel) ble lukket. Aurora åpnet vinduet uten det: du forble logget inn, og verden lastes om på et øyeblikk. VR kommer tilbake neste gang Aurora starter. Aurora laster inn VR-programmet ditt hver gang det starter: for å stoppe dette, slå av Innstillinger › Kamera › VR › Sett opp VR ved oppstart.
 app-gpu-lost-title = Aurora Viewer: grafikkortet ble tapt
+app-gpu-lost =
+    Grafikkortet sluttet å fungere for Aurora: driveren ble tilbakestilt (det tok for lang tid å tegne et bilde, eller skjermminnet var fullt), eller kortet ble fjernet eller tatt av et annet program. Ingenting kan tegnes lenger: Aurora lukker når du trykker OK (du er logget ut riktig).
+
+    Hva du kan prøve:
+    • oppdatere grafikkortdriveren;
+    • redusere størrelsen på svært store bilder, eller grafikkkvaliteten;
+    • lukk de andre programmene som bruker grafikkortet mye;
+    • Ved neste start, velg den trygge grafikken som Aurora vil tilby.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora har ikke en animasjon overstyrer (AO) ennå.
 cmdline-mod-use-hover-height-in-appearance = Juster avatarens hover høyde gjennom Utseende → Hover Høyde.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora anbefaler ikke å åpne denne lenken, og hvis du blir bedt om å logge inn eller betale, er det svært sannsynlig at det er en svindel: Gi aldri passordet ditt eller betalingsinformasjonen din.
@@ -13393,6 +13421,10 @@ movement-pass-reached = Passasjemålet nådd.
 movement-pass-not-reached = Passasjen mislyktes: målet ble ikke nådd før motoren stoppet.
 movement-pass-cancelled = Passasjen avbrutt.
 movement-pass-no-result = Ingen endelig passasjeresultat mottatt. Kommandolevering bekrefter ikke bevegelse.
+movement-pass-feedback =
+    { $state }
+    Forskyvning fremover: { $progress } m · Avstand til mål: { $remaining } m
+    Høyeste samplede fremoverhastighet: { $speed } m/s
 movement-disabled = Bevegelsesforsterker slått av
 movement-physics-unavailable = Broen er utilgjengelig – fysikkstøtten avbrutt
 movement-pass-not-sent = Passasjen ble ikke sendt: { $reason }
@@ -13501,6 +13533,29 @@ bridge-object-info-loading = Henter objektinformasjon gjennom Aurora- broen …
 bridge-object-info-region = Objektinformasjon er bare tilgjengelig for et objekt i gjeldende region.
 bridge-object-info-failed = Objektinformasjon ikke tilgjengelig: { $reason }
 bridge-object-info-group-owned = Gruppeeiet
+bridge-object-info-result =
+    Objektinformasjon for “{ $name }”:
+    Objekt-ID: { $object }
+    Beskrivelse: { $description }
+    Rotprim: { $root }
+    Antall prim: { $prims }
+    Landpåvirkning: { $impact }
+    Elementer i inventaret: { $inventory }
+    Hastighet: { $velocity } m/s
+    Posisjon: { $position } ({ $distance } m)
+    Rotasjon: { $rotation } ({ $degrees }°)
+    Vinkelhastighet: { $angular } rad/s
+    Skaper: { $creator }
+    Eier: { $owner }
+    Tidligere eier: { $previous }
+    Plassert i verden av: { $rezzer }
+    Gruppe: { $group }
+    Opprettet: { $created }
+    Plassert i verden: { $rezzed }
+    Type rutesøking: { $pathfinding }
+    Festepunkt: { $attachment }
+    Midlertidig festet: { $temporary }
+    Din nåværende posisjon: { $observer }
 bridge-query-timeout = Brua returnerte ikke den forespurte informasjonen i tide. Prøv igjen.
 bridge-query-interrupted = Forespørselen om informasjon ble avbrutt av en region- eller brotilkoblingsendring. Prøv igjen.
 ao-bootstrap-interrupted = En uferdig AO import eksisterer allerede i # Aurora. Gjennomgå det i inventar før du prøver på nytt.

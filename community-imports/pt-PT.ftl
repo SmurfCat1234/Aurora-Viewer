@@ -1720,6 +1720,37 @@ notecard-markdown-help = Ajuda do Markdown
 notecard-markdown-help-code = Use um bloco ```lsl para as cores do editor de script. Em Editar: Tab recua, Shift+Tab recua para fora, Enter mantém o recuo LSL e os colchetes de fechamento alinhados com seus iniciadores. Ctrl+K comenta linhas LSL selecionadas; Ctrl + Shift + K alterna um comentário de bloco. Texto colado permanece inalterado.
 notecard-markdown-help-intro = Os botões editam a fonte e a visualização segue suas alterações. Clique novamente para remover um estilo, título, lista ou citação.Ctrl+Z desfaz, Ctrl+Y refaz.
 notecard-markdown-help-extra = Separe parágrafos com uma linha em branco. Para tabelas, separe colunas com | e adicione uma linha de cabeçalho como | --- | ---. Imagens mostram seu texto alternativo; HTML permanece texto. Anexos são preservados ao salvar (Ctrl+S).
+notecard-markdown-demo =
+    Bem-vindo a Aurora
+    Um notecard com **negrito**, *itálico*, ~~riscado~~ e `code`.
+
+    ## Suas notas
+    - Mantenha o texto original ao alternar entre as visualizações.
+    - Salvar a partir de qualquer vista com **Ctrl+S**.
+
+    > Itens incorporados permanecem parte do notecard.
+
+    { "[" }Aurora Viewer](em inglês)https://aurora-viewer.org)
+
+    Texto
+    Um bloco de código simples
+    ```
+notecard-lsl-demo =
+    # LSL em um cartão de nota
+    Use o botão **LSL** botão, em seguida, digite como no editor de script.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = Muitos documentos estão sendo carregados. Tente novamente em um momento.
 inventory-preview-timeout = Carregando o documento expirou. Reabra-o para tentar novamente.
 notecard-text-too-large = Um notecard não pode exceder 65.536 bytes de texto.
@@ -2574,6 +2605,18 @@ app-graphics-start-memory-full =
 
     Registo deste arranque: { $log }
 app-graphics-start-failed-title = Aurora Viewer não pode iniciar
+app-graphics-start-failed =
+    O Aurora Viewer não conseguiu inicializar uma placa gráfica para apresentar a janela.
+
+    O que pode tentar:
+    • actualize o controlador da placa gráfica;
+    • se o computador tiver duas placas gráficas, confirme que ambas estão activadas no Gestor de Dispositivos e que o monitor está ligado à placa que deve apresentar a imagem;
+    • num portátil com gráficos AMD e NVIDIA, actualize o controlador AMD a partir do site da AMD e actualize também o controlador NVIDIA;
+    • reinicie o computador.
+
+    Detalhes: { $e }
+
+    Registo deste arranque: { $log }
 app-gpu-stall-title = Aurora Viewer: a placa gráfica não está respondendo
 app-gpu-stall = A placa gráfica não terminou uma imagem para { $seconds } the card is logged out, Aurora will reset itself automatically. If you are logged in to your account, you will see a message that says: “Aurora has been logged off” or “Aura is not logged on”. If you’re logged into your account again, you’ll see this message: “The graphics card driver has been reset.” If you have logged-out from your account before, you may see the following message:“The grafica driver has not been resettled yet.” If it is, you can try the following steps:• Yes;• Keep waiting?Yes;What to try:• wait a little: Yes keeps waiting; No• at the next start, choose the safe graphics Aurora will offer.What to do:• What to do?What to test:• Apply the following commands:• Restart the computer;• Continue.What do you want to try?What do I need?• What can I do?Why?What should I do:What to check:• Do I need to do now?What can I try:What can i do:How do I fix this?What does I do to fix this problem?What is the solution:What do i do?How do i fix this issue?What are the solutions?What must be done:What should be tried:What are my options:• How to fix it?What I can do:Why do I do this?Which is the best solution?What will I do if I get this problem:•What can be done?What you can do to resolve this issue:• what to do to prevent it? What to try to fix?•What to fix:• Why do I try to repair it?How to do it?When I do it:What
 app-gpu-recovered-title = A placa de vídeo foi redefinida
@@ -2583,6 +2626,14 @@ app-vr-runtime-closed-title = VR software fechado
 app-vr-runtime-closed = Seu software de VR (SteamVR, por exemplo) foi fechado. O Aurora reabriu sua janela sem ele: você permaneceu conectado e o mundo recarrega em um instante.
 app-vr-runtime-closed-at-start = Seu software de VR (SteamVR, por exemplo) foi fechado. O Aurora reabriu sua janela sem ele: você permaneceu conectado e o mundo recarrega em um instante. A VR retorna na próxima inicialização do Aurora. O Aurora carrega seu software de RV a cada inicialização: para interromper isso, desative Preferências › Câmera › VR › Configurar VR na inicialização.
 app-gpu-lost-title = Aurora Viewer: a placa de vídeo foi perdida
+app-gpu-lost =
+    O Aurora deixou de ter acesso à placa gráfica. O controlador pode ter sido reposto porque a apresentação de um fotograma demorou demasiado ou a memória de vídeo esgotou-se. A placa pode também ter sido desligada ou ficar ocupada por outro programa. Ao carregar em OK, a sessão será terminada correctamente e o Aurora fechará.
+
+    O que pode tentar:
+    • actualize o controlador da placa gráfica;
+    • reduza o tamanho das fotografias muito grandes ou a qualidade gráfica;
+    • feche os outros programas que utilizam intensamente a placa gráfica;
+    • no próximo arranque, escolha as definições gráficas seguras propostas pelo Aurora.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = O Aurora ainda não tem um substituto de animação (AO).
 cmdline-mod-use-hover-height-in-appearance = Ajuste a altura do seu avatar em Aparência → Altura do cursor.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = A Aurora recomenda não abrir este link, se ele pedir para você fazer login ou pagar, é muito provável que seja um golpe: nunca forneça sua senha ou informações de pagamento.
@@ -6374,6 +6425,9 @@ region-restart-toast-seconds =
        *[other] segundos
     }. Se você permanecer nesta região quando ele for desligado, você será desconectado.
 region-restart-disconnected = { $region } restarted: a conexão foi fechada.
+region-restart-legacy-text =
+    A região onde se encontra ({ $region }) está prestes a reiniciar.
+    Se permanecer nesta região, a sua sessão será terminada.
 region-restart-legacy-seconds = Segundos até reiniciar
 region-restart-legacy-landmarks = Os meus pontos de referência
 region-restart-legacy-teleport = Teletransporte para Landmark
@@ -10004,6 +10058,10 @@ update-intro = Uma nova versão do Aurora está esperando por você.
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = O que há de novo
+update-demo-notes =
+    • Uma interface mais acolhedora, em inglês e francês.
+    • Melhorias de estabilidade e desempenho.
+    • Instalação verificada com rollback se a inicialização falhar.
 update-downloading = Download em andamento...
 update-transfer = { $downloaded } / { $total } MB
 update-ready = O download está concluído.
@@ -11214,6 +11272,7 @@ marketplace-listings-not-merchant = Se você quiser se tornar um comerciante, pr
 marketplace-listings-create-store = Criar uma loja do Marketplace
 marketplace-listings-error-title = Erros do Marketplace.
 marketplace-listings-error = Se você continuar recebendo esta mensagem, entre em contato com o suporte do Second Life para obter assistência no endereço https://support.secondlife.com
+marketplace-listings-connection-error = O servidor falhou ao conectar. Se você continuar recebendo esta mensagem, entre em contato com o suporte do Second Life para obter assistência em https://support.secondlife.com
 marketplace-listings-connection-error-reason = O Marketplace Listings falhou ao se conectar. { $reason }Se você continuar recebendo esta mensagem, entre em contato com o suporte do Second Life para obter assistência em https://support.secondlife.com
 marketplace-listings-empty-title = Sua pasta Listagens do Marketplace está vazia.
 marketplace-listings-empty = Arraste pastas para esta área para listá-las para venda no Marketplace.
@@ -12207,6 +12266,10 @@ ui-group-create-rating = Conteúdo
 ui-group-create-rating-to-choose = Classificação para escolher
 ui-group-create-you-owner = Você, o proprietário
 ui-group-create-moderate-question = Este grupo contém conteúdo moderado?
+ui-group-create-cost =
+    Criar este grupo custa L${ $cost }.
+    Os grupos precisam de mais de um membro. Caso contrário, são eliminados permanentemente.
+    Convide membros nas próximas 48 horas.
 ui-group-create-refused = Não é possível criar grupo.
 ui-group-create-fee-title = Taxa de criação
 ui-group-create-fee-line = Criar um grupo custa L$ { $cost }.

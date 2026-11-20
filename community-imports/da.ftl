@@ -2596,8 +2596,38 @@ splash-update-installing = Installerer opdateringen…
 splash-update-cache = Rydder cachen…
 splash-update-launching = Starter den nye version…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: kunne ikke initialisere Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Grafikkortet har ikke mere videohukommelse tilbage til Aurora Viewer: et andet program holder den.
+
+    Hvad skal du prøve:
+    • lukke de programmer, der bruger grafikkortet (en anden seer, et spil, en video eller 3D editor), og start Aurora Viewer igen;
+    • på en bærbar computer med to grafikkort, kontrollere, hvilken Aurora Viewer kører på.
+
+    Logfilen for denne start: { $log }
 app-graphics-start-failed-title = Aurora Viewer kan ikke starte
+app-graphics-start-failed =
+    Aurora Viewer kunne ikke åbne et grafikkort for at tegne dets vindue.
+
+    Hvad skal du prøve:
+    • opdatere grafikkort driveren;
+    • på en pc med to grafikkort, skal du kontrollere, at begge er aktiveret i Enhedshåndtering, og at skærmen er tilsluttet det kort, der skal tegne;
+    • på en bærbar computer med AMD og NVIDIA grafik, opdatere AMD driveren fra AMDs hjemmeside samt NVIdia driver;
+    • genstart pc'en.
+
+    Detaljer: { $e }
+
+    Logfilen for denne start: { $log }
 app-gpu-stall-title = Aurora Viewer: grafikkortet reagerer ikke
+app-gpu-stall =
+    Grafikkortet har ikke afsluttet et billede for { $seconds } sekunder. Aurora virker stadig (verden, lyden, chatten fortsætter), men der kan ikke trækkes noget, før kortet svarer igen.
+
+    Hvad skal du prøve:
+    • vent lidt: en grafik driver, der nulstiller sig selv kan tage flere sekunder;
+    • opdatere grafikkort driveren;
+    • slukke overlejringer af andre programmer (Discord, Steam, MSI Afterburner...);
+    • ved næste start, skal du vælge den sikre grafik, som Aurora vil tilbyde.
+
+    Ja, det bliver ved med at vente. Ingen lukker Aurora (du er logget ud korrekt).
 app-gpu-recovered-title = Grafikkortet er blevet nulstillet
 app-gpu-recovered = Grafikkortets driver blev nulstillet (et billede tog for lang tid at tegne, dets videohukommelse var fuld, eller et andet program tog kortet).Aurora genåbnede sit vindue på kortet igen: du forblev logget ind, og verden genindlæses i et øjeblik.
 app-gpu-recovered-safe = Grafikkortets driver blev nulstillet igen inden for få minutter. Aurora genåbnede sit vindue med den sikre grafik (Potato-niveauet), så det ikke sker igen: du forblev logget ind. Dine grafikindstillinger bevares: loginskærmen tilbyder dem igen.
@@ -6397,6 +6427,9 @@ region-restart-toast-seconds =
        *[other] sekunder
     }Hvis du bliver i dette område, når det lukkes ned, vil du blive logget ud.
 region-restart-disconnected = { $region } genstartet: forbindelsen blev lukket.
+region-restart-legacy-text =
+    Den region, du befinder dig i ({ $region }), er ved at genstarte.
+    Hvis du bliver i regionen, bliver du logget ud.
 region-restart-legacy-seconds = Sekunder indtil genstart
 region-restart-legacy-landmarks = Mine seværdigheder
 region-restart-legacy-teleport = Teleportér til Landmark
@@ -11238,6 +11271,7 @@ marketplace-listings-not-merchant = Hvis du vil blive forhandler, skal du oprett
 marketplace-listings-create-store = Opret en Marketplace-butik
 marketplace-listings-error-title = Markedspladsfejl.
 marketplace-listings-error = Hvis du fortsat modtager denne meddelelse, skal du kontakte Second Life-support for at få hjælp på https://support.secondlife.com eller ringe til 800-247-1234.
+marketplace-listings-connection-error = Der kunne ikke oprettes forbindelse. Hvis du fortsætter med at modtage denne besked, skal du kontakte Second Life support for hjælp på https://support.secondlife.com
 marketplace-listings-connection-error-reason = Der kunne ikke oprettes forbindelse til Marketplace Listings. { $reason }Hvis du fortsat modtager denne meddelelse, bedes du kontakte Second Life support for at få hjælp på https://support.secondlife.com
 marketplace-listings-empty-title = Din mappe med markedspladsopslag er tom.
 marketplace-listings-empty = Træk mapper til dette område for at vise dem til salg på markedspladsen.
@@ -12231,6 +12265,10 @@ ui-group-create-rating = Indhold
 ui-group-create-rating-to-choose = Vælg hvilken rating du vil vælge
 ui-group-create-you-owner = Du, ejeren
 ui-group-create-moderate-question = Indeholder denne gruppe moderat indhold?
+ui-group-create-cost =
+    Det koster L${ $cost } at oprette denne gruppe.
+    En gruppe med kun ét medlem slettes permanent.
+    Invitér medlemmer inden for 48 timer.
 ui-group-create-refused = Kan ikke oprette gruppe.
 ui-group-create-fee-title = Opretelsesgebyr
 ui-group-create-fee-line = Oprettelse af en gruppe koster L$ { $cost }.

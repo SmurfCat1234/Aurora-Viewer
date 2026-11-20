@@ -2596,7 +2596,27 @@ splash-update-installing = புதுப்பித்தலை நிறு�
 splash-update-cache = தற்காலிக நினைவகம் துடைக்கப்படுகிறது...
 splash-update-launching = புதிய பதிப்பு துவக்கப்படுகிறது...
 app-aurora-viewer-unable-to-initialize-metal = { "ஆரோரா காட்சி: மெட்டல்: " }{ $e }
+app-graphics-start-memory-full =
+    ஆரோரா பார்வையாளருக்கு வரைகலை அட்டையில் வீடியோ நினைவகம் இல்லை: வேறு நிரல் அதை வைத்திருக்கிறது.
+
+    என்ன முயற்சிக்க வேண்டும்:
+    வரைகலை அட்டை பயன்படுத்தும் நிரல்களை மூடு (வேறு பார்வையாளர், விளையாட்டு, வீடியோ அல்லது 3D தொகுப்பாளர்), பின்னர் ஆரோரா பார்வையாளரை மீண்டும் துவக்கு;
+    இரண்டு வரைகலை அட்டைகள் கொண்ட லேப்டாப்பில், எந்த ஆரோரா பார்வையாளர் இயக்குகிறது என்பதை சரிபார்க்கவும்.
+
+    இந்த துவக்கத்தின் பதிவு: { $log }
 app-graphics-start-failed-title = ஆரோரா காட்சியை துவக்க முடியவில்லை
+app-graphics-start-failed =
+    ஆரோரா பார்வையாளர் சாளரத்தை வரைய ஒரு வரைகலை அட்டை திறக்க முடியவில்லை.
+
+    என்ன முயற்சிக்க வேண்டும்:
+    வரைகலை அட்டை இயக்கியை புதுப்பிக்கவும்
+    இரண்டு வரைகலை அட்டைகள் கொண்ட PC யில், சாதன மேலாளரில் இருவரும் செயல்படுத்தப்பட்டுள்ளதா என சரிபார்க்கவும், மற்றும் திரை அட்டைக்குள் இணைக்கப்பட்டுள்ளது என்பதை பார்க்கவும்;
+    • AMD மற்றும் NVIDIA வரைகலைகளுடன் ஒரு லேப்டாப்பில், AMD இன் வலைத்தளத்திலிருந்து AMD இயக்கியை புதுப்பிக்கவும் NVIdia இயக்கியும்;
+    PC யை மறுநிகழ்வு செய்.
+
+    விவரங்கள்: { $e }
+
+    இந்த துவக்கத்தின் பதிவு: { $log }
 app-gpu-stall-title = ஆரோரா பார்வையாளர்: வரைகலை அட்டை பதில் அளிக்கவில்லை
 app-gpu-stall = பிம்பத்தை முடிக்கவில்லை { $seconds } the card is not responding, you can try to reset it. If Aurora does not respond, you may have to try to restart the computer. If you are logged out, you will see the following message: “Aurora has failed to respond” (or “Aura has failled to respond”). If you have logged in, you should be able to start Aurora again. If the card does not answer, you must try to log out. If it does, you need to reboot the computer and try again. When you do this, Aurora will ask you if you want to continue playing.What to doWhat to try:• Keep waiting? Yes keep waiting; NoWhat to attempt:• Restart Aurora;• Apply changes.What you can do:• Continue playing? Yes Keep playing;No Keep watching? Yes waits for the next time.What can you do:What to test:What can I do:Why?What to tell:What do I do?What do you do? What to do: What to try?What can we do?Why do I try?Which is the best solution?What is the most common problem?What are the possible solutions?What should I do to avoid problems?What does Aurora do?How to fix it?What you should try:What you cannot do:what to do?what to try!What to avoid:What should you do to prevent problems?When you try to resolve this issue, you might find that Aurora is not working properly.What do we try:Which things can be done:What are you trying to do to fix this problem? What can you try? What do you try: What do I want to do, what do you want?What will you do when you try it? What you can help?
 app-gpu-recovered-title = வரைகலை அட்டை மீட்டமைக்கப்பட்டதுName
@@ -2606,6 +2626,14 @@ app-vr-runtime-closed-title = VR மென்பொருள் மூடப்�
 app-vr-runtime-closed = உங்கள் VR மென்பொருள் (உதாரணமாக, ஸ்டைம்VR) மூடப்பட்டது. ஆரோரா அதன் சாளரத்தை அதை இல்லாமல் மீண்டும் திறந்தது: நீங்கள் உள்ளே நுழைந்திருந்தீர்கள், உலகம் ஒரு நிமிடத்தில் மீளேற்றப்படுகிறது. அடுத்த ஆரோராவின் துவக்கத்தில் VR திரும்ப வருகிறது.
 app-vr-runtime-closed-at-start = உங்கள் VR மென்பொருள் (SteamVR, உதாரணமாக) மூடப்பட்டது. ஆரோரா அதன் சாளரத்தை அதை இல்லாமல் மீண்டும் திறந்தது: நீங்கள் உள்ளே நுழைந்திருந்தீர்கள், உலகம் ஒரு நிமிடத்தில் மீளேற்றப்படுகிறது. அடுத்த ஆரோராவின் துவக்கத்தில் VR திரும்ப வருகிறது. ஒவ்வொரு துவக்கம் போதும் ஆரோரம் உங்கள் VR மென்பொருளை ஏற்றுகிறது: இதை நிறுத்த, முன்னுரிமைகள் › கேமரா › VR › துவக்கும் போது VR அமைக்கவும் என்பதை முடக்கு.
 app-gpu-lost-title = ஆரோரா காட்சி: வரைகலை அட்டை இழக்கப்பட்டது
+app-gpu-lost =
+    ஆரோராவிற்கு வரைகலை அட்டை வேலை செய்யாமல் போய்விட்டது: அதன் இயக்கி மீட்டமைக்கப்பட்டுள்ளது (படத்தை வரைய மிகவும் நேரம் பிடித்தது, அல்லது அதன் வீடியோ நினைவகம் நிரம்பியிருந்தது), அல்லது அட்டை நீக்கப்பட்டது அல்லது வேறு நிரல் எடுத்துக் கொண்டது. எதையும் வரைய முடியாது: நீங்கள் சரி என்று அழுத்தும்போது ஆரோரா மூடும் (நீங்கள் சரியாக வெளியேறிவிட்டீர்கள்).
+
+    என்ன முயற்சிக்க வேண்டும்:
+    வரைகலை அட்டை இயக்கியை புதுப்பிக்கவும்
+    மிகப் பெரிய புகைப்படங்களின் அளவை குறைக்கவும் அல்லது வரைகலை தரத்தை குறைக்கலாம்.
+    வரைகலை அட்டைகளை அதிகம் பயன்படுத்தும் மற்ற நிரல்களை மூடு;
+    அடுத்த துவக்கத்தில், ஆரோரா வழங்கும் பாதுகாப்பான வரைகலையை தேர்ந்தெடு.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = ஆரோராவுக்கு இன்னும் அசைவூட்ட மேல்நோக்கி (AO) இல்லை.
 cmdline-mod-use-hover-height-in-appearance = உங்கள் உருவத்தின் மேலேற்ற உயரத்தை தோற்றம் → மேலேற்று உயரம் மூலம் மாற்றவும்.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = இந்த இணைப்பை திறக்க வேண்டாம் என்று ஆரோரா அறிவுறுத்துகிறது. இது உங்களை நுழைய அல்லது செலுத்த கேட்கும்போது, அது ஒரு மோசடியாக இருக்கலாம்: உங்கள் கடவுச்சொல்லை அல்லது செலுத்து தகவல்களை அவர்களுக்கு கொடுக்க வேண்டாம்.
@@ -6397,6 +6425,9 @@ region-restart-toast-seconds =
        *[other] நொடிகள்
     }. நீங்கள் இந்த பகுதியில் நின்றுவிட்டால், அது மூடப்படும் போது, நீங்கள் வெளியேறப்படுவீர்கள்.
 region-restart-disconnected = { $region } மீண்டும் தொடங்கப்பட்டது: இணைப்பு மூடப்பட்டது.
+region-restart-legacy-text =
+    நீங்கள் தற்போது இருக்கும் பகுதி ({ $region }) விரைவில் மறுதொடக்கம் செய்யப்படும்.
+    இந்தப் பகுதியில் தங்கினால், உங்கள் அமர்வு முடிவடையும்.
 region-restart-legacy-seconds = மறுநிகழ்வு வரை நொடிகள்
 region-restart-legacy-landmarks = என் அடையாளங்கள்
 region-restart-legacy-teleport = குறிக்கோளுக்கு தொலைநகர்த்தி
@@ -6729,6 +6760,7 @@ build-ui-texture-repeats-meter = மீட்டர்
 ui-options-network-and-cache = பிணையமும் தற்காலிக சேமிப்பும்
 ui-options-web-browser = வலை உலாவி
 ui-options-browser-home-page = உலாவி இல்லப் பக்கம்
+ui-options-browser-home-page-help = இணைய உலாவி கருவிப்பட்டை பட்டன் திறக்கும் பக்கம். காலி: https://duckduckgo.com.
 ui-options-browser-javascript = ஜாவாஸ்கிரிப்ட்
 ui-options-browser-javascript-help = உள்ளமைந்த உலாவியில் ஜாவாஸ்கிரிப்ட், பொருள்கள் மற்றும் தொகுப்புகளின் ஊடகம், பண்பு மற்றும் தேடல். முடக்கப்பட்டது: தேடல் மற்றும் பல பக்கங்கள் இப்போது வேலை செய்யாது. பின் திறக்கப்படும் பக்கங்களுக்கு பொருந்தும்.
 ui-options-browser-behavior = விருப்பமான உலாவி
@@ -10026,6 +10058,10 @@ update-intro = ஆரோராவின் புதிய பதிப்பு
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = புதியது என்ன
+update-demo-notes =
+    • ஆங்கிலமும் பிரெஞ்சும் கலந்த ஒரு நன்கு அறியப்பட்ட இடைமுகம்.
+    நிலைத்தன்மை மற்றும் செயல்திறன் மேம்பாடுகள்.
+    துவக்கத்தில் தோல்வி ஏற்பட்டால், திரும்பச் செல்லும் நிலையுடன் நிறுவப்பட்டதை உறுதிசெய்.
 update-downloading = பதிவிறக்குகிறது
 update-transfer = { $downloaded } / { $total } MB
 update-ready = பதிவிறக்கம் முடிந்தது
@@ -11726,6 +11762,11 @@ region-int-return-estate = இந்த நிலத்தின் ஒவ்வ
 region-int-return-cap = பொருள்கள் தங்கள் உரிமையாளர்களின் பட்டியலுக்கு திரும்பிச் செல்கின்றன. இதை செயல் நீக்க முடியாது.
 region-int-return-ok = அவர்களது பொருள்களை திரும்ப பெறு
 region-int-restart-title = மறுநிகழ்வு { $region }?
+region-int-restart-text =
+    { $count ->
+        [one] இங்குள்ளவர்களுக்கு இப்போதே எச்சரிக்கை அனுப்பப்படும். பின்னர் குறிப்பிட்ட இடைவெளிகளில் அது மீண்டும் அனுப்பப்படும். பகுதி மறுதொடக்கம் செய்யும்போது அதில் இருப்பவர்களின் அமர்வு முடிவடையும்.
+       *[other] இங்குள்ள { $count } குடியிருப்பாளர்களுக்கு இப்போதே எச்சரிக்கை அனுப்பப்படும். பின்னர் குறிப்பிட்ட இடைவெளிகளில் அது மீண்டும் அனுப்பப்படும். பகுதி மறுதொடக்கம் செய்யும்போது அதில் இருப்பவர்களின் அமர்வு முடிவடையும்.
+    }
 region-int-delay = தாமதம்
 region-int-delay-other = மற்றவை
 region-int-delay-cap = மற்றவை: 15 செ.மீ முதல் 1 மணி நேரம் வரை. மீண்டும் தொடங்குதல் முடிவிற்கு வரையில் ரத்து செய்யப்படலாம், இங்கே அல்லது தலைப்புப் பெட்டியில் இருந்து.
@@ -13496,6 +13537,29 @@ bridge-object-info-loading = ஆரோரா பாலத்தின் மூ�
 bridge-object-info-region = பொருள் தகவல் உங்கள் தற்போதைய பகுதியில் உள்ள பொருளுக்கு மட்டுமே கிடைக்கும்.
 bridge-object-info-failed = பொருள் தகவல் கிடைக்கவில்லை: { $reason }
 bridge-object-info-group-owned = குழு சொத்து
+bridge-object-info-result =
+    பொருளின் தகவல் “{ $name }”:
+    பொருள் அடையாள எண்: { $object }
+    விளக்கம்: { $description }
+    முதன்மை prim: { $root }
+    prim எண்ணிக்கை: { $prims }
+    நிலத்தின் மீதான தாக்கம்: { $impact }
+    சரக்குப் பட்டியல் உருப்படிகள்: { $inventory }
+    வேகம்: { $velocity } m/s
+    இடம்: { $position } ({ $distance } m)
+    சுழற்சி: { $rotation } ({ $degrees }°)
+    கோண வேகம்: { $angular } rad/s
+    உருவாக்கியவர்: { $creator }
+    உரிமையாளர்: { $owner }
+    முந்தைய உரிமையாளர்: { $previous }
+    உலகில் வைத்தவர்: { $rezzer }
+    குழு: { $group }
+    உருவாக்கிய நேரம்: { $created }
+    உலகில் வைத்த நேரம்: { $rezzed }
+    பாதை கண்டறிதல் வகை: { $pathfinding }
+    இணைப்புப் புள்ளி: { $attachment }
+    தற்காலிகமாக இணைக்கப்பட்டது: { $temporary }
+    உங்களின் தற்போதைய இடம்: { $observer }
 bridge-query-timeout = பாலத்தின் தேவையான தகவல் சரியாக திரும்பவில்லை. மீண்டும் முயற்சி செய்யவும்.
 bridge-query-interrupted = தகவல் கோரிக்கை ஒரு பகுதி அல்லது பாலத்தின் இணைப்பு மாற்றத்தால் தடை செய்யப்பட்டது. மீண்டும் முயற்சி செய்யவும்.
 ao-bootstrap-interrupted = முடிக்கப்படாத AO இறக்குமதி # ஆரோராவில் ஏற்கனவே உள்ளது. மீண்டும் முயற்சிக்கும் முன் அதை பட்டியலில் சரிபார்க்கவும்.

@@ -2584,7 +2584,27 @@ splash-update-installing = Güncelleme yükleniyor...
 splash-update-cache = Önbellek temizleniyor...
 splash-update-launching = Yeni sürüm başlatılıyor...
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Görüntüleyici: Metal'i başlatamadı: " }{ $e }
+app-graphics-start-memory-full =
+    Grafik kartında Aurora Viewer için boş video belleği kalmadı. Belleği başka bir program kullanıyor.
+
+    Deneyebileceğiniz adımlar:
+    • grafik kartını kullanan diğer görüntüleyicileri, oyunları, video veya 3B düzenleyicileri kapatıp Aurora Viewer’ı yeniden başlatın;
+    • dizüstü bilgisayarda iki grafik kartı varsa Aurora Viewer’ın hangisini kullandığını kontrol edin.
+
+    Bu başlatmanın günlüğü: { $log }
 app-graphics-start-failed-title = Aurora Görüntüleyici başlatılamadı
+app-graphics-start-failed =
+    Aurora Viewer penceresini görüntülemek için grafik kartını başlatamadı.
+
+    Deneyebileceğiniz adımlar:
+    • grafik kartı sürücüsünü güncelleyin;
+    • bilgisayarda iki grafik kartı varsa ikisinin de Aygıt Yöneticisi’nde etkin olduğunu ve monitörün görüntüyü oluşturacak karta bağlı olduğunu kontrol edin;
+    • dizüstü bilgisayarda AMD ve NVIDIA grafik donanımı varsa AMD sürücüsünü AMD’nin sitesinden, NVIDIA sürücüsünü de kendi sitesinden güncelleyin;
+    • bilgisayarı yeniden başlatın.
+
+    Ayrıntılar: { $e }
+
+    Bu başlatmanın günlüğü: { $log }
 app-gpu-stall-title = Aurora Görüntüleyici: grafik kartı cevap vermiyor
 app-gpu-stall = Grafik kartı için bir görüntü tamamlanmadı { $seconds } the card responds again, Aurora will reset itself. If you are logged in to your account, you will see the following message: “Aurora is not able to draw any graphics” or “The graphics driver has been reset”. If you have a graphics card that is not connected to the internet, you can use the following steps to try to reset the card:• restart the computer;• reboot the PC;• check the graphics cards drivers;• change the settings of the operating system (Windows 10/8/7/Vista/XP).What to doWhat to try:• Keep waiting? Yes keep waiting; NoWhat to attempt:• reset your graphics controller.What to test:• Restart the computer.What can be done:• start Aurora again.What should I do:• What to do?What to avoid:• what to try?• what can I do?• What can I try?What can I help?What do I do if Aurora fails?Why does Aurora fail?What should you do:What can you do?Which can you try:What do you try?How to fix it?What you can do:Which things do you do to fix the problem?What are you trying to do: What to try!What to say:What to think about:What you should do:How to do it:What should be done?What must be done to fix this problem:What are the solutions?What is the solution?What does it mean:What does Aurora do? What can be tried:What is it? What do I try:Why should I try it?When to try it:When do I attempt to reboot Aurora?What could I doWhy do I want to do this?
 app-gpu-recovered-title = Grafik kartı geri yüklendi
@@ -2594,6 +2614,14 @@ app-vr-runtime-closed-title = VR yazılımı kapatıldı
 app-vr-runtime-closed = VR yazılımınız (örneğin SteamVR) kapatıldı. Aurora penceresini bu yazılım olmadan yeniden açtı: giriş yapmış kaldınız ve dünya bir an içinde yeniden yüklendi. VR, Aurora'nın bir sonraki başlatılmasında geri döner.
 app-vr-runtime-closed-at-start = VR yazılımınız (örneğin SteamVR) kapatıldı. Aurora penceresini bu yazılım olmadan yeniden açtı: giriş yapmış kaldınız ve dünya bir an içinde yeniden yüklendi. VR, Aurora'nın bir sonraki başlatılmasında geri dönüyor. Aurora her başlatmada VR yazılımı yükler: bunu durdurmak için, Seçenekler › Kamera › VR › Başlatma sırasında VR Kurulumunu Kapat seçeneğini kapatınız.
 app-gpu-lost-title = Aurora Görüntüleyici: grafik kartı kayboldu
+app-gpu-lost =
+    Aurora grafik kartına erişimini kaybetti. Bir görüntüyü çizmek çok uzun sürmüş veya video belleği dolmuş ve sürücü sıfırlanmış olabilir. Kart çıkarılmış ya da başka bir program tarafından kullanıma alınmış da olabilir. Tamam’a bastığınızda Aurora oturumu düzgünce kapatıp çıkacaktır.
+
+    Deneyebileceğiniz adımlar:
+    • grafik kartı sürücüsünü güncelleyin;
+    • çok büyük fotoğrafların boyutunu küçültün veya grafik kalitesini düşürün;
+    • grafik kartını yoğun kullanan diğer programları kapatın;
+    • sonraki açılışta Aurora’nın önereceği güvenli grafik ayarlarını seçin.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora'nın henüz bir animasyon üstatıcısı (AO) yoktur.
 cmdline-mod-use-hover-height-in-appearance = Avatarınızın hover yüksekliğini Appearance → Hover Height aracılığıyla ayarlayabilirsiniz.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora bu bağlantıyı açmamayı tavsiye eder. Eğer size giriş ya da ödeme yapmanız istenirse, büyük olasılıkla bir dolandırıcılıktır: parolanızı veya ödeme bilgilerinizi asla vermeyin.
@@ -3597,6 +3625,7 @@ ui-options-remove-aurora-button = Kaldır…
 uninstall-title = Aurora'yı bu bilgisayardan silmek ister misiniz?
 uninstall-text = Aurora, kendi dizinlerinin dışında kaydettiği aşağıdakileri kaldırır. Bu, programdan çıkıncaya kadar çalışır, fakat kaydedilmiş şifreler unutulur ve önbellek yeniden indirilir. Başka bir programı açacak bir bağlantı yöneticisi olduğu gibi bırakılır.
 uninstall-confirm = Kaldır
+uninstall-links = Bağlantı yöneticisi secondlife://, hop:// ve x-grid-location-info://
 uninstall-notification-id = Windows bildirim kimliği
 uninstall-cache-key = Önbellek anahtarı, kimlik bilgileri deposunda
 uninstall-password = Şifre kaydedildi { $user } ({ $grid }), kimlik kaydı deposunda
@@ -13494,6 +13523,29 @@ bridge-object-info-loading = Aurora Köprüsü'nden nesne bilgisi alınıyor...
 bridge-object-info-region = Nesne bilgisi sadece mevcut bölgenizdeki bir nesne için mevcuttur.
 bridge-object-info-failed = Nesne bilgisi mevcut değil: { $reason }
 bridge-object-info-group-owned = Grup sahibi
+bridge-object-info-result =
+    Nesne bilgileri “{ $name }”:
+    Nesne kimliği: { $object }
+    Açıklama: { $description }
+    Kök prim: { $root }
+    Prim sayısı: { $prims }
+    Arazi etkisi: { $impact }
+    Envanter öğeleri: { $inventory }
+    Hız: { $velocity } m/s
+    Konum: { $position } ({ $distance } m)
+    Dönüş: { $rotation } ({ $degrees }°)
+    Açısal hız: { $angular } rad/s
+    Oluşturan: { $creator }
+    Sahibi: { $owner }
+    Önceki sahibi: { $previous }
+    Dünyaya yerleştiren: { $rezzer }
+    Grup: { $group }
+    Oluşturulma zamanı: { $created }
+    Dünyaya yerleştirilme zamanı: { $rezzed }
+    Yol bulma türü: { $pathfinding }
+    Bağlantı noktası: { $attachment }
+    Geçici olarak takılı: { $temporary }
+    Şu anki konumunuz: { $observer }
 bridge-query-timeout = Köprü istenen bilgiyi zamanında geri vermedi. Tekrar deneyin.
 bridge-query-interrupted = Bilgi talebi bölge veya köprü bağlantı değişimi nedeniyle kesildi. Tekrar deneyelim.
 ao-bootstrap-interrupted = #Aurora'da bitmemiş bir AO ihracatı zaten mevcuttur. Yeniden denemeden önce envanterinizi inceleyin.

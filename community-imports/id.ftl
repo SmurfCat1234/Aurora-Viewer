@@ -1720,6 +1720,37 @@ notecard-markdown-help = Bantuan Markdown
 notecard-markdown-help-code = Gunakan blok ```lsl'' untuk warna editor skrip. Dalam Edit: Tab menonjol, Shift+Tab keluar, Enter mempertahankan indentasi LSL dan kurung penutupan disesuaikan dengan pembuka mereka. Ctrl+K komentar baris LSL yang dipilih; Ctrl + Shift + K mengatur komentar blok. Teks yang ditempel tetap tidak berubah.
 notecard-markdown-help-intro = Tombol menyunting sumber dan pratinjau mengikuti perubahan Anda. Klik lagi untuk menghapus gaya, judul, daftar atau kutipan. Ctrl+Z membatalkan, Ctrl + Y melakukannya kembali.
 notecard-markdown-help-extra = Judul: # sampai ### Pisahkan paragraf dengan baris kosong. Untuk tabel, pisahkan kolom dengan | dan tambahkan baris judul seperti | --- | ---. Gambar menampilkan teks alternatif mereka; HTML tetap teks. Lampiran dipertahankan saat disimpan (Ctrl+S).
+notecard-markdown-demo =
+    # Selamat datang di Aurora
+    Sebuah kartu catatan dengan **tebal**, *italic*, ~~garis putus~~ dan `code`.
+
+    ## Catatan Anda
+    - Pertahankan teks asli saat bertukar tampilan.
+    - Simpan dari tampilan apapun dengan **Ctrl+S**.
+
+    > Item tertanam tetap menjadi bagian dari notecard.
+
+    { "[" }Aurora Viewer](https://aurora-viewer.org)
+
+    ```text
+    Blok kode biasa
+    ```
+notecard-lsl-demo =
+    # LSL dalam kartu catatan
+    Gunakan **LSL** tombol, lalu ketik sebagai dalam editor skrip.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = Terlalu banyak dokumen sedang dimuat. Coba lagi nanti.
 inventory-preview-timeout = Memuat dokumen tertunda. Buka lagi untuk mencoba lagi.
 notecard-text-too-large = Sebuah notecard tidak dapat melebihi 65.536 byte teks.
@@ -2553,7 +2584,27 @@ splash-update-installing = Memasang pembaruan...
 splash-update-cache = Mengosongkan cache...
 splash-update-launching = Memulai versi baru...
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: tidak dapat menginitialisasi Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Kartu grafis tidak memiliki memori video yang tersisa untuk Aurora Viewer: program lain menyimpannya.
+
+    Apa yang harus dicoba:
+    • tutup program yang menggunakan kartu grafis (penonton lain, permainan, video atau penyunting 3D), lalu mulai Aurora Viewer lagi;
+    • pada laptop dengan dua kartu grafis, periksa mana Aurora Viewer berjalan di.
+
+    Log dari awal ini: { $log }
 app-graphics-start-failed-title = Aurora Viewer tidak dapat dimulai
+app-graphics-start-failed =
+    Aurora Viewer tidak dapat membuka kartu grafis untuk menggambar jendelanya.
+
+    Apa yang harus dicoba:
+    • update driver kartu grafis;
+    • pada PC dengan dua kartu grafis, periksa apakah keduanya diaktifkan dalam Manajer Perangkat, dan bahwa monitor tersambung ke kartu yang harus menggambar;
+    • pada laptop dengan grafik AMD dan NVIDIA, update driver AMD dari situs web AMD serta driver NVIdia;
+    • Mulai ulang PC.
+
+    Rincian: { $e }
+
+    Log dari awal ini: { $log }
 app-gpu-stall-title = Aurora Viewer: kartu grafis tidak menanggapi
 app-gpu-stall = Kartu grafis belum menyelesaikan gambar untuk { $seconds } the card responds again, Aurora will reset itself. If you are logged in to your account, you will see this message: “Aurora is not running properly” or “The graphics card driver has been reset”. If you have a computer with a Windows 10 system, you can use the following steps to reset the graphics driver:• restart the computer;• reboot the PC;• check for errors in the operating system;• install the latest version of the driver;• try to restart it again. If Aurora does not respond, follow these steps:What to doWhat to try:• Keep waiting? Yes keep waiting; NoWhy does Aurora not respond?Why is Aurora not replying?What to attempt:• Restart the computer.What to avoid:• Do I need to wait? What to do?What do I need:• What to try?• What do I do?• Getting startedHow to get startedHow do I get started?What can I do:What can i do?Which to try to do:• How to fix it?• How do I fix it.What can be done:• Waiting? Yes Keep awaiting?Yes Keep waiting? Yes No Keep watching?No Keep expecting?NoWhat to test:•Keep waiting!Yes Apply!What to check:• Continue waiting?Yes NoWhat to look for:• Why do I wait?What should I try?What is the solution:What do you do:Why do I try to resolve this issue?What does I doWhy don’t I try:What should you do?How to fix this problem?What you can do:How to do it?What I can do? What do you try:Which can I
 app-gpu-recovered-title = Kartu grafis telah diset ulang
@@ -6355,6 +6406,9 @@ region-restart-toast-seconds =
        *[other] detik
     }Jika kau tetap di wilayah ini saat itu ditutup, kau akan terdeteksi.
 region-restart-disconnected = { $region } restart: sambungan ditutup.
+region-restart-legacy-text =
+    Region tempat Anda berada sekarang ({ $region }) akan segera dimulai ulang.
+    Jika Anda tetap di region ini, Anda akan keluar dari akun secara otomatis.
 region-restart-legacy-seconds = Detik sampai restart
 region-restart-legacy-landmarks = Landmark-ku
 region-restart-legacy-teleport = Teleport ke Landmark
@@ -12190,6 +12244,10 @@ ui-group-create-rating = Isi
 ui-group-create-rating-to-choose = Penilaian untuk dipilih
 ui-group-create-you-owner = Kau, pemilik
 ui-group-create-moderate-question = Apakah kelompok ini berisi konten Moderat?
+ui-group-create-cost =
+    Pembuatan grup ini dikenai biaya L${ $cost }.
+    Grup harus memiliki lebih dari satu anggota. Jika tidak, grup akan dihapus secara permanen.
+    Undang anggota dalam waktu 48 jam.
 ui-group-create-refused = Tidak dapat membuat grup.
 ui-group-create-fee-title = Biaya penciptaan
 ui-group-create-fee-line = Membuat grup membutuhkan biaya L$ { $cost }.

@@ -2596,7 +2596,27 @@ splash-update-installing = Memasang kemaskini...
 splash-update-cache = Membuang cache...
 splash-update-launching = Memulakan versi baru...
 app-aurora-viewer-unable-to-initialize-metal = { "Pelihat Aurora: tidak dapat memulakan Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Kad grafik tidak mempunyai memori video yang tinggal untuk Pelihat Aurora: program lain memegangnya.
+
+    Apa yang perlu dicuba:
+    • tutup program yang menggunakan kad grafik (pelihat lain, permainan, video atau penyunting 3D), kemudian mulakan Pelihat Aurora lagi;
+    • pada laptop dengan dua kad grafik, semak mana satu Aurora Viewer berjalan pada.
+
+    Log permulaan ini: { $log }
 app-graphics-start-failed-title = Pelihat Aurora tidak dapat dimulakan
+app-graphics-start-failed =
+    Pelihat Aurora tidak dapat membuka kad grafik untuk melukis tetingkapnya.
+
+    Apa yang perlu dicuba:
+    • kemaskini pemacu kad grafik;
+    • pada PC dengan dua kad grafik, semak sama ada kedua-duanya dibenarkan dalam Pengurus Peranti, dan monitor disambungkan ke kad yang patut dilukis;
+    • pada laptop dengan grafik AMD dan NVIDIA, kemaskini pemacu AMD dari laman web AMD serta pemacu NVIdia;
+    • mulakan semula PC.
+
+    Perincian: { $e }
+
+    Log permulaan ini: { $log }
 app-gpu-stall-title = Pelihat Aurora: kad grafik tidak menjawab
 app-gpu-stall = Kad grafik tidak selesaikan imej untuk { $seconds } the card is not responding, you can try to reboot it. If Aurora does not respond, you should try to restart it. When you do this, you will see a message: “Aurora has failed to start” or “Aura is not running properly”. This message shows that Aurora is not working properly. You can try the following:• restart Aurora;• restarts Aurora; • restarts the card;• reboots Aurora; Keep waiting? Yes keeps waiting; No closes Aurora (you are logged out properly). What to do:• Keep…What to do? Keep wait? Yes Keep awaiting; No opens Aurora. What to try:• What to avoid?What to try?What do you do?What can you do:What to avoid:• Do you want to continue playing? Yes do you want?What you can do: Keep watching?Yes do you?What should you do!What to attempt:• Wait? Yes wait; No Keep.What to test:• Why? Why?Why?What is wrong?What does it mean?What are the possible causes of this problem?What must be done?What may be the solution?What could be done:•What to fix?What might be done to prevent this?What cannot be done.What can be done for:What can I do?• What can I try? What can be made?What will I do:Which can I help?What would I do if I get this problem:What should I doWhat to prove:What do I do to prevent it?What I can do?Which is the best way to fix this problem.What do we do?How to fix it? What to fix:• How to fix the issue?What have
 app-gpu-recovered-title = Kad grafik telah diset semula
@@ -2606,6 +2626,14 @@ app-vr-runtime-closed-title = Perisian VR ditutup
 app-vr-runtime-closed = Perisian VR anda (SteamVR, contohnya) telah ditutup. Aurora membuka semula tetingkap tanpa ia: anda tetap log masuk, dan dunia dimuatkan semula dalam masa yang singkat. VR kembali pada permulaan seterusnya Aurora.
 app-vr-runtime-closed-at-start = Perisian VR anda (SteamVR, contohnya) telah ditutup. Aurora membuka semula tetingkap tanpa ia: anda tetap log masuk, dan dunia dimuatkan semula dalam masa seketika. VR kembali pada permulaan seterusnya Aurora. Aurora memuatkan perisian VR anda pada setiap permulaan: untuk menghentikannya, nyahaktifkan Keutamaan › Kamera › VR › Tetapkan VR pada permulaan.
 app-gpu-lost-title = Pelihat Aurora: kad grafik hilang
+app-gpu-lost =
+    Kad grafik berhenti berfungsi untuk Aurora: pemacunya telah diset semula (ia mengambil masa terlalu lama untuk melukis imej, atau memori videonya penuh), atau kad telah dikeluarkan atau diambil oleh program lain. Tiada apa boleh dilukis lagi: Aurora ditutup bila anda tekan OK (anda log keluar dengan betul).
+
+    Apa yang perlu dicuba:
+    • kemaskini pemacu kad grafik;
+    • kurangkan saiz foto yang sangat besar, atau kualiti grafik;
+    • tutup program lain yang menggunakan kad grafik banyak;
+    • pada permulaan seterusnya, pilih grafik selamat yang Aurora akan tawarkan.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora tidak mempunyai penapis animasi (AO) lagi.
 cmdline-mod-use-hover-height-in-appearance = Selaraskan ketinggian hover avatar anda melalui Penampilan → Tinggi Hover.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora mengesyorkan tidak membuka pautan ini. Jika ia meminta anda log masuk atau bayar, ia mungkin penipuan: jangan beri kata laluan atau maklumat pembayaran anda.
@@ -4456,6 +4484,7 @@ ui-options-region-restart-channel = Saluran (473405 secara default)
 ui-options-collisions-in-chat = Berlanggar dalam sembang terdekat
 ui-options-collisions-in-chat-help = Baris dalam sembang berdekatan bila seseorang melanggar anda, mendorong anda dengan skrip atau memukul anda dengan objek.
 ui-options-collisions-report = Beritahu skrip pada saluran
+ui-options-collisions-report-help = Untuk HUD dan skrip: menghantar <key>,<strength>,<type> dari setiap kemalangan di saluran ini.
 ui-options-collisions-channel = Saluran (-25000 secara default)
 ui-options-environment-fade = Kelabu persekitaran
 demo-fountain = Fountain
@@ -10027,6 +10056,10 @@ update-intro = Versi baru Aurora sedang menunggu awak.
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = Apa yang baru
+update-demo-notes =
+    • Antara muka yang lebih mesra, dalam bahasa Inggeris dan Perancis.
+    • Kestabilan dan peningkatan prestasi.
+    • Pemasangan disahkan dengan rollback jika permulaan gagal.
 update-downloading = Muat turun sedang dijalankan...
 update-transfer = { $downloaded } / { $total } MB
 update-ready = Muat turun selesai.

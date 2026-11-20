@@ -6429,6 +6429,9 @@ region-restart-toast-seconds =
        *[other] ثانية
     }إذا بقيت في هذه المنطقة عند إغلاقها، سيتم خروجك من الحساب.
 region-restart-disconnected = { $region } restarted: أُغلق الاتصال.
+region-restart-legacy-text =
+    المنطقة التي توجد فيها الآن ({ $region }) على وشك إعادة التشغيل.
+    إذا بقيت في هذه المنطقة، فسيتم تسجيل خروجك.
 region-restart-legacy-seconds = ثانية إلى إعادة البدء
 region-restart-legacy-landmarks = معالمي
 region-restart-legacy-teleport = النقل عن بعد إلى علامة
@@ -13538,6 +13541,29 @@ bridge-object-info-loading = استعادة معلومات الجسم من خل�
 bridge-object-info-region = لا تتوافر معلومات الجسم إلا بالنسبة للجسم في منطقتك الحالية.
 bridge-object-info-failed = معلومات عن الجسم غير متاحة: { $reason }
 bridge-object-info-group-owned = مملوكة للمجموعة
+bridge-object-info-result =
+    معلومات الكائن “{ $name }”:
+    معرّف الكائن: { $object }
+    الوصف: { $description }
+    عنصر prim الجذري: { $root }
+    عدد عناصر prim: { $prims }
+    الأثر على الأرض: { $impact }
+    عناصر المخزون: { $inventory }
+    السرعة: { $velocity } m/s
+    الموضع: { $position } ({ $distance } m)
+    الدوران: { $rotation } ({ $degrees }°)
+    السرعة الزاوية: { $angular } rad/s
+    المنشئ: { $creator }
+    المالك: { $owner }
+    المالك السابق: { $previous }
+    وضعه في العالم: { $rezzer }
+    المجموعة: { $group }
+    وقت الإنشاء: { $created }
+    وقت الوضع في العالم: { $rezzed }
+    نوع إيجاد المسار: { $pathfinding }
+    نقطة الإرفاق: { $attachment }
+    مرفق مؤقتًا: { $temporary }
+    موضعك الحالي: { $observer }
 bridge-query-timeout = لم يعد الجسر المعلومات المطلوبة في الوقت المناسب، حاول مرة أخرى.
 bridge-query-interrupted = تم قطع طلب المعلومات بسبب تغيير في المنطقة أو اتصال الجسر. حاول مرة أخرى.
 ao-bootstrap-interrupted = هناك استيراد غير مكتمل لـ AO موجود بالفعل في #Aurora. راجعه في المخزون قبل المحاولة مجدداً.

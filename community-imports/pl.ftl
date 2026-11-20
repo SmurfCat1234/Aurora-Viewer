@@ -1720,6 +1720,37 @@ notecard-markdown-help = Markdown help
 notecard-markdown-help-code = Użyj bloku ```lsl dla kolorów edytora skryptów. W Edycji: Tab wciska, Shift+Tab wyciąga, Enter utrzymuje wcięcie LSL i nawiasy zamykające wyrównane z ich otwierającym. Ctrl+K komentuje wybrane linie LSR; Ctrl + Shift + K przełącza komentarz bloku.
 notecard-markdown-help-intro = Kliknij ponownie, aby usunąć styl, nagłówek, listę lub cytat. Ctrl+Z cofa działanie, Ctrl + Y powtarza czynność.
 notecard-markdown-help-extra = Nagłówki: od # do ### Oddzielaj akapity pustą linią. W przypadku tabel, kolumny rozdzielaj znakiem | i dodaj wiersz nagłówka taki jak | --- | ---. Obrazy pokazują ich tekst alternatywny; HTML pozostaje tekstem. Załączniki są zachowywane podczas zapisywania (Ctrl+S).
+notecard-markdown-demo =
+    # Witamy w Aurorze
+    Karta notatek z **pogrubieniem**, *kursywą*, ~~przekreśleniem~~ i `kodem`.
+
+    ## Twoje notatki
+    - Zachowaj oryginalny tekst przy zmianie widoku.
+    - Zapisz w dowolnym widoku za pomocą **Ctrl+S**.
+
+    > Osadzone elementy pozostają częścią karty notatek.
+
+    { "[" }Aurora Viewer](https://aurora-viewer.org)
+
+    ```text
+    Zwykły blok kodu
+    ```
+notecard-lsl-demo =
+    # LSL w notatce
+    Użyj przycisku **LSL** Kliknij przycisk, a następnie wpisz jako w edytorze skryptów.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = Ładuje się zbyt wiele dokumentów. Spróbuj ponownie za chwilę.
 inventory-preview-timeout = Przekroczono limit czasu ładowania dokumentu. Otwórz go ponownie, aby spróbować ponownie.
 notecard-text-too-large = Notecard nie może przekraczać 65,536 bajtów tekstu.
@@ -2569,7 +2600,27 @@ splash-update-installing = Instalowanie aktualizacji…
 splash-update-cache = Czyszczenie pamięci podręcznej...
 splash-update-launching = Uruchamianie nowej wersji…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: nie można zainicjować Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Dla Aurora Viewer zabrakło pamięci karty graficznej. Zajmuje ją inny program.
+
+    Możesz wykonać następujące czynności:
+    • zamknij programy używające karty graficznej, takie jak inna przeglądarka świata, gra czy edytor wideo lub 3D, a następnie uruchom Aurora Viewer ponownie;
+    • jeśli laptop ma dwie karty graficzne, sprawdź, której używa Aurora Viewer.
+
+    Dziennik uruchomienia: { $log }
 app-graphics-start-failed-title = Aurora Viewer nie może się uruchomić
+app-graphics-start-failed =
+    Aurora Viewer nie może otworzyć karty graficznej potrzebnej do wyświetlenia okna.
+
+    Możesz wykonać następujące czynności:
+    • zaktualizuj sterownik karty graficznej;
+    • jeśli komputer ma dwie karty graficzne, sprawdź, czy obie są włączone w Menedżerze urządzeń i czy monitor jest podłączony do karty używanej do wyświetlania obrazu;
+    • jeśli laptop ma karty AMD i NVIDIA, zaktualizuj oba sterowniki. Pobierz sterownik AMD z witryny AMD;
+    • uruchom ponownie komputer.
+
+    Szczegóły: { $e }
+
+    Dziennik uruchomienia: { $log }
 app-gpu-stall-title = Aurora Viewer: karta graficzna nie odpowiada
 app-gpu-stall = Karta graficzna nie ukończyła obrazu dla { $seconds } the card responds, Aurora will reset itself. If you are logged in to your account, you will see this message: “Aurora is not able to draw any graphics” or “The graphics driver has been reset”. If you’re logged out, you’ll see a message like this: “You are not logged into your account yet.” If you haven’t logged on, you can use the following steps:• restart your computer;• restarts Aurora;• starts Aurora again;• reboots Aurora; • restarts the game. What to do?What to try:• Keep waiting? Yes keeps waiting; NoWhat to do:• restart Aurora and restart Aurora.What to test:• What to try?• Delete Aurora.Why?What do I need?What can I do?• What can I help?What should I do:What to check:• Does Aurora still work?• Do you want to continue playing?What does I want to do??What do you do?Why don’t you try?What you can do:Why do I do it?What I can do?How do I fix it?• How do I get started?What i can doWhy should I try to fix it:What do i do?what to doWhen do I start Aurora again?•What to avoidWhat to attempt:• Wait? Yes waits for a while?Yes waits;NoWhat to find:• Why do I not find anything that I can find?What is the problem?What are you trying to fix?What will you doWhich to do!What to fix:What can you do:How do you fix?Which do you try to resolve this problem? What do I try?Wh
 app-gpu-recovered-title = Karta graficzna została zresetowana
@@ -10003,6 +10054,10 @@ update-intro = Nowa wersja Aurora czeka na Ciebie.
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = Co jest nowego
+update-demo-notes =
+    • Bardziej przyjazny interfejs, w języku angielskim i francuskim.
+    • Poprawki stabilności i wydajności.
+    • Zweryfikowana instalacja z cofnięciem, jeśli uruchomienie nie powiedzie się.
 update-downloading = Pobieranie w toku...
 update-transfer = { $downloaded } / { $total } MB
 update-ready = Pobieranie jest zakończone.
@@ -12207,6 +12262,10 @@ ui-group-create-rating = Content
 ui-group-create-rating-to-choose = Jak wybrać?
 ui-group-create-you-owner = Ty, właściciel
 ui-group-create-moderate-question = Czy ta grupa zawiera treści Moderate?
+ui-group-create-cost =
+    Utworzenie tej grupy kosztuje L${ $cost }.
+    Grupa musi mieć więcej niż jednego członka. W przeciwnym razie zostanie trwale usunięta.
+    Zaproś członków w ciągu 48 godzin.
 ui-group-create-refused = Nie można utworzyć grupy.
 ui-group-create-fee-title = Opłata za stworzenie
 ui-group-create-fee-line = Tworzenie grupy kosztuje L$ { $cost }.
@@ -13477,6 +13536,29 @@ bridge-object-info-loading = Pobieranie informacji o obiekcie przez most Aurora�
 bridge-object-info-region = Informacje o obiekcie są dostępne tylko dla obiektu w bieżącym regionie.
 bridge-object-info-failed = Informacje o obiekcie niedostępne: { $reason }
 bridge-object-info-group-owned = Grupa kapitałowa
+bridge-object-info-result =
+    Informacje o obiekcie “{ $name }”:
+    Identyfikator obiektu: { $object }
+    Opis: { $description }
+    Prim główny: { $root }
+    Liczba primów: { $prims }
+    Wpływ na teren: { $impact }
+    Elementy ekwipunku: { $inventory }
+    Prędkość: { $velocity } m/s
+    Położenie: { $position } ({ $distance } m)
+    Obrót: { $rotation } ({ $degrees }°)
+    Prędkość kątowa: { $angular } rad/s
+    Twórca: { $creator }
+    Właściciel: { $owner }
+    Poprzedni właściciel: { $previous }
+    Umieszczony w świecie przez: { $rezzer }
+    Grupa: { $group }
+    Czas utworzenia: { $created }
+    Czas umieszczenia w świecie: { $rezzed }
+    Typ wyznaczania ścieżki: { $pathfinding }
+    Punkt mocowania: { $attachment }
+    Dołączony tymczasowo: { $temporary }
+    Twoje bieżące położenie: { $observer }
 bridge-query-timeout = Mostek nie zwrócił żądanych informacji na czas. Spróbuj ponownie.
 bridge-query-interrupted = Żądanie informacji zostało przerwane przez zmianę połączenia w regionie lub mostku. Spróbuj ponownie.
 ao-bootstrap-interrupted = Niedokończony import AO już istnieje w #Aurorze. Przejrzyj go w ekwipunku przed ponownym próbowaniem.

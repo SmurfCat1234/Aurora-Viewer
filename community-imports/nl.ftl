@@ -1720,6 +1720,37 @@ notecard-markdown-help = Hulp bij Markdown
 notecard-markdown-help-code = Gebruik een ```lsl-blok voor de kleuren van de scripteditor. In Bewerken: Tab inspringt, Shift+Tab uitspringt en Enter houdt LSL-inspringing en slothaakjes uitgelijnd met hun opening. Ctrl+K commentaar op geselecteerde LSL regels; Ctrl + Shift + K schakelt een blokcommentaar.
 notecard-markdown-help-intro = Knoppen bewerken de bron en het voorbeeld volgt uw wijzigingen. Klik nogmaals om een stijl, kop, lijst of citaat te verwijderen.Ctrl+Z maakt ongedaan, Ctrl+Y herhaalt.
 notecard-markdown-help-extra = Koppen: # tot en met ### Scheid alinea's met een lege regel. Voor tabellen, scheid kolommen met | en voeg een kopregel toe zoals | --- | ---. Afbeeldingen tonen hun alt-tekst; HTML blijft tekst. Bijlagen blijven behouden bij het opslaan (Ctrl+S).
+notecard-markdown-demo =
+    Welkom bij Aurora
+    Een notitiekaart met **vet**, *cursief*, ~~doorgehaald~~ en `code`.
+
+    Uw notities
+    - Houd de originele tekst bij het schakelen van weergaven.
+    - Opslaan vanuit elke weergave met **Ctrl+S**.
+
+    > Ingesloten items blijven onderdeel van de notitiekaart.
+
+    { "[" }Aurora Viewer](https://aurora-viewer.org)
+
+    ```text
+    Een gewoon codeblok
+    ```
+notecard-lsl-demo =
+    # LSL in een notitiekaart
+    Gebruik de knop **LSL** Klik op de knop en typ vervolgens als in de scripteditor.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = Er worden te veel documenten geladen. Probeer het over enkele ogenblikken opnieuw.
 inventory-preview-timeout = Het laden van het document is vertraagd. Open het opnieuw om opnieuw te proberen.
 notecard-text-too-large = Een notitiekaart mag niet meer dan 65.536 bytes tekst bevatten.
@@ -2574,6 +2605,18 @@ app-graphics-start-memory-full =
 
     Logboek van deze start: { $log }
 app-graphics-start-failed-title = Aurora Viewer kan niet starten
+app-graphics-start-failed =
+    Aurora Viewer kon geen grafische kaart initialiseren om zijn venster weer te geven.
+
+    Wat u kunt proberen:
+    • werk het stuurprogramma van de grafische kaart bij;
+    • controleer bij twee grafische kaarten of beide in Apparaatbeheer zijn ingeschakeld en of de monitor op de kaart is aangesloten die het beeld moet weergeven;
+    • werk op een laptop met AMD- en NVIDIA-graphics zowel het AMD-stuurprogramma van de AMD-website als het NVIDIA-stuurprogramma bij;
+    • start de computer opnieuw op.
+
+    Details: { $e }
+
+    Logboek van deze start: { $log }
 app-gpu-stall-title = Aurora Viewer: de grafische kaart reageert niet
 app-gpu-stall = De grafische kaart heeft een beeld niet voltooid voor { $seconds } the card responds again, Aurora will reset itself and start drawing. If you are logged in to your account, you will see the following message: “Aurora is unable to draw” or “The graphics driver has been reset”. If you’re logged out, you’ll see this message:“Auroras graphics card driver has not been updated.”If you’ve logged into your account before, you may have seen this message before: “There is a problem with the graphics controller. Please try again later.”If it doesn’t work, try again.What to try:• Keep waiting? Yes keeps waiting; NoWhat to do:• restart the computer. What to do?What to test:• Restart the PC.Why?What can I do?Why should I do this?What do I do:What do you do?How do I fix it?What should I try:What to check:• What to try?• What do I try?What does I do when I get this message?What must I do to fix this issue?What is the solution:• Do I wait? Yes Keep awaiting?Yes Keep waiting?No Keep Waiting?What cannot I doWhy do I not try?Which can I try to fix?What could I do if I don’t wait?What I can do:Why can I not do it?When I do it:What can i do:I can do it without any problems.What can be done:• Stop waiting?Yes stop waiting;No stop waiting. What can be tried:• Continue waiting? No stop waiting!What can you do: What can I make?What are you doing?What you can do? What can you try:Which
 app-gpu-recovered-title = De grafische kaart is gereset
@@ -2583,6 +2626,14 @@ app-vr-runtime-closed-title = VR software gesloten
 app-vr-runtime-closed = Je VR-software (bijvoorbeeld SteamVR) werd afgesloten en Aurora opende het venster zonder deze software: je bleef ingelogd en de wereld herlaadt in een oogwenk. VR komt terug bij de volgende start van Aurora.
 app-vr-runtime-closed-at-start = Je VR-software (bijvoorbeeld SteamVR) werd afgesloten. Aurora opende het venster opnieuw zonder deze software: je bleef ingelogd en de wereld herlaadt binnen een ogenblik. VR komt terug bij de volgende start van Aurora. Aurora laadt je VR-software bij elke start: om dit te stoppen, schakel je Voorkeuren › Camera › VR › VR instellen bij opstarten uit.
 app-gpu-lost-title = Aurora Viewer: de grafische kaart is verloren
+app-gpu-lost =
+    Aurora heeft geen toegang meer tot de grafische kaart. Het stuurprogramma kan zijn gereset doordat het weergeven van een frame te lang duurde of het videogeheugen vol was. De kaart kan ook zijn verwijderd of door een ander programma in gebruik zijn genomen. Als u op OK klikt, wordt uw sessie netjes afgemeld en sluit Aurora.
+
+    Wat u kunt proberen:
+    • werk het stuurprogramma van de grafische kaart bij;
+    • verklein zeer grote foto’s of verlaag de grafische kwaliteit;
+    • sluit andere programma’s die de grafische kaart intensief gebruiken;
+    • kies bij de volgende start de veilige grafische instellingen die Aurora aanbiedt.
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora heeft nog geen animatie overrider (AO).
 cmdline-mod-use-hover-height-in-appearance = Pas de hoverhoogte van je avatar aan via Uiterlijk → Hoverhoolte.
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora raadt aan om deze link niet te openen. Als je wordt gevraagd in te loggen of te betalen, is het hoogstwaarschijnlijk een scam. Geef nooit je wachtwoord of betaalgegevens door.
@@ -11216,6 +11267,7 @@ marketplace-listings-not-merchant = Als u een verkoper wilt worden, moet u een M
 marketplace-listings-create-store = Een Marketplace-winkel maken
 marketplace-listings-error-title = Fouten op de marktplaats.
 marketplace-listings-error = Er is een fout opgetreden bij het openen van Marketplace Listings.Als je dit bericht blijft ontvangen, neem dan contact op met Second Life support voor hulp via https://support.secondlife.com
+marketplace-listings-connection-error = De verbinding is mislukt. Als je dit bericht blijft ontvangen, neem dan contact op met Second Life support voor hulp op https://support.secondlife.com
 marketplace-listings-connection-error-reason = Marketplace Listings kon geen verbinding maken. Reden: { $reason }Als je dit bericht blijft ontvangen, neem dan contact op met Second Life support voor hulp via https://support.secondlife.com
 marketplace-listings-empty-title = Uw map Marketplace-aanbiedingen is leeg.
 marketplace-listings-empty = Sleep mappen naar dit gebied om ze te verkopen op de Marketplace.
@@ -13369,6 +13421,10 @@ movement-pass-reached = Passagedoel bereikt.
 movement-pass-not-reached = Passage failed: het doel werd niet bereikt voordat de motor stopte.
 movement-pass-cancelled = Passage geannuleerd.
 movement-pass-no-result = Geen eindresultaat ontvangen. Commando-aflevering bevestigt geen beweging.
+movement-pass-feedback =
+    { $state }
+    Vooruit verplaatsing: 100 mm { $progress } m · Afstand tot doel: { $remaining } m
+    Hoogste bemonsterde voorwaartse snelheid: { $speed } m/s
 movement-disabled = Bewegingsversterker uitgeschakeld
 movement-physics-unavailable = Bridge niet beschikbaar - fysica-ondersteuning onderbroken
 movement-pass-not-sent = Passage niet verzonden: { $reason }
@@ -13477,6 +13533,29 @@ bridge-object-info-loading = Objectinformatie ophalen via de Aurora bridge…
 bridge-object-info-region = Objectinformatie is alleen beschikbaar voor een object in uw huidige regio.
 bridge-object-info-failed = Objectinformatie niet beschikbaar: { $reason }
 bridge-object-info-group-owned = Eigendom van de groep
+bridge-object-info-result =
+    Objectinformatie voor “{ $name }”:
+    Object-ID: { $object }
+    Beschrijving: { $description }
+    Hoofdprim: { $root }
+    Aantal prims: { $prims }
+    Landimpact: { $impact }
+    Inventarisitems: { $inventory }
+    Snelheid: { $velocity } m/s
+    Positie: { $position } ({ $distance } m)
+    Rotatie: { $rotation } ({ $degrees }°)
+    Hoeksnelheid: { $angular } rad/s
+    Maker: { $creator }
+    Eigenaar: { $owner }
+    Vorige eigenaar: { $previous }
+    In de wereld geplaatst door: { $rezzer }
+    Groep: { $group }
+    Aangemaakt op: { $created }
+    In de wereld geplaatst op: { $rezzed }
+    Type padvinding: { $pathfinding }
+    Bevestigingspunt: { $attachment }
+    Tijdelijk bevestigd: { $temporary }
+    Uw huidige positie: { $observer }
 bridge-query-timeout = De brug heeft de gevraagde informatie niet op tijd teruggestuurd. Probeer het opnieuw.
 bridge-query-interrupted = De informatieaanvraag is onderbroken door een wijziging in de regio of brugverbinding. Probeer het opnieuw.
 ao-bootstrap-interrupted = Een onvoltooide AO-import bestaat al in #Aurora. Bekijk deze in de inventaris voordat je het opnieuw probeert.

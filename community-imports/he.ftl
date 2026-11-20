@@ -1720,6 +1720,37 @@ notecard-markdown-help = עזרה ב- Markdown
 notecard-markdown-help-code = השתמש בבלוק `` `lsl לצבעים של עורך התסריט. בעריכת: טבלה מקדימה, Shift+Tab מקדמת החוצה, Enter שומרת על ההדפסה LSL והסיכות הסגורות מתואמות עם הפתיחה שלהם. Ctrl+K מוסיפה הערות לשורות LSL הנבחרות; Ctrl- Shift- K משנה את הערות הבלוק. הטקסט המודבק נשאר ללא שינוי.
 notecard-markdown-help-intro = כפתורים עורכים את המקור והתצוגה מקדימה עוקבת אחר השינויים שלך. לחץ שוב כדי להסיר סגנון, כותרת, רשימה או ציטוט. Ctrl+Z מבטל, Ctrl- Y עושה שוב.
 notecard-markdown-help-extra = כותרות: # עד ## מפריד פיסקאות בשורה ריקה. עבור טבלאות, מפריד עמודות עם | ומוסיף שורה של כותרת כמו | --- | ---. תמונות מראות את הטקסט האלטרנטיבי שלהם; HTML נשאר טקסט. ציטוטים נשמרים בעת השמורה (Ctrl+S).
+notecard-markdown-demo =
+    ברוכים הבאים לאורורה
+    כרטיס עם **מודגש**, * איטלקי *, ~~כתוב~~ ו `code`.
+
+    הרשימות שלך
+    -שמור על הטקסט המקורי כאשר אתה משנה תצוגה.
+    -שמור מכל תצפית עם **Ctrl+S**.
+
+    > פריטים מוטמעים נשארים חלק מהכרטיס.
+
+    { "[" }אורורה מראה](https://aurora-viewer.org)
+
+    טקסט
+    בלוק קוד פשוט
+    ```
+notecard-lsl-demo =
+    # LSL בכרטיס הודעה
+    השתמש ב **LSL** לחץ על הכפתור, ואז הקליד כפי שעורך התסריט.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = יש יותר מדי מסמכים שנטענים. נסה שוב בעוד רגע.
 inventory-preview-timeout = עבר זמן הטענה של המסמך. פתחו אותו מחדש כדי לנסות שוב.
 notecard-text-too-large = כרטיס זיכרון לא יכול להיות גדול מ-65,536 בתים של טקסט.
@@ -2558,7 +2589,27 @@ splash-update-installing = מתקין את העדכון...
 splash-update-cache = מנקה את המטמון...
 splash-update-launching = אני מתחיל את הגרסה החדשה...
 app-aurora-viewer-unable-to-initialize-metal = { "מראה אורורה: לא ניתן להתחיל את מטאל: " }{ $e }
+app-graphics-start-memory-full =
+    לכרטיס הגרפי אין זיכרון וידאו נשאר עבור Aurora Viewer: תוכנה אחרת מחזיקה אותו.
+
+    מה לנסות:
+    סגרו את התוכניות שמשתמשות בכרטיסי הגרפי (צופה אחר, משחק, וידאו או עורך תלת- מימדי), ואז התחילו את Aurora Viewer שוב;
+    על מחשב נייד עם שני כרטיסי גרפיה, בדוק באיזה מהם מראה האורורה עובד.
+
+    יומן ההתחלה: { $log }
 app-graphics-start-failed-title = לא ניתן להפעיל את מראה האורורה
+app-graphics-start-failed =
+    לא ניתן לפתוח את כרטיסי הגרפיקה כדי לצייר את החלון שלהם.
+
+    מה לנסות:
+    עדכן את נהיגת כרטיסי הגרפי;
+    על מחשב עם שני כרטיסי גרפיקה, בדוק ששניהם מופעלים במנהל התקנים, ושמסך המחשב מחובר לכרטיס שצריך להציג את התמונה.
+    • על מחשב נייד עם גרפיקה AMD ו NVIDIA, עדכן את הנהג AMD מהאתר של AMD כמו גם הנהג NVIdia;
+    הפעל מחדש את המחשב.
+
+    פרטים: { $e }
+
+    יומן ההתחלה: { $log }
 app-gpu-stall-title = מראה Aurora: כרטיס הגרפי לא מגיבName
 app-gpu-stall = הכרטיס הגרפי לא סיים את יצירת התמונה עבור { $seconds } you have a graphics card that is not compatible with Aurora, you can try to reset the graphics driver. If you are using a 32-bit or 64-bit version of Windows, you will see this message: "Aurora is not working properly" (or "Aura is not running correctly"). If you have an 802.11g or 810.10g card, you may also see this error message: “Aura does not work properly” (or “The graphics controller is not connected properly”). What to do?What to try:• Keep waiting? Yes keep waiting; NoWhat to do:• restart the computer and try again.What to test:• Continue waiting?Yes keep waiting• No Keep awaiting? Yes Keep waiting; No What to try?• Delete all files.What can I do?Why?What can you do?How to fix it?What should I do:What to check:• What can I try?What do I do if I don’t know what to do.What do you do:Why should I try to fix this problem?What must I try:What can be done:• Do I wait?Yes Keep watching? Yes Yes Apply; No Apply.What is the solution?• What to avoid:•Keep waiting!Yes Apply!What to attempt:• Don’t wait?No Keep expecting?Yes What to attempt?• Do you want to do now?What you can do:Keep waiting.What you need to do to fix?Which is the best solution?What does you want?What are you going to do in order to fix the issue?What is your answer?What will you try?When you
 app-gpu-recovered-title = כרטיס הגרפי נמדד מחדשName
@@ -6360,6 +6411,9 @@ region-restart-toast-seconds =
        *[other] שניות
     }אם תישאר באזור הזה כשהוא יכבה, אתה תהיה מחוץ למערכת.
 region-restart-disconnected = { $region } התחלתי מחדש: החיבור נסגר.
+region-restart-legacy-text =
+    האזור שבו אתם נמצאים כעת ({ $region }) עומד להתחיל מחדש.
+    אם תישארו באזור, תנותקו מהמערכת.
 region-restart-legacy-seconds = שניות עד ההתחלה מחדש
 region-restart-legacy-landmarks = נקודות ציון שלי
 region-restart-legacy-teleport = טלפורט לנקודה היסטורית
@@ -6692,6 +6746,7 @@ build-ui-texture-repeats-meter = חזרות / מטר
 ui-options-network-and-cache = רשת ומטמון
 ui-options-web-browser = דפדפן רשתName
 ui-options-browser-home-page = דף הבית של הדפדפן
+ui-options-browser-home-page-help = הדף שבו נפתח הכפתור של סרגל הכלים של דפדפן האינטרנט. ריק: https://duckduckgo.com.
 ui-options-browser-javascript = ג' אווה סקריפטName
 ui-options-browser-javascript-help = JavaScript בדפדפן הפנימי, מדיה על עצמים וחבילות, פרופילים והחיפוש. כבה: החיפוש ודפים רבים לא יפעלו יותר. חל על הדפים שנפתחו לאחר מכן.
 ui-options-browser-behavior = דפדפן מומלץ
@@ -9989,6 +10044,10 @@ update-intro = גרסה חדשה של אורורה מחכה לך.
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = מה חדש
+update-demo-notes =
+    • ממשק יותר מקסים, באנגלית ובצרפתית.
+    שיפורי יציבות וביצועים.
+    התקנה מאושרת עם החזרה לאחור אם ההתחלה נכשלה.
 update-downloading = הורדה בתהליך
 update-transfer = { $downloaded } / { $total } MB
 update-ready = ההורדה הושלמה.
@@ -12193,6 +12252,10 @@ ui-group-create-rating = תוכן
 ui-group-create-rating-to-choose = דירוג לבחירה
 ui-group-create-you-owner = אתה, הבעלים
 ui-group-create-moderate-question = האם הקבוצה הזו מכילה תוכן מתון?
+ui-group-create-cost =
+    יצירת קבוצה זו תעלה L${ $cost }.
+    קבוצות זקוקות ליותר מחבר אחד. אחרת הן יימחקו לצמיתות.
+    יש להזמין חברים בתוך 48 שעות.
 ui-group-create-refused = לא ניתן ליצור קבוצה.
 ui-group-create-fee-title = תשלום יצירה
 ui-group-create-fee-line = יצירת קבוצה עולה L$ { $cost }.

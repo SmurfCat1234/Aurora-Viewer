@@ -2596,7 +2596,27 @@ splash-update-installing = Päivitystä asennetaan…
 splash-update-cache = Tyhjennetään välimuistia…
 splash-update-launching = Uusi versio käynnistetään…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: ei voi aloittaa Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Näytönohjaimessa ei ole enää videomuistia Aurora Viewer -ohjelmalle: se on toisen ohjelman hallussa.
+
+    Mitä kokeilla:
+    • sulje näytönohjaimen käyttävät ohjelmat (toinen katseluohjelma, peli, video tai 3D-editori) ja käynnistä Aurora Viewer uudelleen;
+    • kannettavassa tietokoneessa, jossa on kaksi näytönohjainta, tarkista, missä Aurora Viewer toimii.
+
+    Tämän aloitustapahtuman loki: { $log }
 app-graphics-start-failed-title = Aurora Viewer ei käynnisty
+app-graphics-start-failed =
+    Aurora Viewer ei voinut avata näytönohjainta sen ikkunan piirtämiseksi.
+
+    Mitä kokeilla:
+    • päivittää näytönohjaimen ohjain;
+    • tietokoneessa, jossa on kaksi näytönohjainta, tarkista, että molemmat ovat käytössä Laitehallinnassa ja että näyttö on kytketty korttiin, jonka pitäisi piirtää;
+    • kannettavassa tietokoneessa, jossa on AMD- ja NVIDIA-näytönohjaimet, päivitä AMD-ajuri AMD: n verkkosivustosta sekä NVIdia-apuri;
+    • Käynnistä tietokone uudelleen.
+
+    Yksityiskohdat: { $e }
+
+    Tämän aloitustapahtuman loki: { $log }
 app-gpu-stall-title = Aurora Viewer: näytönohjain ei vastaa
 app-gpu-stall = Näytönohjain ei ole lopettanut kuvankäsittelyä { $seconds } the card is not responding, you can try to reset it. If Aurora does not respond, you may have a problem with the graphics driver. If you are logged out, you will be prompted to enter your password and then you will see the following message: “Aurora has been logged off” or “Aura has been unable to connect to the server”. If you have logged in, you must enter your username and password. If the card does not answer, you should try to restart Aurora. If it does not reply, you need to try again. What to do?What to doWhat to try:What to test:What do you try:• Keep waiting? Yes keep waiting; No closes Aurora (you are locked out properly).What to avoid:• Do not use the remote control.What to attempt:What can I do?Why?What can you do?How to fix it?What do I do:What should I do to fix this?What should you do:• What to try?What does I do if I am stuck?What is the solution:What is to try to fix?What you can do:Why do I try to resolve this issue?What could I do for this problem?What will I do when I get back to Aurora?What would I doIf I get home:What will i do? What to avoid?What I can doWhy should I try?Which is the best way to fix the problem?When I get there:What I should do?Who can help me?What might I doWhen do I get here?What must I doWhat do i do: What to think about it?Whether I should try:Which things should I make?What are I going to do:what to
 app-gpu-recovered-title = Näytönohjain on nollattu
@@ -6398,6 +6418,9 @@ region-restart-toast-seconds =
        *[other] sekuntia
     }Jos pysyt tällä alueella, kun se sammuu, sinut kirjataan ulos.
 region-restart-disconnected = { $region } Yhteys on katkaistu.
+region-restart-legacy-text =
+    Nykyinen alueesi ({ $region }) käynnistyy pian uudelleen.
+    Jos jäät alueelle, sinut kirjataan ulos.
 region-restart-legacy-seconds = Sekuntia uudelleenkäynnistykseen
 region-restart-legacy-landmarks = Omat maamerkkini
 region-restart-legacy-teleport = Teleporttaudu maamerkille
@@ -13393,6 +13416,10 @@ movement-pass-reached = - Olemme saavuttaneet tavoitteen.
 movement-pass-not-reached = Passing failed: kohdetta ei saavutettu ennen moottorin pysähtymistä.
 movement-pass-cancelled = Lähtö peruutettu.
 movement-pass-no-result = Ei lopullista läpimenotulosta. Komento ei vahvista liikettä.
+movement-pass-feedback =
+    { $state }
+    Eteenpäin siirtyminen: { $progress } m · Etäisyys kohteeseen: { $remaining } m
+    Suurin näytteenotto eteenpäin nopeus: { $speed } m/s
 movement-disabled = Liikevahvistin pois käytöstä
 movement-physics-unavailable = Silta ei käytettävissä – fysiikan apu keskeytetty
 movement-pass-not-sent = Lähetystä ei lähetetty: { $reason }

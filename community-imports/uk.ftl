@@ -2596,8 +2596,38 @@ splash-update-installing = Встановлення оновлення…
 splash-update-cache = Очищення кешу…
 splash-update-launching = Запуск нової версії…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: неможливо ініціалізувати Metal: " }{ $e }
+app-graphics-start-memory-full =
+    У графічній картці не залишилося відеопам’ яті для переглядача Aurora: її використовує інша програма.
+
+    Що спробувати:
+    • закрийте програми, які використовують графічну карту (інший переглядач, гру, відео або редактор 3D), а потім знову запустіть Aurora Viewer;
+    • на ноутбуці з двома графічними картами перевірте, на якій з них запущено Aurora Viewer.
+
+    Журнал цього запуску: { $log }
 app-graphics-start-failed-title = Не вдається запустити переглядач Aurora
+app-graphics-start-failed =
+    Переглядач Aurora не може відкрити графічну карту для малювання її вікна.
+
+    Що спробувати:
+    • оновити драйвер відеокарт;
+    • на комп’ ютері з двома графічними картами перевірте, чи ввімкнено обидві карти у менеджері пристроїв і чи підключено монітор до картки, яка має відображати графіку;
+    • на ноутбуці з графічними картами AMD і NVIDIA, оновити драйвер AMD з веб- сайту AMD, а також драйвери NVIdia;
+    • перезапустити комп’ ютер.
+
+    Подробиці: { $e }
+
+    Журнал цього запуску: { $log }
 app-gpu-stall-title = Переглядач Aurora: відеокарта не відповідає
+app-gpu-stall =
+    Графіка не завершила створення зображення для { $seconds } секунд. Aurora все ще працює (світ, звук, балачка продовжуються), але нічого не можна намальувати доки карта знову не відповість.
+
+    Що спробувати:
+    • зачекайте трохи: скидання драйвера графіки може тривати декілька секунд;
+    • оновити драйвер відеокарт;
+    • вимкнути накладання інших програм (Discord, Steam, MSI Afterburner...);
+    • під час наступного запуску, вибрати безпечну графіку, яку Aurora пропонуватиме.
+
+    Так, чекатимуть. Не закривати Aurora (ви правильно вийшли з системи).
 app-gpu-recovered-title = Відеокартку було скинутоName
 app-gpu-recovered = Драйвер графічної картки було скасовано (відтворення зображення тривало занадто довго, відеопам’ ять карти була переповнена або інша програма використовувала картку). Aurora знову відкрила своє вікно на картці: ви залишилися у системі, і світ перезавантажиться за мить.
 app-gpu-recovered-safe = Драйвер відеокарт було знову скинуто за декілька хвилин. Aurora знову відкрила своє вікно з безпечними графіками (рівень Potato), щоб цього не повторилося: ви залишилися у системі. Параметри ваших графік збережено: на екрані реєстрації буде показано їх знову.
@@ -4456,6 +4486,7 @@ ui-options-region-restart-channel = Канал (типово 473405)
 ui-options-collisions-in-chat = Збої в найближчому балаканні
 ui-options-collisions-in-chat-help = Рядок у найближчому чаті, коли хтось наїхав на вас, змусив вас виконати скрипт або вдарив вас предметом.
 ui-options-collisions-report = Розповісти про скрипти на каналі
+ui-options-collisions-report-help = Для HUD і скриптів: sends <key>,<strength>,<type> кожного зіткнення на цьому каналі.
 ui-options-collisions-channel = Канал (типово - 25000)
 ui-options-environment-fade = Згасання навколишнього середовища
 demo-fountain = Фонтан
@@ -6396,6 +6427,9 @@ region-restart-toast-seconds =
        *[other] секунд
     }. Якщо ви залишитеся у цьому регіоні після завершення роботи програми, вас буде виключено з системи.
 region-restart-disconnected = { $region } перезапустити: з' єднання було закрито.
+region-restart-legacy-text =
+    Регіон, у якому ви зараз перебуваєте ({ $region }), скоро перезапуститься.
+    Якщо ви залишитеся в цьому регіоні, сеанс буде завершено.
 region-restart-legacy-seconds = Секунд до перезапуску
 region-restart-legacy-landmarks = Мої пам' ятки
 region-restart-legacy-teleport = Телепортувати до пам' ятки
@@ -6728,6 +6762,7 @@ build-ui-texture-repeats-meter = Повторень на метр
 ui-options-network-and-cache = Мережа і кеш
 ui-options-web-browser = Переглядач мережі
 ui-options-browser-home-page = Домашня сторінка переглядача
+ui-options-browser-home-page-help = Сторінка, яку відкриває кнопка панелі інструментів переглядача мережі. Порожній: https://duckduckgo.com.
 ui-options-browser-javascript = JavaScript
 ui-options-browser-javascript-help = JavaScript у вбудованому переглядачі, носіях на об’ єктах і пакетах, профілях і пошуку. Вимкнено: пошук і багато сторінок більше не працюватимуть. Застосовано до сторінки, яку буде відкрито пізніше.
 ui-options-browser-behavior = Найкращий переглядач
@@ -7832,6 +7867,7 @@ demo-bubbles-local-1 = Нова підлога готова.
 demo-bubbles-local-2 = Приходь і подивись на це до сьогоднішнього вечора 🎉
 demo-bubbles-local-3 = Ласкаво просимо на площу, екскурсія починається тут.
 demo-chat-lines-emote = /Я махаю на всіх 👋
+demo-chat-lines-long = Екскурсія починається біля фонтану, потім ми піднімаємося до галереї і саду на даху; карта площі знаходиться на https://example.com/plaza-map якщо ти загубишся на шляху.
 demo-chat-lines-shout = Двері відкриваються через п'ять хвилин!
 demo-muted-chat-near-1 = Хто прийде сьогодні на галерею?
 demo-muted-chat-blocked-1 = HEY EVERYONE
@@ -7858,6 +7894,7 @@ demo-object-chat-door = Двері галереї
 demo-object-chat-door-text = /Я відкриваюся зі скрипом.
 demo-object-chat-script-error = Помилка виконання скрипту: зіткнення стека і купи
 demo-object-chat-vendor = Площа продавця
+demo-object-chat-direct = Ваш подарунок готовий: карта площі знаходиться у https://example.com/plaza-map
 demo-rez-style-grid = 1 · Градієнт
 demo-rez-style-scan = 2 · Сканувати рядки
 demo-rez-style-wire = 3 · Дротяна схема
@@ -11235,6 +11272,7 @@ marketplace-listings-create-store = Створити магазин Marketplace
 marketplace-listings-error-title = Помилки ринку.
 marketplace-listings-error = Під час відкриття списків ринку сталася помилка. Якщо ви продовжуєте отримувати це повідомлення, будь ласка, зверніться до підрозділу підтримки Second Life за адресою https://support.secondlife.com
 marketplace-listings-connection-error = Не вдалося з’ єднатися з ринком списків. Якщо ви продовжуєте отримувати це повідомлення, будь ласка, зверніться до підрозділу підтримки Second Life за адресою https://support.secondlife.com
+marketplace-listings-connection-error-reason = Не вдалося з’ єднатися з Marketplace Listings. Причина: { $reason }. Якщо ви продовжуєте отримувати це повідомлення, будь ласка, зверніться до підтримки Second Life за адресою https://support.secondlife.com
 marketplace-listings-empty-title = Ваша тека з описами Marketplace порожня.
 marketplace-listings-empty = Перетягніть теки до цієї області, щоб показати їх у списку для продажу на ринку.
 marketplace-suffix-no-id = немає ідентифікатора Mkt
@@ -12227,6 +12265,10 @@ ui-group-create-rating = Зміст
 ui-group-create-rating-to-choose = Оцінка для вибору
 ui-group-create-you-owner = Ти, власник.
 ui-group-create-moderate-question = Чи містить ця група вміст, який можна поміркувати?
+ui-group-create-cost =
+    Створення цієї групи коштуватиме L${ $cost }.
+    У групі має бути більше одного учасника. Інакше її буде видалено назавжди.
+    Запросіть учасників протягом 48 годин.
 ui-group-create-refused = Не вдалося створити групу.
 ui-group-create-fee-title = Оплата за створення
 ui-group-create-fee-line = Створення групи коштує L$ { $cost }.

@@ -1734,6 +1734,22 @@ notecard-markdown-demo =
     ```text
     일반 코드 블록
     ```
+notecard-lsl-demo =
+    메모장에 # LSL
+    로그인 **LSL** 버튼을 클릭한 다음 스크립트 편집기에 as 를 입력합니다.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = 너무 많은 문서가 불러오고 있습니다. 잠시 후 다시 시도하십시오.
 inventory-preview-timeout = 문서 불러오는 중 시간이 초과되었습니다. 다시 열고 다시 시도하십시오.
 notecard-text-too-large = 노트카드는 65,536 바이트의 텍스트를 초과할 수 없습니다.

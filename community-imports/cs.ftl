@@ -2601,7 +2601,27 @@ splash-update-installing = Instalace aktualizace…
 splash-update-cache = Vymazání cache…
 splash-update-launching = Spuštění nové verze…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: nelze inicializovat Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Grafická karta nemá pro Aurora Viewer žádnou video paměť: drží ji jiný program.
+
+    Co vyzkoušet:
+    • zavřete programy, které používají grafickou kartu (jiný prohlížeč, hra, video nebo 3D editor), pak znovu spusťte Aurora Viewer;
+    • na notebooku se dvěma grafickými kartami, zkontrolujte, který Aurora Viewer běží na jednom.
+
+    Protokol tohoto startu: { $log }
 app-graphics-start-failed-title = Aurora Viewer nelze spustit
+app-graphics-start-failed =
+    Aurora Viewer nemohl otevřít grafickou kartu a vykreslit její okno.
+
+    Co vyzkoušet:
+    • aktualizovat ovladač grafické karty;
+    • na počítači se dvěma grafickými kartami, zkontrolujte, zda jsou obě povoleny ve Správci zařízení a že monitor je připojen do karty, která by měla kreslit;
+    • na notebooku s AMD a NVIDIA grafiky, aktualizovat ovladač AMD z webových stránek společnosti AMD, stejně jako ovladače NVIdia;
+    • restartujte počítač.
+
+    Podrobnosti: { $e }
+
+    Protokol tohoto startu: { $log }
 app-gpu-stall-title = Aurora Viewer: grafická karta nereaguje
 app-gpu-stall = Grafická karta nedokázala dokončit obraz pro { $seconds } the card is not responding, you can try to reset it. If Aurora does not respond, you may have a problem with the graphics driver. If you are logged out, you will see the following message: “Aurora has been logged off” or “Aura has been unable to connect to the network”. If you have a graphics card that is not supported by Aurora, you should try to restart the computer and try again. If the card still responds, you might have a trouble with the Aurora graphics controller. What to do? Yes keep waiting; No stop using Aurora.What to do:Keep waiting? Yes continue waiting;No start Aurora again.What do you want to do when Aurora fails?What to try:• Keep waiting! Yes keep awaiting; No start Aurora.Why does Aurora fail? Why does Aurora not respond?What do I do?What can I do:What to attempt:• Do I wait?Yes keep waiting?NoDo I try to start Aurora?What should I doWhy do I try:What do i do?How do I fix Aurora?Why should I try?What does I doWhat to avoid:• What to try?• Apply the following steps:• Restart Aurora?• Reboot Aurora• Delete Aurora• Reload Aurora• Reset Aurora• What can I try??What to test:• Continue waiting?Yes Keep watching? Yes Keep looking? Yes Yes Delete?Yes No Keep searching for Aurora; No Delete.What can you do?Which to try, don’t try to remove Aurora. What can you try:Why?What you can do:• Stop waiting? No ApplyWhat to check:• How to fix it?What is the solution:• Please wait
 app-gpu-recovered-title = Grafická karta byla resetována
@@ -10034,6 +10054,10 @@ update-intro = Čeká na vás nová verze Aurora.
 update-current = CURRENT VERSION
 update-new = NEW VERSION
 update-release-notes = Co je nového
+update-demo-notes =
+    • Více přívětivé rozhraní, v angličtině a francouzštině.
+    • Vylepšení stability a výkonu.
+    • Ověřená instalace s rollback, pokud se selže spuštění.
 update-downloading = Probíhá stahování...
 update-transfer = { $downloaded } / { $total } MB
 update-ready = Stahování je dokončeno.
@@ -13398,6 +13422,10 @@ movement-pass-reached = Cíl průchodu dosažen.
 movement-pass-not-reached = Průlet se nezdařil: cíle nebylo dosaženo před zastavením motoru.
 movement-pass-cancelled = Průlet zrušen.
 movement-pass-no-result = Nebyl přijat žádný konečný výsledek průchodu. Dodání příkazu nepotvrzuje pohyb.
+movement-pass-feedback =
+    { $state }
+    Přední posunutí: { $progress } m · Vzdálenost k cíli: { $remaining } m
+    Nejvyšší vzorkovaná rychlost vpřed: { $speed } m/s
 movement-disabled = Vylepšovač pohybu vypnutý
 movement-physics-unavailable = Bridge nedostupný — fyzikální pomoc přerušena
 movement-pass-not-sent = Průchod nebyl odeslán: { $reason }

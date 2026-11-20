@@ -1735,6 +1735,22 @@ notecard-markdown-demo =
     ```text
     Ett enkelt kodblock
     ```
+notecard-lsl-demo =
+    # LSL i ett anteckningskort
+    Använd knappen **LSL** knappen och skriv sedan som i scriptredigeraren.
+
+    ```lsl
+    default
+    { "{" }
+        state_entry()
+    { "    {" }
+            // LSL colors and indentation
+            integer count = 2;
+            vector tint = <1.0, 0.5, 0.0>;
+            llSay(PUBLIC_CHANNEL, "Hello 🐺");
+    { "    }" }
+    { "}" }
+    ```
 inventory-preview-busy = För många dokument läses in. Försök igen om en stund.
 inventory-preview-timeout = Tidsgränsen för att läsa in dokumentet gick ut. Öppna det igen och försök igen.
 notecard-text-too-large = Ett anteckningskort får inte innehålla mer än 65 536 byte text.
@@ -13501,6 +13517,29 @@ bridge-object-info-loading = Hämtar objektinformation genom Aurora-bron…
 bridge-object-info-region = Objektinformation är endast tillgänglig för ett objekt i din aktuella region.
 bridge-object-info-failed = Objektinformation otillgänglig: { $reason }
 bridge-object-info-group-owned = Koncernägd
+bridge-object-info-result =
+    Objektinformation för “{ $name }”:
+    Objekt-ID: { $object }
+    Beskrivning: { $description }
+    Rotprim: { $root }
+    Antal primar: { $prims }
+    Markpåverkan: { $impact }
+    Inventarieobjekt: { $inventory }
+    Hastighet: { $velocity } m/s
+    Position: { $position } ({ $distance } m)
+    Rotation: { $rotation } ({ $degrees }°)
+    Vinkelhastighet: { $angular } rad/s
+    Skapare: { $creator }
+    Ägare: { $owner }
+    Föregående ägare: { $previous }
+    Placerad i världen av: { $rezzer }
+    Grupp: { $group }
+    Skapad: { $created }
+    Placerad i världen: { $rezzed }
+    Typ av vägsökning: { $pathfinding }
+    Fästpunkt: { $attachment }
+    Tillfälligt fäst: { $temporary }
+    Din nuvarande position: { $observer }
 bridge-query-timeout = Bryggan returnerade inte den begärda informationen i tid. Försök igen.
 bridge-query-interrupted = Informationsbegäran avbröts på grund av en region- eller broanslutningsändring. Försök igen.
 ao-bootstrap-interrupted = En oavslutad AO-import finns redan i #Aurora. Granska den i inventeringen innan du försöker igen.

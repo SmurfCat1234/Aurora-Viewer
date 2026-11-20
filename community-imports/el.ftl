@@ -2596,7 +2596,27 @@ splash-update-installing = Εγκατάσταση της ενημέρωσης…
 splash-update-cache = Καθαρισμός της προσωρινής μνήμης…
 splash-update-launching = Ξεκινώντας τη νέα έκδοση…
 app-aurora-viewer-unable-to-initialize-metal = { "Αδυναμία αρχικοποίησης του Μετάλλου: " }{ $e }
+app-graphics-start-memory-full =
+    Η κάρτα γραφικών δεν έχει μνήμη εικόνας για το πρόγραμμα προβολής την οποία κατέχει ένα άλλο πρόγραμμα.
+
+    Τι να δοκιμάσετε:
+    • κλείστε τα προγράμματα που χρησιμοποιούν την κάρτα γραφικών (ένα άλλο πρόγραμμα προβολής, ένα παιχνίδι, ένα βίντεο ή 3επεξεργαστής), στη συνέχεια ξεκινήστε και πάλι?
+    • σε ένα φορητό υπολογιστή με δύο κάρτες γραφικών, ελέγξτε ποια μία τρέχει.
+
+    Το αρχείο καταγραφής αυτής της εκκίνησης: { $log }
 app-graphics-start-failed-title = Το πρόγραμμα προβολής δεν μπορεί να ξεκινήσει
+app-graphics-start-failed =
+    Το πρόγραμμα προβολής δεν μπόρεσε να ανοίξει μια κάρτα γραφικών για να σχεδιάσει το παράθυρό του.
+
+    Τι να δοκιμάσετε:
+    • ενημερώστε το πρόγραμμα οδήγησης κάρτας γραφικών?
+    • σε έναν υπολογιστή με δύο κάρτες γραφικών, ελέγξτε ότι και οι δύο είναι ενεργοποιημένες στη Διαχείριση συσκευών, και ότι η οθόνη είναι συνδεδεμένη στην κάρτα που θα πρέπει να σχεδιάσετε?
+    • σε ένα φορητό υπολογιστή με γραφικά και ενημερώστε το πρόγραμμα οδήγησης από την ιστοσελίδα της καθώς και το πρόγραμμά οδηγήσεως?
+    • επανεκκινήστε τον υπολογιστή.
+
+    Λεπτομέρειες: { $e }
+
+    Το αρχείο καταγραφής αυτής της εκκίνησης: { $log }
 app-gpu-stall-title = Προβολέας: η κάρτα γραφικών δεν αποκρίνεται
 app-gpu-stall = Η κάρτα γραφικών δεν έχει τελειώσει μια εικόνα για { $seconds } the card is not responding, you can try to reboot it. If Aurora does not respond, you may have a problem with the graphics driver. If you are logged out, you will see the following message: “Aurora has been logged off” or “Aura is logged in but cannot draw”. If you have logged into Aurora, you should be able to draw using the 3D mode. If the card does not answer, you might have a graphics card issue. If your card is logging in, you must be logged back in to Aurora. What to do?What to doWhat to try:What to test:What do you do?Why?When you log in, Aurora will ask you if you want to continue.What to attempt:What you can do:What can you do:• Keep waiting? Yes keep waiting;No Keep awaiting? Yes Keep waiting; No Keep Waiting?What can I do? What can I try?What do I do:Why do I wait?What should I do!What to avoid:What should you do!Which can I make?What could I do to prevent this?What you should do: What to try?Which things can I avoid?What I can do?How to fix it?What is the solution:What is it?Whach to try to fix this?Whick:What does it do?what to do:How to do it?How do I fix it:What I do not do?Who can help me?What does I do for you?What will I do if I fail?What would I do when I fail to draw?What are the possible solutions:What are they?What must I do, what should I try to do,What to choose?What cannot
 app-gpu-recovered-title = Η κάρτα γραφικών έχει επαναρυθμιστεί
@@ -13394,6 +13414,10 @@ movement-pass-reached = Ο στόχος διέλευσης επιτεύχθηκ�
 movement-pass-not-reached = Η διέλευση απέτυχε: ο στόχος δεν επιτεύχθηκε πριν σταματήσει η μηχανή.
 movement-pass-cancelled = Το πέρασμα ακυρώθηκε.
 movement-pass-no-result = Δεν λήφθηκε τελικό αποτέλεσμα διέλευσης. Η παράδοση εντολής δεν επιβεβαιώνει την κίνηση.
+movement-pass-feedback =
+    { $state }
+    1000 Μπροστινή μετατόπιση: { $progress } Απόσταση στο στόχο: { $remaining } m
+    Υψηλότερη δειγματοληπμένη μπροστινή ταχύτητα: { $speed } m/s
 movement-disabled = Ο ενισχυτής κίνησης απενεργοποιήθηκε
 movement-physics-unavailable = Γέφυρα μη διαθέσιμη — διακοπή βοήθειας φυσικής
 movement-pass-not-sent = Το πέρασμα δεν εστάλη: { $reason }
@@ -13502,6 +13526,29 @@ bridge-object-info-loading = Ανάκτηση πληροφοριών αντικ�
 bridge-object-info-region = Οι πληροφορίες αντικειμένου είναι διαθέσιμες μόνο για ένα αντικείμενο στην τρέχουσα περιοχή σας.
 bridge-object-info-failed = Πληροφορίες αντικειμένου μη διαθέσιμες: { $reason }
 bridge-object-info-group-owned = Ιδιοκτησία του ομίλου
+bridge-object-info-result =
+    Πληροφορίες αντικειμένου “{ $name }”:
+    Αναγνωριστικό αντικειμένου: { $object }
+    Περιγραφή: { $description }
+    Ριζικό prim: { $root }
+    Αριθμός prim: { $prims }
+    Επίδραση στη γη: { $impact }
+    Αντικείμενα στο απόθεμα: { $inventory }
+    Ταχύτητα: { $velocity } m/s
+    Θέση: { $position } ({ $distance } m)
+    Περιστροφή: { $rotation } ({ $degrees }°)
+    Γωνιακή ταχύτητα: { $angular } rad/s
+    Δημιουργός: { $creator }
+    Ιδιοκτήτης: { $owner }
+    Προηγούμενος ιδιοκτήτης: { $previous }
+    Τοποθετήθηκε στον κόσμο από: { $rezzer }
+    Ομάδα: { $group }
+    Ώρα δημιουργίας: { $created }
+    Ώρα τοποθέτησης: { $rezzed }
+    Τύπος εύρεσης διαδρομής: { $pathfinding }
+    Σημείο προσάρτησης: { $attachment }
+    Προσωρινή προσάρτηση: { $temporary }
+    Τρέχουσα θέση σας: { $observer }
 bridge-query-timeout = Η γέφυρα δεν επέστρεψε τις ζητούμενες πληροφορίες εγκαίρως. Δοκιμάστε ξανά.
 bridge-query-interrupted = Το αίτημα πληροφοριών διακόπηκε από μια αλλαγή στη σύνδεση περιοχής ή γέφυρας. Δοκιμάστε ξανά.
 ao-bootstrap-interrupted = Μια ημιτελής εισαγωγή ΑΟ υπάρχει ήδη στην #Αυγή. Ελέγξτε την στο απόθεμα πριν προσπαθήσετε ξανά.
@@ -15477,6 +15524,10 @@ wearable-favorites-assign = Αντιστοίχιση σε φάκελο
 wearable-favorites-new-folder-prompt = Εισαγάγετε ένα όνομα για το νέο φάκελο Αγαπημένα φορετά:
 wearable-favorites-new-folder-default = Νέος φάκελος
 wearable-favorites-rename-prompt = Εισαγάγετε ένα νέο όνομα για το φάκελο Αγαπημένα φορετά { $name }:
+wearable-favorites-delete-confirm =
+    Διαγραφή φακέλου αγαπημένων φορετών"{ $name }"?
+
+    Με αυτήν την ενέργεια καταργείται μόνο ο φάκελος και οι αγαπημένες συνδέσεις του. Τα αρχικά στοιχεία απογραφής δεν διαγράφονται.
 wearable-favorites-delete-refused = Ο φάκελος "{ $name }" διατηρεί τα αρχικά αντικείμενα απογραφής, όχι μόνο τους συνδέσμους, έτσι δεν θα διαγραφεί.Μετακινήστε πρώτα τα πρωτότυπα από αυτό.
 wearable-favorites-delete-unloaded = Ο φάκελος "{ $name }Περιμένετε να φορτωθούν τα περιεχόμενά του και μετά προσπαθήστε ξανά.Περιμένετε μέχρι να φορτώσουν τα περιέχοντά του και στη συνέχεια προσπαθήσετε ξανα.
 wearable-favorites-invalid-name =

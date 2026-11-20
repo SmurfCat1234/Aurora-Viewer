@@ -2596,7 +2596,27 @@ splash-update-installing = Pag-install ng update…
 splash-update-cache = Pag-clear ng cache…
 splash-update-launching = Pagsisimula ng bagong bersyon…
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora Viewer: hindi maaaring simulan ang Metal: " }{ $e }
+app-graphics-start-memory-full =
+    Ang graphics card ay walang video memory na kaliwa para sa Aurora Viewer: isa pang programa ay may hawak ito.
+
+    Ano ang subukan:
+    • isara ang mga programa na ginagamit ang graphics card (iba pang viewer, isang laro, isang video o 3D editor), pagkatapos ay simulan Aurora Viewer muli;
+    • sa isang laptop na may dalawang graphics card, suriin kung aling isa Aurora Viewer tumatakbo sa.
+
+    Ang log ng ito simulan: { $log }
 app-graphics-start-failed-title = Aurora Viewer ay hindi nagsisimula
+app-graphics-start-failed =
+    Ang Aurora Viewer ay hindi maaaring buksan ang isang graphic card upang gumuhit ng window nito.
+
+    Ano ang subukan:
+    • i-update ang driver ng graphics card;
+    • sa isang PC na may dalawang graphics card, suriin na ang parehong ay naka-enable sa Device Manager, at na ang monitor ay plugged sa card na dapat gumuhit;
+    • sa isang laptop na may AMD at NVIDIA graphics, i-update ang driver AMD mula sa website ng AMD pati na rin ang driver NVIdia;
+    • I-restart ang PC.
+
+    Mga detalye: { $e }
+
+    Ang log ng ito simulan: { $log }
 app-gpu-stall-title = Aurora Viewer: ang graphics card ay hindi tumutugon
 app-gpu-stall = Ang graphics card ay hindi natapos ng isang imahe para sa { $seconds } the card is not responding, you can try to reset it. If Aurora does not respond, you may have a problem with the graphics driver. If you are logged out, you will see this message: “Aurora has failed to respond” or “Aura has failled to respond”. If you have a graphics card that is not supported by Aurora, you should try to restart the computer and try again. If the card still responds, you might have a issue with the driver. What to do:• restart Aurora;• restarts the computer;• reboot Aurora.What to do?What to try:• Keep waiting? Yes keeps waiting; NoWhat to test:• Restart Aurora; What to try?What do you do:Why do I get this message?What can I do?Why?What should I do:What to check:• What to check?What must I do to avoid this problem?What is the solution:What can be done:What should be tried:What do I do if I am stuck?What could I do when I am lost?What does I do in case of an emergency?What are the possible solutions?What will I do for this problem:What is my answer:What will you do?How to fix it?What would I do, if I were lost?Which is the best solution?What you can do: What to attempt:• wait?Yes Keep wait? Yes Keep awaiting? Yes Yes Apply; No Keep Waiting? No Apply.What can you do to prevent it?When you start Aurora, what can I try?Whether you want to continue?What may you do,what can you try? What to test?What cannot you do if you are stuck in the
 app-gpu-recovered-title = Ang graphic card ay nai-reset
@@ -4457,6 +4477,7 @@ ui-options-region-restart-channel = Channel (473405 sa pamamagitan ng default)
 ui-options-collisions-in-chat = Collisions sa malapit na chat
 ui-options-collisions-in-chat-help = Isang linya sa malapit na chat kapag may isang taong bumps sa iyo, pushes sa iyo ng isang script o hits sa iyo sa pamamagitan ng isang bagay.
 ui-options-collisions-report = Sabihin script sa isang channel
+ui-options-collisions-report-help = Para sa HUDs at script: nagpapadala <key>,<strength>,<type> ng bawat pagsabog sa channel na ito.
 ui-options-collisions-channel = Channel (-25000 sa pamamagitan ng default)
 ui-options-environment-fade = Pakikipag-ugnayan
 demo-fountain = Patakbo
@@ -6397,6 +6418,9 @@ region-restart-toast-seconds =
        *[other] segundo
     }. Kung mananatili ka sa rehiyong ito kapag na-shut down, ikaw ay logged out.
 region-restart-disconnected = { $region } restarted: ang koneksyon ay sarado.
+region-restart-legacy-text =
+    Malapit nang mag-restart ang rehiyong kinaroroonan mo ngayon ({ $region }).
+    Kung mananatili ka sa rehiyong ito, mala-log out ka.
 region-restart-legacy-seconds = Mga segundo hanggang sa muling simulan
 region-restart-legacy-landmarks = Ang Aking mga Landmark
 region-restart-legacy-teleport = Teleport sa Landmark
@@ -13392,6 +13416,10 @@ movement-pass-reached = Ang target ay naabot.
 movement-pass-not-reached = Ang pasahe ay nabigo: ang target ay hindi naabot bago ang motor tumigil.
 movement-pass-cancelled = Ang pasahe ay canceled.
 movement-pass-no-result = Walang huling resulta ng pasahe natanggap. Command paghahatid ay hindi kumpirmahin ang paggalaw.
+movement-pass-feedback =
+    { $state }
+    Patungo sa displacement: { $progress } · Distansya sa target: { $remaining } m
+    Pinakamataas na sampled forward bilis: { $speed } m/s
 movement-disabled = Ang pagpapabuti ng paggalaw ay hindi nagagamit
 movement-physics-unavailable = Bridge hindi magagamit - physics tulong interrupted
 movement-pass-not-sent = Pasahe hindi ipinadala: { $reason }
@@ -13500,6 +13528,29 @@ bridge-object-info-loading = Pagkuha ng impormasyon sa bagay sa pamamagitan ng A
 bridge-object-info-region = Object impormasyon ay magagamit lamang para sa isang bagay sa iyong kasalukuyang rehiyon.
 bridge-object-info-failed = Object impormasyon hindi magagamit: { $reason }
 bridge-object-info-group-owned = Group-owned
+bridge-object-info-result =
+    Impormasyon ng object “{ $name }”:
+    ID ng object: { $object }
+    Paglalarawan: { $description }
+    Pangunahing prim: { $root }
+    Bilang ng mga prim: { $prims }
+    Epekto sa lupa: { $impact }
+    Mga item sa imbentaryo: { $inventory }
+    Bilis: { $velocity } m/s
+    Posisyon: { $position } ({ $distance } m)
+    Pag-ikot: { $rotation } ({ $degrees }°)
+    Bilis ng pag-ikot: { $angular } rad/s
+    Gumawa: { $creator }
+    May-ari: { $owner }
+    Dating may-ari: { $previous }
+    Naglagay sa mundo: { $rezzer }
+    Grupo: { $group }
+    Oras ng paggawa: { $created }
+    Oras ng paglagay sa mundo: { $rezzed }
+    Uri ng paghahanap ng landas: { $pathfinding }
+    Puntong pinagkakabitan: { $attachment }
+    Pansamantalang nakakabit: { $temporary }
+    Kasalukuyan mong posisyon: { $observer }
 bridge-query-timeout = Ang tulay ay hindi bumalik ang mga hinihingi ng impormasyon sa oras. Subukan muli.
 bridge-query-interrupted = Ang kahilingan ng impormasyon ay nasira sa pamamagitan ng isang rehiyon o bridge pagbabago ng koneksyon. Subukan muli.
 ao-bootstrap-interrupted = Ang isang hindi natapos AO import ay umiiral na sa #Aurora. Tingnan ito sa imbentaryo bago muling subukan.
@@ -15475,6 +15526,10 @@ wearable-favorites-assign = Magtalaga sa Folder
 wearable-favorites-new-folder-prompt = Mag-type ng pangalan para sa bagong folder ng Mga Favorite Wearables:
 wearable-favorites-new-folder-default = Bagong Folder
 wearable-favorites-rename-prompt = Mag-type ng bagong pangalan para sa folder na Favorite Wearables { $name }:
+wearable-favorites-delete-confirm =
+    I-delete ang Favorite Wearables folder "{ $name }"?
+
+    Ito ay inaalis ang folder at ang mga paboritong link lamang. Orihinal na mga item imbentaryo ay hindi tinanggal.
 wearable-favorites-delete-refused = Ang folder "{ $name }" hold orihinal na mga item sa imbentaryo, hindi lamang mga link, kaya ito ay hindi tinanggal. Ilipat ang mga orihinal na labas ng ito una.
 wearable-favorites-delete-unloaded = Ang folder "{ $name }" ay hindi natapos loading, kaya ito ay hindi tinanggal. maghintay para sa mga nilalaman nito upang i-load, pagkatapos ay subukan muli.
 wearable-favorites-invalid-name =

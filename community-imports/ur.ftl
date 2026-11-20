@@ -2596,7 +2596,27 @@ splash-update-installing = اپڈیٹ انسٹال کیا جارہا ہے...
 splash-update-cache = کیش صاف کیا جارہا ہے...
 splash-update-launching = نئے ورژن کو شروع کیا جارہا ہے...
 app-aurora-viewer-unable-to-initialize-metal = { "Aurora ناظر: میٹل کو شروع کرنے میں ناکارآمد: " }{ $e }
+app-graphics-start-memory-full =
+    گرافکس کارڈ میں Aurora Viewer کے لیے ویڈیو میموری نہیں ہے: ایک اور پروگرام اسے رکھتا ہے.
+
+    کوشش کرنے کے لئے کیا:
+    گرافک کارڈ استعمال کر نے والے پروگرام بند کريں (ديگر ويز ر، گيم، ويڈیو يا 3D ايڈيٽر)، پھر اوررا ويزر کو دوبارہ شروع کريے
+    دو گرافکس کارڈز کے ساتھ ایک لپ ٹا پ پر، چکیں کہ Aurora Viewer کون سا چل رہا ہے.
+
+    اس شروع کا لاگ: { $log }
 app-graphics-start-failed-title = Aurora ناظر شروع نہیں ہوسکتا
+app-graphics-start-failed =
+    Aurora ناظر اس کی وینڈو ڈرائنگ کرنے کے لیے گرافکس کارڈ نہیں کھول سکتا.
+
+    کوشش کرنے کے لئے کیا:
+    گرافکس کارڈ ڈرائیور اپ ڈیٹ کریں
+    دو گرافک کارڈز کے ساتھ پي سي پر ، چکيں کہ دونوں ڈیوائس مينيجر ميں فعال هے اور مونيٹر کا کارڈ ميں پلگ ان هے جو ڈرائنگ کر نے کا حق رکھتا هے
+    • ایک کمپیوٹر پر AMD اور NVIDIA گرافکس کے ساتھ، AMD کی ویب سائٹ سے AMD ڈرائیوروں کو اپڈیٹ کریں، اسی طرح NVIdia ڈرائیورز کو بھی اپڈائٹ کریں۔
+    پی سی کو دوبارہ شروع کریں.
+
+    تفصیلات: { $e }
+
+    اس شروع کا لاگ: { $log }
 app-gpu-stall-title = Aurora ناظر: گرافکس کارڈ جواب نہیں دے رہا ہے
 app-gpu-stall = گرافکس کارڈ نے اس کے لیے ایک تصویر ختم نہیں کی { $seconds } you are logged in to Aurora, you can see the following message: “Aurora is not able to draw” or “Aura is not capable of drawing”. If you are not logged out, you will see this message: "Auroras graphics driver has been reset" or "Aura has not been resettled". If you have an Aurora card, you may be logged into Aurora and using Aurora. If you do not have an account, you must log in to your account. If Aurora is logged on, you should be logging in to the account. What to do?What to doKeep waiting?YesKeep waiting;NoKeep waiting:• Keep waiting!Yes keep waiting; NoKeep waiting.What to try:• Wait a bit.What do you do?Keep waiting…What to test:• Do you want to try?What do I do?Why?What can I do:What to attempt:•Do I wait?What does I do??What to avoid?What should I do when I am waiting?What I can do?How to fix it?What you can do:•Keep waiting, what can I try?Which is the best solution?What is the problem?What are the solutions?What will help?What would you do:Which can you do to fix this problem?When you start Aurora, what do you try to fix?What could you do if you need to fix the issue?What must you do when you get the problem:What can you try:What do You do:You can try to resolve the problem.What can be done:What you do,what can you make?What cannot you doWhy do you fail?What might you do.What you should do:If you fail,what should you doWhat to stop:What
 app-gpu-recovered-title = گرافکس کارڈ دوبارہ قائم کیا گیا
@@ -2606,6 +2626,14 @@ app-vr-runtime-closed-title = VR سوفٹ ویئر بند
 app-vr-runtime-closed = آپ کا VR سوفٹ ویئر بند هو گیا تھا اور Aurora نے اس کے بغیر وینڈوز کھول دیے: آپ لا گ ان میں رہے اور دنیا ایک لمحے میں دوبارہ لوڈ ہو جا ئيں گی.VR آئندہ Aurora کی شروعات پر واپس آتا هے
 app-vr-runtime-closed-at-start = آپ کا VR سوفٹ و ير (مثال طور پر SteamVR) بند هو تا هے Aurora نے اس کے بغیر وينڈو ري دوبارا کھولي: آپ لا گ ان ميں رہیں اور دنيا کو چند دقيقہ ميں لوڈ کريں VR آ گتي شروع Auroraکے شروع ہونے پر واپس آتا هے. Aurora ہر شروع ميں آپ کاVRسافٹ و ري لوڈ کرتا هے: اسے روکنے کے ليے ترجيحات › کيمرا › VR › شروع ميے VR کو قائم کريے
 app-gpu-lost-title = Aurora ناظر: گرافکس کارڈ کھویا گیا
+app-gpu-lost =
+    گرافکس کارڈ Aurora کے لیے کام کرنا بند کر دیا: اس کا ڈرائیور ری سیٹ کیا گیا تھا (اس میں ایک تصویر بنانے میں بہت زیادہ وقت لگتا ہے، یا اس کی ویڈیو میموری بھر گئی تھی)، یا کارڈ کو ہٹا دیا گیا تھا یا کسی دوسرے پروگرام سے لیا گیا تھا. کچھ بھی نہیں ديرا جا سکتا: Aurora بند ہوجاتا هے جب آپ OK دباتے هيں (آپ صحيح طور پر لا گ آئوٽ ہو چکے هيں)
+
+    کوشش کرنے کے لئے کیا:
+    گرافکس کارڈ ڈرائیور اپ ڈیٹ کریں
+    بہت بڑی فوٹو کی سائز کو کم کریں، یا گرافکس کی کیفیت؛
+    دوسرے پروگرام بند کریں جو گرافکس کارڈ کو بہت استعمال کرتے ہیں
+    اگلے شروع میں، محفوظ گرافکس منتخب کريں جو Aurora پيش کريگا
 cmdline-mod-aurora-does-not-have-an-animation-overrider-ao-yet = Aurora کے پاس ابھی تک کوئی متحرک اوپررائڈر (AO) نہیں ہے.
 cmdline-mod-use-hover-height-in-appearance = آپ کے آوٹار کی ہوور بلندی کو نظريے → ہوور اونچے سے رکاوٹ دیں۔
 ui-context-aurora-recommends-against-opening-this-link-if-it-asks = Aurora اس لنک کو کھولنے کی سفارش نہیں کرتا. اگر یہ آپ سے لاگ ان یا ادائگی کے لیے پوچھتا ہے تو یہ بہت ممکن ہے کہ یہ ایک دھوکا ہو: کبھی بھی اسے اپنا پاس ورڈ یا ادائیگی کی معلومات نہ دیں.
@@ -3609,6 +3637,7 @@ ui-options-remove-aurora-button = حذف کریں
 uninstall-title = اس کمپیوٹر سے Aurora کو ہٹانا چاہتے ہیں؟
 uninstall-text = Aurora نے زيروں کو حذف کر دیا ہے، جو اس نے اپنے فولڈر کے باہر رجسٹر کیا تھا. یہ آپ کے بند ہونے تک کام کرتا ہے، لیکن محفوظ پاس ورڈ بھول جاتے ہیں اور کیش دوبارہ ڈاؤن لوڈ ہوتا ہے۔ ایک لنک ہینڈلر جو دوسرے پروگرام کو کھولتا ہے وہ اسی طرح چھوڑ دیا جاتا ہے.
 uninstall-confirm = حذف
+uninstall-links = رابطہ ہینڈلر secondlife://, hop:// اور x-grid-location-info://
 uninstall-notification-id = وینڈوز اطلاع شناخت
 uninstall-cache-key = کیش کلید، کریڈٹ سسٹم میں
 uninstall-password = محفوظ خفیہ لفظ { $user } ({ $grid }), کریڈٹ سسٹم میں
@@ -13503,6 +13532,29 @@ bridge-object-info-loading = Aurora پل سے چیز معلومات حاصل ک�
 bridge-object-info-region = اشيا ں کا معلومات صرف آپ کے حالياں علاقے ميں موجود شائد
 bridge-object-info-failed = اشیا معلومات دستیاب نہیں: { $reason }
 bridge-object-info-group-owned = گروپ کی ملکیت
+bridge-object-info-result =
+    آبجیکٹ کی معلومات “{ $name }”:
+    آبجیکٹ کی شناخت: { $object }
+    تفصیل: { $description }
+    بنیادی prim: { $root }
+    prim کی تعداد: { $prims }
+    زمین پر اثر: { $impact }
+    انوینٹری کی اشیا: { $inventory }
+    رفتار: { $velocity } m/s
+    مقام: { $position } ({ $distance } m)
+    گردش: { $rotation } ({ $degrees }°)
+    زاویائی رفتار: { $angular } rad/s
+    بنانے والا: { $creator }
+    مالک: { $owner }
+    سابقہ مالک: { $previous }
+    دنیا میں رکھنے والا: { $rezzer }
+    گروپ: { $group }
+    بنانے کا وقت: { $created }
+    دنیا میں رکھنے کا وقت: { $rezzed }
+    راستہ تلاش کرنے کی قسم: { $pathfinding }
+    منسلک کرنے کا نقطہ: { $attachment }
+    عارضی طور پر منسلک: { $temporary }
+    آپ کا موجودہ مقام: { $observer }
 bridge-query-timeout = بریج نے وقت میں مطالبہ معلومات واپس نہیں کی۔ دوبارہ کوشش کرو۔
 bridge-query-interrupted = معلومات کی درخواست کو ایک خطے یا بریس اتصال کے تبدیلی سے روک دیا گیا تھا. دوبارہ کوشش کریں.
 ao-bootstrap-interrupted = ایک نا مکمل AO امپورٹ پہلے سے #Aurora میں موجود ہے. دوبارہ کوشش کرنے سے پہلے اس کو انسٹالمنٹ میں دیکھیں.
@@ -15478,6 +15530,10 @@ wearable-favorites-assign = فولڈر میں منسوخ کریں
 wearable-favorites-new-folder-prompt = نئے پسندیدہ ویئربلز فولڈر کے لیے نام داخل کریں:
 wearable-favorites-new-folder-default = فولڈر
 wearable-favorites-rename-prompt = پسندیدہ ویئربل فولڈر کے لیے نیا نام داخل کریں { $name }:
+wearable-favorites-delete-confirm =
+    پسندیدہ فولڈر{ $name }"?
+
+    یہ فولڈر اور صرف اس کے پسندیدہ رابطوں کو حذف کرتا ہے. اصل انسٹالمنٹ آیٹم حذف نہیں کی جاتی.
 wearable-favorites-delete-refused = فولڈر "%s"{ $name }"اصلی انسٹالیشن آیٹم رکھتا ہے، صرف لنکس نہیں، تو یہ حذف نہیں کیا جاتا. اصل کو پہلے اس سے باہر ہٹاو.
 wearable-favorites-delete-unloaded = فولڈر "%s"{ $name }"لوڈ مکمل نہیں ہوا ہے، اس لیے اسے حذف نہیں کیا گیا ہے. اس کے مواد کو لوڈ کرنے کے لئے انتظار کریں اور پھر دوبارہ کوشش کریں.
 wearable-favorites-invalid-name =
