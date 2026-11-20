@@ -203,6 +203,8 @@ poser-policy-friends
 poser-policy-nobody
 poser-privacy
 poser-privacy-hint
+ui-chat-latest
+ui-context-script-info
 ui-day-editor-weather-tip
 ui-env-editor-northern-lights-tip
 ui-env-editor-weather-amount-from

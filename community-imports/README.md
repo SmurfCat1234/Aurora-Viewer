@@ -1,6 +1,6 @@
 # Aurora Viewer language review packs
 
-These 26 opt-in Fluent catalogs target Aurora Viewer at `2ca847e5`. Each file passed parsing, key and variable checks, and formatting with representative type and selector values. Wording counts and pending text findings are recorded separately in `manifest.json` and the reports in the ZIP.
+These 26 opt-in Fluent catalogs target Aurora Viewer at `3fe6a320`. Each file passed parsing, key and variable checks, and formatting with representative type and selector values. Wording counts and pending text findings are recorded separately in `manifest.json` and the reports in the ZIP.
 
 1. Choose a file named after your language, such as `es.ftl` or `ko.ftl`.
 2. In Aurora Viewer, open **Preferences → Language and updates** and turn on **Use a language file (.ftl)**.
@@ -8,7 +8,7 @@ These 26 opt-in Fluent catalogs target Aurora Viewer at `2ca847e5`. Each file pa
 
 The Viewer uses its current English message when a translation is missing. The additional previews keep Linden Lab’s copyright-report notice in English pending a review of the policy wording. Right-to-left reading order and layout still need acceptance.
 
-For the next release, run Aurora’s `catalog_delta` example against the old and new English files. That produces added, changed, and retired message IDs. Run the Fluent checks again after applying the delta. Use the audit reports and representative Windows offline screens to check the wording changes. [Aurora translator guide](https://github.com/Aurora-Viewer/Aurora-Viewer/blob/2ca847e5/docs/TRANSLATING.md)
+For the next release, run Aurora’s `catalog_delta` example against the old and new English files. That produces added, changed, and retired message IDs. Run the Fluent checks again after applying the delta. Use the audit reports and representative Windows offline screens to check the wording changes. [Aurora translator guide](https://github.com/Aurora-Viewer/Aurora-Viewer/blob/3fe6a320/docs/TRANSLATING.md)
 
 The validation manifest has the English baseline, coverage and counts by language, plus SHA-256 values with LF line endings. The review packs and discussion are tracked in [draft #4335](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4335). Italian is tracked separately in [#4259](https://github.com/Aurora-Viewer/Aurora-Viewer/issues/4259).
 
