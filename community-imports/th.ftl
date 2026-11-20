@@ -2842,7 +2842,7 @@ ui-environment-based-on-day-cycle = ตามรอบวัน
 build-ui-object-bias = ความแตกต่าง
 common-library = ไลบรารี
 app-welcome = ยินดีต้อนรับ
-demo-welcome-to-the-aurora-viewer-demo = ยินดีต้อนรับสู่ Aurora Viewer Demo!
+demo-welcome-to-the-aurora-viewer-demo = ยินดีต้อนรับสู่โหมดสาธิต Aurora Viewer! 🐺✨❤️
 demo-region-day-cycle = นอร์ดิค ดอว์น
 demo-region-telehub = จุดหมาย
 demo-region-telehub-object = หินที่มาถึง
@@ -5349,7 +5349,7 @@ build-ui-tools-local = ภายใน
 ui-land-general-when-land-is-deeded-to-a-group-the-previous = เมื่อดินถูกจัดสรรให้กลุ่ม เจ้าของก่อนหน้านี้ก็ยังบริจาค สิทธิในการใช้ที่ดินมากพอ
 ui-contacts-granting-modify-rights-lets-another-resident-change-delete-or = { "Granting modify rights lets another resident change, delete or take any of your Second Life objects. Think carefully before granting these rights.\u000ADo you really want to grant modify rights to " }{ $value0 }?
 demo-wolf = หมาป่า
-demo-violet-wolf = ไวโอเล็ตวูล์ฟ
+demo-violet-wolf = Violet Wolf
 demo-lone-wolf-weekend-builder-my-partner-secondlife-app-agent = { "Lone wolf, weekend builder.\u000A\u000AMy partner: secondlife:///app/agent/" }{ $DEMO_NOVA }{ "/about\u000AMy site: https://example.com/loup 🐺\u000AMy home: http://maps.secondlife.com/secondlife/Aurora%20D%C3%A9mo/140/120/25" }
 demo-northern-wolves = หมาป่าทางเหนือ
 build-ui-texture-glow = แสงสว่าง
@@ -5526,7 +5526,7 @@ build-demo-sim-instructions = คำสั่ง
 app-demo-mode-no-grid-connection = โหมดทดลอง: ไม่มีการเชื่อมต่อกับระบบเครือข่าย
 app-demo-login-pending-logout = ระบบกำลังล็อกออกคุณอยู่ตอนนี้ โปรดรอสักครู่ก่อนที่จะลองล็อกอินอีกครั้ง
 voice-demo-mode-no-voice-server-the-microphone-drives-the = โหมด Demo: ไม่มีเซิร์ฟเวอร์เสียง (ไมโครโฟนจะทำการเคลื่อนไหวของแท็กชื่อ)
-demo-offline-demo-mode-no-network-connection = โหมดแสดงตัวแบบออฟไลน์: ไม่มีการเชื่อมต่อเครือข่าย
+demo-offline-demo-mode-no-network-connection = โหมดสาธิตออฟไลน์: ไม่ได้เชื่อมต่อเครือข่าย
 ui-appearance-items-modify = แก้ไข
 ui-inventory-changing = กำลังเปลี่ยน...
 inventory-operations-change-sent-but-could-not-read-it-back-reload = เปลี่ยนแปลงส่ง แต่ไม่สามารถอ่านกลับมาได้ โหลดรายการใหม่
@@ -5834,8 +5834,8 @@ ui-appearance-items-left-ear-2 = หูซ้าย
 ui-appearance-items-alt-left-ear-2 = ตัวเลือกด้านซ้าย
 common-original = ต้นฉบับ
 keybinds-origin = บ้าน
-demo-orion-example = ตัวอย่างของ Orion
-demo-orion-the-great = โอริออนผู้ยิ่งใหญ่
+demo-orion-example = Orion Example
+demo-orion-the-great = Orion the Great
 ui-options-nearby-avatar-bones-32-m-after-animation = กระดูกอวตารใกล้เคียง (32 เมตร) หลังจากการเคลื่อนไหว
 ui-object-actions-or-choose-an-amount = หรือเลือกจำนวน:
 build-manip-west = ตะวันตก
@@ -6364,66 +6364,66 @@ build-ui-floaters-automatically-resize-media-to-the-object-face = ปรับ�
 world-mod-redirecting-to-another-location = กำลังนำทางไปยังตำแหน่งอื่น...
 ui-sound-region-restart = เริ่มใหม่
 ui-sound-region-restart-opensim = เริ่มพื้นที่ใหม่ (OpenSim)
-region-restart-title = เริ่มใหม่
-region-restart-before = จนกว่าจะเริ่มใหม่
+region-restart-title = การรีสตาร์ตภูมิภาค
+region-restart-before = ก่อนเริ่มระบบใหม่
 region-restart-seconds = วินาที
-region-restart-seconds-short = { $seconds } s
-region-restart-calm-title = { $region } จะเริ่มใหม่
-region-restart-calm-text = ถ้าคุณอยู่ในพื้นที่ คุณจะถูกล็อกออก
+region-restart-seconds-short = { $seconds } วิ
+region-restart-calm-title = { $region } จะเริ่มระบบใหม่
+region-restart-calm-text = หากยังอยู่ในภูมิภาคนี้ ระบบจะนำคุณออกจากระบบ
 region-restart-near-title = เหลืออีกหนึ่งนาที
 region-restart-near-text =
-    ออกไป { $elide ->
+    ออกจาก { $elide ->
        *[other] { $region }
-    } เพื่อที่จะคงความสัมพันธ์
-region-restart-red-title = ไปเดี๋ยวนี้
-region-restart-red-text = { $region } เริ่มใหม่ในอีกไม่ถึง 30 วินาที
-region-restart-final-title = กำลังจะเริ่มใหม่
-region-restart-final-text = อยู่ข้างใน { $region } และคุณจะถูกล็อกออก
-region-restart-zero-title = { $region } กำลังเริ่มใหม่
-region-restart-zero-text = ถ้าคุณยังอยู่ที่นี่ การเชื่อมต่อของคุณจะถูกตัด
-region-restart-cancelled-title = ยกเลิกการเริ่มใหม่
+    } เพื่อคงการเชื่อมต่อไว้
+region-restart-red-title = ออกจากภูมิภาคตอนนี้
+region-restart-red-text = { $region } จะเริ่มระบบใหม่ในอีกไม่ถึง 30 วินาที
+region-restart-final-title = ใกล้จะเริ่มระบบใหม่แล้ว
+region-restart-final-text = หากยังอยู่ใน { $region } ระบบจะนำคุณออกจากระบบ
+region-restart-zero-title = { $region } กำลังเริ่มระบบใหม่
+region-restart-zero-text = หากยังอยู่ที่นี่ การเชื่อมต่อของคุณจะถูกตัด
+region-restart-cancelled-title = ยกเลิกการเริ่มระบบใหม่แล้ว
 region-restart-cancelled-text =
-    ผู้จัดการยกเลิกการเริ่มต้นใหม่ของ { $elide ->
+    ผู้ดูแลได้ยกเลิกการเริ่มระบบใหม่ของ { $elide ->
        *[other] { $region }
-    }.
-region-restart-left-title = คุณออกไป { $region }
-region-restart-left-text = ถึง: { $arrival }ปิดการแจ้งเตือน
-region-restart-minimize = ลดขนาด
+    }
+region-restart-left-title = คุณออกจาก { $region } แล้ว
+region-restart-left-text = มาถึง { $arrival } แล้ว การแจ้งเตือนจะปิดลง
+region-restart-minimize = ย่อหน้าต่าง
 region-restart-show = แสดงการแจ้งเตือน
-region-restart-search = ค้นหาจุดหมายปลายทาง...
-region-restart-recent = ปัจจุบัน
-region-restart-no-landmark = ไม่มีจุดหมายปลายทาง
-region-restart-neighbour = พื้นที่ใกล้เคียง: { $region }
-region-restart-suggestion = ข้อเสนอแนะ
-region-restart-last-place = อันดับสุดท้าย: { $place }
-region-restart-all-landmarks = สถานที่สำคัญทั้งหมด...
-region-restart-manager = คุณจัดการพื้นที่นี้
-region-restart-cancel = ยกเลิกการเริ่มใหม่
-region-restart-region-estate = พื้นที่
-region-restart-cancel-confirm-title = ยกเลิกการเริ่มต้นใหม่?
-region-restart-cancel-confirm-text = { $region } มันจะไม่เริ่มใหม่ และผู้ที่อยู่อาศัยที่นั่น จะได้รับแจ้ง
-region-restart-keep = เก็บการเริ่มใหม่ไว้
-region-restart-pinned = ถูกกั้น
-region-restart-chat = พื้นที่ที่คุณอยู่ในตอนนี้กำลังจะเริ่มใหม่ หากคุณยังคงอยู่ในพื้นที่นี้ คุณจะถูกล็อกอิน
-region-restart-chat-zero = ภูมิภาคนี้กำลังเริ่มต้นใหม่
-region-restart-chat-cancelled = การเริ่มต้นใหม่ของภูมิภาคถูกยกเลิก
+region-restart-search = ค้นหาหมุดสถานที่…
+region-restart-recent = ล่าสุด
+region-restart-no-landmark = ไม่พบหมุดสถานที่
+region-restart-neighbour = ภูมิภาคข้างเคียง: { $region }
+region-restart-suggestion = แนะนำ
+region-restart-last-place = สถานที่ล่าสุด: { $place }
+region-restart-all-landmarks = หมุดสถานที่ทั้งหมด…
+region-restart-manager = คุณเป็นผู้ดูแลภูมิภาคนี้
+region-restart-cancel = ยกเลิกการเริ่มระบบใหม่
+region-restart-region-estate = ภูมิภาค / เอสเตต ›
+region-restart-cancel-confirm-title = ยกเลิกการเริ่มระบบใหม่หรือไม่
+region-restart-cancel-confirm-text = { $region } จะไม่เริ่มระบบใหม่ และระบบจะแจ้งให้ผู้อยู่อาศัยที่นั่นทราบ
+region-restart-keep = เริ่มระบบใหม่ตามกำหนดเดิม
+region-restart-pinned = ปักหมุดแล้ว
+region-restart-chat = ภูมิภาคที่คุณอยู่กำลังจะเริ่มระบบใหม่ หากยังอยู่ในภูมิภาคนี้ ระบบจะนำคุณออกจากระบบ
+region-restart-chat-zero = ภูมิภาคกำลังเริ่มระบบใหม่
+region-restart-chat-cancelled = ยกเลิกการเริ่มระบบใหม่ของภูมิภาคแล้ว
 region-restart-toast-minutes =
-    ภูมิภาค{ $region }"จะเริ่มใหม่ใน { $count } { $count ->
+    ภูมิภาค “{ $region }” จะเริ่มระบบใหม่ในอีก { $count } { $count ->
         [one] นาที
        *[other] นาที
-    }ถ้าคุณอยู่ในพื้นที่นี้ ตอนที่มันปิด คุณจะถูกล็อกออก
+    } หากคุณยังอยู่ในภูมิภาคนี้เมื่อระบบปิด ระบบจะนำคุณออกจากระบบ
 region-restart-toast-seconds =
-    ภูมิภาค{ $region }"จะเริ่มใหม่ใน { $count } { $count ->
+    ภูมิภาค “{ $region }” จะเริ่มระบบใหม่ในอีก { $count } { $count ->
         [one] วินาที
        *[other] วินาที
-    }ถ้าคุณอยู่ในพื้นที่นี้ ตอนที่มันปิด คุณจะถูกล็อกออก
-region-restart-disconnected = { $region } เริ่มใหม่: การเชื่อมต่อถูกปิด
+    } หากคุณยังอยู่ในภูมิภาคนี้เมื่อระบบปิด ระบบจะนำคุณออกจากระบบ
+region-restart-disconnected = { $region } เริ่มระบบใหม่แล้ว การเชื่อมต่อถูกปิด
 region-restart-legacy-text =
     ภูมิภาคที่คุณอยู่ในขณะนี้ ({ $region }) กำลังจะเริ่มใหม่
     หากคุณยังอยู่ในภูมิภาคนี้ ระบบจะนำคุณออกจากระบบ
-region-restart-legacy-seconds = วินาทีก่อนเริ่มการทำงานใหม่
-region-restart-legacy-landmarks = จุดหมายปลายทางของฉัน
-region-restart-legacy-teleport = พาไปยังจุดหมายปลายทาง
+region-restart-legacy-seconds = วินาทีจนกว่าจะเริ่มระบบใหม่
+region-restart-legacy-landmarks = หมุดสถานที่ของฉัน
+region-restart-legacy-teleport = เทเลพอร์ตไปยังหมุดสถานที่
 ui-options-planar-scene-reflection-high-and-ultra-are-costly = ภาพสะท้อนจากฉากที่เรียงตัวกันสูงและต่ำมีราคาแพง
 ui-options-reflections = ภาพสะท้อนแสง
 ui-options-water-reflections = ภาพสะท้อนของน้ำ
@@ -11670,7 +11670,7 @@ region-health-smooth = เรียบ
 region-health-slowed = ช้าลง
 region-health-struggling = กำลังพยายาม
 region-dilation = ขยาย { $value }
-region-restart-schedule = เริ่มใหม่ตามแผนการ
+region-restart-schedule = การเริ่มระบบใหม่ตามกำหนด
 region-schedule-at = { $days } ที่ { $time } UTC
 region-schedule-every-day = ทุกวัน
 region-schedule-none = ไม่มี

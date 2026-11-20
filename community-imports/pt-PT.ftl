@@ -5356,7 +5356,7 @@ build-ui-tools-local = Local
 ui-land-general-when-land-is-deeded-to-a-group-the-previous = Quando a terra é atribuída a um grupo, o proprietário anterior também doa crédito suficiente para uso da terra.
 ui-contacts-granting-modify-rights-lets-another-resident-change-delete-or = { "Granting modify rights lets another resident change, delete or take any of your Second Life objects. Think carefully before granting these rights.\u000ADo you really want to grant modify rights to " }{ $value0 }?
 demo-wolf = Lobo.
-demo-violet-wolf = Violet WolfTradução
+demo-violet-wolf = Violet Wolf
 demo-lone-wolf-weekend-builder-my-partner-secondlife-app-agent = { "Lone wolf, weekend builder.\u000A\u000AMy partner: secondlife:///app/agent/" }{ $DEMO_NOVA }{ "/about\u000AMy site: https://example.com/loup 🐺\u000AMy home: http://maps.secondlife.com/secondlife/Aurora%20D%C3%A9mo/140/120/25" }
 demo-northern-wolves = Lobos do Norte
 build-ui-texture-glow = Brilho
@@ -5533,7 +5533,7 @@ build-demo-sim-instructions = Instruções
 app-demo-mode-no-grid-connection = Modo Demo: sem conexão de rede.
 app-demo-login-pending-logout = O sistema está desconectando você agora. Aguarde um minuto antes de tentar fazer login novamente.
 voice-demo-mode-no-voice-server-the-microphone-drives-the = Modo de demonstração: sem servidor de voz (o microfone anima a etiqueta de nome)
-demo-offline-demo-mode-no-network-connection = Modo de demonstração offline: sem conexão de rede.
+demo-offline-demo-mode-no-network-connection = Modo de demonstração offline: sem ligação à rede.
 ui-appearance-items-modify = Modificar
 ui-inventory-changing = A mudar...
 inventory-operations-change-sent-but-could-not-read-it-back-reload = A alteração foi enviada, mas não foi possível lê-la de volta.
@@ -5841,8 +5841,8 @@ ui-appearance-items-left-ear-2 = Orelha esquerda
 ui-appearance-items-alt-left-ear-2 = Alt orelha esquerda
 common-original = Original
 keybinds-origin = Casa
-demo-orion-example = Exemplo de Orion
-demo-orion-the-great = Orion the GreatTradução
+demo-orion-example = Orion Example
+demo-orion-the-great = Orion the Great
 ui-options-nearby-avatar-bones-32-m-after-animation = Ossos próximos do avatar (32 m), após animação
 ui-object-actions-or-choose-an-amount = Ou escolha uma quantia:
 build-manip-west = Oeste
@@ -6371,66 +6371,66 @@ build-ui-floaters-automatically-resize-media-to-the-object-face = Redimensionar 
 world-mod-redirecting-to-another-location = Redirecionando para outro local…
 ui-sound-region-restart = Reinicialização da região
 ui-sound-region-restart-opensim = Reiniciar região (OpenSim)
-region-restart-title = Reinicialização da região
-region-restart-before = até o reinício
+region-restart-title = Reinício da região
+region-restart-before = até ao reinício
 region-restart-seconds = segundos
 region-restart-seconds-short = { $seconds } s
-region-restart-calm-title = { $region } irá reiniciar
-region-restart-calm-text = Se você permanecer na região, você será desconectado.
-region-restart-near-title = Um minuto restante
+region-restart-calm-title = { $region } vai reiniciar
+region-restart-calm-text = Se permanecer na região, a sua sessão será terminada.
+region-restart-near-title = Falta um minuto
 region-restart-near-text =
-    Saia. { $elide ->
+    Saia de { $elide ->
        *[other] { $region }
-    } para ficar conectado.
+    } para manter a ligação.
 region-restart-red-title = Saia agora
-region-restart-red-text = { $region } reinicia em menos de 30 segundos.
-region-restart-final-title = Reiniciar iminente
-region-restart-final-text = Fique em casa { $region } e você será desconectado.
-region-restart-zero-title = { $region } Está a reiniciar
-region-restart-zero-text = Se você ainda estiver aqui, sua conexão será cortada.
-region-restart-cancelled-title = Reiniciar cancelado
+region-restart-red-text = { $region } vai reiniciar dentro de menos de 30 segundos.
+region-restart-final-title = Reinício iminente
+region-restart-final-text = Se permanecer em { $region }, a sua sessão será terminada.
+region-restart-zero-title = { $region } está a reiniciar
+region-restart-zero-text = Se ainda estiver aqui, a sua ligação será interrompida.
+region-restart-cancelled-title = Reinício cancelado
 region-restart-cancelled-text =
-    Um gerente cancelou o reinício de { $elide ->
+    Um gestor cancelou o reinício de { $elide ->
        *[other] { $region }
     }.
-region-restart-left-title = Você saiu { $region }
-region-restart-left-text = Chegou: { $arrival }. O alerta fecha.
+region-restart-left-title = Saiu de { $region }
+region-restart-left-text = Chegou a { $arrival }. O aviso fecha-se.
 region-restart-minimize = Minimizar
-region-restart-show = Mostrar o alerta
-region-restart-search = Pesquisar um ponto de referência…
+region-restart-show = Mostrar o aviso
+region-restart-search = Procurar um ponto de referência…
 region-restart-recent = Recentes
-region-restart-no-landmark = Nenhum marco encontrado
+region-restart-no-landmark = Nenhum ponto de referência encontrado
 region-restart-neighbour = Região vizinha: { $region }
 region-restart-suggestion = sugestão
-region-restart-last-place = Última posição: { $place }
-region-restart-all-landmarks = Todos os pontos turísticos…
-region-restart-manager = Você gerencia esta região
+region-restart-last-place = Último local: { $place }
+region-restart-all-landmarks = Todos os pontos de referência…
+region-restart-manager = É gestor desta região
 region-restart-cancel = Cancelar o reinício
-region-restart-region-estate = Região / propriedade ›
+region-restart-region-estate = Região / Propriedade ›
 region-restart-cancel-confirm-title = Cancelar o reinício?
-region-restart-cancel-confirm-text = { $region } não vai reiniciar, e os moradores lá serão informados.
-region-restart-keep = Mantenha o reinício
-region-restart-pinned = fixado
-region-restart-chat = A região em que você está agora está prestes a ser reiniciada, se você permanecer nessa região você será desconectado.
-region-restart-chat-zero = A região está sendo reiniciada.
+region-restart-cancel-confirm-text = { $region } não vai reiniciar e os residentes da região serão avisados.
+region-restart-keep = Manter o reinício
+region-restart-pinned = afixado
+region-restart-chat = A região onde se encontra está prestes a reiniciar. Se permanecer na região, a sua sessão será terminada.
+region-restart-chat-zero = A região está a reiniciar.
 region-restart-chat-cancelled = O reinício da região foi cancelado.
 region-restart-toast-minutes =
-    A região "{ $region }" será reiniciado em { $count } { $count ->
+    A região «{ $region }» vai reiniciar dentro de { $count } { $count ->
         [one] minuto
        *[other] minutos
-    }. Se você permanecer nesta região quando ele for desligado, você será desconectado.
+    }. Se permanecer na região quando esta encerrar, a sua sessão será terminada.
 region-restart-toast-seconds =
-    A região "{ $region }" será reiniciado em { $count } { $count ->
+    A região «{ $region }» vai reiniciar dentro de { $count } { $count ->
         [one] segundo
        *[other] segundos
-    }. Se você permanecer nesta região quando ele for desligado, você será desconectado.
-region-restart-disconnected = { $region } restarted: a conexão foi fechada.
+    }. Se permanecer na região quando esta encerrar, a sua sessão será terminada.
+region-restart-disconnected = { $region } reiniciou. A ligação foi encerrada.
 region-restart-legacy-text =
     A região onde se encontra ({ $region }) está prestes a reiniciar.
     Se permanecer nesta região, a sua sessão será terminada.
-region-restart-legacy-seconds = Segundos até reiniciar
+region-restart-legacy-seconds = Segundos até ao reinício
 region-restart-legacy-landmarks = Os meus pontos de referência
-region-restart-legacy-teleport = Teletransporte para Landmark
+region-restart-legacy-teleport = Teletransportar para o ponto de referência
 ui-options-planar-scene-reflection-high-and-ultra-are-costly = Reflexão de cena planar; Alto e Ultra são caros
 ui-options-reflections = Reflexões
 ui-options-water-reflections = Reflexões da água
@@ -11677,7 +11677,7 @@ region-health-smooth = Suave
 region-health-slowed = Lentamente
 region-health-struggling = Lutando
 region-dilation = dilatação { $value }
-region-restart-schedule = Reinicialização agendada
+region-restart-schedule = Reinício agendado
 region-schedule-at = { $days } e { $time } UTC
 region-schedule-every-day = Todos os dias
 region-schedule-none = Nenhum

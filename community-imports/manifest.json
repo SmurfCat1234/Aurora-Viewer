@@ -192,12 +192,12 @@
     "pt-PT": {
       "active_keys": 15044,
       "preferences_keys": 2356,
-      "reviewed": 214,
+      "reviewed": 263,
       "english_fallbacks": 1,
       "retired_keys": 0,
       "reference_mismatches": 0,
-      "text_flags": 124,
-      "sha256": "ad214c25e9bd586bae708b3aa43b8a151b76a5bf935a0c93005d6dd572bfd3cd",
+      "text_flags": 125,
+      "sha256": "41369e683008b1d9f9649a8a2011a3e779ca6515c8dde9f637b3a3bfeafb0c95",
       "fluent_render": "passed"
     },
     "ro": {
@@ -236,12 +236,12 @@
     "th": {
       "active_keys": 15044,
       "preferences_keys": 2356,
-      "reviewed": 35,
+      "reviewed": 84,
       "english_fallbacks": 1,
       "retired_keys": 0,
       "reference_mismatches": 0,
-      "text_flags": 88,
-      "sha256": "d6c7f047de7945068ede0ec1c0544a9a1e5960b84b4bcd7928571162b0959e4c",
+      "text_flags": 89,
+      "sha256": "3ca0fe6160e9347dc51250467b0159415ba8fc34fc802e69050464f48376860b",
       "fluent_render": "passed"
     },
     "tr": {
