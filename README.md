@@ -1,8 +1,8 @@
 # Aurora Viewer language review files
 
-These optional Fluent catalogs continue the localization work recorded in [Aurora Viewer PR #4220](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4220). German, Brazilian Portuguese, Russian and both Chinese catalogs are now built into upstream Aurora through [#4315](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4315).
+These optional Fluent catalogs support the [community localization draft, #4335](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4335), continuing the work recorded in [#4220](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4220). German, Brazilian Portuguese, Russian and both Chinese catalogs are now built into upstream Aurora through [#4315](https://github.com/Aurora-Viewer/Aurora-Viewer/pull/4315).
 
-The Spanish file covers all 15,032 active English messages at [upstream commit `afc7d8c4`](https://github.com/Aurora-Viewer/Aurora-Viewer/commit/afc7d8c4d189fe3ac57d39844cd1e9296b44ee11), including 5,156 individually reviewed messages. This pass adds Appearance and the audio listening position. The other new-language drafts reflect an earlier 0.9.12 beta baseline. Missing strings in those drafts use English.
+The Spanish file covers all 15,032 active English messages at [upstream commit `afc7d8c4`](https://github.com/Aurora-Viewer/Aurora-Viewer/commit/afc7d8c4d189fe3ac57d39844cd1e9296b44ee11), including 5,310 individually reviewed messages. This pass adds Appearance, the World Map, the toolbar editor and its command list, and the audio listening position. The other new-language drafts reflect an earlier 0.9.12 beta baseline. Missing strings in those drafts use English.
 
 The [bundled refresh files](bundled-refresh) are importable copies of the five upstream community catalogs. Each adds nine current weather, avatar-cache and audio messages to the corresponding upstream catalog. These files are for release review.
 
