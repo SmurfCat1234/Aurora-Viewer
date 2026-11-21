@@ -7,25 +7,73 @@ use crate::{
 use aurora_assets::anim::{Animation, JointMotion, RotKey};
 use glam::{Quat, Vec3};
 use std::{
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Command, Stdio},
-    time::Instant,
+    sync::Arc,
 };
 
 pub(super) type RotationFrame = Vec<Option<Quat>>;
 
 #[derive(Clone)]
 pub(super) struct AudioPass {
-    pub(super) path: PathBuf,
-    pub(super) playback: Instant,
+    pub(super) source: AudioSource,
     pub(super) from: f32,
+    pub(super) end: f32,
     pub(super) offset: f32,
+    pub(super) rate: f32,
+}
+
+#[derive(Clone)]
+pub(super) struct AudioSource {
+    path: PathBuf,
+    _retained: Option<Arc<RetainedMedia>>,
+}
+
+struct RetainedMedia(PathBuf);
+
+impl Drop for RetainedMedia {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_file(&self.0);
+    }
+}
+
+impl AudioSource {
+    pub(super) fn local(path: PathBuf) -> Self {
+        Self { path, _retained: None }
+    }
+
+    pub(super) fn downloaded(path: &Path) -> Self {
+        // Link the already downloaded file in its own volume. The take can
+        // export after the companion's temporary cache has been discarded.
+        let target = std::env::temp_dir().join(format!(
+            "aurora-webcam-take-{}.{}",
+            uuid::Uuid::new_v4(),
+            path.extension().and_then(|ext| ext.to_str()).unwrap_or("mp4")
+        ));
+        if std::fs::hard_link(path, &target).is_ok() {
+            Self {
+                path: target.clone(),
+                _retained: Some(Arc::new(RetainedMedia(target))),
+            }
+        } else {
+            Self::local(path.to_owned())
+        }
+    }
 }
 
 /// Repair only short, corroborated gaps and isolated single-frame jumps.
 /// An optional playhead time explicitly replaces its closest sample using
 /// neighbors on both sides of a wider window.
 pub(super) fn repair(timed: &[(f32, RotationFrame)], playhead: Option<f32>) -> Vec<RotationFrame> {
+    repair_selected(timed, playhead.map(|center| [center - 0.065, center + 0.065]), None, 0.35)
+}
+
+pub(super) fn repair_selected(
+    timed: &[(f32, RotationFrame)],
+    range: Option<[f32; 2]>,
+    joints: Option<&[usize]>,
+    max_gap: f32,
+) -> Vec<RotationFrame> {
     let size = timed.iter().map(|(_, pose)| pose.len()).max().unwrap_or(0);
     let mut out: Vec<_> = timed
         .iter()
@@ -36,15 +84,18 @@ pub(super) fn repair(timed: &[(f32, RotationFrame)], playhead: Option<f32>) -> V
         })
         .collect();
     for joint in 0..size {
+        if joints.is_some_and(|joints| !joints.contains(&joint)) {
+            continue;
+        }
         let mut known: Vec<_> = timed
             .iter()
             .enumerate()
             .filter_map(|(i, (t, frame))| frame.get(joint).copied().flatten().filter(|q| q.is_finite()).map(|q| (i, *t, q)))
             .collect();
-        if let Some(center) = playhead {
-            let before = known.iter().rfind(|(_, t, _)| *t <= center - 0.065);
-            let after = known.iter().find(|(_, t, _)| *t >= center + 0.065);
-            if let Some((a, b)) = before.zip(after).filter(|(a, b)| b.1 - a.1 <= 0.35) {
+        if let Some([start, end]) = range {
+            let before = known.iter().rfind(|(_, t, _)| *t <= start);
+            let after = known.iter().find(|(_, t, _)| *t >= end);
+            if let Some((a, b)) = before.zip(after).filter(|(a, b)| b.1 - a.1 <= max_gap) {
                 for (i, (time, _)) in timed.iter().enumerate().take(b.0).skip(a.0 + 1) {
                     out[i][joint] = Some(between(a, b, *time));
                 }
@@ -331,44 +382,13 @@ fn accents(pcm: &[u8]) -> Vec<f32> {
 
 pub(super) fn audio_beats(passes: &[AudioPass], duration: f32) -> Vec<f32> {
     let mut result: Vec<f32> = Vec::new();
-    for (i, pass) in passes.iter().enumerate() {
-        let end = passes.get(i + 1).map_or(duration, |p| p.from.min(duration));
+    for pass in passes {
+        let end = pass.end.min(duration);
         let length = end - pass.from;
         if length < 0.22 {
             continue;
         }
-        let mut command = Command::new("ffmpeg");
-        command
-            .args([
-                "-nostdin",
-                "-v",
-                "error",
-                "-protocol_whitelist",
-                "file,pipe,crypto,data",
-                "-ss",
-                &format!("{:.4}", pass.offset),
-                "-i",
-            ])
-            .arg(&pass.path)
-            .args([
-                "-t",
-                &format!("{length:.4}"),
-                "-vn",
-                "-f",
-                "f32le",
-                "-ac",
-                "1",
-                "-ar",
-                "8000",
-                "pipe:1",
-            ])
-            .stdin(Stdio::null())
-            .stderr(Stdio::null());
-        #[cfg(windows)]
-        {
-            use std::os::windows::process::CommandExt;
-            command.creation_flags(0x0800_0000);
-        }
+        let mut command = audio_command(pass, pass.offset, length, 8000, "f32le");
         if let Ok(out) = command.output()
             && out.status.success()
         {
@@ -383,9 +403,58 @@ pub(super) fn audio_beats(passes: &[AudioPass], duration: f32) -> Vec<f32> {
     result
 }
 
+pub(super) fn audio_command(pass: &AudioPass, offset: f32, length: f32, rate: u32, format: &str) -> Command {
+    let mut command = Command::new("ffmpeg");
+    command
+        .args([
+            "-nostdin",
+            "-v",
+            "error",
+            "-protocol_whitelist",
+            "file,pipe,crypto,data",
+            "-ss",
+            &format!("{offset:.6}"),
+            "-i",
+        ])
+        .arg(&pass.source.path)
+        .args([
+            "-map",
+            "0:a:0",
+            "-af",
+            &format!("aresample=44100,asetrate={}", (44_100.0 * pass.rate).round() as u32),
+            "-t",
+            &format!("{length:.6}"),
+            "-vn",
+            "-f",
+            format,
+            "-ac",
+            "1",
+            "-ar",
+            &rate.to_string(),
+            "pipe:1",
+        ])
+        .stdin(Stdio::null())
+        .stderr(Stdio::null());
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        command.creation_flags(0x0800_0000);
+    }
+    command
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn joint_repair_only_changes_the_selected_rotation_between_anchors() {
+        let spike = Some(Quat::from_rotation_x(1.8));
+        let stable = Some(Quat::IDENTITY);
+        let timed = [(0.0, vec![stable, stable]), (0.1, vec![spike, spike]), (0.2, vec![stable, stable])];
+        let repaired = repair_selected(&timed, Some([0.08, 0.12]), Some(&[0]), 0.35);
+        assert_eq!(repaired, [vec![stable, stable], vec![stable, spike], vec![stable, stable]]);
+    }
 
     #[test]
     fn short_gaps_and_spikes_are_repaired_while_long_missing_runs_stay_missing() {

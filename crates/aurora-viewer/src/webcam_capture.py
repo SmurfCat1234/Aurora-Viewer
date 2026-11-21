@@ -137,28 +137,35 @@ def anchored_face(face, region, pose, aspect):
 
 def anchored_hands(hands, pose, aspect):
     hand_points = hands.multi_hand_landmarks or ()
+    identities = [
+        ("left" if value.classification[0].label == "Right" else "right", value.classification[0].score)
+        for value in (hands.multi_handedness or ())
+    ]
     p = pose.landmark if pose else None
     if p is None or not (visible(p[15]) or visible(p[16]) or (visible(p[11]) and visible(p[12]))):
         # Labels assume a horizontally mirrored selfie.
         return {
-            "left" if identity.classification[0].label == "Right" else "right": hand
-            for hand, identity in zip(hand_points, hands.multi_handedness or ())
+            side: hand for hand, (side, confidence) in zip(hand_points, identities) if confidence >= 0.65
         }
-    candidates = []
+    candidates = {"left": [(0.20, -1)], "right": [(0.20, -1)]}
     for i, hand in enumerate(hand_points):
         for side, wrist, elbow in (("left", 15, 13), ("right", 16, 14)):
             w = p[wrist]
             if visible(w) or (w.visibility >= 0.35 and visible(p[elbow]) and 0 <= w.x <= 1 and 0 <= w.y <= 1):
                 separation = distance(p[wrist], hand.landmark[0], aspect)
                 if separation <= max(0.04, min(0.12, distance(p[wrist], p[elbow], aspect) * 0.75)):
-                    candidates.append((separation, i, side))
-    assigned = {}
-    used = set()
-    for _, i, side in sorted(candidates):
-        if i not in used and side not in assigned:
-            assigned[side] = hand_points[i]
-            used.add(i)
-    return assigned
+                    label, confidence = identities[i] if i < len(identities) else (side, 0.0)
+                    # Handedness breaks ties at crossed wrists. A clear
+                    # pose anchor outweighs the model's selfie label.
+                    penalty = 0.024 * confidence if label != side else 0.0
+                    candidates[side].append((separation + penalty, i))
+    _, left, right = min(
+        (a + b, left, right)
+        for a, left in candidates["left"]
+        for b, right in candidates["right"]
+        if left != right or left == -1
+    )
+    return {side: hand_points[i] for side, i in (("left", left), ("right", right)) if i >= 0}
 
 
 def pose_is_hand(pose, hands):
@@ -701,6 +708,12 @@ class FileCycle:
 
 def file_playback(cv2, commands, tracking, emit, source, read, rewind, has_audio):
     source_id = source["id"]
+    offset = source.get("offset", 0.0)
+    first_offset = offset
+    out = source.get("out")
+    loop_in = source.get("loop_in", 0.0)
+    rate = source.get("rate", 1.0)
+    step = OUTPUT_INTERVAL * rate
     cycles = deque([FileCycle(0.0, tracking.file_motion)])
     capture_at = output_at = 0.0
     latest_jpeg = None
@@ -709,19 +722,25 @@ def file_playback(cv2, commands, tracking, emit, source, read, rewind, has_audio
     while True:
         delay = min(capture_at, FILE_LOOKAHEAD + output_at)
         try:
-            return commands.get(timeout=max(0.0, clock + delay - time.monotonic()))
+            command = commands.get(timeout=max(0.0, clock + delay / rate - time.monotonic()))
+            if command is not None and "loop_setting" in command:
+                source["loop_video"] = command["loop_setting"]
+                continue
+            return command
         except Empty:
             pass
-        now = time.monotonic() - clock
+        now = (time.monotonic() - clock) * rate
         if capture_at <= now + 0.001:
             cycle = cycles[-1]
-            item = read()
+            media_at = first_offset + capture_at - cycle.start
+            item = read() if out is None or media_at < out - 0.001 else None
             if item is None:
                 if cycle.previewed_at < 0:
                     raise RuntimeError("The selected input did not return a frame.")
                 cycle.end = capture_at
                 if source["loop_video"]:
-                    rewind()
+                    rewind(loop_in)
+                    first_offset = loop_in
                     tracking.clear()
                     cycles.append(FileCycle(capture_at, tracking.file_motion))
                 else:
@@ -729,24 +748,24 @@ def file_playback(cv2, commands, tracking, emit, source, read, rewind, has_audio
             else:
                 image, duration = item
                 # Limit model and JPEG work on high-rate files.
-                offset = capture_at - cycle.start
-                if offset - cycle.inferred_at >= 0.029:
-                    tracking.submit(source_id, offset, image, is_file=True)
-                    cycle.inferred_at = offset
-                if offset - cycle.previewed_at >= OUTPUT_INTERVAL - 0.001:
+                relative = capture_at - cycle.start
+                if relative - cycle.inferred_at >= 0.029 * rate:
+                    tracking.submit(source_id, relative, image, is_file=True)
+                    cycle.inferred_at = relative
+                if relative - cycle.previewed_at >= min(OUTPUT_INTERVAL, step) - 0.001:
                     if jpeg := preview_jpeg(cv2, image):
                         cycle.preview.append((capture_at, jpeg, image.shape[0] / image.shape[1]))
                         if latest_jpeg is None:
                             latest_jpeg = jpeg
                             emit({"id": source_id, "preview": {"jpeg": jpeg, "groups": []}})
-                    cycle.previewed_at = offset
-                capture_at += duration
+                    cycle.previewed_at = relative
+                capture_at += duration if out is None else min(duration, out - media_at)
         if now + 0.001 < FILE_LOOKAHEAD + output_at:
             continue
         # Skip presentation ticks after a stall without queuing stale poses.
         # Catch the decoder up only as far as frames actually read.
         skip = min(now - FILE_LOOKAHEAD, capture_at) - output_at
-        output_at += max(0, int(skip / OUTPUT_INTERVAL)) * OUTPUT_INTERVAL
+        output_at += max(0, int(skip / step)) * step
         while cycles[0].end is not None and output_at >= cycles[0].end - 0.001:
             cycles.popleft()
             if not cycles:
@@ -755,7 +774,8 @@ def file_playback(cv2, commands, tracking, emit, source, read, rewind, has_audio
         cycle = cycles[0]
         if played is not cycle:
             if has_audio:
-                emit({"id": source_id, "video_started": True})
+                start = offset if cycle.start == 0 else loop_in
+                emit({"id": source_id, "video_started": start + output_at - cycle.start})
             played = cycle
         with tracking.changed:
             frame, groups, screen = cycle.motion.at(output_at - cycle.start)
@@ -775,7 +795,7 @@ def file_playback(cv2, commands, tracking, emit, source, read, rewind, has_audio
             sample["preview"] = {"jpeg": jpeg, "groups": groups}
         if len(sample) > 1:
             emit(sample)
-        output_at += OUTPUT_INTERVAL
+        output_at += step
 
 
 def image_playback(cv2, commands, tracking, emit, source):
@@ -805,7 +825,7 @@ def image_playback(cv2, commands, tracking, emit, source):
                 frame_index += 1
                 return image, max(10, picture.info.get("duration") or 100) / 1000
 
-            def rewind():
+            def rewind(_offset):
                 nonlocal frame_index
                 frame_index = 0
 
@@ -852,9 +872,29 @@ def playback(cv2, commands, tracking, emit, source):
                 ok, image = camera.read()
                 return (image, interval) if ok else None
 
-            def rewind():
-                if not camera.set(cv2.CAP_PROP_POS_FRAMES, 0):
-                    raise RuntimeError("Cannot loop the selected video.")
+            count = camera.get(cv2.CAP_PROP_FRAME_COUNT)
+            duration = count * interval if math.isfinite(count) and count > 0 else 0.0
+            emit({"id": source_id, "video_duration": duration})
+
+            def rewind(offset):
+                frame = int(offset / interval)
+                if duration:
+                    frame = min(frame, max(0, int(count) - 1))
+                if not camera.set(cv2.CAP_PROP_POS_FRAMES, frame):
+                    raise RuntimeError("Cannot seek in the selected video.")
+
+            offset = source.get("offset", 0.0)
+            if offset > 0:
+                rewind(offset)
+            if source.get("paused"):
+                item = read()
+                if item is None:
+                    raise RuntimeError("Cannot preview the selected video frame.")
+                image, _ = item
+                if jpeg := preview_jpeg(cv2, image):
+                    emit({"id": source_id, "preview": {"jpeg": jpeg, "groups": []}})
+                    tracking.submit(source_id, time.monotonic(), image, jpeg, is_file=True)
+                return commands.get()
 
             return file_playback(cv2, commands, tracking, emit, source, read, rewind, True)
         next_preview = 0.0
@@ -1166,7 +1206,7 @@ def worker():
     try:
         source = commands.get()
         while source is not None:
-            if source.get("stop"):
+            if source.get("stop") or "loop_setting" in source:
                 source = commands.get()
                 continue
             try:

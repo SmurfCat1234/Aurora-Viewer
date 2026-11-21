@@ -276,21 +276,22 @@ impl Webcam {
             ui.add_space(6.0);
             self.preview_stage(ui, palette);
             widgets::divider(ui, palette);
-            egui::ScrollArea::vertical()
-                .auto_shrink([false, false])
-                .show(ui, |ui| self.controls(ui, palette, rig));
+            egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
+                self.video_controls(ui, palette);
+                self.controls(ui, palette, rig);
+            });
         });
         self.open = open;
         if !open {
             self.capture = None;
             self.clear_input();
             self.recorder.hide_preview();
-        } else if play_video
-            || (was_running
-                && self.running
-                && (self.panel.source != previous_source || (self.can_loop() && self.panel.loop_video != previous_loop)))
-        {
+        } else if play_video || (was_running && self.running && self.panel.source != previous_source) {
             self.start();
+        } else if self.panel.loop_video != previous_loop
+            && let Some(capture) = &mut self.capture
+        {
+            let _ = capture.send(serde_json::json!({"loop_setting": self.panel.loop_video}));
         }
     }
 
@@ -385,11 +386,147 @@ impl Webcam {
         !self.still && matches!(self.current_file_kind(), Some(FileKind::Video | FileKind::Gif))
     }
 
-    fn current_file_kind(&self) -> Option<FileKind> {
+    pub(super) fn current_file_kind(&self) -> Option<FileKind> {
         self.link_path
             .as_deref()
             .and_then(FileKind::of)
             .or_else(|| self.panel.source.file_kind())
+    }
+
+    fn video_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
+        let duration = self.transport.duration;
+        if !self.running || duration <= 0.0 {
+            return;
+        }
+        let now = Instant::now();
+        let position = self.transport.position(now);
+        let mut paused = self.transport.paused;
+        let mut target = self.transport.scrub.unwrap_or(position);
+        let mut seek = false;
+        let mut toggle = false;
+        let mut rate = self.transport.rate;
+        let response = ui.vertical(|ui| {
+            ui.horizontal_wrapped(|ui| {
+                let key = if paused {
+                    tr!("webcam-video-play")
+                } else {
+                    tr!("webcam-video-pause")
+                };
+                toggle = ui.button(key).on_hover_text(tr!("webcam-video-space")).clicked();
+                for (label, delta) in [("−10", -10.0), ("−3", -3.0), ("+3", 3.0), ("+5", 5.0), ("+10", 10.0)] {
+                    if ui.small_button(label).clicked() {
+                        target = position + delta;
+                        seek = true;
+                    }
+                }
+                super::recording::speed_picker(ui, "webcam_video_rate", &mut rate);
+            });
+            ui.horizontal(|ui| {
+                ui.spacing_mut().slider_width = (ui.available_width() - 124.0).max(80.0);
+                let mut slider_time = target.clamp(0.0, duration);
+                let slider = ui.add(egui::Slider::new(&mut slider_time, 0.0..=duration).show_value(false));
+                if slider.dragged() {
+                    self.transport.scrub = Some(slider_time);
+                }
+                if slider.drag_stopped() || (slider.changed() && !slider.is_pointer_button_down_on()) || slider.clicked() {
+                    target = self.transport.scrub.take().unwrap_or(slider_time);
+                    seek = true;
+                }
+                let mut exact = self.transport.scrub.unwrap_or(target).clamp(0.0, duration);
+                if ui
+                    .add(
+                        egui::DragValue::new(&mut exact)
+                            .range(0.0..=duration)
+                            .update_while_editing(false)
+                            .speed(0.1)
+                            .fixed_decimals(2)
+                            .suffix(" s"),
+                    )
+                    .changed()
+                {
+                    target = exact;
+                    seek = true;
+                }
+                ui.label(format!("/ {:.1}", duration));
+            });
+            egui::CollapsingHeader::new(tr!("webcam-video-range")).show(ui, |ui| {
+                let mut range = self.transport.range();
+                let mut change = false;
+                ui.horizontal_wrapped(|ui| {
+                    ui.label(tr!("webcam-record-in"));
+                    let latest_in = (range[1] - 0.08).max(0.0);
+                    change |= ui
+                        .add(
+                            egui::DragValue::new(&mut range[0])
+                                .range(0.0..=latest_in)
+                                .update_while_editing(false)
+                                .fixed_decimals(2)
+                                .speed(0.1),
+                        )
+                        .changed();
+                    if ui.small_button(tr!("webcam-video-mark")).clicked() {
+                        range[0] = position.min((range[1] - 0.08).max(0.0));
+                        change = true;
+                    }
+                    ui.label(tr!("webcam-record-out"));
+                    let earliest_out = (range[0] + 0.08).min(duration);
+                    change |= ui
+                        .add(
+                            egui::DragValue::new(&mut range[1])
+                                .range(earliest_out..=duration)
+                                .update_while_editing(false)
+                                .fixed_decimals(2)
+                                .speed(0.1),
+                        )
+                        .changed();
+                    if ui.small_button(tr!("webcam-video-mark")).clicked() {
+                        range[1] = position.max((range[0] + 0.08).min(duration));
+                        change = true;
+                    }
+                    if self.transport.selection.is_some() && ui.small_button(tr!("webcam-video-reset-range")).clicked() {
+                        range = [0.0, duration];
+                        change = true;
+                    }
+                });
+                if change {
+                    self.transport.selection = (range != [0.0, duration]).then_some(range);
+                    if !(range[0]..range[1]).contains(&target) {
+                        target = range[0];
+                    }
+                    seek = true;
+                }
+            });
+        });
+        if response.response.contains_pointer() && !ui.ctx().egui_wants_keyboard_input() {
+            ui.input_mut(|input| {
+                toggle |= input.consume_key(egui::Modifiers::NONE, egui::Key::Space);
+                for (key, delta) in [(egui::Key::ArrowLeft, -3.0), (egui::Key::ArrowRight, 3.0)] {
+                    if input.consume_key(egui::Modifiers::NONE, key) {
+                        target = position + delta;
+                        seek = true;
+                    }
+                }
+            });
+        }
+        let rate_changed = rate != self.transport.rate;
+        self.transport.rate = rate;
+        if toggle {
+            paused = !paused;
+            if paused && !seek {
+                self.pause_video(position);
+            } else {
+                if !seek && position >= self.transport.range()[1] - 0.05 {
+                    target = self.transport.range()[0];
+                }
+                self.restart_video(target, paused);
+            }
+        } else if seek || (rate_changed && !paused) {
+            self.restart_video(target, paused);
+        }
+        if !paused {
+            ui.ctx().request_repaint_after(Duration::from_millis(33));
+        }
+        widgets::divider(ui, palette);
     }
 
     fn controls(&mut self, ui: &mut egui::Ui, palette: &Palette, rig: &std::sync::Arc<crate::scene::anim::Rig>) {
@@ -406,12 +543,33 @@ impl Webcam {
         widgets::divider(ui, palette);
         let live = self.running
             && !self.still
+            && (self.current_file_kind() != Some(FileKind::Video) || self.transport.clock.is_some())
             && self
                 .latest
                 .as_ref()
                 .is_some_and(|(at, frame)| at.elapsed() < Duration::from_millis(250) && frame.detected());
-        if self.recorder.ui(ui, palette, live, rig) && self.running {
-            self.stop();
+        let was_recording = self.recorder.is_active();
+        let preview = self.recorder.ui(ui, palette, live, rig);
+        if self.running && (preview || (was_recording && !self.recorder.is_active())) {
+            if self.transport.duration > 0.0 {
+                self.pause_video(self.transport.position(Instant::now()));
+            } else if preview {
+                self.stop();
+            }
+        }
+        if let Some(batch) = &self.gesture_upload {
+            if batch.assets().is_some() {
+                self.gesture_requested |= ui.button(tr!("webcam-gesture-create")).clicked();
+            } else {
+                ui.colored_label(
+                    palette.muted,
+                    tr!(
+                        "webcam-gesture-progress",
+                        done = batch.received.len().to_string(),
+                        total = (1 + batch.sounds.len()).to_string()
+                    ),
+                );
+            }
         }
 
         widgets::divider(ui, palette);

@@ -322,8 +322,12 @@ impl Pose {
         if let Some((&index, &pinky)) = rig.names.get(&index).zip(rig.names.get(&pinky)) {
             let index = rig.local_pos[index];
             let pinky = rig.local_pos[pinky];
-            if let Some((tracked, rest)) =
-                basis(hand[5] - hand[17], (hand[5] + hand[17]) * 0.5 - hand[0]).zip(basis(index - pinky, (index + pinky) * 0.5))
+            let across = hand[5] - hand[17];
+            let forward = (hand[5] + hand[17]) * 0.5 - hand[0];
+            // A collapsed palm plane gives arbitrary twist about the
+            // forearm. Leave the wrist to its parent until it opens again.
+            if across.cross(forward).length_squared() > 0.04 * across.length_squared() * forward.length_squared()
+                && let Some((tracked, rest)) = basis(across, forward).zip(basis(index - pinky, (index + pinky) * 0.5))
             {
                 set(rig, targets, &format!("mWrist{side}"), Target::Absolute(tracked * rest.inverse()));
             }

@@ -24,13 +24,20 @@ use crate::{
 pub struct LocalMediaAudio(Arc<AtomicBool>);
 
 impl LocalMediaAudio {
-    pub(crate) fn start(path: PathBuf, started: Instant, mute: Arc<AtomicBool>, tx: Sender<Command>) -> Option<Self> {
+    pub(crate) fn start(
+        path: PathBuf,
+        started: Instant,
+        offset: f64,
+        rate: f64,
+        mute: Arc<AtomicBool>,
+        tx: Sender<Command>,
+    ) -> Option<Self> {
         let cancelled = Arc::new(AtomicBool::new(false));
         let stop = cancelled.clone();
         thread::Builder::new()
             .name("local-media-audio".into())
             .spawn(move || {
-                if let Err(error) = play(&path, started, stop, mute, tx) {
+                if let Err(error) = play(&path, started, offset, rate, stop, mute, tx) {
                     // Silent and unsupported clips still play their video.
                     log::debug!("local video audio unavailable: {error}");
                 }
@@ -46,9 +53,30 @@ impl Drop for LocalMediaAudio {
     }
 }
 
-fn play(path: &Path, started: Instant, stop: Arc<AtomicBool>, mute: Arc<AtomicBool>, tx: Sender<Command>) -> Result<(), AudioError> {
+fn play(
+    path: &Path,
+    started: Instant,
+    offset: f64,
+    rate: f64,
+    stop: Arc<AtomicBool>,
+    mute: Arc<AtomicBool>,
+    tx: Sender<Command>,
+) -> Result<(), AudioError> {
     let file = File::open(path).map_err(|error| AudioError::Decode(error.to_string()))?;
     let mut decoder = DecodeStream::open(Box::new(file), path.extension().and_then(|ext| ext.to_str()))?;
+    // A failed demuxer seek can invalidate the stream. Decode from the start
+    // on a fresh reader in that case.
+    let mut skip_source = if offset >= 0.1 {
+        if let Some(remaining) = decoder.seek_before(offset) {
+            remaining
+        } else {
+            let file = File::open(path).map_err(|error| AudioError::Decode(error.to_string()))?;
+            decoder = DecodeStream::open(Box::new(file), path.extension().and_then(|ext| ext.to_str()))?;
+            offset
+        }
+    } else {
+        offset
+    };
     if stop.load(Ordering::Relaxed) {
         return Ok(());
     }
@@ -62,7 +90,8 @@ fn play(path: &Path, started: Instant, stop: Arc<AtomicBool>, mute: Arc<AtomicBo
     // Opening a file should not delay the pictures. If probing was slow,
     // start with the samples that correspond to the current video position.
     let skip = started.elapsed().saturating_sub(Duration::from_millis(30));
-    let mut skip_frames = (skip.as_secs_f64() * f64::from(ENGINE_SAMPLE_RATE)) as usize;
+    skip_source += skip.as_secs_f64() * rate;
+    let mut skip_frames = (skip_source / rate * f64::from(ENGINE_SAMPLE_RATE)) as usize;
     let mut stereo = Vec::new();
     let mut converted = Vec::new();
     let mut resampler = None;
@@ -70,14 +99,15 @@ fn play(path: &Path, started: Instant, stop: Arc<AtomicBool>, mute: Arc<AtomicBo
         let Some(chunk) = decoder.next_chunk()? else { break };
         stereo.clear();
         to_stereo(chunk.samples, chunk.channels, &mut stereo);
-        let pcm = if chunk.rate == ENGINE_SAMPLE_RATE {
+        let input_rate = (f64::from(chunk.rate) * rate).round() as u32;
+        let pcm = if input_rate == ENGINE_SAMPLE_RATE {
             resampler = None;
             &stereo
         } else {
-            let (rate, converter) = resampler.get_or_insert_with(|| (chunk.rate, Resampler::new(chunk.rate, ENGINE_SAMPLE_RATE, 2)));
-            if *rate != chunk.rate {
-                *rate = chunk.rate;
-                *converter = Resampler::new(chunk.rate, ENGINE_SAMPLE_RATE, 2);
+            let (rate, converter) = resampler.get_or_insert_with(|| (input_rate, Resampler::new(input_rate, ENGINE_SAMPLE_RATE, 2)));
+            if *rate != input_rate {
+                *rate = input_rate;
+                *converter = Resampler::new(input_rate, ENGINE_SAMPLE_RATE, 2);
             }
             converted.clear();
             converter.process(&stereo, &mut converted);

@@ -4,6 +4,7 @@
 mod panel;
 mod recording;
 mod retarget;
+mod soundtrack;
 mod take_tools;
 
 use std::{
@@ -19,6 +20,7 @@ use serde::Deserialize;
 
 use retarget::Channels;
 pub(crate) use retarget::Pose;
+use uuid::Uuid;
 
 pub const WINDOW: &str = "webcam_tracking";
 const SCRIPT: &str = include_str!("webcam_capture.py");
@@ -49,7 +51,8 @@ struct Sample {
     id: Option<u64>,
     frame: Option<Frame>,
     preview: Option<PreviewFrame>,
-    video_started: Option<bool>,
+    video_started: Option<f32>,
+    video_duration: Option<f32>,
     link_media: Option<PathBuf>,
     link_error: Option<LinkError>,
     still: Option<bool>,
@@ -91,7 +94,8 @@ struct Latest {
     id: Option<u64>,
     frame: Option<(Instant, Frame)>,
     preview: Option<PreviewImage>,
-    video_started: Option<Instant>,
+    video_started: Option<(Instant, f32)>,
+    video_duration: Option<f32>,
     link_media: Option<PathBuf>,
     link_error: Option<LinkError>,
     still: bool,
@@ -263,8 +267,11 @@ impl Capture {
                         if let Some(frame) = sample.frame {
                             slot.frame = Some((Instant::now(), frame));
                         }
-                        if sample.video_started == Some(true) {
-                            slot.video_started = Some(Instant::now());
+                        if let Some(offset) = sample.video_started {
+                            slot.video_started = Some((Instant::now(), offset));
+                        }
+                        if let Some(duration) = sample.video_duration.filter(|duration| duration.is_finite() && *duration > 0.0) {
+                            slot.video_duration = Some(duration);
                         }
                         slot.still |= sample.still == Some(true);
                         if preview.is_some() {
@@ -283,14 +290,14 @@ impl Capture {
         self.input.write_all(&line)
     }
 
-    fn start(&mut self, source: &Source, loop_video: bool) -> std::io::Result<()> {
+    fn start(&mut self, source: &Source, loop_video: bool, transport: &Transport) -> std::io::Result<()> {
         self.serial += 1;
         let id = self.serial;
         *self.latest.lock().unwrap() = Latest {
             id: Some(id),
             ..Latest::default()
         };
-        let message = match source {
+        let mut message = match source {
             Source::Camera(camera) => serde_json::json!({"id": id, "camera": camera.index, "backend": camera.backend}),
             Source::File(path, FileKind::Video) => {
                 serde_json::json!({"id": id, "video": path.to_string_lossy(), "loop_video": loop_video})
@@ -298,6 +305,15 @@ impl Capture {
             Source::File(path, _) => serde_json::json!({"id": id, "image": path.to_string_lossy(), "loop_video": loop_video}),
             Source::Link(url) => serde_json::json!({"id": id, "url": url, "loop_video": loop_video}),
         };
+        if matches!(source, Source::Link(_) | Source::File(_, FileKind::Video)) {
+            message["offset"] = transport.position.into();
+            message["paused"] = transport.paused.into();
+            message["rate"] = transport.rate.into();
+            if let Some([start, end]) = transport.selection {
+                message["loop_in"] = start.into();
+                message["out"] = end.into();
+            }
+        }
         self.send(message)
     }
 
@@ -330,6 +346,79 @@ impl Drop for Capture {
     }
 }
 
+#[derive(Clone, Copy)]
+struct MediaClock {
+    began: Instant,
+    offset: f32,
+    rate: f32,
+}
+
+impl MediaClock {
+    fn position(self, now: Instant) -> f32 {
+        self.offset + now.saturating_duration_since(self.began).as_secs_f32() * self.rate
+    }
+}
+
+struct Transport {
+    duration: f32,
+    position: f32,
+    paused: bool,
+    rate: f32,
+    selection: Option<[f32; 2]>,
+    clock: Option<MediaClock>,
+    scrub: Option<f32>,
+}
+
+pub(crate) struct GestureAssets {
+    pub(crate) animation: Uuid,
+    pub(crate) sounds: Vec<(f32, Uuid)>,
+}
+
+struct GestureUpload {
+    animation: Uuid,
+    sounds: Vec<(f32, Uuid)>,
+    received: std::collections::HashMap<Uuid, Uuid>,
+}
+
+impl GestureUpload {
+    fn assets(&self) -> Option<GestureAssets> {
+        Some(GestureAssets {
+            animation: *self.received.get(&self.animation)?,
+            sounds: self
+                .sounds
+                .iter()
+                .map(|(at, entry)| Some((*at, *self.received.get(entry)?)))
+                .collect::<Option<_>>()?,
+        })
+    }
+}
+
+impl Default for Transport {
+    fn default() -> Self {
+        Self {
+            duration: 0.0,
+            position: 0.0,
+            paused: false,
+            rate: 1.0,
+            selection: None,
+            clock: None,
+            scrub: None,
+        }
+    }
+}
+
+impl Transport {
+    fn range(&self) -> [f32; 2] {
+        self.selection.unwrap_or([0.0, self.duration])
+    }
+
+    fn position(&self, now: Instant) -> f32 {
+        self.clock
+            .map_or(self.position, |clock| clock.position(now))
+            .clamp(0.0, self.range()[1])
+    }
+}
+
 #[derive(Default)]
 pub(crate) struct Webcam {
     pub open: bool,
@@ -348,11 +437,14 @@ pub(crate) struct Webcam {
     neutral: Option<Frame>,
     preview: Option<PreviewImage>,
     clip_audio: Option<aurora_audio::LocalMediaAudio>,
-    media_started: Option<Instant>,
+    soundtrack_source: Option<take_tools::AudioSource>,
+    transport: Transport,
     video_muted: Arc<AtomicBool>,
     fps: f32,
     front_view_requested: bool,
     recorder: recording::Recorder,
+    gesture_upload: Option<GestureUpload>,
+    gesture_requested: bool,
 }
 
 impl Webcam {
@@ -378,7 +470,8 @@ impl Webcam {
         self.neutral = None;
         self.preview = None;
         self.clip_audio = None;
-        self.media_started = None;
+        self.soundtrack_source = None;
+        self.transport = Transport::default();
         self.link_path = None;
         self.panel.clear_preview();
         self.fps = 0.0;
@@ -415,8 +508,14 @@ impl Webcam {
         self.recorder.hide_preview();
         self.link_error = None;
         let source = self.panel.source.clone();
+        if let Source::File(path, FileKind::Video) = &source {
+            self.soundtrack_source = Some(take_tools::AudioSource::local(path.clone()));
+        }
         let loop_video = self.panel.loop_video;
-        match self.warm().and_then(|capture| capture.start(&source, loop_video)) {
+        match self
+            .warm()
+            .and_then(|capture| capture.start(&source, loop_video, &Transport::default()))
+        {
             Ok(()) => {
                 self.running = true;
                 self.error = false;
@@ -429,8 +528,69 @@ impl Webcam {
         }
     }
 
+    fn restart_video(&mut self, position: f32, paused: bool) {
+        self.recorder.pause(Instant::now());
+        self.recorder.hide_preview();
+        let [start, end] = self.transport.range();
+        self.transport.position = position.clamp(start, if paused { end } else { (end - 0.05).max(start) });
+        self.transport.paused = paused;
+        self.transport.clock = None;
+        self.clip_audio = None;
+        self.latest = None;
+        self.rendered = None;
+        self.fps = 0.0;
+        if let Some(capture) = &mut self.capture {
+            let result = capture.start(&self.panel.source, self.panel.loop_video, &self.transport);
+            self.running = result.is_ok();
+            self.error = result.is_err();
+        }
+    }
+
+    fn pause_video(&mut self, position: f32) {
+        self.recorder.pause(Instant::now());
+        self.transport.position = position;
+        self.transport.paused = true;
+        self.transport.clock = None;
+        self.clip_audio = None;
+        if let Some(capture) = &mut self.capture {
+            capture.stop();
+        }
+    }
+
     pub(crate) fn take_recorded_upload(&mut self) -> Option<crate::ik_edit::PreparedAnimation> {
         self.recorder.take_upload()
+    }
+
+    pub(crate) fn take_media_upload(&mut self) -> Option<recording::PreparedMedia> {
+        self.recorder.take_media()
+    }
+
+    pub(crate) fn track_gesture_upload(&mut self, animation: Uuid, sounds: Vec<(f32, Uuid)>) {
+        self.gesture_upload = Some(GestureUpload {
+            animation,
+            sounds,
+            received: Default::default(),
+        });
+        self.gesture_requested = false;
+    }
+
+    pub(crate) fn uploaded(&mut self, entry: Uuid, item: Uuid) {
+        if let Some(upload) = &mut self.gesture_upload
+            && (entry == upload.animation || upload.sounds.iter().any(|(_, sound)| *sound == entry))
+        {
+            upload.received.insert(entry, item);
+        }
+    }
+
+    pub(crate) fn take_gesture_request(&mut self) -> Option<GestureAssets> {
+        if !std::mem::take(&mut self.gesture_requested) {
+            return None;
+        }
+        self.gesture_upload.as_ref()?.assets()
+    }
+
+    pub(crate) fn clear_gesture_upload(&mut self) {
+        self.gesture_upload = None;
     }
 
     pub fn update(&mut self, audio: Option<&aurora_audio::AudioEngine>, rig: &crate::scene::anim::Rig) -> Option<Arc<Pose>> {
@@ -446,13 +606,19 @@ impl Webcam {
                 .latest
                 .as_ref()
                 .is_some_and(|(time, _)| now.saturating_duration_since(*time).as_secs_f32() < 0.25);
-            let path = match &self.panel.source {
-                Source::File(path, FileKind::Video) => Some(path.as_path()),
-                Source::Link(_) => self.link_path.as_deref(),
-                _ => None,
-            };
-            self.recorder
-                .tick(rig, now, pose.as_deref().filter(|_| fresh), path.zip(self.media_started));
+            let awaiting_video = self.current_file_kind() == Some(FileKind::Video) && self.transport.clock.is_none();
+            if !awaiting_video {
+                let recording = self.recorder.is_active();
+                self.recorder.tick(
+                    rig,
+                    now,
+                    pose.as_deref().filter(|_| fresh),
+                    self.soundtrack_source.as_ref().zip(self.transport.clock),
+                );
+                if self.transport.duration > 0.0 && recording && !self.recorder.is_active() {
+                    self.pause_video(self.transport.position(now));
+                }
+            }
         }
         pose
     }
@@ -484,30 +650,42 @@ impl Webcam {
                 slot.preview.take(),
                 slot.frame.take(),
                 slot.video_started.take(),
+                slot.video_duration.take(),
                 slot.link_media.take(),
                 slot.link_error.take(),
                 slot.still,
             )
         });
-        if let Some((finished, preview, sample, video_started, link_media, link_error, still)) = pending {
-            if let Some(error) = finished {
-                self.stop();
-                self.error = error;
-                self.link_error = link_error;
-                return None;
+        if let Some((finished, preview, sample, video_started, video_duration, link_media, link_error, still)) = pending {
+            if let Some(duration) = video_duration {
+                self.transport.duration = duration;
             }
-            if let Some(path) = link_media {
-                self.link_path = Some(path);
+            if let Some(preview) = preview {
+                self.preview = Some(preview);
             }
-            if preview.is_some() {
-                self.preview = preview;
-            }
-            self.still = still;
             if let Some((when, frame)) = sample {
                 self.update_target(when, frame);
             }
-            if let Some(started) = video_started {
-                self.media_started = Some(started);
+            if let Some(error) = finished {
+                if !error && self.transport.duration > 0.0 {
+                    self.pause_video(self.transport.range()[1]);
+                } else {
+                    self.stop();
+                    self.error = error;
+                    self.link_error = link_error;
+                    return None;
+                }
+            }
+            if let Some(path) = link_media {
+                if self.link_path.as_ref() != Some(&path) && FileKind::of(&path) == Some(FileKind::Video) {
+                    self.soundtrack_source = Some(take_tools::AudioSource::downloaded(&path));
+                }
+                self.link_path = Some(path);
+            }
+            self.still = still;
+            if let Some((began, offset)) = video_started.filter(|_| finished.is_none() && !self.transport.paused) {
+                let rate = self.transport.rate;
+                self.transport.clock = Some(MediaClock { began, offset, rate });
                 self.clip_audio = None;
                 let path = match &self.panel.source {
                     Source::File(path, FileKind::Video) => Some(path),
@@ -515,7 +693,7 @@ impl Webcam {
                     _ => None,
                 };
                 if let Some((engine, path)) = audio.zip(path) {
-                    self.clip_audio = engine.play_local_media(path.clone(), started, self.video_muted.clone());
+                    self.clip_audio = engine.play_local_media(path.clone(), began, offset.into(), rate.into(), self.video_muted.clone());
                 }
             }
         }
@@ -523,7 +701,7 @@ impl Webcam {
         let now = Instant::now();
         let age = now.saturating_duration_since(*received).as_secs_f32();
         let fade_after = (2.0 / self.fps.max(3.0)).clamp(0.18, 0.45);
-        let strength = if self.still {
+        let strength = if self.still || self.transport.paused {
             1.0
         } else {
             (1.0 - (age - fade_after) / 0.35).clamp(0.0, 1.0)

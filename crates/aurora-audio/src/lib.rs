@@ -219,9 +219,11 @@ impl AudioEngine {
         &self,
         path: std::path::PathBuf,
         started: std::time::Instant,
+        offset: f64,
+        rate: f64,
         mute: Arc<std::sync::atomic::AtomicBool>,
     ) -> Option<LocalMediaAudio> {
-        LocalMediaAudio::start(path, started, mute, self.inner.cmd_tx.clone())
+        LocalMediaAudio::start(path, started, offset, rate, mute, self.inner.cmd_tx.clone())
     }
 
     /// Creates a sink feeding the Voice channel (see [`PcmSink`]).

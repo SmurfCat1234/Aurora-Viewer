@@ -84,17 +84,34 @@ the video. Availability depends on the platform's anonymous access and
 formats. Live streams, login-only videos, profiles and playlists are
 outside this mode.
 
+### Control a video
+
+A seekable local or downloaded video gets its own transport under the
+preview. Pause or resume, skip by seconds, drag the playhead, or enter a
+position in seconds. With the pointer over the transport, Space toggles
+playback and the left and right arrows skip three seconds. Choose a speed
+between 0.5× and 2×. Speed changes preserve the current position and change
+the pitch of the soundtrack along with playback. **Video range** sets the
+source boundaries. With looping on, playback returns to the in point.
+
 ### Record a take
 
 Start tracking a camera, video, or animated GIF. Open **Record motion** in
 the tracking panel and select **Record** once a subject is detected. The
-optional three-second countdown leaves time to get into position.
+take starts immediately by default. Turn on the optional three-second
+countdown when you need time to get into position.
 **Finish recording** ends the take sooner than the selected auto-stop
 time (one to 60 seconds). The timed recorder samples up to 30 times per
 second and follows elapsed time when the input or viewer runs slower.
+**Pause recording** keeps the take open while allowing the source to play.
+Seek, pause the source, or change video speed and the recorder pauses as
+well. Resume source playback if needed, then select **Resume recording**
+once tracking returns. The recording omits time spent on hold and appends
+the new section to the same take.
 
 Use **Trim in**, **Trim out**, the playhead and **Preview take** to
-review the selected interval on your avatar. **Loop take** controls
+review the selected interval on your avatar. The take preview supports
+its own speed, one-second jumps and 1/30-second steps. **Loop take** controls
 preview and the exported asset. **Save .anim…** writes the selected
 animation locally. **Open upload preview** opens Aurora's existing
 animation inspector with that same export, including its ordinary
@@ -107,13 +124,33 @@ override. It uses animation priority 4. The exporter reduces redundant
 keys before checking Second Life's 250,000-byte limit. Trim a take
 further if it exceeds that limit.
 
+### Export the soundtrack or assemble a gesture
+
+**Sound & gesture** uses FFmpeg on PATH to read the source audio. It
+uses the same trim, playback speeds and captured sections as the take.
+Muting the video affects monitoring. A WAV export contains the aligned
+mono, 44.1 kHz, 16-bit soundtrack. Webcams do not capture microphone audio.
+
+**Upload soundtrack…** stages sound assets in Import for review. It
+splits long selections into uploadable chunks of up to 29 seconds.
+**Prepare gesture uploads…** stages a non-looping animation and, if
+selected, the corresponding sounds. Confirm the uploads through the
+existing Import window. When those entries finish, **Assemble gesture…**
+opens a new gesture with the animation, sounds and required waits in
+order. The regular editor lets you preview, assign a trigger and save.
+Gesture assets are separate inventory items and require the usual asset
+permissions. The grid plays clips as separate sound events, so later
+chunks can be affected by asset loading or timing on the receiving viewer.
+
 ### Edit a recorded take
 
 Open **Take tools** below the take preview controls. The marker strip
 shows missing observations on commonly tracked joints and any beat
 markers. Click it to move the playhead. **Repair short gaps** uses
 observations before and after a gap and rejects isolated jumps. **Repair
-at playhead** reruns this over a short window chosen by the user.
+at playhead** reruns this over a short window chosen by the user. Choose
+a joint (for example, mWristLeft) and a width, then select **Repair
+selection** to limit the interpolation to that joint and window.
 **Restore original** restores the recorded take. The repair operates on
 recorded joint rotations and estimates neither new depth nor long unseen
 actions.

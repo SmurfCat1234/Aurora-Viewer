@@ -1,7 +1,7 @@
 //! Capture only webcam-authored joint rotations and bake native animation assets.
 
 use super::{
-    Pose,
+    MediaClock, Pose, soundtrack,
     take_tools::{self, AudioPass, RotationFrame},
 };
 use crate::{
@@ -14,7 +14,6 @@ use aurora_assets::anim::{Animation, JointMotion, RotKey};
 use aurora_i18n::tr;
 use glam::Quat;
 use std::{
-    path::Path,
     sync::{Arc, mpsc},
     time::{Duration, Instant},
 };
@@ -29,6 +28,9 @@ struct Sample {
 
 struct Capture {
     starts: Instant,
+    paused: Option<Instant>,
+    audio_clock: Option<Instant>,
+    audio_from: Instant,
     limit: f32,
     next_sample: f32,
     names: Vec<String>,
@@ -52,11 +54,13 @@ enum Failure {
     Write,
     NoLoop,
     NoBeats,
+    NoSound,
 }
 
 enum Output {
     Saved(usize),
     Upload(PreparedAnimation),
+    Media(PreparedMedia),
     Cancelled,
     Repaired(Animation, Vec<(f32, RotationFrame)>),
     Loop([f32; 2], Animation),
@@ -69,6 +73,15 @@ enum Export {
     Upload,
     Pose,
     Segments,
+    SoundFile,
+    SoundUpload,
+    Gesture,
+}
+
+pub(crate) struct PreparedMedia {
+    pub(crate) animation: Option<PreparedAnimation>,
+    pub(crate) sounds: Vec<(f32, aurora_assets::import_sound::Sound)>,
+    pub(crate) name: String,
 }
 
 pub(super) struct Recorder {
@@ -88,11 +101,16 @@ pub(super) struct Recorder {
     dropouts: Vec<f32>,
     beats: Vec<f32>,
     bpm: u32,
+    preview_rate: f32,
+    repair_joint: Option<usize>,
+    repair_width: f32,
+    include_sound: bool,
     beats_per_clip: usize,
     job: Option<mpsc::Receiver<Result<Output, Failure>>>,
     saved: usize,
     failure: Option<Failure>,
     upload: Option<PreparedAnimation>,
+    media: Option<PreparedMedia>,
 }
 
 impl Default for Recorder {
@@ -104,7 +122,7 @@ impl Default for Recorder {
             repaired_frames: None,
             take: None,
             limit: 30,
-            countdown: true,
+            countdown: false,
             range: [0.0; 2],
             cursor: 0.0,
             visible: false,
@@ -114,11 +132,16 @@ impl Default for Recorder {
             dropouts: Vec::new(),
             beats: Vec::new(),
             bpm: 120,
+            preview_rate: 1.0,
+            repair_joint: None,
+            repair_width: 0.22,
+            include_sound: true,
             beats_per_clip: 4,
             job: None,
             saved: 0,
             failure: None,
             upload: None,
+            media: None,
         }
     }
 }
@@ -134,6 +157,11 @@ impl Recorder {
         self.upload.take()
     }
 
+    pub(super) fn take_media(&mut self) -> Option<PreparedMedia> {
+        self.poll();
+        self.media.take()
+    }
+
     fn start(&mut self, now: Instant) {
         self.hide_preview();
         self.failure = None;
@@ -141,6 +169,9 @@ impl Recorder {
         let delay = if self.countdown { Duration::from_secs(3) } else { Duration::ZERO };
         self.active = Some(Capture {
             starts: now + delay,
+            paused: None,
+            audio_clock: None,
+            audio_from: now + delay,
             limit: self.limit as f32,
             next_sample: 0.0,
             names: Vec::new(),
@@ -151,25 +182,49 @@ impl Recorder {
         });
     }
 
-    pub(super) fn tick(&mut self, rig: &Rig, now: Instant, pose: Option<&Pose>, sound: Option<(&Path, Instant)>) {
+    pub(super) fn is_active(&self) -> bool {
+        self.active.is_some()
+    }
+
+    pub(super) fn pause(&mut self, now: Instant) {
+        if let Some(capture) = &mut self.active
+            && capture.paused.is_none()
+        {
+            capture.paused = Some(now);
+            capture.audio_clock = None;
+            capture.feet = WebcamFeet::default();
+        }
+    }
+
+    pub(super) fn tick(&mut self, rig: &Rig, now: Instant, pose: Option<&Pose>, sound: Option<(&take_tools::AudioSource, MediaClock)>) {
         let Some(capture) = &mut self.active else { return };
+        if capture.paused.is_some() {
+            return;
+        }
         let Some(elapsed) = now.checked_duration_since(capture.starts) else {
             return;
         };
         let elapsed = elapsed.as_secs_f32();
         let time = elapsed.min(capture.limit);
-        if let Some((path, playback)) = sound
-            && capture.audio_passes.len() < 128
-            && capture.audio_passes.last().is_none_or(|pass| pass.playback != playback)
-            && playback <= now
-        {
-            let from = capture.starts.max(playback);
-            capture.audio_passes.push(AudioPass {
-                path: path.to_owned(),
-                playback,
-                from: from.duration_since(capture.starts).as_secs_f32(),
-                offset: from.duration_since(playback).as_secs_f32(),
-            });
+        if let Some((source, clock)) = sound.filter(|(_, clock)| clock.began <= now) {
+            if capture.audio_clock != Some(clock.began) {
+                capture.audio_clock = None;
+                if capture.audio_passes.len() < 128 {
+                    let from = capture.audio_from.max(clock.began);
+                    capture.audio_passes.push(AudioPass {
+                        source: source.clone(),
+                        from: from.duration_since(capture.starts).as_secs_f32(),
+                        end: time,
+                        offset: clock.position(from),
+                        rate: clock.rate,
+                    });
+                    capture.audio_clock = Some(clock.began);
+                }
+            } else if let Some(pass) = capture.audio_passes.last_mut() {
+                pass.end = time;
+            }
+        } else {
+            capture.audio_clock = None;
         }
         if time + 0.001 >= capture.next_sample {
             if capture.names.is_empty() {
@@ -209,6 +264,7 @@ impl Recorder {
         let clip = Arc::new(clip);
         self.original = Some(clip.clone());
         self.repaired_frames = None;
+        self.repair_joint = None;
         self.clip = Some(clip);
         self.seam = None;
         self.beats.clear();
@@ -227,7 +283,7 @@ impl Recorder {
         }
         let clip = self.playback_clip()?;
         if let Some((start, time)) = self.playing {
-            let time = time + now.saturating_duration_since(start).as_secs_f32();
+            let time = time + now.saturating_duration_since(start).as_secs_f32() * self.preview_rate;
             let [a, b] = self.range;
             if self.looping && b > a {
                 self.cursor = a + (time - a).rem_euclid(b - a);
@@ -259,8 +315,16 @@ impl Recorder {
         let cursor = self.cursor;
         let segments = take_tools::segments(range, &self.beats, self.beats_per_clip);
         let title = tr!("webcam-record-save").to_string();
-        let name = tr!("webcam-record-name").to_string();
+        let name = if matches!(mode, Export::Gesture) {
+            let suffix = uuid::Uuid::new_v4().simple().to_string();
+            format!("{} {}", tr!("webcam-record-name"), &suffix[..8])
+        } else {
+            tr!("webcam-record-name").to_string()
+        };
         let pose_name = tr!("webcam-take-pose-name").to_string();
+        let sound_title = tr!("webcam-sound-save").to_string();
+        let take = self.take.clone();
+        let include_sound = self.include_sound && take.as_ref().is_some_and(|take| !take.audio.is_empty());
         self.spawn(ctx, move || match mode {
             Export::Segments => save_segments(&clip, &segments, &name),
             Export::Upload => {
@@ -275,6 +339,40 @@ impl Recorder {
             Export::Save => {
                 let prepared = prepare(&clip, range, looping, name)?;
                 save_file(prepared, title)
+            }
+            Export::SoundFile | Export::SoundUpload | Export::Gesture => {
+                let animation = if matches!(mode, Export::Gesture) {
+                    Some(prepare(&clip, range, false, name.clone())?)
+                } else {
+                    None
+                };
+                let pcm = if !matches!(mode, Export::Gesture) || include_sound {
+                    let passes = take.as_ref().map_or(&[][..], |take| take.audio.as_slice());
+                    soundtrack::render(passes, range).ok_or(Failure::NoSound)?
+                } else {
+                    Vec::new()
+                };
+                if matches!(mode, Export::SoundFile) {
+                    let Some(mut path) = rfd::FileDialog::new()
+                        .set_title(sound_title)
+                        .set_file_name(format!("{name}.wav"))
+                        .add_filter("WAV", &["wav"])
+                        .save_file()
+                    else {
+                        return Ok(Output::Cancelled);
+                    };
+                    if !path.extension().is_some_and(|ext| ext.eq_ignore_ascii_case("wav")) {
+                        path.set_extension("wav");
+                    }
+                    write_animation_atomic(&path, &soundtrack::to_wav(&pcm)).map_err(|_| Failure::Write)?;
+                    Ok(Output::Saved(1))
+                } else {
+                    Ok(Output::Media(PreparedMedia {
+                        animation,
+                        sounds: soundtrack::upload_pieces(&pcm),
+                        name,
+                    }))
+                }
             }
         });
     }
@@ -315,6 +413,7 @@ impl Recorder {
         match result {
             Ok(Output::Saved(count)) => self.saved = count,
             Ok(Output::Upload(upload)) => self.upload = Some(upload),
+            Ok(Output::Media(media)) => self.media = Some(media),
             Ok(Output::Cancelled) => {}
             Ok(Output::Repaired(repaired, timed)) => {
                 self.clip = Some(Arc::new(repaired));
@@ -356,6 +455,34 @@ impl Recorder {
                         self.clip = self.original.clone();
                         self.repaired_frames = None;
                         self.seam = None;
+                    }
+                });
+                ui.horizontal_wrapped(|ui| {
+                    let selected = self
+                        .repair_joint
+                        .and_then(|i| take.names.get(i))
+                        .map_or(tr!("webcam-repair-all"), String::as_str);
+                    egui::ComboBox::from_id_salt("webcam_repair_joint")
+                        .selected_text(selected)
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(&mut self.repair_joint, None, tr!("webcam-repair-all"));
+                            for (i, name) in take.names.iter().enumerate() {
+                                if take.timed.iter().any(|(_, frame)| frame.get(i).is_some_and(Option::is_some)) {
+                                    ui.selectable_value(&mut self.repair_joint, Some(i), name);
+                                }
+                            }
+                        });
+                    ui.label(tr!("webcam-repair-width"));
+                    ui.add(
+                        egui::DragValue::new(&mut self.repair_width)
+                            .range(0.08..=0.8)
+                            .speed(0.02)
+                            .suffix(" s"),
+                    );
+                    if ui.button(tr!("webcam-repair-selection")).clicked() {
+                        let half = self.repair_width / 2.0;
+                        let range = [self.cursor - half, self.cursor + half];
+                        self.repair_range(ui.ctx(), Some(range), self.repair_joint, take.clone());
                     }
                 });
                 ui.horizontal_wrapped(|ui| {
@@ -458,10 +585,24 @@ impl Recorder {
     }
 
     fn repair(&mut self, ctx: &egui::Context, at: Option<f32>, take: Arc<TakeData>) {
+        self.repair_range(ctx, at.map(|center| [center - 0.065, center + 0.065]), None, take);
+    }
+
+    fn repair_range(&mut self, ctx: &egui::Context, range: Option<[f32; 2]>, joint: Option<usize>, take: Arc<TakeData>) {
         let current = self.repaired_frames.clone();
         self.spawn(ctx, move || {
-            let timed = at.and(current.as_deref()).unwrap_or(&take.timed);
-            let frames = take_tools::repair(timed, at);
+            let timed = range.and(current.as_deref()).unwrap_or(&take.timed);
+            let frames = if let Some([a, b]) = range {
+                let joint = joint.map(|index| [index]);
+                take_tools::repair_selected(
+                    timed,
+                    Some([a, b]),
+                    joint.as_ref().map(|indices| indices.as_slice()),
+                    (b - a + 0.22).max(0.35),
+                )
+            } else {
+                take_tools::repair(timed, None)
+            };
             let repaired: Vec<_> = timed.iter().zip(frames).map(|((time, _), rotations)| (*time, rotations)).collect();
             let samples = repaired
                 .iter()
@@ -483,8 +624,14 @@ impl Recorder {
         let was_visible = self.visible;
         widgets::section_header(ui, palette, "video-filled", &tr!("webcam-record-title"));
         ui.horizontal_wrapped(|ui| {
-            if let Some(active) = &self.active {
-                let status = if now < active.starts {
+            if let Some(active) = &mut self.active {
+                let mark = active.paused.unwrap_or(now);
+                let status = if active.paused.is_some() {
+                    tr!(
+                        "webcam-record-paused",
+                        seconds = format!("{:.1}", mark.saturating_duration_since(active.starts).as_secs_f32())
+                    )
+                } else if now < active.starts {
                     tr!(
                         "webcam-record-counting",
                         seconds = format!("{:.0}", active.starts.duration_since(now).as_secs_f32().ceil())
@@ -496,6 +643,15 @@ impl Recorder {
                     )
                 };
                 let stop = ui.button(tr!("webcam-record-stop")).clicked();
+                if let Some(paused) = active.paused {
+                    if ui.add_enabled(can_record, egui::Button::new(tr!("webcam-record-resume"))).clicked() {
+                        active.starts += now.saturating_duration_since(paused);
+                        active.audio_from = now.max(active.starts);
+                        active.paused = None;
+                    }
+                } else if ui.button(tr!("webcam-record-hold")).clicked() {
+                    self.pause(now);
+                }
                 ui.colored_label(palette.danger, status);
                 ui.ctx().request_repaint_after(Duration::from_millis(33));
                 if stop {
@@ -578,6 +734,24 @@ impl Recorder {
                 widgets::checkbox(ui, palette, &mut self.looping, tr!("webcam-record-loop"));
             });
             ui.horizontal_wrapped(|ui| {
+                if ui.small_button("−1 s").clicked() {
+                    self.scrub_take(self.cursor - 1.0);
+                }
+                if ui.small_button("+1 s").clicked() {
+                    self.scrub_take(self.cursor + 1.0);
+                }
+                let fps = 30.0;
+                if ui.small_button("‹").on_hover_text(tr!("webcam-preview-prev-frame")).clicked() {
+                    self.scrub_take(self.cursor - 1.0 / fps);
+                }
+                if ui.small_button("›").on_hover_text(tr!("webcam-preview-next-frame")).clicked() {
+                    self.scrub_take(self.cursor + 1.0 / fps);
+                }
+                if speed_picker(ui, "webcam_take_speed", &mut self.preview_rate) && self.playing.is_some() {
+                    self.playing = Some((now, self.cursor));
+                }
+            });
+            ui.horizontal_wrapped(|ui| {
                 ui.add_enabled_ui(self.job.is_none(), |ui| {
                     if ui.button(tr!("webcam-record-save")).clicked() {
                         self.export(Export::Save, ui.ctx());
@@ -586,6 +760,29 @@ impl Recorder {
                         self.hide_preview();
                         self.export(Export::Upload, ui.ctx());
                     }
+                });
+            });
+            let has_sound = self.take.as_ref().is_some_and(|take| !take.audio.is_empty());
+            ui.add_enabled_ui(self.job.is_none(), |ui| {
+                egui::CollapsingHeader::new(tr!("webcam-sound-gesture")).show(ui, |ui| {
+                    ui.horizontal_wrapped(|ui| {
+                        if ui.add_enabled(has_sound, egui::Button::new(tr!("webcam-sound-save"))).clicked() {
+                            self.export(Export::SoundFile, ui.ctx());
+                        }
+                        if ui.add_enabled(has_sound, egui::Button::new(tr!("webcam-sound-upload"))).clicked() {
+                            self.export(Export::SoundUpload, ui.ctx());
+                        }
+                    });
+                    ui.horizontal_wrapped(|ui| {
+                        ui.add_enabled_ui(has_sound, |ui| {
+                            widgets::checkbox(ui, palette, &mut self.include_sound, tr!("webcam-gesture-with-sound"));
+                        });
+                        if ui.button(tr!("webcam-gesture-prepare")).clicked() {
+                            self.hide_preview();
+                            self.export(Export::Gesture, ui.ctx());
+                        }
+                    });
+                    ui.colored_label(palette.muted, tr!("webcam-gesture-hint"));
                 });
             });
             self.edit_tools(ui, palette, duration, rig);
@@ -604,11 +801,31 @@ impl Recorder {
                     Failure::Write => tr!("webcam-record-error"),
                     Failure::NoLoop => tr!("webcam-take-no-loop"),
                     Failure::NoBeats => tr!("webcam-take-no-beats"),
+                    Failure::NoSound => tr!("webcam-sound-unavailable"),
                 },
             );
         }
         !was_visible && self.visible
     }
+
+    fn scrub_take(&mut self, time: f32) {
+        self.cursor = time.clamp(self.range[0], self.range[1]);
+        self.visible = true;
+        self.playing = None;
+    }
+}
+
+pub(super) fn speed_picker(ui: &mut egui::Ui, id: &str, rate: &mut f32) -> bool {
+    let before = *rate;
+    egui::ComboBox::from_id_salt(id)
+        .width(65.0)
+        .selected_text(format!("{rate}×"))
+        .show_ui(ui, |ui| {
+            for speed in [0.5, 0.75, 1.0, 1.25, 1.5, 2.0] {
+                ui.selectable_value(rate, speed, format!("{speed}×"));
+            }
+        });
+    before != *rate
 }
 
 fn assemble(samples: Vec<Sample>, names: Vec<String>) -> Option<Animation> {
