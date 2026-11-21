@@ -40,6 +40,13 @@ struct Face {
 }
 
 impl Face {
+    const REST: Self = Self {
+        head: Quat::IDENTITY,
+        jaw: 0.035,
+        openness: [0.26; 2],
+        gaze: [[0.0; 2]; 2],
+    };
+
     fn measure(points: [[f32; 3]; 16]) -> Option<Self> {
         let p = points.map(Vec3::from_array);
         let left = p[0] - p[1];
@@ -74,10 +81,20 @@ pub(crate) struct Pose {
 impl Pose {
     pub(super) fn new(frame: &Frame, neutral: Option<&Frame>, strength: f32, channels: Channels) -> Self {
         let neutral_face = neutral.and_then(|f| Face::measure(f.face?));
+        let neutral_torso = neutral.and_then(|f| torso(&body_points(f)));
+        Self::with_reference(frame, neutral_face, neutral_torso, strength, channels)
+    }
+
+    pub(super) fn still(frame: &Frame, channels: Channels) -> Self {
+        // A photograph has no earlier frame to calibrate against.
+        Self::with_reference(frame, Some(Face::REST), Some(Quat::IDENTITY), 1.0, channels)
+    }
+
+    fn with_reference(frame: &Frame, neutral_face: Option<Face>, neutral_torso: Option<Quat>, strength: f32, channels: Channels) -> Self {
         let face = frame.face.and_then(Face::measure).zip(neutral_face);
         let body = body_points(frame);
         let chest = torso(&body)
-            .zip(neutral.and_then(|f| torso(&body_points(f))))
+            .zip(neutral_torso)
             .map(|(current, rest)| limited(current * rest.inverse(), 0.48));
         Self {
             body,

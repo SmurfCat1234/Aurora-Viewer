@@ -6,7 +6,7 @@ mod retarget;
 
 use std::{
     io::{BufRead, BufReader, Read, Write},
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Child, ChildStdin, Command, Stdio},
     sync::{Arc, Mutex, atomic::AtomicBool},
     time::Instant,
@@ -37,6 +37,7 @@ struct Sample {
     frame: Option<Frame>,
     preview: Option<PreviewFrame>,
     video_started: Option<bool>,
+    still: Option<bool>,
     ended: Option<bool>,
     error: Option<String>,
     fatal: Option<String>,
@@ -76,6 +77,7 @@ struct Latest {
     frame: Option<(Instant, Frame)>,
     preview: Option<PreviewImage>,
     video_started: Option<Instant>,
+    still: bool,
     finished: Option<bool>,
 }
 
@@ -95,7 +97,43 @@ struct Device {
 #[derive(Clone, PartialEq, Eq)]
 enum Source {
     Camera(Camera),
-    Video(PathBuf),
+    File(PathBuf, FileKind),
+}
+
+const VIDEO_EXTENSIONS: &[&str] = &["mp4", "m4v", "mov", "webm", "mkv", "avi"];
+const IMAGE_EXTENSIONS: &[&str] = &["gif", "png", "jpg", "jpeg", "bmp", "webp"];
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum FileKind {
+    Video,
+    Gif,
+    Image,
+}
+
+impl FileKind {
+    fn of(path: &Path) -> Option<Self> {
+        let suffix = path.extension()?.to_str()?.to_ascii_lowercase();
+        match suffix.as_str() {
+            "gif" => Some(Self::Gif),
+            ext if IMAGE_EXTENSIONS.contains(&ext) => Some(Self::Image),
+            ext if VIDEO_EXTENSIONS.contains(&ext) => Some(Self::Video),
+            _ => None,
+        }
+    }
+}
+
+impl Source {
+    fn file(path: PathBuf) -> Self {
+        let kind = FileKind::of(&path).unwrap_or(FileKind::Video);
+        Self::File(path, kind)
+    }
+
+    fn file_kind(&self) -> Option<FileKind> {
+        match self {
+            Self::Camera(_) => None,
+            Self::File(_, kind) => Some(*kind),
+        }
+    }
 }
 
 impl Default for Source {
@@ -170,6 +208,7 @@ impl Capture {
                         if sample.video_started == Some(true) {
                             slot.video_started = Some(Instant::now());
                         }
+                        slot.still |= sample.still == Some(true);
                         if preview.is_some() {
                             slot.preview = preview;
                         }
@@ -195,7 +234,10 @@ impl Capture {
         };
         let message = match source {
             Source::Camera(camera) => serde_json::json!({"id": id, "camera": camera.index, "backend": camera.backend}),
-            Source::Video(path) => serde_json::json!({"id": id, "video": path.to_string_lossy(), "loop_video": loop_video}),
+            Source::File(path, FileKind::Video) => {
+                serde_json::json!({"id": id, "video": path.to_string_lossy(), "loop_video": loop_video})
+            }
+            Source::File(path, _) => serde_json::json!({"id": id, "image": path.to_string_lossy(), "loop_video": loop_video}),
         };
         self.send(message)
     }
@@ -218,6 +260,7 @@ pub(crate) struct Webcam {
     pub open: bool,
     capture: Option<Capture>,
     running: bool,
+    still: bool,
     warm_attempted: bool,
     warming_before_open: bool,
     panel: panel::Panel,
@@ -249,6 +292,7 @@ impl Webcam {
 
     fn clear_input(&mut self) {
         self.running = false;
+        self.still = false;
         self.latest = None;
         self.rendered = None;
         self.neutral = None;
@@ -328,9 +372,10 @@ impl Webcam {
                 slot.preview.take(),
                 slot.frame.take(),
                 slot.video_started.take(),
+                slot.still,
             )
         });
-        if let Some((finished, preview, sample, video_started)) = pending {
+        if let Some((finished, preview, sample, video_started, still)) = pending {
             if let Some(error) = finished {
                 self.stop();
                 self.error = error;
@@ -339,12 +384,13 @@ impl Webcam {
             if preview.is_some() {
                 self.preview = preview;
             }
+            self.still = still;
             if let Some((when, frame)) = sample {
                 self.update_target(when, frame);
             }
             if let Some(started) = video_started {
                 self.clip_audio = None;
-                if let (Some(engine), Source::Video(path)) = (audio, &self.panel.source) {
+                if let (Some(engine), Source::File(path, FileKind::Video)) = (audio, &self.panel.source) {
                     self.clip_audio = engine.play_local_media(path.clone(), started, self.video_muted.clone());
                 }
             }
@@ -353,7 +399,11 @@ impl Webcam {
         let now = Instant::now();
         let age = now.saturating_duration_since(*received).as_secs_f32();
         let fade_after = (2.0 / self.fps.max(3.0)).clamp(0.18, 0.45);
-        let strength = (1.0 - (age - fade_after) / 0.35).clamp(0.0, 1.0);
+        let strength = if self.still {
+            1.0
+        } else {
+            (1.0 - (age - fade_after) / 0.35).clamp(0.0, 1.0)
+        };
         if strength == 0.0 || !target.detected() {
             self.rendered = None;
             return None;
@@ -368,7 +418,12 @@ impl Webcam {
         }
         self.rendered = Some((now, frame.clone()));
         let channels = self.panel.channels;
-        let pose = if self.mirror {
+        let pose = if self.still {
+            if self.mirror {
+                frame = frame.mirrored();
+            }
+            Pose::still(&frame, channels)
+        } else if self.mirror {
             Pose::new(
                 &frame.mirrored(),
                 self.neutral.as_ref().map(Frame::mirrored).as_ref(),

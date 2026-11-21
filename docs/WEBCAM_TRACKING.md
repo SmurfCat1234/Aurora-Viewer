@@ -14,7 +14,7 @@ its normal avatar animations to the grid.
    ```powershell
    py -3.12 -m venv "$env:LOCALAPPDATA\AuroraWebcam\venv"
    $env:AURORA_WEBCAM_PYTHON = "$env:LOCALAPPDATA\AuroraWebcam\venv\Scripts\python.exe"
-   & $env:AURORA_WEBCAM_PYTHON -m pip install 'mediapipe==0.10.21' 'opencv-contrib-python==4.11.0.86' 'cv2-enumerate-cameras==1.3.0'
+   & $env:AURORA_WEBCAM_PYTHON -m pip install 'mediapipe==0.10.21' 'opencv-contrib-python==4.11.0.86' 'cv2-enumerate-cameras==1.3.0' 'pillow==13.0.0'
    $env:AURORA_DEMO = '1'
    cargo run -p aurora-viewer -- --title 'Test local-webcam-tracking'
    ```
@@ -41,8 +41,10 @@ its normal avatar animations to the grid.
    rigged head and hands weighted to the corresponding joints for a
    meaningful in-world comparison.
 
-Choose a demo clip or use **Open video…** to play a local file through the
-same trackers as the camera. **Loop video** repeats the clip. Set
+Choose a demo file or use **Open file…** to track a local video, GIF, or
+still image (PNG, JPEG, BMP, or WebP). GIFs follow the frame delays stored
+in the file. **Loop playback** repeats a video or GIF. A still image is
+analyzed once and holds the detected pose until you stop or switch inputs. Set
 `AURORA_DEMO_WEBCAM_VIDEO` before launching the offline demo to preselect a
 clip and warm the models during viewer startup. The preview keeps its place
 while idle, opening a source, or switching inputs. The preview and tracking

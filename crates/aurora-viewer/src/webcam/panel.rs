@@ -7,7 +7,7 @@ use std::{
 
 use aurora_i18n::tr;
 
-use super::{Camera, Channels, Device, PreviewImage, Source, WINDOW, Webcam, companion};
+use super::{Camera, Channels, Device, FileKind, IMAGE_EXTENSIONS, PreviewImage, Source, VIDEO_EXTENSIONS, WINDOW, Webcam, companion};
 use crate::{theme::Palette, ui::widgets};
 
 pub(super) struct Panel {
@@ -59,12 +59,12 @@ impl Panel {
                 self.demo_clips = files
                     .filter_map(Result::ok)
                     .map(|entry| entry.path())
-                    .filter(|path| path.extension().is_some_and(|ext| ext.eq_ignore_ascii_case("mp4")) && path.is_file())
+                    .filter(|path| FileKind::of(path).is_some() && path.is_file())
                     .collect();
                 self.demo_clips.sort();
             }
             if let Some(video) = std::env::var_os("AURORA_DEMO_WEBCAM_VIDEO") {
-                self.source = Source::Video(video.into());
+                self.source = Source::file(video.into());
             }
         }
         self.refresh_devices();
@@ -90,15 +90,15 @@ impl Panel {
         }
     }
 
-    fn pick_video(&mut self) {
+    fn pick_file(&mut self) {
         let (send, receive) = mpsc::channel();
         let title = tr!("webcam-browse");
         if std::thread::Builder::new()
-            .name("webcam-video-picker".into())
+            .name("webcam-file-picker".into())
             .spawn(move || {
                 let path = rfd::FileDialog::new()
                     .set_title(title)
-                    .add_filter("Video", &["mp4", "m4v", "mov", "webm", "mkv", "avi"])
+                    .add_filter(tr!("webcam-media-files"), &[VIDEO_EXTENSIONS, IMAGE_EXTENSIONS].concat())
                     .pick_file();
                 let _ = send.send(path);
             })
@@ -160,7 +160,7 @@ impl Panel {
                 .iter()
                 .find(|device| device.camera == *camera)
                 .map_or_else(|| tr!("webcam-camera-number", number = camera.index), |device| device.name.clone()),
-            Source::Video(file) => file_label(file),
+            Source::File(file, _) => file_label(file),
         };
         let mut play_video = false;
         egui::ComboBox::from_id_salt("webcam-source")
@@ -182,7 +182,7 @@ impl Panel {
                     ui.selectable_value(source, Source::default(), tr!("webcam-camera-auto"));
                 }
                 for file in &self.demo_clips {
-                    play_video |= ui.selectable_value(source, Source::Video(file.clone()), file_label(file)).clicked();
+                    play_video |= ui.selectable_value(source, Source::file(file.clone()), file_label(file)).clicked();
                 }
             });
         play_video
@@ -191,7 +191,7 @@ impl Panel {
     fn next_camera(&mut self) {
         let index = match self.source {
             Source::Camera(camera) => self.devices.iter().position(|device| device.camera == camera),
-            Source::Video(_) => None,
+            Source::File(..) => None,
         };
         let next = index.map_or(0, |index| (index + 1) % self.devices.len());
         self.source = Source::Camera(self.devices[next].camera);
@@ -254,7 +254,7 @@ impl Webcam {
         let previous_loop = self.panel.loop_video;
         let mut play_video = false;
         if let Some(video) = self.panel.poll() {
-            self.panel.source = Source::Video(video);
+            self.panel.source = Source::file(video);
             play_video = true;
         }
         if let Some(preview) = self.preview.take() {
@@ -282,8 +282,7 @@ impl Webcam {
         } else if play_video
             || (was_running
                 && self.running
-                && (self.panel.source != previous_source
-                    || (matches!(self.panel.source, Source::Video(_)) && self.panel.loop_video != previous_loop)))
+                && (self.panel.source != previous_source || (self.can_loop() && self.panel.loop_video != previous_loop)))
         {
             self.start();
         }
@@ -309,21 +308,32 @@ impl Webcam {
                 .add_enabled(self.panel.picker.is_none(), egui::Button::new(tr!("webcam-browse")))
                 .clicked()
             {
-                self.panel.pick_video();
+                self.panel.pick_file();
             }
         });
         play_video
     }
 
     fn preview_stage(&self, ui: &mut egui::Ui, palette: &Palette) {
-        let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
+        let fresh = self
+            .latest
+            .as_ref()
+            .filter(|(at, _)| self.still || at.elapsed() < Duration::from_millis(500));
         ui.horizontal(|ui| {
-            if self.panel.preview_fps > 0.0 {
+            if !self.still && self.panel.preview_fps > 0.0 {
                 ui.strong(tr!("webcam-preview-fps", fps = format!("{:.0}", self.panel.preview_fps)));
             } else {
                 ui.strong(tr!("webcam-preview"));
             }
-            if fresh.is_some_and(|(_, frame)| frame.detected()) {
+            if self.still
+                && let Some((_, frame)) = fresh
+            {
+                if frame.detected() {
+                    ui.colored_label(palette.success, tr!("webcam-still-held"));
+                } else {
+                    ui.colored_label(palette.muted, tr!("webcam-still-empty"));
+                }
+            } else if fresh.is_some_and(|(_, frame)| frame.detected()) {
                 ui.colored_label(palette.success, tr!("webcam-fps", fps = format!("{:.0}", self.fps)));
             } else if self.panel.last_preview.is_some() {
                 ui.colored_label(palette.muted, tr!("webcam-waiting"));
@@ -339,11 +349,16 @@ impl Webcam {
         self.panel.preview(ui, palette, self.mirror, empty);
     }
 
+    fn can_loop(&self) -> bool {
+        !self.still && matches!(self.panel.source.file_kind(), Some(FileKind::Video | FileKind::Gif))
+    }
+
     fn controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
+        let can_loop = self.can_loop();
         ui.horizontal_wrapped(|ui| {
             widgets::checkbox(ui, palette, &mut self.panel.show_dots, tr!("webcam-landmarks"));
             widgets::checkbox(ui, palette, &mut self.mirror, tr!("webcam-mirror"));
-            ui.add_enabled_ui(matches!(self.panel.source, Source::Video(_)), |ui| {
+            ui.add_enabled_ui(can_loop, |ui| {
                 widgets::checkbox(ui, palette, &mut self.panel.loop_video, tr!("webcam-loop"));
             });
             self.front_view_requested |= ui.button(tr!("camera-settings-front-view")).clicked();
@@ -382,7 +397,7 @@ impl Webcam {
                 }
                 if ui
                     .add_enabled(
-                        fresh.is_some_and(|(_, f)| f.face.is_some() || (f.body[0].is_some() && f.body[3].is_some())),
+                        !self.still && fresh.is_some_and(|(_, f)| f.face.is_some() || (f.body[0].is_some() && f.body[3].is_some())),
                         egui::Button::new(tr!("webcam-recenter")),
                     )
                     .clicked()
@@ -390,16 +405,16 @@ impl Webcam {
                     self.neutral = fresh.map(|(_, frame)| frame.clone());
                 }
             } else {
-                let label = if matches!(self.panel.source, Source::Video(_)) {
-                    tr!("webcam-replay")
-                } else {
-                    tr!("webcam-start")
+                let label = match self.panel.source.file_kind() {
+                    Some(FileKind::Image) => tr!("webcam-track-image"),
+                    Some(_) => tr!("webcam-replay"),
+                    None => tr!("webcam-start"),
                 };
                 if widgets::primary_button_sized(ui, palette, label, egui::vec2(124.0, 30.0)).clicked() {
                     self.start();
                 }
             }
-            if matches!(self.panel.source, Source::Video(_)) {
+            if self.panel.source.file_kind() == Some(FileKind::Video) {
                 let mut muted = self.video_muted.load(Ordering::Relaxed);
                 if widgets::checkbox(ui, palette, &mut muted, tr!("webcam-mute-video")).changed() {
                     self.video_muted.store(muted, Ordering::Relaxed);

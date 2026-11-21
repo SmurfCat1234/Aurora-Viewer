@@ -90,9 +90,9 @@ class Tracking:
         self.closed = False
         self.overlay = None
 
-    def submit(self, source_id, timestamp, image):
+    def submit(self, source_id, timestamp, image, still_preview=None):
         with self.changed:
-            self.pending = (source_id, timestamp, image)
+            self.pending = (source_id, timestamp, image, still_preview)
             self.changed.notify()
 
     def clear(self):
@@ -126,7 +126,7 @@ class Tracking:
                     self.changed.wait_for(lambda: self.pending is not None or self.closed)
                     if self.closed:
                         return
-                    source_id, timestamp, image = self.pending
+                    source_id, timestamp, image, still_preview = self.pending
                     self.pending = None
                 if last_source is not None and last_source != source_id:
                     for tracker in trackers:
@@ -139,7 +139,10 @@ class Tracking:
                 body, hand_result, face_result = (result.result() for result in results)
                 frame, groups = landmarks(body, hand_result, face_result, height / width)
                 self.overlay = (source_id, timestamp, groups)
-                emit({"id": source_id, "frame": frame})
+                sample = {"id": source_id, "frame": frame}
+                if still_preview:
+                    sample["preview"] = {"jpeg": still_preview, "groups": groups}
+                emit(sample)
 
 
 def read_commands(commands):
@@ -150,7 +153,72 @@ def read_commands(commands):
         commands.put(None)
 
 
+def preview_jpeg(cv2, image):
+    ok, jpeg = cv2.imencode(".jpg", resize(cv2, image, PREVIEW_SIZE), [cv2.IMWRITE_JPEG_QUALITY, 68])
+    return base64.b64encode(jpeg).decode("ascii") if ok else None
+
+
+def image_playback(cv2, commands, tracking, emit, source):
+    import numpy as np
+    from PIL import Image, ImageOps
+
+    source_id = source["id"]
+    try:
+        with Image.open(source["image"]) as picture:
+            if picture.width * picture.height > 32_000_000:
+                raise RuntimeError("Image is larger than 32 megapixels.")
+            animated = picture.format == "GIF" and picture.is_animated
+            frame_index = 0
+            deadline = time.monotonic()
+            while True:
+                try:
+                    return commands.get(timeout=max(0.0, deadline - time.monotonic()))
+                except Empty:
+                    pass
+                try:
+                    picture.seek(frame_index)
+                except EOFError:
+                    if not source["loop_video"]:
+                        emit({"id": source_id, "ended": True})
+                        return {"stop": True}
+                    frame_index = 0
+                    picture.seek(0)
+                frame = picture if animated else ImageOps.exif_transpose(picture)
+                rgba = frame.convert("RGBA")
+                rgba.thumbnail((TRACKING_SIZE, TRACKING_SIZE))
+                background = Image.new("RGBA", rgba.size, (128, 128, 128, 255))
+                rgb = Image.alpha_composite(background, rgba).convert("RGB")
+                image = cv2.cvtColor(np.asarray(rgb), cv2.COLOR_RGB2BGR)
+                timestamp = time.monotonic()
+                jpeg = preview_jpeg(cv2, image)
+                sample = {"id": source_id}
+                if not animated:
+                    sample["still"] = True
+                if jpeg:
+                    overlay = tracking.overlay
+                    groups = overlay[2] if animated and overlay and overlay[0] == source_id and timestamp - overlay[1] < 0.15 else []
+                    sample["preview"] = {"jpeg": jpeg, "groups": groups}
+                emit(sample)
+                tracking.submit(source_id, timestamp, image, jpeg if not animated else None)
+                if not animated:
+                    break
+                duration = max(10, picture.info.get("duration") or 100) / 1000
+                deadline += duration
+                # Keep the GIF's per-frame delays without replaying a backlog
+                # of overdue frames after a stall.
+                if deadline < timestamp:
+                    deadline = timestamp + duration
+                frame_index += 1
+        return commands.get()
+    except (OSError, Image.DecompressionBombError) as error:
+        raise RuntimeError(f"Cannot read the selected image: {error}") from error
+    finally:
+        tracking.clear()
+
+
 def playback(cv2, commands, tracking, emit, source):
+    if "image" in source:
+        return image_playback(cv2, commands, tracking, emit, source)
     source_id = source["id"]
     video = source.get("video")
     if video is not None and hasattr(cv2, "CAP_PROP_N_THREADS"):
@@ -205,13 +273,13 @@ def playback(cv2, commands, tracking, emit, source):
             timestamp = time.monotonic()
             tracking.submit(source_id, timestamp, image)
             if timestamp >= next_preview:
-                ok, jpeg = cv2.imencode(".jpg", resize(cv2, image, PREVIEW_SIZE), [cv2.IMWRITE_JPEG_QUALITY, 68])
-                if ok:
+                jpeg = preview_jpeg(cv2, image)
+                if jpeg:
                     overlay = tracking.overlay
                     groups = overlay[2] if overlay and overlay[0] == source_id and timestamp - overlay[1] < 0.15 else []
                     emit({
                         "id": source_id,
-                        "preview": {"jpeg": base64.b64encode(jpeg).decode("ascii"), "groups": groups},
+                        "preview": {"jpeg": jpeg, "groups": groups},
                     })
                 # Keep a phase on typical 24/30 FPS sources without starving high-rate cameras.
                 preview_interval = 1.0 / 30
@@ -253,7 +321,7 @@ def worker():
                 continue
             try:
                 source = playback(cv2, commands, tracking, emit, source)
-            except (RuntimeError, cv2.error) as error:
+            except (ImportError, RuntimeError, cv2.error) as error:
                 emit({"id": source["id"], "error": str(error)})
                 source = commands.get()
     finally:
