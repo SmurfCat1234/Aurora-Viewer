@@ -4086,8 +4086,10 @@ offline demo on initial selection. Open **Build › Webcam Tracking** and
 select **Replay test video**. Switch to a second video while playing and
 verify the preview changes and the new subject controls the pose. Disable
 Loop and check that the end of the clip restores the usual animation.
-`AURORA_WEBCAM_DEMOS` lists any of the following files in its directory:
-`01-Face-and-blinks.mp4`, `02-Hand-gestures.mp4`, and `03-Full-body.mp4`.
+`AURORA_WEBCAM_DEMOS` lists local MP4s in its directory by name. Watch the
+preview before starting, while the camera or video opens, and after stopping.
+The preview and Stop button keep their positions. The first source frame can
+appear while the landmark models are still starting.
 Set
 `AURORA_WEBCAM_PYTHON` to the interpreter in the environment described in
 [Webcam tracking](WEBCAM_TRACKING.md).

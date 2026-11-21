@@ -44,7 +44,10 @@ its normal avatar animations to the grid.
 Choose **Open video…** to feed a local clip through the same trackers as the
 camera. **Loop video** repeats the clip. Set `AURORA_DEMO_WEBCAM_VIDEO` before
 launching the offline demo to preselect a clip. **Preview** and **Landmarks**
-show the input image and detected points. The status reports the approximate
+show the input image and detected points. The preview keeps its place while
+idle, opening a source, or switching inputs. Once the selected source
+returns a frame, Aurora shows it while the tracking models finish starting.
+The status reports the approximate
 rate at which the viewer receives tracking samples.
 
 The prototype estimates head motion, gaze, blink, jaw opening, chest and

@@ -33,7 +33,7 @@ struct Frame {
 
 #[derive(Deserialize)]
 struct Sample {
-    frame: Frame,
+    frame: Option<Frame>,
     preview: Option<PreviewFrame>,
 }
 
@@ -148,7 +148,9 @@ impl Capture {
                 if let Ok(sample) = serde_json::from_slice::<Sample>(&line) {
                     let preview = sample.preview.and_then(PreviewFrame::decode);
                     if let Ok(mut slot) = latest.lock() {
-                        slot.frame = Some((Instant::now(), sample.frame));
+                        if let Some(frame) = sample.frame {
+                            slot.frame = Some((Instant::now(), frame));
+                        }
                         if preview.is_some() {
                             slot.preview = preview;
                         }

@@ -30,7 +30,7 @@ def list_cameras():
     ]))
 
 
-def preview_frame(cv2, image, body, hands, face):
+def preview_frame(cv2, image, body=None, hands=None, face=None):
     height, width = image.shape[:2]
     ratio = min(1.0, 384 / max(width, height))
     small = cv2.resize(image, (max(1, round(width * ratio)), max(1, round(height * ratio))))
@@ -50,16 +50,15 @@ def preview_frame(cv2, image, body, hands, face):
     return {
         "jpeg": base64.b64encode(jpeg).decode("ascii"),
         "groups": [
-            dots(body.pose_landmarks, visible_only=True),
-            dots(face.multi_face_landmarks[0], 5) if face.multi_face_landmarks else [],
-            *[dots(hand) for hand in (hands.multi_hand_landmarks or ())],
+            dots(body.pose_landmarks, visible_only=True) if body else [],
+            dots(face.multi_face_landmarks[0], 5) if face and face.multi_face_landmarks else [],
+            *(dots(hand) for hand in ((hands.multi_hand_landmarks or ()) if hands else ())),
         ],
     }
 
 
 def capture(args):
     import cv2
-    import mediapipe as mp
 
     if args.video and not Path(args.video).is_file():
         raise RuntimeError("The demo clip must be a local file.")
@@ -74,6 +73,19 @@ def capture(args):
         fps = camera.get(cv2.CAP_PROP_FPS)
         interval = 1.0 / fps if 1 <= fps <= 240 else 1.0 / 30
         next_preview = 0.0
+        # Show the source before the inference models finish loading. Keep
+        # this frame for inference so replay starts at the beginning.
+        first_frame = None
+        if args.preview:
+            ok, first_frame = camera.read()
+            if not ok:
+                raise RuntimeError("The selected input did not return a frame.")
+            print(json.dumps({"preview": preview_frame(cv2, first_frame)}), flush=True)
+            if not args.video:
+                first_frame = None
+
+        import mediapipe as mp
+
         # Separate detectors let a close-up keep face and hand tracking when
         # the pose model cannot see enough of the torso or legs.
         with (
@@ -83,7 +95,11 @@ def capture(args):
         ):
             while True:
                 started = time.monotonic()
-                ok, bgr = camera.read()
+                if first_frame is not None:
+                    ok, bgr = True, first_frame
+                    first_frame = None
+                else:
+                    ok, bgr = camera.read()
                 if not ok and args.video and args.loop:
                     camera.set(cv2.CAP_PROP_POS_FRAMES, 0)
                     ok, bgr = camera.read()

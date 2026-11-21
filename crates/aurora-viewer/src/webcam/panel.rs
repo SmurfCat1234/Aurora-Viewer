@@ -9,7 +9,6 @@ pub(super) struct Panel {
     pub source: Source,
     pub loop_video: bool,
     pub channels: Channels,
-    show_preview: bool,
     show_dots: bool,
     initialized: bool,
     devices: Vec<Device>,
@@ -26,7 +25,6 @@ impl Default for Panel {
             source: Source::default(),
             loop_video: true,
             channels: Channels::default(),
-            show_preview: true,
             show_dots: true,
             initialized: false,
             devices: Vec::new(),
@@ -46,12 +44,15 @@ impl Panel {
         }
         self.initialized = true;
         if demo {
-            if let Some(folder) = std::env::var_os("AURORA_WEBCAM_DEMOS") {
-                self.demo_clips = ["01-Face-and-blinks.mp4", "02-Hand-gestures.mp4", "03-Full-body.mp4"]
-                    .map(|file| PathBuf::from(&folder).join(file))
-                    .into_iter()
-                    .filter(|p| p.is_file())
+            if let Some(folder) = std::env::var_os("AURORA_WEBCAM_DEMOS")
+                && let Ok(files) = std::fs::read_dir(folder)
+            {
+                self.demo_clips = files
+                    .filter_map(Result::ok)
+                    .map(|entry| entry.path())
+                    .filter(|path| path.extension().is_some_and(|ext| ext.eq_ignore_ascii_case("mp4")) && path.is_file())
                     .collect();
+                self.demo_clips.sort();
             }
             if let Some(video) = std::env::var_os("AURORA_DEMO_WEBCAM_VIDEO") {
                 self.source = Source::Video(video.into());
@@ -143,7 +144,7 @@ impl Panel {
             Source::Video(file) => file_label(file),
         };
         egui::ComboBox::from_id_salt("webcam-source")
-            .width(255.0)
+            .width(ui.available_width())
             .selected_text(name)
             .show_ui(ui, |ui| {
                 for device in &self.devices {
@@ -175,22 +176,23 @@ impl Panel {
         self.source = Source::Camera(self.devices[next].camera);
     }
 
-    fn preview(&self, ui: &mut egui::Ui, palette: &Palette, mirror: bool) {
-        let Some(texture) = self.texture.as_ref().filter(|_| self.show_preview) else {
-            return;
-        };
-        let size = texture.size_vec2();
-        let fit = (ui.available_width() / size.x).min(180.0 / size.y);
-        let uv = if mirror {
-            egui::Rect::from_min_max(egui::pos2(1.0, 0.0), egui::pos2(0.0, 1.0))
-        } else {
-            egui::Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0))
-        };
-        ui.horizontal(|ui| {
-            ui.add_space((ui.available_width() - size.x * fit).max(0.0) * 0.5);
-            let image = ui.add(egui::Image::new((texture.id(), size * fit)).uv(uv));
+    fn preview(&self, ui: &mut egui::Ui, palette: &Palette, mirror: bool, empty: &str) {
+        let (stage, _) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 180.0), egui::Sense::hover());
+        let painter = ui.painter().with_clip_rect(stage);
+        painter.rect_filled(stage, ui.visuals().widgets.inactive.corner_radius, palette.field);
+        if let Some(texture) = &self.texture {
+            let size = texture.size_vec2();
+            let bounds = stage.shrink(4.0);
+            let fit = (bounds.width() / size.x).min(bounds.height() / size.y);
+            let image = egui::Rect::from_center_size(bounds.center(), size * fit);
+            let uv = if mirror {
+                egui::Rect::from_min_max(egui::pos2(1.0, 0.0), egui::pos2(0.0, 1.0))
+            } else {
+                egui::Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0))
+            };
+            painter.image(texture.id(), image, uv, egui::Color32::WHITE); // theme-guard: content — the video keeps its original colors
             if self.show_dots {
-                let painter = ui.painter().with_clip_rect(image.rect);
+                let painter = painter.with_clip_rect(image);
                 for (points, color) in self
                     .groups
                     .iter()
@@ -198,11 +200,19 @@ impl Panel {
                 {
                     for &[x, y] in points {
                         let x = if mirror { 1.0 - x } else { x };
-                        painter.circle_filled(image.rect.lerp_inside(egui::vec2(x, y)), 1.5, color);
+                        painter.circle_filled(image.lerp_inside(egui::vec2(x, y)), 1.5, color);
                     }
                 }
             }
-        });
+        } else {
+            painter.text(
+                stage.center(),
+                egui::Align2::CENTER_CENTER,
+                empty,
+                egui::TextStyle::Body.resolve(ui.style()),
+                palette.muted,
+            );
+        }
     }
 }
 
@@ -226,12 +236,15 @@ impl Webcam {
             self.panel.update_preview(ctx, preview);
         }
         let mut open = self.open;
-        let mut floater = widgets::Floater::new(WINDOW, tr!("webcam-title"), egui::pos2(72.0, 120.0), egui::vec2(420.0, 525.0))
+        let mut floater = widgets::Floater::new(WINDOW, tr!("webcam-title"), egui::pos2(72.0, 120.0), egui::vec2(460.0, 555.0))
             .framed_header("video-filled");
-        floater.min_size = egui::vec2(380.0, 440.0);
+        floater.min_size = egui::vec2(390.0, 485.0);
         floater.show(ctx, palette, &mut open, |ui| {
             self.source_controls(ui, palette);
+            ui.add_space(4.0);
             self.capture_controls(ui, palette);
+            ui.add_space(6.0);
+            self.preview_stage(ui, palette);
             widgets::divider(ui, palette);
             egui::ScrollArea::vertical()
                 .auto_shrink([false, false])
@@ -251,15 +264,18 @@ impl Webcam {
 
     fn source_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
         widgets::section_header(ui, palette, "video-filled", &tr!("webcam-input"));
+        self.panel.chooser(ui);
         ui.horizontal_wrapped(|ui| {
-            self.panel.chooser(ui);
             if ui
                 .add_enabled(self.panel.discovery.is_none(), egui::Button::new(tr!("webcam-refresh")))
                 .clicked()
             {
                 self.panel.refresh_devices();
             }
-            if self.panel.devices.len() > 1 && ui.button(tr!("webcam-next-camera")).clicked() {
+            if ui
+                .add_enabled(self.panel.devices.len() > 1, egui::Button::new(tr!("webcam-next-camera")))
+                .clicked()
+            {
                 self.panel.next_camera();
             }
             if ui
@@ -269,19 +285,35 @@ impl Webcam {
                 self.panel.pick_video();
             }
         });
-        if matches!(self.panel.source, Source::Video(_)) {
-            widgets::checkbox(ui, palette, &mut self.panel.loop_video, tr!("webcam-loop"));
-        }
+    }
+
+    fn preview_stage(&self, ui: &mut egui::Ui, palette: &Palette) {
+        let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
+        ui.horizontal(|ui| {
+            ui.strong(tr!("webcam-preview"));
+            if fresh.is_some_and(|(_, frame)| frame.detected()) {
+                ui.colored_label(palette.success, tr!("webcam-fps", fps = format!("{:.0}", self.fps)));
+            } else if self.panel.texture.is_some() {
+                ui.colored_label(palette.muted, tr!("webcam-waiting"));
+            }
+        });
+        let empty = if self.error {
+            tr!("webcam-preview-error")
+        } else if self.capture.is_some() {
+            tr!("webcam-preview-opening")
+        } else {
+            tr!("webcam-preview-idle")
+        };
+        self.panel.preview(ui, palette, self.mirror, empty);
     }
 
     fn controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
-        self.panel.preview(ui, palette, self.mirror);
         ui.horizontal_wrapped(|ui| {
-            widgets::checkbox(ui, palette, &mut self.panel.show_preview, tr!("webcam-preview"));
-            ui.add_enabled_ui(self.panel.show_preview, |ui| {
-                widgets::checkbox(ui, palette, &mut self.panel.show_dots, tr!("webcam-landmarks"));
-            });
+            widgets::checkbox(ui, palette, &mut self.panel.show_dots, tr!("webcam-landmarks"));
             widgets::checkbox(ui, palette, &mut self.mirror, tr!("webcam-mirror"));
+            ui.add_enabled_ui(matches!(self.panel.source, Source::Video(_)), |ui| {
+                widgets::checkbox(ui, palette, &mut self.panel.loop_video, tr!("webcam-loop"));
+            });
             self.front_view_requested |= ui.button(tr!("camera-settings-front-view")).clicked();
         });
 
@@ -299,16 +331,18 @@ impl Webcam {
             ui.add(egui::Slider::new(&mut ch.expression_strength, 0.0..=2.0).text(tr!("webcam-expression-strength")));
         });
         ui.colored_label(palette.muted, tr!("webcam-local"));
+        if self.error {
+            ui.colored_label(palette.danger, tr!("webcam-error"));
+        }
     }
 
     fn capture_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
         ui.horizontal_wrapped(|ui| {
             if self.capture.is_some() {
                 let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
-                if fresh.is_some_and(|(_, frame)| frame.detected()) {
-                    ui.colored_label(palette.success, tr!("webcam-fps", fps = format!("{:.0}", self.fps)));
-                } else {
-                    ui.label(tr!("webcam-waiting"));
+                if ui.add_sized([124.0, 30.0], egui::Button::new(tr!("webcam-stop"))).clicked() {
+                    self.stop();
+                    return;
                 }
                 if ui
                     .add_enabled(
@@ -318,9 +352,6 @@ impl Webcam {
                     .clicked()
                 {
                     self.neutral = fresh.map(|(_, frame)| frame.clone());
-                }
-                if ui.button(tr!("webcam-stop")).clicked() {
-                    self.stop();
                 }
             } else {
                 let label = if matches!(self.panel.source, Source::Video(_)) {
@@ -333,8 +364,5 @@ impl Webcam {
                 }
             }
         });
-        if self.error {
-            ui.colored_label(palette.danger, tr!("webcam-error"));
-        }
     }
 }
