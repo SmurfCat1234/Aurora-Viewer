@@ -5,6 +5,7 @@ import base64
 from concurrent.futures import ThreadPoolExecutor
 import json
 import math
+import os
 from queue import Empty, Queue
 import sys
 from threading import Condition, Lock, Thread
@@ -59,8 +60,8 @@ def dots(landmarks, step=1, visible_only=False):
     ]
 
 
-def visible(point):
-    return point.visibility >= 0.55 and 0 <= point.x <= 1 and 0 <= point.y <= 1
+def visible(point, threshold=0.55):
+    return point.visibility >= threshold and 0 <= point.x <= 1 and 0 <= point.y <= 1
 
 
 def distance(a, b, aspect):
@@ -71,15 +72,17 @@ def head_crop(cv2, image, pose):
     if not pose:
         return image, None
     p = pose.landmark
-    if not visible(p[0]):
+    anchor = next((p[i] for i in (0, 7, 8) if visible(p[i], 0.4)), None)
+    if anchor is None:
         return image, None
     h, w = image.shape[:2]
     aspect = h / w
     eye_span = distance(p[2], p[5], aspect)
+    ear_span = distance(p[7], p[8], aspect)
     shoulder_span = distance(p[11], p[12], aspect)
-    side = max(min(w, h) * 0.12, w * eye_span * 5.5, w * shoulder_span * 0.55)
-    x = round(p[0].x * w)
-    y = round(p[0].y * h)
+    side = max(min(w, h) * 0.12, w * eye_span * 5.5, w * ear_span * 2.2, w * shoulder_span * 0.55)
+    x = round(anchor.x * w)
+    y = round(anchor.y * h)
     half = round(side / 2)
     x0, x1 = max(0, x - half), min(w, x + half)
     y0, y1 = max(0, y - half), min(h, y + half)
@@ -108,7 +111,7 @@ def anchored_face(face, region, pose, aspect):
     if not pose:
         return face_points
     p = pose.landmark
-    if not visible(p[0]):
+    if not visible(p[0], 0.40):
         return None if visible(p[11]) and visible(p[12]) else face_points
     eyes = max(distance(p[2], p[5], aspect), 0.012)
     face_width = distance(f[33], f[263], aspect)
@@ -169,6 +172,11 @@ def landmarks(body, hands, face_points, aspect):
             xyz if visible(pose2d.landmark[i]) and all(math.isfinite(value) for value in xyz) else None
             for i, xyz in zip(BODY_INDICES, points(pose, BODY_INDICES))
         ]
+        p = pose2d.landmark
+        if visible(p[0], 0.50) and (visible(p[7]) or visible(p[8])) and visible(p[7], 0.25) and visible(p[8], 0.25):
+            head = points(pose, (0, 7, 8))
+            if all(math.isfinite(value) for point in head for value in point):
+                frame["head"] = head
     hand_points = anchored_hands(hands, pose2d, aspect)
     for side, hand in hand_points.items():
         frame[side] = points(hand, range(21), aspect)
@@ -192,6 +200,7 @@ class StableLandmarks:
 
     def apply(self, frame, timestamp):
         body = frame.get("body", [None] * len(BODY_INDICES))
+        predicted = set()
         for i, position in enumerate(body):
             previous = self.body.get(i)
             age = timestamp - previous[0] if previous else math.inf
@@ -203,19 +212,111 @@ class StableLandmarks:
                 if not candidate or timestamp - candidate[0] > 0.15 or math.dist(candidate[1], position) > 0.18:
                     position = None
             if position is not None:
-                self.body[i] = (timestamp, position)
+                velocity = [0.0, 0.0, 0.0]
+                if 0.008 <= age <= 0.12:
+                    change = [(new - old) / age for new, old in zip(position, previous[1])]
+                    speed = math.hypot(*change)
+                    weight = min(0.6, 1.2 / max(speed, 0.001))
+                    velocity = [old * 0.4 + new * weight for old, new in zip(previous[2], change)]
+                self.body[i] = (timestamp, position, velocity)
                 self.pending.pop(i, None)
             elif age <= 0.12:
-                body[i] = previous[1]
+                horizon = min(age, 0.055)
+                body[i] = [point + speed * horizon for point, speed in zip(previous[1], previous[2])]
+                predicted.add(i)
             else:
                 body[i] = None
+        # Keep synthesized points near the last measured limb length. Measured
+        # joints remain untouched, even if they are adjacent to a prediction.
+        for a, b in ((0, 1), (1, 2), (3, 4), (4, 5), (6, 8), (8, 10), (10, 12), (7, 9), (9, 11), (11, 13)):
+            if body[a] is None or body[b] is None or not (a in predicted or b in predicted):
+                continue
+            if a not in self.body or b not in self.body:
+                continue
+            reference = math.dist(self.body[a][1], self.body[b][1])
+            length = math.dist(body[a], body[b])
+            if min(reference, length) < 0.015:
+                continue
+            target = max(reference * 0.90, min(reference * 1.10, length))
+            moving, fixed = (b, a) if b in predicted else (a, b)
+            body[moving] = [x + (y - x) * target / length for x, y in zip(body[fixed], body[moving])]
         if any(position is not None for position in body):
             frame["body"] = body
-        for name in ("face", "left", "right"):
+        for name in ("face", "head", "left", "right"):
             if name in frame:
                 self.detail[name] = (timestamp, frame[name])
             elif name in self.detail and timestamp - self.detail[name][0] <= 0.12:
                 frame[name] = self.detail[name][1]
+
+
+ARM_LINKS = ((0, 1), (1, 2), (3, 4), (4, 5))
+LEG_LINKS = ((6, 8), (8, 10), (7, 9), (9, 11))
+
+
+def limb_count(frame):
+    body = frame.get("body")
+    return sum(body[a] is not None and body[b] is not None for a, b in ARM_LINKS + LEG_LINKS) if body else 0
+
+
+def face_fraction(frame, aspect):
+    face = frame.get("face")
+    return abs(face[2][2] - face[3][2]) / aspect if face else 0
+
+
+def usable_planar_pose(candidate, face_height):
+    if limb_count(candidate) < 4:
+        return False
+    body = candidate["body"]
+    if not any(all(body[i] for i in indices) for indices in ((6, 8, 10), (7, 9, 11))):
+        return False
+    ys = [point[2] for point in body if point is not None]
+    height = (max(ys) - min(ys)) / 1.65
+    # A close-up face can produce hallucinated limbs. Require room for a
+    # body below it when the primary detector has already found a face.
+    return height >= 0.25 and face_height <= height * 0.40
+
+
+class PlanarPose:
+    """Top-down RTMPose fallback for a single subject filling a file's picture."""
+
+    def __init__(self, cv2, np, path):
+        self.cv2 = cv2
+        self.np = np
+        self.path = path
+        self.net = None
+        self.failed = False
+        self.mean = np.array([123.675, 116.28, 103.53], dtype=np.float32)
+        self.std = np.array([58.395, 57.12, 57.375], dtype=np.float32)
+
+    def track(self, rgb):
+        if self.failed:
+            return {}, []
+        cv2, np = self.cv2, self.np
+        try:
+            if self.net is None:
+                self.net = cv2.dnn.readNetFromONNX(self.path)
+            h, w = rgb.shape[:2]
+            scale = min(192 / w, 256 / h) / 1.15
+            offset = np.array([(192 - w * scale) / 2, (256 - h * scale) / 2], dtype=np.float32)
+            transform = np.array([[scale, 0, offset[0]], [0, scale, offset[1]]], dtype=np.float32)
+            image = cv2.warpAffine(rgb, transform, (192, 256)).astype(np.float32)
+            self.net.setInput(np.ascontiguousarray(((image - self.mean) / self.std).transpose(2, 0, 1)[None]))
+            xs, ys = self.net.forward(["simcc_x", "simcc_y"])
+            if xs.shape != (1, 17, 384) or ys.shape != (1, 17, 512):
+                raise ValueError("unexpected RTMPose output shape")
+            scores = np.minimum(xs.max(axis=-1), ys.max(axis=-1))[0]
+            xy = (np.stack([xs.argmax(axis=-1), ys.argmax(axis=-1)], axis=-1)[0] / 2 - offset) / scale
+        except (cv2.error, OSError, ValueError):
+            self.failed = True
+            return {}, []
+        points = [(float(x), float(y)) if score >= 0.28 and 0 <= x < w and 0 <= y < h else None
+                  for (x, y), score in zip(xy, scores)]
+        order = (5, 7, 9, 6, 8, 10, 11, 12, 13, 14, 15, 16)
+        # Planar estimates do not contain depth or reliable toe/face detail.
+        body = [[0.0, (pt[0] - w / 2) / h * 1.65, (h / 2 - pt[1]) / h * 1.65] if pt else None
+                for pt in (points[i] for i in order)] + [None, None]
+        groups = [[(pt[0] / w, pt[1] / h) for pt in (points[i] for i in order) if pt]]
+        return {"body": body, "planar": True}, groups
 
 
 class Tracking:
@@ -248,6 +349,9 @@ class Tracking:
         import mediapipe as mp
         import numpy as np
 
+        planar_model = os.environ.get("AURORA_WEBCAM_PLANAR_MODEL")
+        planar = PlanarPose(cv2, np, planar_model) if planar_model else None
+
         with (
             mp.solutions.pose.Pose(model_complexity=1) as pose,
             mp.solutions.hands.Hands(model_complexity=0) as hands,
@@ -263,6 +367,9 @@ class Tracking:
             previous_pose = None
             cropped = False
             stable = StableLandmarks()
+            misses = 0
+            use_planar = False
+            saw_primary = False
             while True:
                 with self.changed:
                     self.changed.wait_for(lambda: self.pending is not None or self.closed)
@@ -277,22 +384,42 @@ class Tracking:
                     previous_pose = None
                     cropped = False
                     stable = StableLandmarks()
+                    if last_source[0] != source_id:
+                        misses = 0
+                        use_planar = False
+                        saw_primary = False
                 last_source = source
                 height, width = image.shape[:2]
                 rgb = cv2.cvtColor(resize(cv2, image, FILE_TRACKING_SIZE if is_file else TRACKING_SIZE), cv2.COLOR_BGR2RGB)
                 rgb.flags.writeable = False
-                body_task = pool.submit(pose.process, rgb)
-                hand_task = pool.submit(hands.process, rgb)
-                anchor = previous_pose if previous_pose is not None else body_task.result().pose_landmarks
-                face_image, region = head_crop(cv2, rgb, anchor)
-                if bool(region) != cropped:
-                    face.reset()
-                    cropped = bool(region)
-                face_task = pool.submit(face.process, face_image)
-                body = body_task.result()
-                previous_pose = body.pose_landmarks
-                face_points = anchored_face(face_task.result(), region, previous_pose, height / width)
-                frame, groups = landmarks(body, hand_task.result(), face_points, height / width)
+                if use_planar:
+                    frame, groups = planar.track(rgb)
+                    frame["planar"] = True
+                else:
+                    body_task = pool.submit(pose.process, rgb)
+                    hand_task = pool.submit(hands.process, rgb)
+                    anchor = previous_pose if previous_pose is not None else body_task.result().pose_landmarks
+                    face_image, region = head_crop(cv2, rgb, anchor)
+                    if bool(region) != cropped:
+                        face.reset()
+                        cropped = bool(region)
+                    face_task = pool.submit(face.process, face_image)
+                    body = body_task.result()
+                    previous_pose = body.pose_landmarks
+                    face_points = anchored_face(face_task.result(), region, previous_pose, height / width)
+                    frame, groups = landmarks(body, hand_task.result(), face_points, height / width)
+                    links = limb_count(frame)
+                    saw_primary |= links >= 4
+                    if is_file and planar is not None and not planar.failed and not saw_primary:
+                        misses = misses + 1 if links < 2 and not any(key in frame for key in ("left", "right")) else 0
+                        if (misses >= 4 and misses % 4 == 0) or (misses and still_preview):
+                            face_height = face_fraction(frame, height / width)
+                            if face_height < 0.40:
+                                candidate, overlay = planar.track(rgb)
+                                if usable_planar_pose(candidate, face_height):
+                                    frame, groups = candidate, overlay
+                                    stable = StableLandmarks()
+                                    use_planar = True
                 if still_preview is None:
                     stable.apply(frame, timestamp)
                 sample = {"id": source_id, "frame": frame}

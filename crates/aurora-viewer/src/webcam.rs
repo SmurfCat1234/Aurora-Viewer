@@ -29,6 +29,8 @@ struct Frame {
     left: Option<[[f32; 3]; 21]>,
     right: Option<[[f32; 3]; 21]>,
     face: Option<[[f32; 3]; 16]>,
+    head: Option<[[f32; 3]; 3]>,
+    planar: bool,
 }
 
 #[derive(Deserialize)]
@@ -437,9 +439,16 @@ impl Webcam {
     }
 
     fn update_target(&mut self, when: Instant, frame: Frame) {
+        if self.latest.as_ref().is_some_and(|(_, previous)| previous.planar != frame.planar) {
+            self.neutral = None;
+            self.rendered = None;
+        }
         let neutral = self.neutral.get_or_insert_with(|| frame.clone());
         if neutral.face.is_none() {
             neutral.face = frame.face;
+        }
+        if neutral.head.is_none() {
+            neutral.head = frame.head;
         }
         if neutral.body[0].is_none() || neutral.body[3].is_none() {
             neutral.body = frame.body;
@@ -457,7 +466,7 @@ impl Webcam {
 
 impl Frame {
     fn detected(&self) -> bool {
-        self.face.is_some() || self.left.is_some() || self.right.is_some() || self.body.iter().any(Option::is_some)
+        self.face.is_some() || self.head.is_some() || self.left.is_some() || self.right.is_some() || self.body.iter().any(Option::is_some)
     }
 
     fn legs_detected(&self) -> bool {
@@ -473,6 +482,8 @@ impl Frame {
         Self {
             body,
             face,
+            head: self.head.map(|p| [flip(p[0]), flip(p[2]), flip(p[1])]),
+            planar: self.planar,
             left: self.right.map(|p| p.map(flip)),
             right: self.left.map(|p| p.map(flip)),
         }
@@ -501,5 +512,6 @@ impl Frame {
         smooth_group(&mut self.left, &previous.left, amount);
         smooth_group(&mut self.right, &previous.right, amount);
         smooth_group(&mut self.face, &previous.face, amount);
+        smooth_group(&mut self.head, &previous.head, amount);
     }
 }

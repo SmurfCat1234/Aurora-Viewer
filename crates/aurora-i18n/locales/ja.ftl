@@ -15882,6 +15882,7 @@ webcam-media-files = 動画と画像
 webcam-loop = 繰り返し再生
 webcam-track-image = 画像を解析
 webcam-still-held = ポーズを保持中
+webcam-planar = 2D ポーズ
 webcam-still-empty = 人物が検出されませんでした
 webcam-preview = プレビュー
 webcam-preview-fps = プレビュー · { $fps } fps

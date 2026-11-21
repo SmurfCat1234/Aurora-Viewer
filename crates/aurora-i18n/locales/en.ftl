@@ -16021,6 +16021,7 @@ webcam-media-files = Videos and images
 webcam-loop = Loop playback
 webcam-track-image = Track image
 webcam-still-held = Pose held
+webcam-planar = 2D pose
 webcam-still-empty = No subject detected
 webcam-preview = Preview
 webcam-preview-fps = Preview · { $fps } fps

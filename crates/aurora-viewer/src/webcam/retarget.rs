@@ -34,6 +34,7 @@ impl Default for Channels {
 #[derive(Clone, Copy)]
 struct Face {
     head: Quat,
+    balance: f32,
     jaw: f32,
     openness: [f32; 2],
     gaze: [[f32; 2]; 2],
@@ -42,6 +43,7 @@ struct Face {
 impl Face {
     const REST: Self = Self {
         head: Quat::IDENTITY,
+        balance: 1.0,
         jaw: 0.035,
         openness: [0.26; 2],
         gaze: [[0.0; 2]; 2],
@@ -60,8 +62,11 @@ impl Face {
         };
         let (left_open, left_gaze) = eye(p[0], p[8], p[9], p[10], p[11]);
         let (right_open, right_gaze) = eye(p[1], p[12], p[13], p[14], p[15]);
+        let left_width = p[0].distance(p[8]);
+        let right_width = p[1].distance(p[12]);
         Some(Self {
             head,
+            balance: left_width.min(right_width) / left_width.max(right_width).max(0.001),
             jaw: p[4].distance(p[5]) / lip_width,
             openness: [left_open, right_open],
             gaze: [left_gaze, right_gaze],
@@ -73,6 +78,7 @@ pub(crate) struct Pose {
     body: [Option<Vec3>; 14],
     hands: [Option<[[f32; 3]; 21]>; 2],
     face: Option<(Face, Face)>,
+    head: Option<Quat>,
     chest: Option<Quat>,
     pelvis: Option<Quat>,
     strength: f32,
@@ -83,18 +89,48 @@ impl Pose {
     pub(super) fn new(frame: &Frame, neutral: Option<&Frame>, strength: f32, channels: Channels) -> Self {
         let neutral_face = neutral.and_then(|f| Face::measure(f.face?));
         let neutral_torso = neutral.and_then(|f| torso(&body_points(f)));
-        Self::with_reference(frame, neutral_face, neutral_torso, strength, channels)
+        let neutral_head = neutral.and_then(|f| coarse_head(f.head?));
+        Self::with_reference(frame, neutral_face, neutral_head, neutral_torso, strength, channels)
     }
 
     pub(super) fn still(frame: &Frame, channels: Channels) -> Self {
         // A photograph has no earlier frame to calibrate against.
-        Self::with_reference(frame, Some(Face::REST), Some(Quat::IDENTITY), 1.0, channels)
+        Self::with_reference(frame, Some(Face::REST), Some(Quat::IDENTITY), Some(Quat::IDENTITY), 1.0, channels)
     }
 
-    fn with_reference(frame: &Frame, neutral_face: Option<Face>, neutral_torso: Option<Quat>, strength: f32, channels: Channels) -> Self {
+    fn with_reference(
+        frame: &Frame,
+        neutral_face: Option<Face>,
+        neutral_head: Option<Quat>,
+        neutral_torso: Option<Quat>,
+        strength: f32,
+        channels: Channels,
+    ) -> Self {
         let face = frame.face.and_then(Face::measure).zip(neutral_face);
         let body = body_points(frame);
-        let torso_delta = torso(&body).zip(neutral_torso).map(|(current, rest)| current * rest.inverse());
+        let torso_frame = torso(&body);
+        let torso_delta = torso_frame.zip(neutral_torso).map(|(current, rest)| current * rest.inverse());
+        let local_delta = |current: Quat, rest: Quat| {
+            if let Some((current_torso, neutral_torso)) = torso_frame.zip(neutral_torso) {
+                (current_torso.inverse() * current) * (neutral_torso.inverse() * rest).inverse()
+            } else {
+                current * rest.inverse()
+            }
+        };
+        let coarse = frame
+            .head
+            .and_then(coarse_head)
+            .zip(neutral_head)
+            .map(|(head, rest)| local_delta(head, rest));
+        let has_torso = torso_frame.is_some();
+        let head = if let Some((mesh, rest)) = face {
+            let reliable = ((mesh.balance - 0.35) / 0.55).clamp(0.0, 1.0);
+            let motion = limited(local_delta(mesh.head, rest.head), 1.05);
+            let weight = if has_torso { reliable * 0.75 } else { reliable };
+            Some(coarse.map_or(Quat::IDENTITY, |q| limited(q, 1.05)).slerp(motion, weight))
+        } else {
+            coarse.map(|q| limited(q, 1.05)).or_else(|| has_torso.then_some(Quat::IDENTITY))
+        };
         // A tracked torso bend first turns the pelvis. The chest takes only
         // the remaining motion, so the same rotation is not applied twice.
         let pelvis = torso_delta
@@ -105,6 +141,7 @@ impl Pose {
             body,
             hands: [frame.left, frame.right],
             face,
+            head,
             chest,
             pelvis,
             strength,
@@ -124,6 +161,11 @@ impl Pose {
         }
         if let Some((face, neutral)) = self.face {
             self.face_targets(rig, &mut targets, face, neutral);
+        }
+        if self.channels.head
+            && let Some(head) = self.head
+        {
+            set(rig, &mut targets, "mHead", Target::Local(head));
         }
         for (i, side) in SIDES.iter().enumerate() {
             if self.channels.upper_body {
@@ -160,11 +202,8 @@ impl Pose {
     }
 
     fn face_targets(&self, rig: &Rig, targets: &mut [Option<Target>], face: Face, neutral: Face) {
-        if self.channels.head {
-            let head = limited(face.head * neutral.head.inverse(), 1.05);
-            set(rig, targets, "mHead", Target::Absolute(head));
-        }
-        let gain = self.channels.expression_strength;
+        let detail = ((face.balance - 0.25) / 0.55).clamp(0.0, 1.0);
+        let gain = self.channels.expression_strength * detail;
         let expression = self.channels.expression && gain > 0.0;
         if expression {
             let jaw = ((face.jaw - neutral.jaw - 0.015) * 1.55 * gain).clamp(0.0, 0.56);
@@ -172,8 +211,8 @@ impl Pose {
         }
         for (i, side) in SIDES.iter().enumerate() {
             if self.channels.eyes {
-                let yaw = (face.gaze[i][0] - neutral.gaze[i][0]).clamp(-0.23, 0.23);
-                let pitch = (neutral.gaze[i][1] - face.gaze[i][1]).clamp(-0.15, 0.15);
+                let yaw = (face.gaze[i][0] - neutral.gaze[i][0]).clamp(-0.23, 0.23) * detail;
+                let pitch = (neutral.gaze[i][1] - face.gaze[i][1]).clamp(-0.15, 0.15) * detail;
                 let eye = Quat::from_rotation_z(yaw) * Quat::from_rotation_y(pitch);
                 for joint in ["mEye", "mFaceEyeAlt"] {
                     set(rig, targets, &format!("{joint}{side}"), Target::Local(eye));
@@ -266,6 +305,21 @@ fn body_points(frame: &Frame) -> [Option<Vec3>; 14] {
     frame.body.map(|point| point.map(Vec3::from_array))
 }
 
+fn coarse_head(points: [[f32; 3]; 3]) -> Option<Quat> {
+    let [nose, left, right] = points.map(Vec3::from_array);
+    let across = left - right;
+    if across.length_squared() < 0.0025 {
+        return None;
+    }
+    let across = across.try_normalize()?;
+    let forward = nose - (left + right) * 0.5;
+    let forward = forward - across * forward.dot(across);
+    if forward.length_squared() < 0.0004 {
+        return None;
+    }
+    basis(forward, across)
+}
+
 fn torso(body: &[Option<Vec3>; 14]) -> Option<Quat> {
     let left = body[0]?;
     let right = body[3]?;
@@ -290,6 +344,28 @@ fn limited(rotation: Quat, limit: f32) -> Quat {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn head_follows_chest_and_profile_points_can_add_local_turn() {
+        let xml = include_str!("../../assets/character/avatar_skeleton.xml");
+        let rig = Rig::new(&aurora_assets::Skeleton::parse(xml.as_bytes()).unwrap());
+        let mut rest = Frame::default();
+        rest.body[0] = Some([0.0, 0.2, 0.5]);
+        rest.body[3] = Some([0.0, -0.2, 0.5]);
+        rest.body[6] = Some([0.0, 0.15, 0.0]);
+        rest.body[7] = Some([0.0, -0.15, 0.0]);
+        rest.head = Some([[0.08, 0.0, 0.7], [0.0, 0.08, 0.7], [0.0, -0.08, 0.7]]);
+        let turn = Quat::from_rotation_z(0.50);
+        let face_turn = Quat::from_rotation_z(-0.20);
+        let mut frame = Frame::default();
+        frame.body = rest.body.map(|p| p.map(|p| (turn * Vec3::from_array(p)).to_array()));
+        let head = rig.names["mHead"];
+        let without_face = Pose::new(&frame, Some(&rest), 1.0, Channels::default()).rotations(&rig, &rig.local_rot);
+        assert!(without_face[head].abs_diff_eq(rig.local_rot[head], 1e-5));
+        frame.head = rest.head.map(|p| p.map(|p| (turn * face_turn * Vec3::from_array(p)).to_array()));
+        let profile = Pose::new(&frame, Some(&rest), 1.0, Channels::default()).rotations(&rig, &rig.local_rot);
+        assert!(profile[head].abs_diff_eq(rig.local_rot[head] * face_turn, 1e-4));
+    }
 
     #[test]
     fn tracked_torso_turns_pelvis_without_doubling_the_chest_rotation() {

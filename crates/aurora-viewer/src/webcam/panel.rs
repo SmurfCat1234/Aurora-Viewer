@@ -338,6 +338,9 @@ impl Webcam {
             } else if self.panel.last_preview.is_some() {
                 ui.colored_label(palette.muted, tr!("webcam-waiting"));
             }
+            if fresh.is_some_and(|(_, frame)| frame.planar) {
+                ui.colored_label(palette.muted, tr!("webcam-planar"));
+            }
         });
         let empty = if self.error {
             tr!("webcam-preview-error")

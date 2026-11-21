@@ -59,9 +59,18 @@ The prototype estimates head motion, gaze, blink, jaw opening, chest and
 arm rotations, palm orientation, finger curl, pelvis rotation, and hip,
 knee and ankle rotations. Keep the hips, knees and feet in the frame for
 lower-body tracking. Briefly occluded joints can retain a recent reliable
-pose before releasing to the usual animation. Tracking overlays joint
+pose and extrapolate short segments of movement before releasing to the
+usual animation. Head rotation is relative to the torso. Body head points
+provide a fallback when the face mesh loses a profile. Tracking overlays joint
 rotation on the avatar in place, while world position and locomotion follow
 the viewer's controls. A normal OBS window capture can show the result.
+
+An optional local **RTMPose-s** ONNX model adds a **2D pose** fallback for
+files such as stylized animation. Use the [OpenMMLab RTMPose-s model archive](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.zip)
+and set `AURORA_WEBCAM_PLANAR_MODEL` to the extracted `end2end.onnx` path
+before launching. The fallback expects a single, well-framed character and
+supplies body joints in the image plane. Depth, toes and face detail are
+unavailable in this mode. The companion uses the existing OpenCV runtime.
 
 ## Implementation and inspiration
 

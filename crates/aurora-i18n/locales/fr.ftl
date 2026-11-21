@@ -16027,6 +16027,7 @@ webcam-media-files = Vidéos et images
 webcam-loop = Lire en boucle
 webcam-track-image = Analyser l’image
 webcam-still-held = Pose maintenue
+webcam-planar = Pose 2D
 webcam-still-empty = Aucun sujet détecté
 webcam-preview = Aperçu
 webcam-preview-fps = Aperçu · { $fps } i/s
