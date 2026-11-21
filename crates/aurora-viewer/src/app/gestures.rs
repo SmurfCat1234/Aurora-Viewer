@@ -184,11 +184,12 @@ impl App {
             return false;
         }
         let (_, _, definition) = self.gesture_state.webcam_pending.take().expect("matched pending gesture");
-        let mut editor = crate::ui::gestures::Editor::new(item.desc.clone());
-        editor.loaded(Gesture::default());
-        editor.step = Some(0);
-        editor.definition = Some(definition);
-        self.gesture_state.ui.editors.insert(id, editor);
+        self.gesture_state.ui.open(&self.world.inventory, id);
+        if let Some(editor) = self.gesture_state.ui.editors.get_mut(&id) {
+            editor.loaded(Gesture::default());
+            editor.step = Some(0);
+            editor.definition = Some(definition);
+        }
         self.webcam.clear_gesture_upload();
         true
     }
