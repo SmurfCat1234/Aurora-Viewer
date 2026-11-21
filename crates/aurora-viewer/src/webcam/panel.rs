@@ -1,3 +1,4 @@
+use std::sync::atomic::Ordering;
 use std::{
     path::PathBuf,
     sync::mpsc,
@@ -357,7 +358,11 @@ impl Webcam {
             widgets::checkbox(ui, palette, &mut ch.expression, tr!("webcam-expression"));
             widgets::checkbox(ui, palette, &mut ch.hands, tr!("webcam-hands"));
             widgets::checkbox(ui, palette, &mut ch.upper_body, tr!("webcam-upper-body"));
+            widgets::checkbox(ui, palette, &mut ch.lower_body, tr!("webcam-lower-body"));
         });
+        if ch.lower_body && self.running && !self.latest.as_ref().is_some_and(|(_, frame)| frame.legs_detected()) {
+            ui.colored_label(palette.muted, tr!("webcam-lower-body-hint"));
+        }
         ui.add_enabled_ui(ch.expression, |ui| {
             ui.add(egui::Slider::new(&mut ch.expression_strength, 0.0..=2.0).text(tr!("webcam-expression-strength")));
         });
@@ -377,7 +382,7 @@ impl Webcam {
                 }
                 if ui
                     .add_enabled(
-                        fresh.is_some_and(|(_, f)| f.face.is_some()),
+                        fresh.is_some_and(|(_, f)| f.face.is_some() || (f.body[0].is_some() && f.body[3].is_some())),
                         egui::Button::new(tr!("webcam-recenter")),
                     )
                     .clicked()
@@ -392,6 +397,12 @@ impl Webcam {
                 };
                 if widgets::primary_button_sized(ui, palette, label, egui::vec2(124.0, 30.0)).clicked() {
                     self.start();
+                }
+            }
+            if matches!(self.panel.source, Source::Video(_)) {
+                let mut muted = self.video_muted.load(Ordering::Relaxed);
+                if widgets::checkbox(ui, palette, &mut muted, tr!("webcam-mute-video")).changed() {
+                    self.video_muted.store(muted, Ordering::Relaxed);
                 }
             }
         });

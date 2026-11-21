@@ -33,7 +33,7 @@ its normal avatar animations to the grid.
    and mouth relaxed, then select **Set neutral pose**. **Mirror motion**
    swaps sides in the preview and avatar. **Front view** selects Aurora's
    front camera preset. Use the channel checkboxes to
-   isolate head, eyes, expressions, hands or upper body. Expression strength
+   isolate head, eyes, expressions, hands, upper body, or legs and feet. Expression strength
    changes the jaw and eyelid response.
 4. Turn and tilt your head, blink, open your mouth, separately lift each arm,
    turn the wrist, and make a fist. Move out of frame, then select **Stop
@@ -48,12 +48,17 @@ clip and warm the models during viewer startup. The preview keeps its place
 while idle, opening a source, or switching inputs. The preview and tracking
 rates are shown separately. Video follows its playback clock and the preview
 shows up to 30 fps while the models work on the latest input frame.
+MP4 audio plays locally through Aurora's Media volume. **Mute video**
+silences the clip while playback continues. Clearing it resumes sound at
+the current position. The soundtrack follows video loops, source switches,
+and playback stops.
 
 The prototype estimates head motion, gaze, blink, jaw opening, chest and
-arm rotations, palm orientation and finger curl. Full-body clips can exercise
-the pose detector and show leg landmarks in the preview. The avatar's legs
-continue to play their normal animation. A normal OBS window capture can
-show the viewer's rendered output.
+arm rotations, palm orientation, finger curl, and hip, knee and ankle
+rotations. Keep the hips, knees and feet in the frame for lower-body
+tracking. Missing joints use the usual animation. Tracking overlays joint
+rotation on the avatar in place, while world position and locomotion follow
+the viewer's controls. A normal OBS window capture can show the result.
 
 ## Implementation and inspiration
 

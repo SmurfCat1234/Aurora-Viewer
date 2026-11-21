@@ -35,6 +35,7 @@ mod devices;
 mod hrtf;
 mod http;
 mod icy;
+mod local_media;
 mod mixer;
 mod output;
 mod playlist;
@@ -54,6 +55,7 @@ use parking_lot::Mutex;
 pub use capture::{CAPTURE_SAMPLE_RATE, MAX_INPUT_GAIN, MicCapture, MicFeed, OVERDRIVEN_POWER_LEVEL};
 pub use decode::SoundClip;
 pub use devices::{DeviceLister, DeviceLists, input_devices, output_devices};
+pub use local_media::LocalMediaAudio;
 pub use mixer::{Channel, ChannelSettings, ENGINE_SAMPLE_RATE, MAX_RATE, MIN_RATE};
 pub use output::OutputInfo;
 pub use processing::{EchoReference, MicProcessing};
@@ -209,6 +211,17 @@ impl AudioEngine {
     /// URL of the requested parcel music stream ("" if none).
     pub fn stream_url(&self) -> String {
         self.inner.stream.lock().url().to_string()
+    }
+
+    /// Plays the audio track of a local video on the Media channel. Dropping
+    /// the handle cancels playback, including any queued samples.
+    pub fn play_local_media(
+        &self,
+        path: std::path::PathBuf,
+        started: std::time::Instant,
+        mute: Arc<std::sync::atomic::AtomicBool>,
+    ) -> Option<LocalMediaAudio> {
+        LocalMediaAudio::start(path, started, mute, self.inner.cmd_tx.clone())
     }
 
     /// Creates a sink feeding the Voice channel (see [`PcmSink`]).

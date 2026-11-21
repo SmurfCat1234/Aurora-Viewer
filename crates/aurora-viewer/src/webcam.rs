@@ -8,7 +8,7 @@ use std::{
     io::{BufRead, BufReader, Read, Write},
     path::PathBuf,
     process::{Child, ChildStdin, Command, Stdio},
-    sync::{Arc, Mutex},
+    sync::{Arc, Mutex, atomic::AtomicBool},
     time::Instant,
 };
 
@@ -25,7 +25,7 @@ const FRAME_BYTES: u64 = 131_072;
 #[derive(Clone, Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 struct Frame {
-    body: [Option<[f32; 3]>; 8],
+    body: [Option<[f32; 3]>; 14],
     left: Option<[[f32; 3]; 21]>,
     right: Option<[[f32; 3]; 21]>,
     face: Option<[[f32; 3]; 16]>,
@@ -36,6 +36,7 @@ struct Sample {
     id: Option<u64>,
     frame: Option<Frame>,
     preview: Option<PreviewFrame>,
+    video_started: Option<bool>,
     ended: Option<bool>,
     error: Option<String>,
     fatal: Option<String>,
@@ -74,6 +75,7 @@ struct Latest {
     id: Option<u64>,
     frame: Option<(Instant, Frame)>,
     preview: Option<PreviewImage>,
+    video_started: Option<Instant>,
     finished: Option<bool>,
 }
 
@@ -165,6 +167,9 @@ impl Capture {
                         if let Some(frame) = sample.frame {
                             slot.frame = Some((Instant::now(), frame));
                         }
+                        if sample.video_started == Some(true) {
+                            slot.video_started = Some(Instant::now());
+                        }
                         if preview.is_some() {
                             slot.preview = preview;
                         }
@@ -222,6 +227,8 @@ pub(crate) struct Webcam {
     rendered: Option<(Instant, Frame)>,
     neutral: Option<Frame>,
     preview: Option<PreviewImage>,
+    clip_audio: Option<aurora_audio::LocalMediaAudio>,
+    video_muted: Arc<AtomicBool>,
     fps: f32,
     front_view_requested: bool,
 }
@@ -246,6 +253,7 @@ impl Webcam {
         self.rendered = None;
         self.neutral = None;
         self.preview = None;
+        self.clip_audio = None;
         self.panel.clear_preview();
         self.fps = 0.0;
     }
@@ -293,7 +301,7 @@ impl Webcam {
         }
     }
 
-    pub fn update(&mut self) -> Option<Arc<Pose>> {
+    pub fn update(&mut self, audio: Option<&aurora_audio::AudioEngine>) -> Option<Arc<Pose>> {
         if !self.open {
             if !self.warming_before_open {
                 if self.capture.take().is_some() {
@@ -314,12 +322,15 @@ impl Webcam {
         if !self.running {
             return None;
         }
-        let pending = capture
-            .latest
-            .try_lock()
-            .ok()
-            .map(|mut slot| (slot.finished.take(), slot.preview.take(), slot.frame.take()));
-        if let Some((finished, preview, sample)) = pending {
+        let pending = capture.latest.try_lock().ok().map(|mut slot| {
+            (
+                slot.finished.take(),
+                slot.preview.take(),
+                slot.frame.take(),
+                slot.video_started.take(),
+            )
+        });
+        if let Some((finished, preview, sample, video_started)) = pending {
             if let Some(error) = finished {
                 self.stop();
                 self.error = error;
@@ -330,6 +341,12 @@ impl Webcam {
             }
             if let Some((when, frame)) = sample {
                 self.update_target(when, frame);
+            }
+            if let Some(started) = video_started {
+                self.clip_audio = None;
+                if let (Some(engine), Source::Video(path)) = (audio, &self.panel.source) {
+                    self.clip_audio = engine.play_local_media(path.clone(), started, self.video_muted.clone());
+                }
             }
         }
         let (received, target) = self.latest.as_ref()?;
@@ -388,9 +405,13 @@ impl Frame {
         self.face.is_some() || self.left.is_some() || self.right.is_some() || self.body.iter().any(Option::is_some)
     }
 
+    fn legs_detected(&self) -> bool {
+        (0..2).any(|side| self.body[6 + side].is_some() && self.body[8 + side].is_some() && self.body[10 + side].is_some())
+    }
+
     fn mirrored(&self) -> Self {
         let flip = |[x, y, z]: [f32; 3]| [x, -y, z];
-        let body = [3, 4, 5, 0, 1, 2, 7, 6].map(|i| self.body[i].map(flip));
+        let body = [3, 4, 5, 0, 1, 2, 7, 6, 9, 8, 11, 10, 13, 12].map(|i| self.body[i].map(flip));
         let face = self
             .face
             .map(|p| [1, 0, 2, 3, 4, 5, 7, 6, 12, 13, 14, 15, 8, 9, 10, 11].map(|i| flip(p[i])));

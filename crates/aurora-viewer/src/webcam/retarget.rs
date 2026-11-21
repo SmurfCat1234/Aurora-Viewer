@@ -13,6 +13,7 @@ pub(super) struct Channels {
     pub expression: bool,
     pub hands: bool,
     pub upper_body: bool,
+    pub lower_body: bool,
     pub expression_strength: f32,
 }
 
@@ -24,6 +25,7 @@ impl Default for Channels {
             expression: true,
             hands: true,
             upper_body: true,
+            lower_body: true,
             expression_strength: 1.0,
         }
     }
@@ -61,7 +63,7 @@ impl Face {
 }
 
 pub(crate) struct Pose {
-    body: [Option<Vec3>; 8],
+    body: [Option<Vec3>; 14],
     hands: [Option<[[f32; 3]; 21]>; 2],
     face: Option<(Face, Face)>,
     chest: Option<Quat>,
@@ -100,6 +102,9 @@ impl Pose {
         for (i, side) in SIDES.iter().enumerate() {
             if self.channels.upper_body {
                 self.arm_targets(rig, &mut targets, i, side);
+            }
+            if self.channels.lower_body {
+                self.leg_targets(rig, &mut targets, i, side);
             }
             if self.channels.hands {
                 self.hand_targets(rig, &mut targets, i, side);
@@ -159,15 +164,18 @@ impl Pose {
 
     fn arm_targets(&self, rig: &Rig, targets: &mut [Option<Target>], i: usize, side: &str) {
         let [shoulder, elbow, wrist] = [self.body[i * 3], self.body[i * 3 + 1], self.body[i * 3 + 2]];
-        for (joint, child, start, end) in [("Shoulder", "Elbow", shoulder, elbow), ("Elbow", "Wrist", elbow, wrist)] {
-            let child = format!("m{child}{side}");
-            if let Some((start, end)) = start.zip(end)
-                && let Some(to) = (end - start).try_normalize()
-                && let Some(&child) = rig.names.get(&child)
-                && let Some(from) = rig.local_pos[child].try_normalize()
-            {
-                set(rig, targets, &format!("m{joint}{side}"), Target::Direction { from, to });
-            }
+        limb_targets(rig, targets, side, [("Shoulder", shoulder), ("Elbow", elbow), ("Wrist", wrist)]);
+    }
+
+    fn leg_targets(&self, rig: &Rig, targets: &mut [Option<Target>], i: usize, side: &str) {
+        let [hip, knee, ankle, toe] = [self.body[6 + i], self.body[8 + i], self.body[10 + i], self.body[12 + i]];
+        limb_targets(rig, targets, side, [("Hip", hip), ("Knee", knee), ("Ankle", ankle)]);
+        if let Some((ankle, toe)) = ankle.zip(toe)
+            && let Some(to) = (toe - ankle).try_normalize()
+            && let Some((&foot, &toe_joint)) = rig.names.get(&format!("mFoot{side}")).zip(rig.names.get(&format!("mToe{side}")))
+            && let Some(from) = (rig.local_pos[foot] + rig.local_rot[foot] * rig.local_pos[toe_joint]).try_normalize()
+        {
+            set(rig, targets, &format!("mAnkle{side}"), Target::Direction { from, to });
         }
     }
 
@@ -215,11 +223,24 @@ fn set(rig: &Rig, targets: &mut [Option<Target>], joint: &str, target: Target) {
     }
 }
 
-fn body_points(frame: &Frame) -> [Option<Vec3>; 8] {
+fn limb_targets(rig: &Rig, targets: &mut [Option<Target>], side: &str, joints: [(&str, Option<Vec3>); 3]) {
+    for pair in joints.windows(2) {
+        let [(joint, start), (child, end)] = pair else { continue };
+        if let Some((start, end)) = start.zip(*end)
+            && let Some(to) = (end - start).try_normalize()
+            && let Some(&child) = rig.names.get(&format!("m{child}{side}"))
+            && let Some(from) = rig.local_pos[child].try_normalize()
+        {
+            set(rig, targets, &format!("m{joint}{side}"), Target::Direction { from, to });
+        }
+    }
+}
+
+fn body_points(frame: &Frame) -> [Option<Vec3>; 14] {
     frame.body.map(|point| point.map(Vec3::from_array))
 }
 
-fn torso(body: &[Option<Vec3>; 8]) -> Option<Quat> {
+fn torso(body: &[Option<Vec3>; 14]) -> Option<Quat> {
     let left = body[0]?;
     let right = body[3]?;
     let up = body[6].zip(body[7]).map_or(Vec3::Z, |(a, b)| (left + right - a - b) * 0.5);
@@ -290,5 +311,39 @@ mod tests {
         };
         let disabled = Pose::new(&frame, None, 1.0, disabled).rotations(&rig, &animated);
         assert_eq!(disabled[shoulder], animated[shoulder]);
+    }
+
+    #[test]
+    fn visible_leg_drives_avatar_segments_and_disabled_channel_leaves_animation() {
+        let xml = include_str!("../../assets/character/avatar_skeleton.xml");
+        let rig = Rig::new(&aurora_assets::Skeleton::parse(xml.as_bytes()).unwrap());
+        let mut frame = Frame::default();
+        frame.body[6] = Some([0.0, 0.1, 0.0]);
+        frame.body[8] = Some([0.3, 0.1, -0.2]);
+        frame.body[10] = Some([0.0, 0.2, -0.4]);
+        frame.body[12] = Some([0.1, 0.2, -0.5]);
+
+        let animated = rig.local_rot.clone();
+        let output = Pose::new(&frame, None, 1.0, Channels::default()).rotations(&rig, &animated);
+        let mut world = vec![Quat::IDENTITY; output.len()];
+        for &joint in &rig.order {
+            world[joint] = rig.parent[joint].map_or(Quat::IDENTITY, |p| world[p]) * output[joint];
+        }
+        let hip = rig.names["mHipLeft"];
+        let knee = rig.names["mKneeLeft"];
+        let ankle = rig.names["mAnkleLeft"];
+        let foot = rig.names["mFootLeft"];
+        let toe = rig.names["mToeLeft"];
+        let foot_axis = rig.local_pos[foot] + rig.local_rot[foot] * rig.local_pos[toe];
+        assert!((world[hip] * rig.local_pos[knee].normalize()).abs_diff_eq(Vec3::new(0.3, 0.0, -0.2).normalize(), 1e-4));
+        assert!((world[knee] * rig.local_pos[ankle].normalize()).abs_diff_eq(Vec3::new(-0.3, 0.1, -0.2).normalize(), 1e-4));
+        assert!((world[ankle] * foot_axis.normalize()).abs_diff_eq(Vec3::new(0.1, 0.0, -0.1).normalize(), 1e-4));
+        assert_eq!(output[rig.names["mHipRight"]], animated[rig.names["mHipRight"]]);
+
+        let disabled = Channels {
+            lower_body: false,
+            ..Channels::default()
+        };
+        assert_eq!(Pose::new(&frame, None, 1.0, disabled).rotations(&rig, &animated), animated);
     }
 }

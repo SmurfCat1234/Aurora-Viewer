@@ -11,7 +11,8 @@ import time
 
 
 FACE_INDICES = (263, 33, 10, 152, 13, 14, 61, 291, 362, 386, 374, 473, 133, 159, 145, 468)
-BODY_INDICES = (11, 13, 15, 12, 14, 16, 23, 24)
+# Arms, paired hips, knees, ankles and toe landmarks.
+BODY_INDICES = (11, 13, 15, 12, 14, 16, 23, 24, 25, 26, 27, 28, 31, 32)
 PREVIEW_SIZE = 384
 TRACKING_SIZE = 480
 
@@ -171,6 +172,7 @@ def playback(cv2, commands, tracking, emit, source):
         interval = 1.0 / fps if 1 <= fps <= 240 else 1.0 / 30
         next_frame = time.monotonic()
         next_preview = 0.0
+        video_started = False
         while True:
             now = time.monotonic()
             try:
@@ -189,6 +191,7 @@ def playback(cv2, commands, tracking, emit, source):
             if not ok and video is not None and source["loop_video"]:
                 camera.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 ok, image = camera.read()
+                video_started = False
                 if not ok:
                     raise RuntimeError("Cannot loop the selected video.")
             if not ok:
@@ -196,6 +199,9 @@ def playback(cv2, commands, tracking, emit, source):
                     raise RuntimeError("The selected input did not return a frame.")
                 emit({"id": source_id, "ended": True})
                 return {"stop": True}
+            if video is not None and not video_started:
+                emit({"id": source_id, "video_started": True})
+                video_started = True
             timestamp = time.monotonic()
             tracking.submit(source_id, timestamp, image)
             if timestamp >= next_preview:

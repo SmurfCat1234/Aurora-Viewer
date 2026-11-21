@@ -11745,7 +11745,7 @@ impl App {
             }
             // poses first: attachments follow their bone in the same frame
             self.scene.update_foot_scope(&self.world, cull, world_frame);
-            self.scene.webcam_pose = self.webcam.update();
+            self.scene.webcam_pose = self.webcam.update(self.audio_engine.as_ref());
             let completed = self.scene.update_poses(&mut self.world, self.camera.position, world_frame);
             self.scene.set_auto_hover_second_life(matches!(
                 self.settings.grid,
