@@ -41,14 +41,13 @@ its normal avatar animations to the grid.
    rigged head and hands weighted to the corresponding joints for a
    meaningful in-world comparison.
 
-Choose **Open video…** to feed a local clip through the same trackers as the
-camera. **Loop video** repeats the clip. Set `AURORA_DEMO_WEBCAM_VIDEO` before
-launching the offline demo to preselect a clip. **Preview** and **Landmarks**
-show the input image and detected points. The preview keeps its place while
-idle, opening a source, or switching inputs. Once the selected source
-returns a frame, Aurora shows it while the tracking models finish starting.
-The status reports the approximate
-rate at which the viewer receives tracking samples.
+Choose a demo clip or use **Open video…** to play a local file through the
+same trackers as the camera. **Loop video** repeats the clip. Set
+`AURORA_DEMO_WEBCAM_VIDEO` before launching the offline demo to preselect a
+clip and warm the models during viewer startup. The preview keeps its place
+while idle, opening a source, or switching inputs. The preview and tracking
+rates are shown separately. Video follows its playback clock and the preview
+shows up to 30 fps while the models work on the latest input frame.
 
 The prototype estimates head motion, gaze, blink, jaw opening, chest and
 arm rotations, palm orientation and finger curl. Full-body clips can exercise
@@ -58,8 +57,10 @@ show the viewer's rendered output.
 
 ## Implementation and inspiration
 
-The MediaPipe Pose, Hands and Face Mesh detectors run in an optional Python
-companion. A bounded reader keeps only the latest frame. Aurora applies
+The optional Python companion keeps MediaPipe Pose, Hands and Face Mesh in
+memory while the panel is open. Decoding and inference run independently,
+with one pending inference frame that newer input can replace. Aurora
+smooths new landmark targets across render frames and applies
 tracked rotations to its own avatar's render skeleton after blending normal
 animations and before composing the joint palette. The Poser and animation
 editing tools retain priority. The underlying animation keeps running.

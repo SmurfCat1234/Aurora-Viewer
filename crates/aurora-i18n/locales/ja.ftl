@@ -15880,6 +15880,7 @@ webcam-next-camera = 次のカメラ
 webcam-browse = 動画を開く…
 webcam-loop = 動画を繰り返す
 webcam-preview = プレビュー
+webcam-preview-fps = プレビュー · { $fps } fps
 webcam-preview-idle = カメラまたは動画を開始するとプレビューが表示されます
 webcam-preview-opening = 入力を開いています…
 webcam-preview-error = 入力を利用できません

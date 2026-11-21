@@ -1,4 +1,8 @@
-use std::{path::PathBuf, sync::mpsc, time::Duration};
+use std::{
+    path::PathBuf,
+    sync::mpsc,
+    time::{Duration, Instant},
+};
 
 use aurora_i18n::tr;
 
@@ -16,6 +20,8 @@ pub(super) struct Panel {
     picker: Option<mpsc::Receiver<Option<PathBuf>>>,
     demo_clips: Vec<PathBuf>,
     texture: Option<egui::TextureHandle>,
+    last_preview: Option<Instant>,
+    preview_fps: f32,
     groups: Vec<Vec<[f32; 2]>>,
 }
 
@@ -32,6 +38,8 @@ impl Default for Panel {
             picker: None,
             demo_clips: Vec::new(),
             texture: None,
+            last_preview: None,
+            preview_fps: 0.0,
             groups: Vec::new(),
         }
     }
@@ -119,11 +127,21 @@ impl Panel {
     }
 
     pub fn clear_preview(&mut self) {
-        self.texture = None;
+        self.last_preview = None;
+        self.preview_fps = 0.0;
         self.groups.clear();
     }
 
     fn update_preview(&mut self, ctx: &egui::Context, preview: PreviewImage) {
+        let now = Instant::now();
+        if let Some(previous) = self.last_preview.replace(now) {
+            let rate = now.saturating_duration_since(previous).as_secs_f32().recip().min(120.0);
+            self.preview_fps = if self.preview_fps == 0.0 {
+                rate
+            } else {
+                self.preview_fps * 0.88 + rate * 0.12
+            };
+        }
         self.groups = preview.groups;
         if let Some(texture) = &mut self.texture {
             texture.set(preview.image, egui::TextureOptions::LINEAR);
@@ -132,7 +150,7 @@ impl Panel {
         }
     }
 
-    fn chooser(&mut self, ui: &mut egui::Ui) {
+    fn chooser(&mut self, ui: &mut egui::Ui) -> bool {
         let source = &mut self.source;
         let name = match source {
             Source::Camera(camera) if *camera == Camera::default() && !self.devices.is_empty() => tr!("webcam-camera-auto").to_owned(),
@@ -143,6 +161,7 @@ impl Panel {
                 .map_or_else(|| tr!("webcam-camera-number", number = camera.index), |device| device.name.clone()),
             Source::Video(file) => file_label(file),
         };
+        let mut play_video = false;
         egui::ComboBox::from_id_salt("webcam-source")
             .width(ui.available_width())
             .selected_text(name)
@@ -162,9 +181,10 @@ impl Panel {
                     ui.selectable_value(source, Source::default(), tr!("webcam-camera-auto"));
                 }
                 for file in &self.demo_clips {
-                    ui.selectable_value(source, Source::Video(file.clone()), file_label(file));
+                    play_video |= ui.selectable_value(source, Source::Video(file.clone()), file_label(file)).clicked();
                 }
             });
+        play_video
     }
 
     fn next_camera(&mut self) {
@@ -180,7 +200,7 @@ impl Panel {
         let (stage, _) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 180.0), egui::Sense::hover());
         let painter = ui.painter().with_clip_rect(stage);
         painter.rect_filled(stage, ui.visuals().widgets.inactive.corner_radius, palette.field);
-        if let Some(texture) = &self.texture {
+        if let Some(texture) = self.texture.as_ref().filter(|_| self.last_preview.is_some()) {
             let size = texture.size_vec2();
             let bounds = stage.shrink(4.0);
             let fit = (bounds.width() / size.x).min(bounds.height() / size.y);
@@ -226,11 +246,15 @@ impl Webcam {
             return;
         }
         self.panel.initialize(demo);
-        let was_running = self.capture.is_some();
+        self.warming_before_open = false;
+        self.prewarm();
+        let was_running = self.running;
         let previous_source = self.panel.source.clone();
         let previous_loop = self.panel.loop_video;
+        let mut play_video = false;
         if let Some(video) = self.panel.poll() {
             self.panel.source = Source::Video(video);
+            play_video = true;
         }
         if let Some(preview) = self.preview.take() {
             self.panel.update_preview(ctx, preview);
@@ -240,7 +264,7 @@ impl Webcam {
             .framed_header("video-filled");
         floater.min_size = egui::vec2(390.0, 485.0);
         floater.show(ctx, palette, &mut open, |ui| {
-            self.source_controls(ui, palette);
+            play_video |= self.source_controls(ui, palette);
             ui.add_space(4.0);
             self.capture_controls(ui, palette);
             ui.add_space(6.0);
@@ -252,19 +276,21 @@ impl Webcam {
         });
         self.open = open;
         if !open {
-            self.stop();
-        } else if was_running
-            && self.capture.is_some()
-            && (self.panel.source != previous_source
-                || (matches!(self.panel.source, Source::Video(_)) && self.panel.loop_video != previous_loop))
+            self.capture = None;
+            self.clear_input();
+        } else if play_video
+            || (was_running
+                && self.running
+                && (self.panel.source != previous_source
+                    || (matches!(self.panel.source, Source::Video(_)) && self.panel.loop_video != previous_loop)))
         {
             self.start();
         }
     }
 
-    fn source_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
+    fn source_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) -> bool {
         widgets::section_header(ui, palette, "video-filled", &tr!("webcam-input"));
-        self.panel.chooser(ui);
+        let play_video = self.panel.chooser(ui);
         ui.horizontal_wrapped(|ui| {
             if ui
                 .add_enabled(self.panel.discovery.is_none(), egui::Button::new(tr!("webcam-refresh")))
@@ -285,21 +311,26 @@ impl Webcam {
                 self.panel.pick_video();
             }
         });
+        play_video
     }
 
     fn preview_stage(&self, ui: &mut egui::Ui, palette: &Palette) {
         let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
         ui.horizontal(|ui| {
-            ui.strong(tr!("webcam-preview"));
+            if self.panel.preview_fps > 0.0 {
+                ui.strong(tr!("webcam-preview-fps", fps = format!("{:.0}", self.panel.preview_fps)));
+            } else {
+                ui.strong(tr!("webcam-preview"));
+            }
             if fresh.is_some_and(|(_, frame)| frame.detected()) {
                 ui.colored_label(palette.success, tr!("webcam-fps", fps = format!("{:.0}", self.fps)));
-            } else if self.panel.texture.is_some() {
+            } else if self.panel.last_preview.is_some() {
                 ui.colored_label(palette.muted, tr!("webcam-waiting"));
             }
         });
         let empty = if self.error {
             tr!("webcam-preview-error")
-        } else if self.capture.is_some() {
+        } else if self.running {
             tr!("webcam-preview-opening")
         } else {
             tr!("webcam-preview-idle")
@@ -338,7 +369,7 @@ impl Webcam {
 
     fn capture_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
         ui.horizontal_wrapped(|ui| {
-            if self.capture.is_some() {
+            if self.running {
                 let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
                 if ui.add_sized([124.0, 30.0], egui::Button::new(tr!("webcam-stop"))).clicked() {
                     self.stop();

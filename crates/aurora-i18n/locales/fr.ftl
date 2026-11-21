@@ -16025,6 +16025,7 @@ webcam-next-camera = Caméra suivante
 webcam-browse = Ouvrir une vidéo…
 webcam-loop = Boucler la vidéo
 webcam-preview = Aperçu
+webcam-preview-fps = Aperçu · { $fps } i/s
 webcam-preview-idle = Démarrez une caméra ou une vidéo pour afficher l’aperçu
 webcam-preview-opening = Ouverture de la source…
 webcam-preview-error = Source indisponible

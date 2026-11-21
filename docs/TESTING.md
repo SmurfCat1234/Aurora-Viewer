@@ -4083,9 +4083,11 @@ To check with these scenarios:
 
 `AURORA_DEMO_WEBCAM_VIDEO` replaces the camera with a local clip for the
 offline demo on initial selection. Open **Build › Webcam Tracking** and
-select **Replay test video**. Switch to a second video while playing and
-verify the preview changes and the new subject controls the pose. Disable
-Loop and check that the end of the clip restores the usual animation.
+select **Replay test video**. Select a second video while playing and verify
+it starts on selection, the preview changes and the new subject controls
+the pose. Compare the displayed preview and tracking rates. The preview
+should continue at the clip's rate (up to 30 fps) when inference is slower.
+Disable Loop and check that the end of the clip restores the usual animation.
 `AURORA_WEBCAM_DEMOS` lists local MP4s in its directory by name. Watch the
 preview before starting, while the camera or video opens, and after stopping.
 The preview and Stop button keep their positions. The first source frame can

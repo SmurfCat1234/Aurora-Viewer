@@ -5,11 +5,11 @@ mod panel;
 mod retarget;
 
 use std::{
-    io::{BufRead, BufReader, Read},
+    io::{BufRead, BufReader, Read, Write},
     path::PathBuf,
-    process::{Child, Command, Stdio},
+    process::{Child, ChildStdin, Command, Stdio},
     sync::{Arc, Mutex},
-    time::{Duration, Instant},
+    time::Instant,
 };
 
 use base64::Engine;
@@ -33,8 +33,12 @@ struct Frame {
 
 #[derive(Deserialize)]
 struct Sample {
+    id: Option<u64>,
     frame: Option<Frame>,
     preview: Option<PreviewFrame>,
+    ended: Option<bool>,
+    error: Option<String>,
+    fatal: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -67,8 +71,10 @@ impl PreviewFrame {
 
 #[derive(Default)]
 struct Latest {
+    id: Option<u64>,
     frame: Option<(Instant, Frame)>,
     preview: Option<PreviewImage>,
+    finished: Option<bool>,
 }
 
 #[derive(Clone, Copy, Default, Deserialize, PartialEq, Eq)]
@@ -98,6 +104,8 @@ impl Default for Source {
 
 struct Capture {
     child: Child,
+    input: ChildStdin,
+    serial: u64,
     latest: Arc<Mutex<Latest>>,
 }
 
@@ -114,24 +122,16 @@ fn companion() -> Command {
 }
 
 impl Capture {
-    fn start(source: &Source, loop_video: bool) -> std::io::Result<Self> {
+    fn launch() -> std::io::Result<Self> {
         let mut command = companion();
-        command.arg("--preview").stdout(Stdio::piped());
-        match source {
-            Source::Camera(camera) => {
-                command.args(["--camera", &camera.index.to_string(), "--backend", &camera.backend.to_string()]);
-            }
-            Source::Video(path) => {
-                command.arg("--video").arg(path);
-                if loop_video {
-                    command.arg("--loop");
-                }
-            }
-        }
+        command.stdin(Stdio::piped()).stdout(Stdio::piped());
         let mut child = command.spawn()?;
+        let input = child.stdin.take().expect("piped webcam stdin");
         let stdout = child.stdout.take().expect("piped webcam stdout");
         let capture = Self {
             child,
+            input,
+            serial: 0,
             latest: Arc::default(),
         };
         let latest = capture.latest.clone();
@@ -148,6 +148,20 @@ impl Capture {
                 if let Ok(sample) = serde_json::from_slice::<Sample>(&line) {
                     let preview = sample.preview.and_then(PreviewFrame::decode);
                     if let Ok(mut slot) = latest.lock() {
+                        if let Some(error) = sample.fatal {
+                            log::warn!("webcam models unavailable: {error}");
+                            slot.finished = Some(true);
+                            continue;
+                        }
+                        if sample.id.is_none() || slot.id != sample.id {
+                            continue;
+                        }
+                        if let Some(error) = sample.error {
+                            log::warn!("webcam input failed: {error}");
+                            slot.finished = Some(true);
+                        } else if sample.ended == Some(true) {
+                            slot.finished = Some(false);
+                        }
                         if let Some(frame) = sample.frame {
                             slot.frame = Some((Instant::now(), frame));
                         }
@@ -159,6 +173,31 @@ impl Capture {
             }
         })?;
         Ok(capture)
+    }
+
+    fn send(&mut self, message: serde_json::Value) -> std::io::Result<()> {
+        let mut line = serde_json::to_vec(&message)?;
+        line.push(b'\n');
+        self.input.write_all(&line)
+    }
+
+    fn start(&mut self, source: &Source, loop_video: bool) -> std::io::Result<()> {
+        self.serial += 1;
+        let id = self.serial;
+        *self.latest.lock().unwrap() = Latest {
+            id: Some(id),
+            ..Latest::default()
+        };
+        let message = match source {
+            Source::Camera(camera) => serde_json::json!({"id": id, "camera": camera.index, "backend": camera.backend}),
+            Source::Video(path) => serde_json::json!({"id": id, "video": path.to_string_lossy(), "loop_video": loop_video}),
+        };
+        self.send(message)
+    }
+
+    fn stop(&mut self) {
+        *self.latest.lock().unwrap() = Latest::default();
+        let _ = self.send(serde_json::json!({"stop": true}));
     }
 }
 
@@ -173,10 +212,14 @@ impl Drop for Capture {
 pub(crate) struct Webcam {
     pub open: bool,
     capture: Option<Capture>,
+    running: bool,
+    warm_attempted: bool,
+    warming_before_open: bool,
     panel: panel::Panel,
     mirror: bool,
     error: bool,
     latest: Option<(Instant, Frame)>,
+    rendered: Option<(Instant, Frame)>,
     neutral: Option<Frame>,
     preview: Option<PreviewImage>,
     fps: f32,
@@ -189,68 +232,124 @@ impl Webcam {
     }
 
     pub fn stop(&mut self) {
-        self.capture = None;
+        if self.running
+            && let Some(capture) = &mut self.capture
+        {
+            capture.stop();
+        }
+        self.clear_input();
+    }
+
+    fn clear_input(&mut self) {
+        self.running = false;
         self.latest = None;
+        self.rendered = None;
         self.neutral = None;
         self.preview = None;
         self.panel.clear_preview();
         self.fps = 0.0;
     }
 
+    fn warm(&mut self) -> std::io::Result<&mut Capture> {
+        if let Some(capture) = &mut self.capture
+            && !matches!(capture.child.try_wait(), Ok(None))
+        {
+            self.capture = None;
+        }
+        if self.capture.is_none() {
+            self.capture = Some(Capture::launch()?);
+        }
+        Ok(self.capture.as_mut().unwrap())
+    }
+
+    fn prewarm(&mut self) {
+        if !self.warm_attempted {
+            self.warm_attempted = true;
+            if let Err(error) = self.warm() {
+                log::warn!("cannot prewarm webcam tracking: {error}");
+            }
+        }
+    }
+
+    pub fn prewarm_demo(&mut self) {
+        self.prewarm();
+        self.warming_before_open = self.capture.is_some();
+    }
+
     fn start(&mut self) {
-        self.stop();
-        self.capture = match Capture::start(&self.panel.source, self.panel.loop_video) {
-            Ok(capture) => Some(capture),
+        self.clear_input();
+        let source = self.panel.source.clone();
+        let loop_video = self.panel.loop_video;
+        match self.warm().and_then(|capture| capture.start(&source, loop_video)) {
+            Ok(()) => {
+                self.running = true;
+                self.error = false;
+            }
             Err(error) => {
                 log::warn!("cannot launch webcam tracking: {error}");
-                None
+                self.capture = None;
+                self.error = true;
             }
-        };
-        self.error = self.capture.is_none();
+        }
     }
 
     pub fn update(&mut self) -> Option<Arc<Pose>> {
+        if !self.open {
+            if !self.warming_before_open {
+                if self.capture.take().is_some() {
+                    self.clear_input();
+                }
+                self.warm_attempted = false;
+            }
+            return None;
+        }
         let capture = self.capture.as_mut()?;
         let exit = capture.child.try_wait();
         if !matches!(exit, Ok(None)) {
-            self.stop();
+            self.capture = None;
+            self.clear_input();
             self.error = !matches!(exit, Ok(Some(status)) if status.success());
             return None;
         }
-        let sample = capture.latest.try_lock().ok().and_then(|mut pending| {
-            if let Some(preview) = pending.preview.take() {
-                self.preview = Some(preview);
-            }
-            pending.frame.take()
-        });
-        if let Some((when, frame)) = sample {
-            let neutral = self.neutral.get_or_insert_with(|| frame.clone());
-            if neutral.face.is_none() {
-                neutral.face = frame.face;
-            }
-            if neutral.body[0].is_none() || neutral.body[3].is_none() {
-                neutral.body = frame.body;
-            }
-            let mut frame = frame;
-            if let Some((previous_at, previous)) = &self.latest {
-                let elapsed = when.saturating_duration_since(*previous_at).as_secs_f32();
-                frame.smooth_from(previous, 1.0 - (-elapsed / 0.045).exp());
-                if elapsed > 0.001 {
-                    let rate = (1.0 / elapsed).min(120.0);
-                    self.fps = if self.fps == 0.0 { rate } else { self.fps * 0.88 + rate * 0.12 };
-                }
-            }
-            self.latest = Some((when, frame));
-        }
-        let (received, frame) = self.latest.as_ref()?;
-        if !frame.detected() {
+        if !self.running {
             return None;
         }
-        let age = received.elapsed();
-        if age >= Duration::from_millis(500) {
+        let pending = capture
+            .latest
+            .try_lock()
+            .ok()
+            .map(|mut slot| (slot.finished.take(), slot.preview.take(), slot.frame.take()));
+        if let Some((finished, preview, sample)) = pending {
+            if let Some(error) = finished {
+                self.stop();
+                self.error = error;
+                return None;
+            }
+            if preview.is_some() {
+                self.preview = preview;
+            }
+            if let Some((when, frame)) = sample {
+                self.update_target(when, frame);
+            }
+        }
+        let (received, target) = self.latest.as_ref()?;
+        let now = Instant::now();
+        let age = now.saturating_duration_since(*received).as_secs_f32();
+        let fade_after = (2.0 / self.fps.max(3.0)).clamp(0.18, 0.45);
+        let strength = (1.0 - (age - fade_after) / 0.35).clamp(0.0, 1.0);
+        if strength == 0.0 || !target.detected() {
+            self.rendered = None;
             return None;
         }
-        let strength = (1.0 - (age.as_secs_f32() - 0.15) / 0.35).clamp(0.0, 1.0);
+        // Apply new landmarks across render frames so sparse estimates do not
+        // move the avatar in single-frame jumps.
+        let mut frame = target.clone();
+        if let Some((at, old)) = &self.rendered {
+            let elapsed = now.saturating_duration_since(*at).as_secs_f32();
+            let time_constant = (0.7 / self.fps.max(3.0)).clamp(0.028, 0.09);
+            frame.smooth_from(old, 1.0 - (-elapsed / time_constant).exp());
+        }
+        self.rendered = Some((now, frame.clone()));
         let channels = self.panel.channels;
         let pose = if self.mirror {
             Pose::new(
@@ -260,9 +359,27 @@ impl Webcam {
                 channels,
             )
         } else {
-            Pose::new(frame, self.neutral.as_ref(), strength, channels)
+            Pose::new(&frame, self.neutral.as_ref(), strength, channels)
         };
         Some(Arc::new(pose))
+    }
+
+    fn update_target(&mut self, when: Instant, frame: Frame) {
+        let neutral = self.neutral.get_or_insert_with(|| frame.clone());
+        if neutral.face.is_none() {
+            neutral.face = frame.face;
+        }
+        if neutral.body[0].is_none() || neutral.body[3].is_none() {
+            neutral.body = frame.body;
+        }
+        if let Some((previous_at, _)) = &self.latest {
+            let elapsed = when.saturating_duration_since(*previous_at).as_secs_f32();
+            if elapsed > 0.001 {
+                let rate = (1.0 / elapsed).min(120.0);
+                self.fps = if self.fps == 0.0 { rate } else { self.fps * 0.88 + rate * 0.12 };
+            }
+        }
+        self.latest = Some((when, frame));
     }
 }
 

@@ -16019,6 +16019,7 @@ webcam-next-camera = Next camera
 webcam-browse = Open video…
 webcam-loop = Loop video
 webcam-preview = Preview
+webcam-preview-fps = Preview · { $fps } fps
 webcam-preview-idle = Start a camera or video to preview it
 webcam-preview-opening = Opening input…
 webcam-preview-error = Input unavailable

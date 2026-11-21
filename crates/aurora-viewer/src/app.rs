@@ -21589,6 +21589,9 @@ impl ApplicationHandler for App {
         });
         if std::env::var_os("AURORA_DEMO").is_some() {
             self.demo = true;
+            if std::env::var_os("AURORA_DEMO_WEBCAM_VIDEO").is_some() {
+                self.webcam.prewarm_demo();
+            }
             // the starting session speed only: Advanced › Animation Speed
             // still changes it live
             if let Some(speed) = std::env::var("AURORA_DEMO_ANIM_SPEED")
