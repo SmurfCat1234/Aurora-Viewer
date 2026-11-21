@@ -919,6 +919,53 @@ def youtube_video(url):
     return f"https://www.youtube.com/watch?v={video}"
 
 
+def social_video(url):
+    """Accept individual posts and the platforms' own short share links."""
+    host, path = url.hostname, url.path.rstrip("/")
+    if host in ("tiktok.com", "www.tiktok.com", "m.tiktok.com", "vm.tiktok.com", "vt.tiktok.com"):
+        if ((host in ("vm.tiktok.com", "vt.tiktok.com") and re.fullmatch(r"/\w+", path))
+                or re.fullmatch(r"/t/\w+", path)):
+            return "tiktok", url.geturl(), False  # yt-dlp has a short-link extractor.
+        if match := re.fullmatch(r"/(@[\w.-]+/video|embed(?:/v2)?|share/video)/([0-9]+)", path):
+            stem, video = match.groups()
+            stem = "embed" if stem.startswith("embed") else stem
+            return "tiktok", f"https://www.tiktok.com/{stem}/{video}", False
+    elif host in ("instagram.com", "www.instagram.com", "m.instagram.com"):
+        if re.fullmatch(r"/share/(?:reel/|p/)?[\w-]+", path):
+            return "instagram", url.geturl(), True
+        if match := re.fullmatch(r"(?:/[\w.]+)?/(reels?|p|tv)/([\w-]+)", path):
+            kind, video = match.groups()
+            return "instagram", f"https://www.instagram.com/{'reel' if kind == 'reels' else kind}/{video}/", False
+    elif host in ("facebook.com", "www.facebook.com", "m.facebook.com", "web.facebook.com", "fb.watch"):
+        if ((host == "fb.watch" and re.fullmatch(r"/[\w-]+", path))
+                or re.fullmatch(r"/share/(?:r/|v/)[\w-]+", path)):
+            return "facebook", url.geturl(), True
+        if re.fullmatch(r"/(?:reel|[\w.]+/videos(?:/[^/]+)?)/[0-9]+", path):
+            return "facebook", f"https://www.facebook.com{path}", False
+        if path in ("/watch", "/video.php", "/video/video.php"):
+            video = parse_qs(url.query).get("v", [""])[0]
+            if re.fullmatch(r"[0-9]+", video):
+                return "facebook", f"https://www.facebook.com/watch/?v={video}", False
+    elif host in ("x.com", "www.x.com", "m.x.com", "twitter.com", "www.twitter.com", "mobile.twitter.com", "m.twitter.com"):
+        if re.fullmatch(r"/(?:i/web/status|[\w]+/status|statuses)/[0-9]+(?:/video/[0-9]+)?", path):
+            return "x", f"https://x.com{path}", False
+    else:
+        return None
+    raise MediaLinkError("unsupported")
+
+
+def expand_social_share(platform, url):
+    request = Request(url, headers={"User-Agent": "Mozilla/5.0", "Range": "bytes=0-0"})
+    try:
+        with urlopen(request, timeout=8) as response:
+            result = social_video(media_url(response.geturl()))
+    except (OSError, MediaLinkError):
+        raise MediaLinkError("unavailable") from None
+    if not result or result[0] != platform or result[2]:
+        raise MediaLinkError("unavailable")
+    return result[1]
+
+
 def media_extension(data):
     # Sniff actual containers, including CDN links without file extensions.
     # Web pages and stream manifests are never passed to the local decoder.
@@ -962,7 +1009,7 @@ def direct_media(url, folder):
     return path
 
 
-def youtube_media(url, folder):
+def platform_media(platform, url, folder):
     try:
         import yt_dlp
     except ImportError:
@@ -991,6 +1038,12 @@ def youtube_media(url, folder):
     can_merge = shutil.which("ffmpeg") is not None
     muxed = "b[ext=mp4][height<=480][protocol=https]"
     split = "bv[ext=mp4][height<=480][protocol=https]+ba[ext=m4a][protocol=https]"
+    if platform == "youtube":
+        formats = (muxed, split if can_merge else None, "b[ext=mp4][height<=720][protocol=https]")
+    else:
+        # Some social clips are silent or come as MP4 over HLS. Prefer
+        # progressive MP4, then allow a merge or a video-only result.
+        formats = ("b[ext=mp4][protocol^=http]", "bv[ext=mp4]+ba[ext=m4a]" if can_merge else None, "b[ext=mp4]", "bv[ext=mp4]")
 
     def limit_download(status):
         nonlocal blocked
@@ -1001,10 +1054,11 @@ def youtube_media(url, folder):
     # Prefer ready-to-play MP4 with audio. Fall back to merging separate
     # MP4/M4A tracks when the player only offers those formats.
     options = {
-        "format": "/".join(part for part in (muxed, split if can_merge else None, "b[ext=mp4][height<=720][protocol=https]") if part),
+        "format": "/".join(part for part in formats if part),
         "merge_output_format": "mp4",
         "outtmpl": str(folder / "media.%(ext)s"),
         "noplaylist": True,
+        "playlist_items": "1",
         "max_filesize": MEDIA_LIMIT,
         "socket_timeout": 8,
         "retries": 1,
@@ -1015,16 +1069,23 @@ def youtube_media(url, folder):
         "logger": Logger(),
         "match_filter": check,
         "progress_hooks": [limit_download],
-        "js_runtimes": {"deno": {"path": runtime} if runtime else {}},
     }
+    if platform == "youtube":
+        options["js_runtimes"] = {"deno": {"path": runtime} if runtime else {}}
+    else:
+        options["format_sort"] = ["res:480", "fps:30"]
     try:
         with yt_dlp.YoutubeDL(options) as resolver:
-            resolver.extract_info(url, download=True)
+            result = resolver.extract_info(url, download=True)
     except yt_dlp.utils.DownloadError:
-        raise MediaLinkError(blocked or ("unavailable" if has_deno and can_merge else "dependencies")) from None
+        runtime_missing = platform == "youtube" and not (has_deno and can_merge)
+        raise MediaLinkError(blocked or ("dependencies" if runtime_missing else "unavailable")) from None
     path = folder / "media.mp4"
     if not path.is_file():
-        raise MediaLinkError(blocked or "too_large")
+        info = next(iter(result.get("entries", ())), None) if result and "entries" in result else result
+        files = info.get("requested_downloads", ()) if info else ()
+        too_large = any((file.get("filesize") or file.get("filesize_approx") or 0) > MEDIA_LIMIT for file in files)
+        raise MediaLinkError(blocked or ("too_large" if too_large else "unavailable"))
     if path.stat().st_size > MEDIA_LIMIT:
         raise MediaLinkError("too_large")
     return path
@@ -1033,7 +1094,14 @@ def youtube_media(url, folder):
 def download_media(raw, folder):
     url = media_url(raw)
     youtube = youtube_video(url)
-    return youtube_media(youtube, folder) if youtube else direct_media(raw, folder)
+    if youtube:
+        return platform_media("youtube", youtube, folder)
+    if social := social_video(url):
+        platform, canonical, share = social
+        if share:
+            canonical = expand_social_share(platform, canonical)
+        return platform_media(platform, canonical, folder)
+    return direct_media(raw, folder)
 
 
 def resolve_media(commands, raw, folder):

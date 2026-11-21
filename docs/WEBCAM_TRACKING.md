@@ -59,27 +59,30 @@ and playback stops.
 
 ### Play a media link
 
-Paste a single YouTube video link or a direct HTTP(S) video, GIF, or image
-URL into **YouTube or direct media URL**, then select **Play link**. The
+Paste an individual YouTube video or Short, TikTok video, Instagram Reel,
+Facebook Reel, X post with video, or direct HTTP(S) media URL into
+**Video, GIF or image link**, then select **Play link**. The
 first play downloads a temporary local copy before starting the same
 preview, audio and motion pipeline used for files. **Stop tracking** or
 switching sources cancels a pending download. Replay and loop reuse the
 temporary copy while the panel remains open. Each download is limited to
 128 MiB. Direct links must return a supported media file.
 
-YouTube needs the optional [yt-dlp](https://github.com/yt-dlp/yt-dlp) package
-in the tracking interpreter, a supported Deno executable, and FFmpeg on
-PATH when video and sound arrive separately:
+Video pages use the optional [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+package in the tracking interpreter. YouTube may also need Deno. FFmpeg
+on PATH can merge separate video and audio tracks:
 
 ```powershell
 & $env:AURORA_WEBCAM_PYTHON -m pip install --upgrade 'yt-dlp[default]'
 ```
 
 Deno can be on PATH or configured with `AURORA_WEBCAM_DENO`. The helper
-uses one public video and prefers MP4 at 480p or below. YouTube Shorts use
-the same path. This mode uses anonymous access, and support depends on the
-formats YouTube offers. Live streams, login-only videos, playlists and
-arbitrary web pages are outside this mode.
+prefers progressive MP4 and uses one video even when a post contains
+multiple videos. TikTok short links and Instagram and Facebook share
+links can be opened when the platform redirects anonymous visitors to
+the video. Availability depends on the platform's anonymous access and
+formats. Live streams, login-only videos, profiles and playlists are
+outside this mode.
 
 The prototype estimates head motion, gaze, blink, jaw opening, chest and
 arm rotations, palm orientation, finger curl, pelvis rotation, and hip,

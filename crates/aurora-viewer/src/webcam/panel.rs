@@ -325,7 +325,7 @@ impl Webcam {
                 [(ui.available_width() - button_width - ui.spacing().item_spacing.x).max(120.0), 26.0],
                 egui::TextEdit::singleline(&mut self.panel.link)
                     .char_limit(4096)
-                    .hint_text(tr!("webcam-link-placeholder")),
+                    .hint_text(tr!("webcam-social-placeholder")),
             );
             let url = self.panel.link.trim();
             let valid = url.split_once("://").is_some_and(|(scheme, rest)| {
@@ -422,9 +422,9 @@ impl Webcam {
         ui.colored_label(palette.muted, tr!("webcam-local"));
         if self.error {
             let detail = match self.link_error {
-                Some(LinkError::Unsupported) => tr!("webcam-link-unsupported"),
-                Some(LinkError::Dependencies) => tr!("webcam-link-dependencies"),
-                Some(LinkError::Unavailable) => tr!("webcam-link-unavailable"),
+                Some(LinkError::Unsupported) => tr!("webcam-social-unsupported"),
+                Some(LinkError::Dependencies) => tr!("webcam-social-dependencies"),
+                Some(LinkError::Unavailable) => tr!("webcam-social-unavailable"),
                 Some(LinkError::TooLarge) => tr!("webcam-link-too-large"),
                 Some(LinkError::Download) => tr!("webcam-link-failed"),
                 None => tr!("webcam-error"),
