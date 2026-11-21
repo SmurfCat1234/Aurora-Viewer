@@ -1,6 +1,9 @@
 //! Capture only webcam-authored joint rotations and bake native animation assets.
 
-use super::Pose;
+use super::{
+    Pose,
+    take_tools::{self, AudioPass, RotationFrame},
+};
 use crate::{
     ik_edit::{PreparedAnimation, write_animation_atomic},
     scene::anim::{Rig, WebcamFeet},
@@ -11,6 +14,7 @@ use aurora_assets::anim::{Animation, JointMotion, RotKey};
 use aurora_i18n::tr;
 use glam::Quat;
 use std::{
+    path::Path,
     sync::{Arc, mpsc},
     time::{Duration, Instant},
 };
@@ -30,6 +34,15 @@ struct Capture {
     names: Vec<String>,
     samples: Vec<Sample>,
     feet: WebcamFeet,
+    foot_phases: Vec<(f32, [bool; 2])>,
+    audio_passes: Vec<AudioPass>,
+}
+
+struct TakeData {
+    names: Vec<String>,
+    timed: Vec<(f32, RotationFrame)>,
+    feet: Vec<(f32, [bool; 2])>,
+    audio: Vec<AudioPass>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -37,17 +50,33 @@ enum Failure {
     Empty,
     Size,
     Write,
+    NoLoop,
+    NoBeats,
 }
 
 enum Output {
-    Saved,
+    Saved(usize),
     Upload(PreparedAnimation),
     Cancelled,
+    Repaired(Animation, Vec<(f32, RotationFrame)>),
+    Loop([f32; 2], Animation),
+    Beats(Vec<f32>),
+}
+
+#[derive(Clone, Copy)]
+enum Export {
+    Save,
+    Upload,
+    Pose,
+    Segments,
 }
 
 pub(super) struct Recorder {
     active: Option<Capture>,
     clip: Option<Arc<Animation>>,
+    original: Option<Arc<Animation>>,
+    repaired_frames: Option<Arc<Vec<(f32, RotationFrame)>>>,
+    take: Option<Arc<TakeData>>,
     limit: u32,
     countdown: bool,
     range: [f32; 2],
@@ -55,8 +84,13 @@ pub(super) struct Recorder {
     visible: bool,
     playing: Option<(Instant, f32)>,
     looping: bool,
+    seam: Option<Arc<Animation>>,
+    dropouts: Vec<f32>,
+    beats: Vec<f32>,
+    bpm: u32,
+    beats_per_clip: usize,
     job: Option<mpsc::Receiver<Result<Output, Failure>>>,
-    saved: bool,
+    saved: usize,
     failure: Option<Failure>,
     upload: Option<PreparedAnimation>,
 }
@@ -66,6 +100,9 @@ impl Default for Recorder {
         Self {
             active: None,
             clip: None,
+            original: None,
+            repaired_frames: None,
+            take: None,
             limit: 30,
             countdown: true,
             range: [0.0; 2],
@@ -73,8 +110,13 @@ impl Default for Recorder {
             visible: false,
             playing: None,
             looping: false,
+            seam: None,
+            dropouts: Vec::new(),
+            beats: Vec::new(),
+            bpm: 120,
+            beats_per_clip: 4,
             job: None,
-            saved: false,
+            saved: 0,
             failure: None,
             upload: None,
         }
@@ -95,7 +137,7 @@ impl Recorder {
     fn start(&mut self, now: Instant) {
         self.hide_preview();
         self.failure = None;
-        self.saved = false;
+        self.saved = 0;
         let delay = if self.countdown { Duration::from_secs(3) } else { Duration::ZERO };
         self.active = Some(Capture {
             starts: now + delay,
@@ -104,26 +146,43 @@ impl Recorder {
             names: Vec::new(),
             samples: Vec::new(),
             feet: WebcamFeet::default(),
+            foot_phases: Vec::new(),
+            audio_passes: Vec::new(),
         });
     }
 
-    pub(super) fn tick(&mut self, rig: &Rig, now: Instant, pose: Option<&Pose>) {
+    pub(super) fn tick(&mut self, rig: &Rig, now: Instant, pose: Option<&Pose>, sound: Option<(&Path, Instant)>) {
         let Some(capture) = &mut self.active else { return };
         let Some(elapsed) = now.checked_duration_since(capture.starts) else {
             return;
         };
         let elapsed = elapsed.as_secs_f32();
         let time = elapsed.min(capture.limit);
+        if let Some((path, playback)) = sound
+            && capture.audio_passes.len() < 128
+            && capture.audio_passes.last().is_none_or(|pass| pass.playback != playback)
+            && playback <= now
+        {
+            let from = capture.starts.max(playback);
+            capture.audio_passes.push(AudioPass {
+                path: path.to_owned(),
+                playback,
+                from: from.duration_since(capture.starts).as_secs_f32(),
+                offset: from.duration_since(playback).as_secs_f32(),
+            });
+        }
         if time + 0.001 >= capture.next_sample {
-            if let Some(pose) = pose {
-                if capture.names.is_empty() {
-                    capture.names = rig.canonical_names.clone();
-                }
-                capture.samples.push(Sample {
-                    time,
-                    rotations: pose.capture(rig, &mut capture.feet),
-                });
+            if capture.names.is_empty() {
+                capture.names = rig.canonical_names.clone();
             }
+            capture.foot_phases.push((
+                time,
+                pose.map_or([false; 2], |p| p.feet().map(|foot| foot.is_some_and(|f| f.weight > 0.35))),
+            ));
+            capture.samples.push(Sample {
+                time,
+                rotations: pose.map_or_else(Vec::new, |p| p.capture(rig, &mut capture.feet)),
+            });
             // Keep real elapsed time across a slow render or a dropped camera frame.
             capture.next_sample = (1.0 + ((time + 0.001) / INTERVAL).floor()) * INTERVAL;
         }
@@ -140,20 +199,33 @@ impl Recorder {
             }
             return;
         }
-        let Some(clip) = assemble(capture.samples, capture.names) else {
+        let timed: Vec<_> = capture.samples.iter().map(|frame| (frame.time, frame.rotations.clone())).collect();
+        let Some(clip) = assemble(capture.samples, capture.names.clone()) else {
             self.failure = Some(Failure::Empty);
             return;
         };
         self.range = [0.0, clip.duration];
         self.cursor = 0.0;
-        self.clip = Some(Arc::new(clip));
+        let clip = Arc::new(clip);
+        self.original = Some(clip.clone());
+        self.repaired_frames = None;
+        self.clip = Some(clip);
+        self.seam = None;
+        self.beats.clear();
+        self.dropouts = take_tools::dropout_marks(&timed, &capture.names);
+        self.take = Some(Arc::new(TakeData {
+            names: capture.names,
+            timed,
+            feet: capture.foot_phases,
+            audio: capture.audio_passes,
+        }));
     }
 
     pub(super) fn preview(&mut self, rig: &Rig, now: Instant) -> Option<Arc<Pose>> {
         if !self.visible {
             return None;
         }
-        let clip = self.clip.as_ref()?;
+        let clip = self.playback_clip()?;
         if let Some((start, time)) = self.playing {
             let time = time + now.saturating_duration_since(start).as_secs_f32();
             let [a, b] = self.range;
@@ -175,43 +247,54 @@ impl Recorder {
         Some(Arc::new(Pose::recorded(joints)))
     }
 
-    fn export(&mut self, for_upload: bool, ctx: &egui::Context) {
-        let Some(clip) = self.clip.clone() else { return };
+    fn export(&mut self, mode: Export, ctx: &egui::Context) {
+        let clip = if matches!(mode, Export::Segments) {
+            self.clip.clone()
+        } else {
+            self.playback_clip()
+        };
+        let Some(clip) = clip else { return };
         let range = self.range;
         let looping = self.looping;
-        self.failure = None;
-        self.saved = false;
-        let (send, receive) = mpsc::channel();
-        let ctx = ctx.clone();
+        let cursor = self.cursor;
+        let segments = take_tools::segments(range, &self.beats, self.beats_per_clip);
         let title = tr!("webcam-record-save").to_string();
         let name = tr!("webcam-record-name").to_string();
+        let pose_name = tr!("webcam-take-pose-name").to_string();
+        self.spawn(ctx, move || match mode {
+            Export::Segments => save_segments(&clip, &segments, &name),
+            Export::Upload => {
+                let prepared = prepare(&clip, range, looping, name)?;
+                Ok(Output::Upload(prepared))
+            }
+            Export::Pose => {
+                let pose = still_pose(&clip, cursor);
+                let prepared = prepare(&pose, [0.0, 1.0], false, pose_name)?;
+                save_file(prepared, title)
+            }
+            Export::Save => {
+                let prepared = prepare(&clip, range, looping, name)?;
+                save_file(prepared, title)
+            }
+        });
+    }
+
+    fn playback_clip(&self) -> Option<Arc<Animation>> {
+        if self.looping
+            && let Some(seam) = &self.seam
+        {
+            return Some(seam.clone());
+        }
+        self.clip.clone()
+    }
+
+    fn spawn(&mut self, ctx: &egui::Context, job: impl FnOnce() -> Result<Output, Failure> + Send + 'static) {
+        self.failure = None;
+        self.saved = 0;
+        let (send, receive) = mpsc::channel();
+        let ctx = ctx.clone();
         let spawned = std::thread::Builder::new().name("webcam-animation-export".into()).spawn(move || {
-            let result = prepare(&clip, range, looping, name.clone()).and_then(|prepared| {
-                if for_upload {
-                    return Ok(Output::Upload(prepared));
-                }
-                let Some(mut path) = rfd::FileDialog::new()
-                    .set_title(title)
-                    .set_file_name(format!("{name}.anim"))
-                    .add_filter("SL .anim", &["anim"])
-                    .save_file()
-                else {
-                    return Ok(Output::Cancelled);
-                };
-                if !path
-                    .extension()
-                    .and_then(|ext| ext.to_str())
-                    .is_some_and(|ext| ext.eq_ignore_ascii_case("anim"))
-                {
-                    path.set_extension("anim");
-                }
-                write_animation_atomic(&path, &prepared.bytes).map_err(|error| {
-                    log::warn!("could not save recorded webcam animation: {error}");
-                    Failure::Write
-                })?;
-                Ok(Output::Saved)
-            });
-            let _ = send.send(result);
+            let _ = send.send(job());
             ctx.request_repaint();
         });
         if spawned.is_ok() {
@@ -230,15 +313,171 @@ impl Recorder {
         };
         self.job = None;
         match result {
-            Ok(Output::Saved) => self.saved = true,
+            Ok(Output::Saved(count)) => self.saved = count,
             Ok(Output::Upload(upload)) => self.upload = Some(upload),
             Ok(Output::Cancelled) => {}
+            Ok(Output::Repaired(repaired, timed)) => {
+                self.clip = Some(Arc::new(repaired));
+                self.repaired_frames = Some(Arc::new(timed));
+                self.seam = None;
+            }
+            Ok(Output::Loop(range, clip)) => {
+                self.set_range(range);
+                self.looping = true;
+                self.seam = Some(Arc::new(clip));
+            }
+            Ok(Output::Beats(beats)) => self.beats = beats,
             Err(failure) => self.failure = Some(failure),
         }
     }
 
+    fn set_range(&mut self, range: [f32; 2]) {
+        self.range = range;
+        self.cursor = range[0];
+        self.playing = None;
+        self.seam = None;
+    }
+
+    fn edit_tools(&mut self, ui: &mut egui::Ui, palette: &Palette, duration: f32, rig: &Arc<Rig>) {
+        let Some(take) = self.take.clone() else { return };
+        egui::CollapsingHeader::new(tr!("webcam-take-tools")).show(ui, |ui| {
+            ui.add_enabled_ui(self.job.is_none(), |ui| {
+                ui.horizontal_wrapped(|ui| {
+                    if ui.button(tr!("webcam-take-repair")).clicked() {
+                        self.repair(ui.ctx(), None, take.clone());
+                    }
+                    if ui.button(tr!("webcam-take-fix-frame")).clicked() {
+                        self.repair(ui.ctx(), Some(self.cursor), take.clone());
+                    }
+                    if let Some((original, active)) = self.original.as_ref().zip(self.clip.as_ref())
+                        && !Arc::ptr_eq(original, active)
+                        && ui.button(tr!("webcam-take-original")).clicked()
+                    {
+                        self.clip = self.original.clone();
+                        self.repaired_frames = None;
+                        self.seam = None;
+                    }
+                });
+                ui.horizontal_wrapped(|ui| {
+                    if ui.button(tr!("webcam-take-find-loop")).clicked()
+                        && let Some(clip) = self.clip.clone()
+                    {
+                        let range = self.range;
+                        let take = take.clone();
+                        let rig = rig.clone();
+                        self.spawn(ui.ctx(), move || {
+                            let found = take_tools::find_loop(&clip, range, &take.feet).ok_or(Failure::NoLoop)?;
+                            let baked = take_tools::bake_loop(&clip, found, &rig, &take.feet);
+                            Ok(Output::Loop(found, baked))
+                        });
+                    }
+                    if ui.button(tr!("webcam-take-whole")).clicked() {
+                        self.set_range([0.0, duration]);
+                    }
+                    if ui.button(tr!("webcam-take-save-pose")).clicked() {
+                        self.export(Export::Pose, ui.ctx());
+                    }
+                });
+                ui.horizontal_wrapped(|ui| {
+                    if ui
+                        .add_enabled(!take.audio.is_empty(), egui::Button::new(tr!("webcam-take-audio-beats")))
+                        .clicked()
+                    {
+                        let take = take.clone();
+                        self.spawn(ui.ctx(), move || {
+                            let beats = take_tools::audio_beats(&take.audio, duration);
+                            if beats.len() >= 2 {
+                                Ok(Output::Beats(beats))
+                            } else {
+                                Err(Failure::NoBeats)
+                            }
+                        });
+                    }
+                    ui.add(egui::DragValue::new(&mut self.bpm).range(40..=240).suffix(" BPM"));
+                    if ui.button(tr!("webcam-take-beat-grid")).clicked() {
+                        self.beats = take_tools::beat_grid(self.bpm, self.cursor, duration);
+                        self.failure = None;
+                    }
+                });
+                if !self.beats.is_empty() {
+                    ui.horizontal_wrapped(|ui| {
+                        ui.label(tr!("webcam-take-beats-per-clip"));
+                        ui.add(egui::DragValue::new(&mut self.beats_per_clip).range(1..=16));
+                        let parts = take_tools::segments(self.range, &self.beats, self.beats_per_clip);
+                        if ui
+                            .add_enabled(parts.len() > 1, egui::Button::new(tr!("webcam-take-select-clip")))
+                            .clicked()
+                            && let Some(part) = parts.iter().find(|[a, b]| *a <= self.cursor && self.cursor <= *b)
+                        {
+                            self.set_range(*part);
+                            self.visible = true;
+                        }
+                        if ui
+                            .add_enabled(parts.len() > 1, egui::Button::new(tr!("webcam-take-save-clips")))
+                            .clicked()
+                        {
+                            self.export(Export::Segments, ui.ctx());
+                        }
+                    });
+                }
+            });
+            if self.job.is_some() {
+                ui.spinner();
+            }
+            ui.horizontal_wrapped(|ui| {
+                ui.colored_label(palette.amber, tr!("webcam-take-dropout-key"));
+                ui.colored_label(palette.teal, tr!("webcam-take-beat-key"));
+            });
+            let (rect, response) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 19.0), egui::Sense::click());
+            let x = |t: f32| rect.left() + (t / duration).clamp(0.0, 1.0) * rect.width();
+            let painter = ui.painter();
+            painter.rect_filled(rect, 3.0, palette.muted.gamma_multiply(0.22));
+            for (times, color, height) in [
+                (self.dropouts.as_slice(), palette.amber, 7.0),
+                (self.beats.as_slice(), palette.teal, 15.0),
+            ] {
+                for &t in times {
+                    painter.line_segment(
+                        [egui::pos2(x(t), rect.bottom()), egui::pos2(x(t), rect.bottom() - height)],
+                        egui::Stroke::new(1.0, color),
+                    );
+                }
+            }
+            painter.line_segment(
+                [egui::pos2(x(self.cursor), rect.top()), egui::pos2(x(self.cursor), rect.bottom())],
+                egui::Stroke::new(2.0, palette.success),
+            );
+            if response.clicked()
+                && let Some(point) = response.interact_pointer_pos()
+            {
+                self.cursor = (((point.x - rect.left()) / rect.width()) * duration).clamp(self.range[0], self.range[1]);
+                self.playing = None;
+                self.visible = true;
+            }
+        });
+    }
+
+    fn repair(&mut self, ctx: &egui::Context, at: Option<f32>, take: Arc<TakeData>) {
+        let current = self.repaired_frames.clone();
+        self.spawn(ctx, move || {
+            let timed = at.and(current.as_deref()).unwrap_or(&take.timed);
+            let frames = take_tools::repair(timed, at);
+            let repaired: Vec<_> = timed.iter().zip(frames).map(|((time, _), rotations)| (*time, rotations)).collect();
+            let samples = repaired
+                .iter()
+                .map(|(time, rotations)| Sample {
+                    time: *time,
+                    rotations: rotations.clone(),
+                })
+                .collect();
+            assemble(samples, take.names.clone())
+                .map(|clip| Output::Repaired(clip, repaired))
+                .ok_or(Failure::Empty)
+        });
+    }
+
     /// Returns true when the take has taken over the local avatar preview.
-    pub(super) fn ui(&mut self, ui: &mut egui::Ui, palette: &Palette, can_record: bool) -> bool {
+    pub(super) fn ui(&mut self, ui: &mut egui::Ui, palette: &Palette, can_record: bool, rig: &Arc<Rig>) -> bool {
         self.poll();
         let now = Instant::now();
         let was_visible = self.visible;
@@ -278,33 +517,36 @@ impl Recorder {
             && let Some(clip) = &self.clip
         {
             let duration = clip.duration;
-            ui.horizontal_wrapped(|ui| {
-                ui.label(tr!("webcam-record-in"));
-                let before = ui
-                    .add(
-                        egui::DragValue::new(&mut self.range[0])
-                            .range(0.0..=(duration - INTERVAL).max(0.0))
-                            .speed(0.03)
-                            .fixed_decimals(2),
-                    )
-                    .changed();
-                if before {
-                    self.range[1] = self.range[1].max(self.range[0] + INTERVAL).min(duration);
-                }
-                ui.label(tr!("webcam-record-out"));
-                let earliest_end = (self.range[0] + INTERVAL).min(duration);
-                let after = ui
-                    .add(
-                        egui::DragValue::new(&mut self.range[1])
-                            .range(earliest_end..=duration)
-                            .speed(0.03)
-                            .fixed_decimals(2),
-                    )
-                    .changed();
-                if before || after {
-                    self.playing = None;
-                    self.cursor = self.cursor.clamp(self.range[0], self.range[1]);
-                }
+            ui.add_enabled_ui(self.job.is_none(), |ui| {
+                ui.horizontal_wrapped(|ui| {
+                    ui.label(tr!("webcam-record-in"));
+                    let before = ui
+                        .add(
+                            egui::DragValue::new(&mut self.range[0])
+                                .range(0.0..=(duration - INTERVAL).max(0.0))
+                                .speed(0.03)
+                                .fixed_decimals(2),
+                        )
+                        .changed();
+                    if before {
+                        self.range[1] = self.range[1].max(self.range[0] + INTERVAL).min(duration);
+                    }
+                    ui.label(tr!("webcam-record-out"));
+                    let earliest_end = (self.range[0] + INTERVAL).min(duration);
+                    let after = ui
+                        .add(
+                            egui::DragValue::new(&mut self.range[1])
+                                .range(earliest_end..=duration)
+                                .speed(0.03)
+                                .fixed_decimals(2),
+                        )
+                        .changed();
+                    if before || after {
+                        self.playing = None;
+                        self.seam = None;
+                        self.cursor = self.cursor.clamp(self.range[0], self.range[1]);
+                    }
+                })
             });
             if ui
                 .add(
@@ -338,17 +580,20 @@ impl Recorder {
             ui.horizontal_wrapped(|ui| {
                 ui.add_enabled_ui(self.job.is_none(), |ui| {
                     if ui.button(tr!("webcam-record-save")).clicked() {
-                        self.export(false, ui.ctx());
+                        self.export(Export::Save, ui.ctx());
                     }
                     if ui.button(tr!("webcam-record-upload")).clicked() {
                         self.hide_preview();
-                        self.export(true, ui.ctx());
+                        self.export(Export::Upload, ui.ctx());
                     }
                 });
             });
+            self.edit_tools(ui, palette, duration, rig);
         }
-        if self.saved {
+        if self.saved == 1 {
             ui.colored_label(palette.success, tr!("webcam-record-saved"));
+        } else if self.saved > 1 {
+            ui.colored_label(palette.success, tr!("webcam-take-saved-clips", count = self.saved.to_string()));
         }
         if let Some(failure) = self.failure {
             ui.colored_label(
@@ -357,6 +602,8 @@ impl Recorder {
                     Failure::Empty => tr!("webcam-record-empty"),
                     Failure::Size => tr!("webcam-record-size"),
                     Failure::Write => tr!("webcam-record-error"),
+                    Failure::NoLoop => tr!("webcam-take-no-loop"),
+                    Failure::NoBeats => tr!("webcam-take-no-beats"),
                 },
             );
         }
@@ -440,6 +687,69 @@ fn simplify(keys: &[RotKey], degrees: f32) -> Vec<RotKey> {
         }
     }
     keys.iter().zip(keep).filter_map(|(key, keep)| keep.then(|| key.clone())).collect()
+}
+
+fn still_pose(source: &Animation, time: f32) -> Animation {
+    let mut pose = source.clone();
+    pose.duration = 1.0;
+    pose.loop_out = 1.0;
+    pose.looping = false;
+    for joint in &mut pose.joints {
+        if let Some(rotation) = joint.rotation_at(time) {
+            joint.rot_keys = [0.0, 1.0].map(|time| RotKey { time, rotation }).into();
+        }
+    }
+    pose
+}
+
+fn save_file(prepared: PreparedAnimation, title: String) -> Result<Output, Failure> {
+    let Some(mut path) = rfd::FileDialog::new()
+        .set_title(title)
+        .set_file_name(format!("{}.anim", prepared.name))
+        .add_filter("SL .anim", &["anim"])
+        .save_file()
+    else {
+        return Ok(Output::Cancelled);
+    };
+    if !path
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .is_some_and(|ext| ext.eq_ignore_ascii_case("anim"))
+    {
+        path.set_extension("anim");
+    }
+    write_animation_atomic(&path, &prepared.bytes).map_err(|error| {
+        log::warn!("could not save recorded webcam animation: {error}");
+        Failure::Write
+    })?;
+    Ok(Output::Saved(1))
+}
+
+fn save_segments(clip: &Animation, segments: &[[f32; 2]], name: &str) -> Result<Output, Failure> {
+    let Some(folder) = rfd::FileDialog::new().pick_folder() else {
+        return Ok(Output::Cancelled);
+    };
+    let batch = uuid::Uuid::new_v4().simple().to_string();
+    let files: Result<Vec<_>, _> = segments
+        .iter()
+        .enumerate()
+        .map(|(index, &range)| {
+            let name = format!("{name} {} {:02}", &batch[..8], index + 1);
+            let prepared = prepare(clip, range, false, name)?;
+            Ok((folder.join(format!("{}.anim", prepared.name)), prepared.bytes))
+        })
+        .collect();
+    let files = files?;
+    for (index, (path, bytes)) in files.iter().enumerate() {
+        if let Err(error) = write_animation_atomic(path, bytes) {
+            log::warn!("could not save beat clips: {error}");
+            for (written, _) in &files[..index] {
+                let _ = std::fs::remove_file(written);
+            }
+            return Err(Failure::Write);
+        }
+    }
+    Ok(Output::Saved(files.len()))
 }
 
 fn prepare(source: &Animation, [start, end]: [f32; 2], looping: bool, name: String) -> Result<PreparedAnimation, Failure> {

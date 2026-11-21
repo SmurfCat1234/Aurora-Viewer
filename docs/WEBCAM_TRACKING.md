@@ -107,6 +107,32 @@ override. It uses animation priority 4. The exporter reduces redundant
 keys before checking Second Life's 250,000-byte limit. Trim a take
 further if it exceeds that limit.
 
+### Edit a recorded take
+
+Open **Take tools** below the take preview controls. The marker strip
+shows missing observations on commonly tracked joints and any beat
+markers. Click it to move the playhead. **Repair short gaps** uses
+observations before and after a gap and rejects isolated jumps. **Repair
+at playhead** reruns this over a short window chosen by the user.
+**Restore original** restores the recorded take. The repair operates on
+recorded joint rotations and estimates neither new depth nor long unseen
+actions.
+
+**Find loop** looks inside the trim range for similar poses and rotation
+directions, favoring leg alignment and matching tracked foot contacts.
+It sets the new range and blends the final fraction of a second in both
+preview and export. When the same foot is detected as planted at the
+start and throughout the bridge, the ankle stays anchored during the
+blend. **Whole take** resets the trim range.
+
+With FFmpeg on PATH, **Find audio beats** estimates rhythmic accents
+from the source soundtrack during the recording. Local video files and
+downloaded clips can supply sound. Silent footage and webcams can use
+**Place BPM grid** with the playhead on the desired beat. Set the number
+of beats per clip and select the current segment or save all segments as
+separate .anim files. **Save frame as pose** exports a one-second held
+pose from the playhead. The exported assets contain joint motion only.
+
 The prototype estimates head motion, gaze, blink, jaw opening, chest and
 arm rotations, palm orientation, finger curl, pelvis rotation, and hip,
 knee and ankle rotations. Keep the hips, knees and feet in the frame for

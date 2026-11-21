@@ -4,6 +4,7 @@
 mod panel;
 mod recording;
 mod retarget;
+mod take_tools;
 
 use std::{
     io::{BufRead, BufReader, Read, Write},
@@ -347,6 +348,7 @@ pub(crate) struct Webcam {
     neutral: Option<Frame>,
     preview: Option<PreviewImage>,
     clip_audio: Option<aurora_audio::LocalMediaAudio>,
+    media_started: Option<Instant>,
     video_muted: Arc<AtomicBool>,
     fps: f32,
     front_view_requested: bool,
@@ -376,6 +378,7 @@ impl Webcam {
         self.neutral = None;
         self.preview = None;
         self.clip_audio = None;
+        self.media_started = None;
         self.link_path = None;
         self.panel.clear_preview();
         self.fps = 0.0;
@@ -443,7 +446,13 @@ impl Webcam {
                 .latest
                 .as_ref()
                 .is_some_and(|(time, _)| now.saturating_duration_since(*time).as_secs_f32() < 0.25);
-            self.recorder.tick(rig, now, pose.as_deref().filter(|_| fresh));
+            let path = match &self.panel.source {
+                Source::File(path, FileKind::Video) => Some(path.as_path()),
+                Source::Link(_) => self.link_path.as_deref(),
+                _ => None,
+            };
+            self.recorder
+                .tick(rig, now, pose.as_deref().filter(|_| fresh), path.zip(self.media_started));
         }
         pose
     }
@@ -498,6 +507,7 @@ impl Webcam {
                 self.update_target(when, frame);
             }
             if let Some(started) = video_started {
+                self.media_started = Some(started);
                 self.clip_audio = None;
                 let path = match &self.panel.source {
                     Source::File(path, FileKind::Video) => Some(path),

@@ -247,7 +247,7 @@ fn file_label(file: &std::path::Path) -> String {
 }
 
 impl Webcam {
-    pub fn show(&mut self, ctx: &egui::Context, palette: &Palette, demo: bool) {
+    pub fn show(&mut self, ctx: &egui::Context, palette: &Palette, demo: bool, rig: &std::sync::Arc<crate::scene::anim::Rig>) {
         if !self.open {
             return;
         }
@@ -278,7 +278,7 @@ impl Webcam {
             widgets::divider(ui, palette);
             egui::ScrollArea::vertical()
                 .auto_shrink([false, false])
-                .show(ui, |ui| self.controls(ui, palette));
+                .show(ui, |ui| self.controls(ui, palette, rig));
         });
         self.open = open;
         if !open {
@@ -392,7 +392,7 @@ impl Webcam {
             .or_else(|| self.panel.source.file_kind())
     }
 
-    fn controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
+    fn controls(&mut self, ui: &mut egui::Ui, palette: &Palette, rig: &std::sync::Arc<crate::scene::anim::Rig>) {
         let can_loop = self.can_loop();
         ui.horizontal_wrapped(|ui| {
             widgets::checkbox(ui, palette, &mut self.panel.show_dots, tr!("webcam-landmarks"));
@@ -410,7 +410,7 @@ impl Webcam {
                 .latest
                 .as_ref()
                 .is_some_and(|(at, frame)| at.elapsed() < Duration::from_millis(250) && frame.detected());
-        if self.recorder.ui(ui, palette, live) && self.running {
+        if self.recorder.ui(ui, palette, live, rig) && self.running {
             self.stop();
         }
 
