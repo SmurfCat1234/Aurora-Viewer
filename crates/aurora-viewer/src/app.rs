@@ -1240,6 +1240,7 @@ pub struct App {
     gesture_state: gestures::State,
     imports: crate::imports::Imports,
     blender_live: crate::blender_live::Live,
+    webcam: crate::webcam::Webcam,
     /// The external script editor sync's server (editor_sync.rs).
     editor_sync: crate::editor_sync::EditorSync,
     task_transfer: std::collections::VecDeque<ui::inventory::task_drop::PendingTransfer>,
@@ -2375,6 +2376,7 @@ impl App {
             gesture_state: Default::default(),
             imports: Default::default(),
             blender_live: Default::default(),
+            webcam: Default::default(),
             editor_sync: Default::default(),
             task_transfer: Default::default(),
             contents_copies: Default::default(),
@@ -3737,6 +3739,8 @@ impl App {
         self.blender_live.stop();
         self.clear_blender_preview();
         self.blender_live = Default::default();
+        self.webcam = Default::default();
+        self.scene.webcam_pose = None;
         if let Some(g) = &mut self.gfx {
             self.scene.clear(&mut g.renderer);
         }
@@ -11741,6 +11745,7 @@ impl App {
             }
             // poses first: attachments follow their bone in the same frame
             self.scene.update_foot_scope(&self.world, cull, world_frame);
+            self.scene.webcam_pose = self.webcam.update();
             let completed = self.scene.update_poses(&mut self.world, self.camera.position, world_frame);
             self.scene.set_auto_hover_second_life(matches!(
                 self.settings.grid,
@@ -16364,6 +16369,9 @@ impl App {
             BarAction::BlenderLive => {
                 ui::widgets::open_floater(&self.egui_ctx, "blender_live", &mut self.blender_live.open);
             }
+            BarAction::WebcamTracking => {
+                ui::widgets::open_floater(&self.egui_ctx, crate::webcam::WINDOW, &mut self.webcam.open);
+            }
             BarAction::EditParticles => self.open_particle_editor(),
             BarAction::SaveToObjectContents => self.build.save_to_contents(&mut self.world),
             BarAction::BuildOptions(options) => {
@@ -20041,6 +20049,7 @@ impl App {
                 self.poll_inventory_animation_stats();
                 self.show_imports(&ctx, &p);
                 self.show_blender_live(&ctx, &p);
+                self.webcam.show(&ctx, &p, self.demo);
                 let inventory_preferences = self.settings.inventory.clone();
                 let import_preferences = self.settings.imports.clone();
                 let mut open = self.panels.inventory;

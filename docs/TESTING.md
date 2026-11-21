@@ -4061,6 +4061,8 @@ To check with these scenarios:
 | `AURORA_DEMO_ANIMESH=1` | Animated objects (animesh); `points`: a bar rigged to an attachment point the animation turns; `far`: an animesh carried far by its animation and one worn far from its point |
 | `AURORA_DEMO_BLENDER_LIVE=1\|objects\|static\|static-hud\|static-attached\|static-detached\|static-linked\|static-linked-child\|static-linked-hud\|static-linked-attached\|static-linked-detached\|static-linked-menu\|static-linked-hud-menu\|upload\|lods\|shape\|shape-readonly\|shape-apply\|plugins\|installer-choose\|installer-check\|installer-install\|installer-done\|installer-error` | Local Blender bridge, static object placement, LOD import, shape transfer and installer feedback |
 | `AURORA_DEMO_BLENDER_PORT=<1024..65535>` | Private loopback port for the Blender demo; use the same `--port` in the native bridge script to avoid already-open Blender clients |
+| `AURORA_DEMO_WEBCAM_VIDEO=<file>` | Replay a local video through webcam tracking in offline demo mode |
+| `AURORA_WEBCAM_PYTHON=<executable>` | Python interpreter for webcam tracking |
 | `AURORA_DEMO_ANIMESH_TRIS=<n>` | Triangles added to the demo's rigged mesh |
 | `AURORA_DEMO_IK_EDIT=<mode>` | Local pose and animation editor (IK Edit, Poser, native animation creation) |
 | `AURORA_DEMO_COUPLE=1\|leave\|clip\|hover\|mirror` | The animation editor's couple mode with a partner who accepts (see Details) |
@@ -4077,6 +4079,13 @@ To check with these scenarios:
 | `AURORA_DEMO_DISPLAYNAME_ERROR=<error_tag>` | Server error on the name change |
 
 ### Details
+
+`AURORA_DEMO_WEBCAM_VIDEO` replaces the camera with a local clip for the
+offline demo. Open **Build › Webcam Tracking** and select **Replay test
+video**. Check that the visible head or limbs follow the clip, and that Stop
+or the end of the clip restores the usual animation. Set
+`AURORA_WEBCAM_PYTHON` to the interpreter in the environment described in
+[Webcam tracking](WEBCAM_TRACKING.md).
 
 `AURORA_DEMO_BLENDER_LIVE=1` opens the local bridge and places a purple shell
 on our animated avatar, through the production protocol and GPU skinning.

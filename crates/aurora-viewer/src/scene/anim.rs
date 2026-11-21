@@ -547,6 +547,7 @@ impl Motion {
 #[derive(Default)]
 pub struct Controller {
     pub(super) poser: Option<(Arc<crate::ik_edit::poser::SubjectPose>, Mat4)>,
+    pub(super) webcam_pose: Option<Arc<crate::webcam::Pose>>,
     pub(super) ik: super::ik::Pose,
     /// LLControlAvatar disables default head / eye motions.
     pub control: bool,
@@ -1900,6 +1901,14 @@ impl Controller {
         let (rotations, positions) = edited.as_ref().map_or((rotations, local_pos.as_slice()), |p| {
             (p.rotations.as_slice(), p.positions.as_slice())
         });
+        // Apply capture after animation blending. Paused and authored poses
+        // keep their own controls, and the underlying animation keeps playing.
+        let tracked = if !hold_pose && edited.is_none() && !editing {
+            self.webcam_pose.as_ref().map(|pose| pose.rotations(rig, rotations))
+        } else {
+            None
+        };
+        let rotations = tracked.as_deref().unwrap_or(rotations);
         let world = self.poser.as_ref().map_or_else(
             || rig.world_with(rotations, pelvis, positions, scale),
             |(pose, model)| pose.matrices(rig, *model),

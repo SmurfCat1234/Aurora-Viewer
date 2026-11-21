@@ -67,6 +67,7 @@ pub enum BarAction {
     ImportStreamList,
     ExportStreamList,
     BlenderLive,
+    WebcamTracking,
     ShowHuds(bool),
     HudZoom(f32),
     #[default]
@@ -1814,6 +1815,9 @@ fn build_menu(
     }
     if menu::item(ui, p, "wand", aurora_i18n::tr!("poser-title")) {
         *action = BarAction::Poser;
+    }
+    if menu::item(ui, p, "video-filled", aurora_i18n::tr!("webcam-title")) {
+        *action = BarAction::WebcamTracking;
     }
     if menu::item_keys(ui, p, "bone-filled", aurora_i18n::tr!("ik-edit-title"), ik_keys) {
         *action = BarAction::IkEdit;

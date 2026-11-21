@@ -920,6 +920,7 @@ pub struct Scene {
     /// of its couple mode.
     pub ik_edit_others: HashMap<Uuid, ik::EditRequest>,
     pub poser: HashMap<Uuid, Arc<crate::ik_edit::poser::SubjectPose>>,
+    pub(crate) webcam_pose: Option<Arc<crate::webcam::Pose>>,
     /// Follow receipt clocks instead of the Legacy Viewer's activation / pause clock.
     pub synchronize_animations: bool,
     /// Session-only keyframe animation rate for every avatar and animesh.
@@ -1757,6 +1758,7 @@ impl Scene {
             ik_edit: ik::EditRequest::default(),
             ik_edit_others: HashMap::new(),
             poser: HashMap::new(),
+            webcam_pose: None,
             synchronize_animations: false,
             animation_speed: 1.0,
             slow_motion_animations: false,
@@ -6138,6 +6140,11 @@ impl Scene {
                 world.avatar_models.insert(owner, model);
             }
             motions.poser = self.poser.get(&owner).zip(model).map(|(pose, model)| (pose.clone(), model));
+            motions.webcam_pose = if !control && owner == world.agent_id {
+                self.webcam_pose.clone()
+            } else {
+                None
+            };
             motions.sitting = !control && world.objects.get(idx).is_some_and(|o| o.parent_id != 0);
             let preview = if owner == world.agent_id && !self.ik_edit.active {
                 world.animation_preview_clock
