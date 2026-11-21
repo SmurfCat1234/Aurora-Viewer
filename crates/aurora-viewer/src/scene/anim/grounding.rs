@@ -252,12 +252,12 @@ fn hinge(hip: Vec3, knee: Vec3, ankle: Vec3, target: Vec3, side: Vec3) -> Option
 /// File mocap contacts are relative to the avatar, independent of terrain
 /// placement and of inferred root translation in the source video.
 #[derive(Default)]
-pub(super) struct WebcamFeet {
+pub(crate) struct WebcamFeet {
     anchors: [Option<(u64, Vec3, Quat)>; 2],
 }
 
 impl WebcamFeet {
-    pub(super) fn apply(
+    pub(crate) fn apply(
         &mut self,
         rig: &Rig,
         rotations: &mut [Quat],

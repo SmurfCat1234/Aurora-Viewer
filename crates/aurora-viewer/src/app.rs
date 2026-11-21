@@ -11745,7 +11745,7 @@ impl App {
             }
             // poses first: attachments follow their bone in the same frame
             self.scene.update_foot_scope(&self.world, cull, world_frame);
-            self.scene.webcam_pose = self.webcam.update(self.audio_engine.as_ref());
+            self.scene.webcam_pose = self.webcam.update(self.audio_engine.as_ref(), &self.world.avatar_lib.rig);
             let completed = self.scene.update_poses(&mut self.world, self.camera.position, world_frame);
             self.scene.set_auto_hover_second_life(matches!(
                 self.settings.grid,
@@ -20050,6 +20050,15 @@ impl App {
                 self.show_imports(&ctx, &p);
                 self.show_blender_live(&ctx, &p);
                 self.webcam.show(&ctx, &p, self.demo);
+                if let Some(recording) = self.webcam.take_recorded_upload() {
+                    self.imports.authored_animation(
+                        &self.world,
+                        &self.settings.inventory,
+                        recording.name,
+                        recording.bytes,
+                        recording.animation,
+                    );
+                }
                 if self.webcam.take_front_view_request() && !self.world.rlva.camera_preset_locked(uuid::Uuid::nil()) {
                     self.switch_camera_view(crate::camera::CameraPreset::Front);
                 }

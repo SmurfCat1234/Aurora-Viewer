@@ -84,6 +84,29 @@ the video. Availability depends on the platform's anonymous access and
 formats. Live streams, login-only videos, profiles and playlists are
 outside this mode.
 
+### Record a take
+
+Start tracking a camera, video, or animated GIF. Open **Record motion** in
+the tracking panel and select **Record** once a subject is detected. The
+optional three-second countdown leaves time to get into position.
+**Finish recording** ends the take sooner than the selected auto-stop
+time (one to 60 seconds). The timed recorder samples up to 30 times per
+second and follows elapsed time when the input or viewer runs slower.
+
+Use **Trim in**, **Trim out**, the playhead and **Preview take** to
+review the selected interval on your avatar. **Loop take** controls
+preview and the exported asset. **Save .anim…** writes the selected
+animation locally. **Open upload preview** opens Aurora's existing
+animation inspector with that same export, including its ordinary
+explicit upload action.
+
+The take contains retargeted joint rotations from enabled webcam
+channels, including available foot stabilization. It contains no video,
+audio, avatar root trajectory, or rotations from the running animation
+override. It uses animation priority 4. The exporter reduces redundant
+keys before checking Second Life's 250,000-byte limit. Trim a take
+further if it exceeds that limit.
+
 The prototype estimates head motion, gaze, blink, jaw opening, chest and
 arm rotations, palm orientation, finger curl, pelvis rotation, and hip,
 knee and ankle rotations. Keep the hips, knees and feet in the frame for

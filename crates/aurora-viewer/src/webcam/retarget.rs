@@ -84,6 +84,7 @@ pub(crate) struct Pose {
     feet: [Option<super::FootContact>; 2],
     strength: f32,
     channels: Channels,
+    recorded: Option<Vec<Option<Quat>>>,
 }
 
 impl Pose {
@@ -163,6 +164,7 @@ impl Pose {
             feet: frame.feet,
             strength,
             channels,
+            recorded: None,
         }
     }
 
@@ -179,7 +181,41 @@ impl Pose {
         }
     }
 
+    pub(super) fn recorded(rotations: Vec<Option<Quat>>) -> Self {
+        let mut pose = Self::still(&Frame::default(), Channels::default());
+        pose.recorded = Some(rotations);
+        pose
+    }
+
     pub(crate) fn rotations(&self, rig: &Rig, animated: &[Quat]) -> Vec<Quat> {
+        if let Some(recorded) = &self.recorded {
+            return animated
+                .iter()
+                .enumerate()
+                .map(|(index, &base)| recorded.get(index).copied().flatten().unwrap_or(base))
+                .collect();
+        }
+        self.solve(rig, animated, &self.targets(rig))
+    }
+
+    pub(super) fn capture(&self, rig: &Rig, feet: &mut crate::scene::anim::WebcamFeet) -> Vec<Option<Quat>> {
+        let targets = self.targets(rig);
+        let mut rotations = self.solve(rig, &rig.local_rot, &targets);
+        let contacts = self.feet();
+        if contacts.iter().any(Option::is_some) {
+            let world = rig.world_with(&rotations, Vec3::ZERO, &rig.local_pos, &rig.scale);
+            feet.apply(rig, &mut rotations, &world, contacts);
+        } else {
+            *feet = Default::default();
+        }
+        rotations
+            .into_iter()
+            .zip(targets)
+            .map(|(rotation, target)| target.map(|_| rotation))
+            .collect()
+    }
+
+    fn targets(&self, rig: &Rig) -> Vec<Option<Target>> {
         let mut targets = vec![None; rig.local_rot.len()];
         if let Some(pelvis) = self.pelvis {
             set(rig, &mut targets, "mPelvis", Target::Local(pelvis));
@@ -209,6 +245,10 @@ impl Pose {
             }
         }
 
+        targets
+    }
+
+    fn solve(&self, rig: &Rig, animated: &[Quat], targets: &[Option<Target>]) -> Vec<Quat> {
         let mut output = animated.to_vec();
         let mut world = vec![Quat::IDENTITY; rig.local_rot.len()];
         for &joint in &rig.order {

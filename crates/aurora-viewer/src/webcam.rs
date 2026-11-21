@@ -2,6 +2,7 @@
 //! viewer's own rendered skeleton consumes them.
 
 mod panel;
+mod recording;
 mod retarget;
 
 use std::{
@@ -349,6 +350,7 @@ pub(crate) struct Webcam {
     video_muted: Arc<AtomicBool>,
     fps: f32,
     front_view_requested: bool,
+    recorder: recording::Recorder,
 }
 
 impl Webcam {
@@ -366,6 +368,7 @@ impl Webcam {
     }
 
     fn clear_input(&mut self) {
+        self.recorder.finish();
         self.running = false;
         self.still = false;
         self.latest = None;
@@ -406,6 +409,7 @@ impl Webcam {
 
     fn start(&mut self) {
         self.clear_input();
+        self.recorder.hide_preview();
         self.link_error = None;
         let source = self.panel.source.clone();
         let loop_video = self.panel.loop_video;
@@ -422,7 +426,29 @@ impl Webcam {
         }
     }
 
-    pub fn update(&mut self, audio: Option<&aurora_audio::AudioEngine>) -> Option<Arc<Pose>> {
+    pub(crate) fn take_recorded_upload(&mut self) -> Option<crate::ik_edit::PreparedAnimation> {
+        self.recorder.take_upload()
+    }
+
+    pub fn update(&mut self, audio: Option<&aurora_audio::AudioEngine>, rig: &crate::scene::anim::Rig) -> Option<Arc<Pose>> {
+        let now = Instant::now();
+        if self.open
+            && let Some(preview) = self.recorder.preview(rig, now)
+        {
+            return Some(preview);
+        }
+        let pose = self.update_live(audio);
+        if self.running && !self.still {
+            let fresh = self
+                .latest
+                .as_ref()
+                .is_some_and(|(time, _)| now.saturating_duration_since(*time).as_secs_f32() < 0.25);
+            self.recorder.tick(rig, now, pose.as_deref().filter(|_| fresh));
+        }
+        pose
+    }
+
+    fn update_live(&mut self, audio: Option<&aurora_audio::AudioEngine>) -> Option<Arc<Pose>> {
         if !self.open {
             if !self.warming_before_open {
                 if self.capture.take().is_some() {

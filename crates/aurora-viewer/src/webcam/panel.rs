@@ -284,6 +284,7 @@ impl Webcam {
         if !open {
             self.capture = None;
             self.clear_input();
+            self.recorder.hide_preview();
         } else if play_video
             || (was_running
                 && self.running
@@ -401,6 +402,17 @@ impl Webcam {
             });
             self.front_view_requested |= ui.button(tr!("camera-settings-front-view")).clicked();
         });
+
+        widgets::divider(ui, palette);
+        let live = self.running
+            && !self.still
+            && self
+                .latest
+                .as_ref()
+                .is_some_and(|(at, frame)| at.elapsed() < Duration::from_millis(250) && frame.detected());
+        if self.recorder.ui(ui, palette, live) && self.running {
+            self.stop();
+        }
 
         widgets::divider(ui, palette);
         widgets::section_header(ui, palette, "bone-filled", &tr!("webcam-channels"));

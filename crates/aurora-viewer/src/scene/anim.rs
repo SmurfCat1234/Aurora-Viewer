@@ -3,6 +3,7 @@
 //! joint palettes (joint world matrices; meshes apply their inverse binds).
 
 pub(super) mod grounding;
+pub(crate) use grounding::WebcamFeet;
 mod legacy_grounding;
 mod pointing;
 
