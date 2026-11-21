@@ -1,25 +1,26 @@
 //! Webcam landmarks arrive over a private child-process pipe. Only the
 //! viewer's own rendered skeleton consumes them.
 
+mod panel;
 mod retarget;
 
 use std::{
-    ffi::OsStr,
     io::{BufRead, BufReader, Read},
+    path::PathBuf,
     process::{Child, Command, Stdio},
     sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
 
-use crate::{theme::Palette, ui::widgets};
-use aurora_i18n::tr;
+use base64::Engine;
 use serde::Deserialize;
 
+use retarget::Channels;
 pub(crate) use retarget::Pose;
 
 pub const WINDOW: &str = "webcam_tracking";
 const SCRIPT: &str = include_str!("webcam_capture.py");
-const FRAME_BYTES: u64 = 16_384;
+const FRAME_BYTES: u64 = 131_072;
 
 #[derive(Clone, Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
@@ -30,28 +31,102 @@ struct Frame {
     face: Option<[[f32; 3]; 16]>,
 }
 
-type Latest = Arc<Mutex<Option<(Instant, Frame)>>>;
+#[derive(Deserialize)]
+struct Sample {
+    frame: Frame,
+    preview: Option<PreviewFrame>,
+}
+
+#[derive(Deserialize)]
+struct PreviewFrame {
+    jpeg: String,
+    groups: Vec<Vec<[f32; 2]>>,
+}
+
+struct PreviewImage {
+    image: egui::ColorImage,
+    groups: Vec<Vec<[f32; 2]>>,
+}
+
+impl PreviewFrame {
+    fn decode(self) -> Option<PreviewImage> {
+        let bytes = base64::engine::general_purpose::STANDARD.decode(self.jpeg).ok()?;
+        let mut reader = image::ImageReader::with_format(std::io::Cursor::new(bytes), image::ImageFormat::Jpeg);
+        let mut limits = image::Limits::default();
+        limits.max_image_width = Some(384);
+        limits.max_image_height = Some(384);
+        reader.limits(limits);
+        let rgb = reader.decode().ok()?.to_rgb8();
+        let size = [rgb.width() as usize, rgb.height() as usize];
+        Some(PreviewImage {
+            image: egui::ColorImage::from_rgb(size, rgb.as_raw()),
+            groups: self.groups,
+        })
+    }
+}
+
+#[derive(Default)]
+struct Latest {
+    frame: Option<(Instant, Frame)>,
+    preview: Option<PreviewImage>,
+}
+
+#[derive(Clone, Copy, Default, Deserialize, PartialEq, Eq)]
+struct Camera {
+    index: i32,
+    backend: i32,
+}
+
+#[derive(Deserialize)]
+struct Device {
+    #[serde(flatten)]
+    camera: Camera,
+    name: String,
+}
+
+#[derive(Clone, PartialEq, Eq)]
+enum Source {
+    Camera(Camera),
+    Video(PathBuf),
+}
+
+impl Default for Source {
+    fn default() -> Self {
+        Self::Camera(Camera::default())
+    }
+}
 
 struct Capture {
     child: Child,
-    latest: Latest,
+    latest: Arc<Mutex<Latest>>,
+}
+
+fn companion() -> Command {
+    let python = std::env::var_os("AURORA_WEBCAM_PYTHON").unwrap_or_else(|| "python".into());
+    let mut command = Command::new(python);
+    command.args(["-I", "-u", "-c", SCRIPT]).stdin(Stdio::null());
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        command.creation_flags(0x0800_0000); // CREATE_NO_WINDOW
+    }
+    command
 }
 
 impl Capture {
-    fn start(camera: u8, video: Option<&OsStr>) -> std::io::Result<Self> {
-        let python = std::env::var_os("AURORA_WEBCAM_PYTHON").unwrap_or_else(|| "python".into());
-        let mut command = Command::new(python);
-        command
-            .args(["-I", "-u", "-c", SCRIPT, "--camera", &camera.to_string()])
-            .stdin(Stdio::null())
-            .stdout(Stdio::piped());
-        if let Some(video) = video {
-            command.arg("--video").arg(video);
-        }
-        #[cfg(windows)]
-        {
-            use std::os::windows::process::CommandExt;
-            command.creation_flags(0x0800_0000); // CREATE_NO_WINDOW
+    fn start(source: &Source, loop_video: bool) -> std::io::Result<Self> {
+        let mut command = companion();
+        command.arg("--preview").stdout(Stdio::piped());
+        match source {
+            Source::Camera(camera) => {
+                command.args(["--camera", &camera.index.to_string(), "--backend", &camera.backend.to_string()]);
+            }
+            Source::Video(path) => {
+                command.arg("--video").arg(path);
+                if loop_video {
+                    command.arg("--loop");
+                }
+            }
         }
         let mut child = command.spawn()?;
         let stdout = child.stdout.take().expect("piped webcam stdout");
@@ -70,10 +145,14 @@ impl Capture {
                     Ok(_) if line.last() != Some(&b'\n') => break,
                     Ok(_) => {}
                 }
-                if let Ok(frame) = serde_json::from_slice::<Frame>(&line)
-                    && let Ok(mut slot) = latest.lock()
-                {
-                    *slot = Some((Instant::now(), frame));
+                if let Ok(sample) = serde_json::from_slice::<Sample>(&line) {
+                    let preview = sample.preview.and_then(PreviewFrame::decode);
+                    if let Ok(mut slot) = latest.lock() {
+                        slot.frame = Some((Instant::now(), sample.frame));
+                        if preview.is_some() {
+                            slot.preview = preview;
+                        }
+                    }
                 }
             }
         })?;
@@ -92,18 +171,40 @@ impl Drop for Capture {
 pub(crate) struct Webcam {
     pub open: bool,
     capture: Option<Capture>,
-    camera: u8,
+    panel: panel::Panel,
     mirror: bool,
     error: bool,
     latest: Option<(Instant, Frame)>,
     neutral: Option<Frame>,
+    preview: Option<PreviewImage>,
+    fps: f32,
+    front_view_requested: bool,
 }
 
 impl Webcam {
+    pub fn take_front_view_request(&mut self) -> bool {
+        std::mem::take(&mut self.front_view_requested)
+    }
+
     pub fn stop(&mut self) {
         self.capture = None;
         self.latest = None;
         self.neutral = None;
+        self.preview = None;
+        self.panel.clear_preview();
+        self.fps = 0.0;
+    }
+
+    fn start(&mut self) {
+        self.stop();
+        self.capture = match Capture::start(&self.panel.source, self.panel.loop_video) {
+            Ok(capture) => Some(capture),
+            Err(error) => {
+                log::warn!("cannot launch webcam tracking: {error}");
+                None
+            }
+        };
+        self.error = self.capture.is_none();
     }
 
     pub fn update(&mut self) -> Option<Arc<Pose>> {
@@ -114,9 +215,13 @@ impl Webcam {
             self.error = !matches!(exit, Ok(Some(status)) if status.success());
             return None;
         }
-        if let Ok(mut pending) = capture.latest.try_lock()
-            && let Some((when, frame)) = pending.take()
-        {
+        let sample = capture.latest.try_lock().ok().and_then(|mut pending| {
+            if let Some(preview) = pending.preview.take() {
+                self.preview = Some(preview);
+            }
+            pending.frame.take()
+        });
+        if let Some((when, frame)) = sample {
             let neutral = self.neutral.get_or_insert_with(|| frame.clone());
             if neutral.face.is_none() {
                 neutral.face = frame.face;
@@ -128,6 +233,10 @@ impl Webcam {
             if let Some((previous_at, previous)) = &self.latest {
                 let elapsed = when.saturating_duration_since(*previous_at).as_secs_f32();
                 frame.smooth_from(previous, 1.0 - (-elapsed / 0.045).exp());
+                if elapsed > 0.001 {
+                    let rate = (1.0 / elapsed).min(120.0);
+                    self.fps = if self.fps == 0.0 { rate } else { self.fps * 0.88 + rate * 0.12 };
+                }
             }
             self.latest = Some((when, frame));
         }
@@ -140,72 +249,18 @@ impl Webcam {
             return None;
         }
         let strength = (1.0 - (age.as_secs_f32() - 0.15) / 0.35).clamp(0.0, 1.0);
+        let channels = self.panel.channels;
         let pose = if self.mirror {
-            Pose::new(&frame.mirrored(), self.neutral.as_ref().map(Frame::mirrored).as_ref(), strength)
+            Pose::new(
+                &frame.mirrored(),
+                self.neutral.as_ref().map(Frame::mirrored).as_ref(),
+                strength,
+                channels,
+            )
         } else {
-            Pose::new(frame, self.neutral.as_ref(), strength)
+            Pose::new(frame, self.neutral.as_ref(), strength, channels)
         };
         Some(Arc::new(pose))
-    }
-
-    pub fn show(&mut self, ctx: &egui::Context, palette: &Palette, demo: bool) {
-        if !self.open {
-            return;
-        }
-        let mut open = self.open;
-        let video = demo.then(|| std::env::var_os("AURORA_DEMO_WEBCAM_VIDEO")).flatten();
-        widgets::Floater::new(WINDOW, tr!("webcam-title"), egui::pos2(72.0, 120.0), egui::vec2(350.0, 220.0))
-            .framed_header("video-filled")
-            .show(ctx, palette, &mut open, |ui| {
-                ui.label(tr!("webcam-local"));
-                if video.is_none() {
-                    ui.horizontal(|ui| {
-                        ui.label(tr!("webcam-camera-index"));
-                        ui.add_enabled(self.capture.is_none(), egui::DragValue::new(&mut self.camera).range(0..=15));
-                    });
-                }
-                widgets::checkbox(ui, palette, &mut self.mirror, tr!("webcam-mirror"));
-                if self.capture.is_some() {
-                    let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
-                    let tracked = fresh.is_some_and(|(_, frame)| frame.detected());
-                    ui.label(if tracked { tr!("webcam-active") } else { tr!("webcam-waiting") });
-                    if ui
-                        .add_enabled(
-                            fresh.is_some_and(|(_, f)| f.face.is_some()),
-                            egui::Button::new(tr!("webcam-recenter")),
-                        )
-                        .clicked()
-                    {
-                        self.neutral = fresh.map(|(_, frame)| frame.clone());
-                    }
-                    if ui.button(tr!("webcam-stop")).clicked() {
-                        self.stop();
-                    }
-                } else {
-                    if self.error {
-                        ui.label(tr!("webcam-error"));
-                    }
-                    let start = if video.is_some() {
-                        tr!("webcam-replay")
-                    } else {
-                        tr!("webcam-start")
-                    };
-                    if ui.button(start).clicked() {
-                        self.capture = match Capture::start(self.camera, video.as_deref()) {
-                            Ok(capture) => Some(capture),
-                            Err(error) => {
-                                log::warn!("cannot launch webcam tracking: {error}");
-                                None
-                            }
-                        };
-                        self.error = self.capture.is_none();
-                    }
-                }
-            });
-        self.open = open;
-        if !open {
-            self.stop();
-        }
     }
 }
 

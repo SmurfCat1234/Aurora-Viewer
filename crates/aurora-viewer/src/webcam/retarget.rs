@@ -7,6 +7,29 @@ const SIDES: [&str; 2] = ["Left", "Right"];
 const FINGERS: [(&str, usize); 5] = [("Thumb", 1), ("Index", 5), ("Middle", 9), ("Ring", 13), ("Pinky", 17)];
 
 #[derive(Clone, Copy)]
+pub(super) struct Channels {
+    pub head: bool,
+    pub eyes: bool,
+    pub expression: bool,
+    pub hands: bool,
+    pub upper_body: bool,
+    pub expression_strength: f32,
+}
+
+impl Default for Channels {
+    fn default() -> Self {
+        Self {
+            head: true,
+            eyes: true,
+            expression: true,
+            hands: true,
+            upper_body: true,
+            expression_strength: 1.0,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
 struct Face {
     head: Quat,
     jaw: f32,
@@ -43,10 +66,11 @@ pub(crate) struct Pose {
     face: Option<(Face, Face)>,
     chest: Option<Quat>,
     strength: f32,
+    channels: Channels,
 }
 
 impl Pose {
-    pub(super) fn new(frame: &Frame, neutral: Option<&Frame>, strength: f32) -> Self {
+    pub(super) fn new(frame: &Frame, neutral: Option<&Frame>, strength: f32, channels: Channels) -> Self {
         let neutral_face = neutral.and_then(|f| Face::measure(f.face?));
         let face = frame.face.and_then(Face::measure).zip(neutral_face);
         let body = body_points(frame);
@@ -59,19 +83,27 @@ impl Pose {
             face,
             chest,
             strength,
+            channels,
         }
     }
 
     pub(crate) fn rotations(&self, rig: &Rig, animated: &[Quat]) -> Vec<Quat> {
         let mut targets = vec![None; rig.local_rot.len()];
-        if let Some(chest) = self.chest {
+        if self.channels.upper_body
+            && let Some(chest) = self.chest
+        {
             set(rig, &mut targets, "mChest", Target::Local(chest));
         }
         if let Some((face, neutral)) = self.face {
             self.face_targets(rig, &mut targets, face, neutral);
         }
         for (i, side) in SIDES.iter().enumerate() {
-            self.arm_targets(rig, &mut targets, i, side);
+            if self.channels.upper_body {
+                self.arm_targets(rig, &mut targets, i, side);
+            }
+            if self.channels.hands {
+                self.hand_targets(rig, &mut targets, i, side);
+            }
         }
 
         let mut output = animated.to_vec();
@@ -97,22 +129,30 @@ impl Pose {
     }
 
     fn face_targets(&self, rig: &Rig, targets: &mut [Option<Target>], face: Face, neutral: Face) {
-        let head = limited(face.head * neutral.head.inverse(), 1.05);
-        set(rig, targets, "mHead", Target::Absolute(head));
-        let jaw = ((face.jaw - neutral.jaw - 0.015) * 1.55).clamp(0.0, 0.56);
-        set(rig, targets, "mFaceJaw", Target::Local(Quat::from_rotation_y(jaw)));
+        if self.channels.head {
+            let head = limited(face.head * neutral.head.inverse(), 1.05);
+            set(rig, targets, "mHead", Target::Absolute(head));
+        }
+        let gain = self.channels.expression_strength;
+        let expression = self.channels.expression && gain > 0.0;
+        if expression {
+            let jaw = ((face.jaw - neutral.jaw - 0.015) * 1.55 * gain).clamp(0.0, 0.56);
+            set(rig, targets, "mFaceJaw", Target::Local(Quat::from_rotation_y(jaw)));
+        }
         for (i, side) in SIDES.iter().enumerate() {
-            let blink = (1.0 - face.openness[i] / neutral.openness[i].max(0.1)).clamp(0.0, 1.0);
-            let yaw = (face.gaze[i][0] - neutral.gaze[i][0]).clamp(-0.23, 0.23);
-            let pitch = (neutral.gaze[i][1] - face.gaze[i][1]).clamp(-0.15, 0.15);
-            let eye = Quat::from_rotation_z(yaw) * Quat::from_rotation_y(pitch);
-            for (joint, rotation) in [
-                ("mEye", eye),
-                ("mFaceEyeAlt", eye),
-                ("mFaceEyeLidUpper", Quat::from_rotation_y(blink * 0.48)),
-                ("mFaceEyeLidLower", Quat::from_rotation_y(-blink * 0.14)),
-            ] {
-                set(rig, targets, &format!("{joint}{side}"), Target::Local(rotation));
+            if self.channels.eyes {
+                let yaw = (face.gaze[i][0] - neutral.gaze[i][0]).clamp(-0.23, 0.23);
+                let pitch = (neutral.gaze[i][1] - face.gaze[i][1]).clamp(-0.15, 0.15);
+                let eye = Quat::from_rotation_z(yaw) * Quat::from_rotation_y(pitch);
+                for joint in ["mEye", "mFaceEyeAlt"] {
+                    set(rig, targets, &format!("{joint}{side}"), Target::Local(eye));
+                }
+            }
+            if expression {
+                let blink = ((1.0 - face.openness[i] / neutral.openness[i].max(0.1)) * gain).clamp(0.0, 1.0);
+                for (joint, angle) in [("mFaceEyeLidUpper", blink * 0.48), ("mFaceEyeLidLower", -blink * 0.14)] {
+                    set(rig, targets, &format!("{joint}{side}"), Target::Local(Quat::from_rotation_y(angle)));
+                }
             }
         }
     }
@@ -129,7 +169,9 @@ impl Pose {
                 set(rig, targets, &format!("m{joint}{side}"), Target::Direction { from, to });
             }
         }
+    }
 
+    fn hand_targets(&self, rig: &Rig, targets: &mut [Option<Target>], i: usize, side: &str) {
         let Some(hand) = self.hands[i] else { return };
         let hand = hand.map(Vec3::from_array);
         let index = format!("mHandIndex1{side}");
@@ -232,7 +274,7 @@ mod tests {
         let shoulder = rig.names["mShoulderLeft"];
         let elbow = rig.names["mElbowLeft"];
         let wrist = rig.names["mWristLeft"];
-        let pose = Pose::new(&frame, None, 1.0).rotations(&rig, &animated);
+        let pose = Pose::new(&frame, None, 1.0, Channels::default()).rotations(&rig, &animated);
         let upper = pose[collar] * pose[shoulder];
         let lower = upper * pose[elbow];
         let up_dir = Vec3::new(0.0, 0.1, -0.2).normalize();
@@ -240,7 +282,13 @@ mod tests {
         assert!((upper * rig.local_pos[elbow].normalize()).abs_diff_eq(up_dir, 1e-4));
         assert!((lower * rig.local_pos[wrist].normalize()).abs_diff_eq(low_dir, 1e-4));
         assert_eq!(pose[knee], animated[knee]);
-        let released = Pose::new(&frame, None, 0.0).rotations(&rig, &animated);
+        let released = Pose::new(&frame, None, 0.0, Channels::default()).rotations(&rig, &animated);
         assert!(released[shoulder].abs_diff_eq(animated[shoulder], 1e-5));
+        let disabled = Channels {
+            upper_body: false,
+            ..Channels::default()
+        };
+        let disabled = Pose::new(&frame, None, 1.0, disabled).rotations(&rig, &animated);
+        assert_eq!(disabled[shoulder], animated[shoulder]);
     }
 }

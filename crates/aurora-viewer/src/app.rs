@@ -20050,6 +20050,9 @@ impl App {
                 self.show_imports(&ctx, &p);
                 self.show_blender_live(&ctx, &p);
                 self.webcam.show(&ctx, &p, self.demo);
+                if self.webcam.take_front_view_request() && !self.world.rlva.camera_preset_locked(uuid::Uuid::nil()) {
+                    self.switch_camera_view(crate::camera::CameraPreset::Front);
+                }
                 let inventory_preferences = self.settings.inventory.clone();
                 let import_preferences = self.settings.imports.clone();
                 let mut open = self.panels.inventory;
