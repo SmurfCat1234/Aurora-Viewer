@@ -74,6 +74,7 @@ pub(crate) struct Pose {
     hands: [Option<[[f32; 3]; 21]>; 2],
     face: Option<(Face, Face)>,
     chest: Option<Quat>,
+    pelvis: Option<Quat>,
     strength: f32,
     channels: Channels,
 }
@@ -93,14 +94,19 @@ impl Pose {
     fn with_reference(frame: &Frame, neutral_face: Option<Face>, neutral_torso: Option<Quat>, strength: f32, channels: Channels) -> Self {
         let face = frame.face.and_then(Face::measure).zip(neutral_face);
         let body = body_points(frame);
-        let chest = torso(&body)
-            .zip(neutral_torso)
-            .map(|(current, rest)| limited(current * rest.inverse(), 0.48));
+        let torso_delta = torso(&body).zip(neutral_torso).map(|(current, rest)| current * rest.inverse());
+        // A tracked torso bend first turns the pelvis. The chest takes only
+        // the remaining motion, so the same rotation is not applied twice.
+        let pelvis = torso_delta
+            .filter(|_| channels.lower_body && body[6].is_some() && body[7].is_some())
+            .map(|delta| limited(delta, 0.78));
+        let chest = torso_delta.map(|delta| limited(pelvis.map_or(delta, |base| base.inverse() * delta), 0.48));
         Self {
             body,
             hands: [frame.left, frame.right],
             face,
             chest,
+            pelvis,
             strength,
             channels,
         }
@@ -108,6 +114,9 @@ impl Pose {
 
     pub(crate) fn rotations(&self, rig: &Rig, animated: &[Quat]) -> Vec<Quat> {
         let mut targets = vec![None; rig.local_rot.len()];
+        if let Some(pelvis) = self.pelvis {
+            set(rig, &mut targets, "mPelvis", Target::Local(pelvis));
+        }
         if self.channels.upper_body
             && let Some(chest) = self.chest
         {
@@ -281,6 +290,26 @@ fn limited(rotation: Quat, limit: f32) -> Quat {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn tracked_torso_turns_pelvis_without_doubling_the_chest_rotation() {
+        let xml = include_str!("../../assets/character/avatar_skeleton.xml");
+        let rig = Rig::new(&aurora_assets::Skeleton::parse(xml.as_bytes()).unwrap());
+        let mut rest = Frame::default();
+        rest.body[0] = Some([0.0, 0.2, 0.5]);
+        rest.body[3] = Some([0.0, -0.2, 0.5]);
+        rest.body[6] = Some([0.0, 0.15, 0.0]);
+        rest.body[7] = Some([0.0, -0.15, 0.0]);
+        let turn = Quat::from_rotation_x(0.35);
+        let mut frame = Frame::default();
+        frame.body = rest.body.map(|p| p.map(|p| (turn * Vec3::from_array(p)).to_array()));
+        let pose = Pose::new(&frame, Some(&rest), 1.0, Channels::default());
+        let rotations = pose.rotations(&rig, &rig.local_rot);
+        let root = rig.names["mPelvis"];
+        let chest = rig.names["mChest"];
+        assert!(rotations[root].abs_diff_eq(rig.local_rot[root] * turn, 1e-4));
+        assert!(rotations[chest].abs_diff_eq(rig.local_rot[chest], 1e-4));
+    }
 
     #[test]
     fn basis_is_right_handed_and_rejects_collinear_input() {

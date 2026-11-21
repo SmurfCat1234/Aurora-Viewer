@@ -56,9 +56,10 @@ the current position. The soundtrack follows video loops, source switches,
 and playback stops.
 
 The prototype estimates head motion, gaze, blink, jaw opening, chest and
-arm rotations, palm orientation, finger curl, and hip, knee and ankle
-rotations. Keep the hips, knees and feet in the frame for lower-body
-tracking. Missing joints use the usual animation. Tracking overlays joint
+arm rotations, palm orientation, finger curl, pelvis rotation, and hip,
+knee and ankle rotations. Keep the hips, knees and feet in the frame for
+lower-body tracking. Briefly occluded joints can retain a recent reliable
+pose before releasing to the usual animation. Tracking overlays joint
 rotation on the avatar in place, while world position and locomotion follow
 the viewer's controls. A normal OBS window capture can show the result.
 
