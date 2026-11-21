@@ -22,6 +22,12 @@ pub const WINDOW: &str = "webcam_tracking";
 const SCRIPT: &str = include_str!("webcam_capture.py");
 const FRAME_BYTES: u64 = 131_072;
 
+#[derive(Clone, Copy, Deserialize)]
+pub(crate) struct FootContact {
+    pub(crate) id: u64,
+    pub(crate) weight: f32,
+}
+
 #[derive(Clone, Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 struct Frame {
@@ -31,6 +37,8 @@ struct Frame {
     face: Option<[[f32; 3]; 16]>,
     head: Option<[[f32; 3]; 3]>,
     planar: bool,
+    profile: f32,
+    feet: [Option<FootContact>; 2],
 }
 
 #[derive(Deserialize)]
@@ -452,6 +460,7 @@ impl Webcam {
         }
         if neutral.body[0].is_none() || neutral.body[3].is_none() {
             neutral.body = frame.body;
+            neutral.profile = frame.profile;
         }
         if let Some((previous_at, _)) = &self.latest {
             let elapsed = when.saturating_duration_since(*previous_at).as_secs_f32();
@@ -484,6 +493,8 @@ impl Frame {
             face,
             head: self.head.map(|p| [flip(p[0]), flip(p[2]), flip(p[1])]),
             planar: self.planar,
+            profile: self.profile,
+            feet: [self.feet[1], self.feet[0]],
             left: self.right.map(|p| p.map(flip)),
             right: self.left.map(|p| p.map(flip)),
         }
@@ -513,5 +524,6 @@ impl Frame {
         smooth_group(&mut self.right, &previous.right, amount);
         smooth_group(&mut self.face, &previous.face, amount);
         smooth_group(&mut self.head, &previous.head, amount);
+        self.profile = previous.profile + (self.profile - previous.profile) * amount;
     }
 }

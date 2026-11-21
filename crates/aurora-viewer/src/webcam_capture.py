@@ -2,11 +2,14 @@
 
 import argparse
 import base64
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 import json
+from itertools import count
 import math
 import os
 from queue import Empty, Queue
+from statistics import median
 import sys
 from threading import Condition, Lock, Thread
 import time
@@ -18,6 +21,9 @@ BODY_INDICES = (11, 13, 15, 12, 14, 16, 23, 24, 25, 26, 27, 28, 31, 32)
 PREVIEW_SIZE = 384
 TRACKING_SIZE = 480
 FILE_TRACKING_SIZE = 720
+OUTPUT_INTERVAL = 1 / 30
+FILE_LOOKAHEAD = 0.28
+CONTACT_IDS = count(1)
 
 
 def points(landmarks, indices, aspect=1.0):
@@ -160,7 +166,7 @@ def pose_is_hand(pose, hands):
     return sum(x0 <= p.x <= x1 and y0 <= p.y <= y1 for p in torso) >= 4
 
 
-def landmarks(body, hands, face_points, aspect):
+def landmarks(body, hands, face_points, aspect, file_motion=False):
     frame = {}
     pose2d = body.pose_landmarks
     if pose_is_hand(pose2d, hands):
@@ -173,6 +179,11 @@ def landmarks(body, hands, face_points, aspect):
             for i, xyz in zip(BODY_INDICES, points(pose, BODY_INDICES))
         ]
         p = pose2d.landmark
+        if file_motion:
+            screen = [screen_point(p[i], aspect) if xyz is not None else None
+                      for i, xyz in zip(BODY_INDICES, frame["body"])]
+            frame["_screen"] = screen
+            frame["profile"] = stabilize_profile(frame["body"], screen)
         if visible(p[0], 0.50) and (visible(p[7]) or visible(p[8])) and visible(p[7], 0.25) and visible(p[8], 0.25):
             head = points(pose, (0, 7, 8))
             if all(math.isfinite(value) for point in head for value in point):
@@ -188,6 +199,43 @@ def landmarks(body, hands, face_points, aspect):
         *(dots(hand_points.get(side)) for side in ("left", "right")),
     ]
     return frame, groups
+
+
+def screen_point(point, aspect):
+    # Visibility can be high just beyond the crop. Such a joint is unobserved.
+    return [0.0, point.x / aspect, -point.y] if 0 <= point.x <= 1 and 0 <= point.y <= 1 else None
+
+
+def mix(a, b, amount):
+    return [x + (y - x) * amount for x, y in zip(a, b)]
+
+
+def stabilize_profile(body, screen):
+    shoulders = (0, 3)
+    hips = (6, 7)
+    if not all(screen[i] is not None and body[i] is not None for i in shoulders + hips):
+        return 0.0
+    top = mix(screen[0], screen[3], 0.5)
+    center = mix(screen[6], screen[7], 0.5)
+    height = math.dist(top, center)
+    if height < 0.08:
+        return 0.0
+    width = abs(screen[0][1] - screen[3][1]) / height
+    weight = max(0.0, min(0.85, (0.53 - width) * 2.4))
+    if not weight:
+        return 0.0
+    hip = mix(body[6], body[7], 0.5)
+    # Side views reveal projected bend, while inferred lateral lean is unstable.
+    length = math.dist(mix(body[0], body[3], 0.5), hip)
+    scale = max(0.35, min(3.0, length / height))
+    for i, point in enumerate(screen):
+        if point is not None:
+            depth = 0.28 if i in (8, 9, 10, 11, 12, 13) else 0.60
+            estimate = [hip[0] + (body[i][0] - hip[0]) * depth,
+                        hip[1] + (point[1] - center[1]) * scale,
+                        hip[2] + (point[2] - center[2]) * scale]
+            body[i] = mix(body[i], estimate, weight)
+    return weight
 
 
 class StableLandmarks:
@@ -251,6 +299,170 @@ class StableLandmarks:
 
 ARM_LINKS = ((0, 1), (1, 2), (3, 4), (4, 5))
 LEG_LINKS = ((6, 8), (8, 10), (7, 9), (9, 11))
+BODY_LINKS = ARM_LINKS + LEG_LINKS + ((10, 12), (11, 13))
+BODY_GRAPH = BODY_LINKS + ((0, 3), (6, 7), (0, 6), (3, 7))
+
+
+class FootContacts:
+    """Recognize stationary ankles in the image, before filling missing joints."""
+
+    def __init__(self):
+        self.previous = [None, None]
+        self.locks = [None, None]
+
+    def update(self, frame, now):
+        screen = frame.get("_screen", [None] * 14)
+        body = frame.get("body", [None] * 14)
+        upright = all(screen[i] is not None for i in (0, 3, 6, 7))
+        if upright:
+            shoulders = mix(screen[0], screen[3], 0.5)
+            hips = mix(screen[6], screen[7], 0.5)
+            height = shoulders[2] - hips[2]
+            upright = height > 0.08 and height > abs(shoulders[1] - hips[1]) * 1.25
+        result = [None, None]
+        for side in range(2):
+            hip, knee, ankle = (body[i + side] for i in (6, 8, 10))
+            point, other = screen[10 + side], screen[11 - side]
+            if (not upright or not all(x is not None for x in (hip, knee, ankle, point, other))
+                    or point[2] - other[2] > height * 0.24 or hips[2] - point[2] < height * 0.64):
+                self.previous[side] = self.locks[side] = None
+                continue
+            previous = self.previous[side]
+            self.previous[side] = (now, point)
+            lock = self.locks[side]
+            if lock and math.dist(point, lock[1]) <= height * 0.105:
+                result[side] = {"id": lock[2], "weight": min(1.0, (now - lock[0]) / 0.095)}
+            elif previous and 0.012 <= now - previous[0] <= 0.15 and math.dist(point, previous[1]) <= height * 0.045:
+                self.locks[side] = (now, point, next(CONTACT_IDS))
+            else:
+                self.locks[side] = None
+        return result
+
+
+class FileMotion:
+    """Bounded lookahead in media time, reset at each loop or source change."""
+
+    def __init__(self):
+        self.samples = deque()
+        self.contacts = FootContacts()
+
+    def add(self, now, frame, groups):
+        screen = frame.get("_screen")
+        body = frame.get("body")
+        if screen and body:
+            for i in (1, 2, 4, 5, 8, 9, 10, 11, 12, 13):
+                if screen[i] is None:
+                    body[i] = None
+        frame["feet"] = self.contacts.update(frame, now)
+        if len(self.samples) >= 2 and body:
+            first_at, first, _ = self.samples[-2]
+            middle_at, middle, _ = self.samples[-1]
+            earlier = first.get("body")
+            middle_body = middle.get("body")
+            mode = frame.get("planar", False)
+            if earlier and middle_body and now - first_at < 0.21 and all(
+                sample.get("planar", False) == mode for sample in (first, middle)
+            ):
+                amount = (middle_at - first_at) / (now - first_at)
+                for i, (a, b, c) in enumerate(zip(earlier, middle_body, body)):
+                    limit = 0.17 if mode else 0.24
+                    if a is not None and b is not None and c is not None and math.dist(a, c) < limit * 0.65:
+                        if math.dist(b, mix(a, c, amount)) > limit:
+                            middle_body[i] = None
+                            if "_screen" in middle:
+                                middle["_screen"][i] = None
+        self.samples.append((now, frame, groups))
+        while self.samples and now - self.samples[0][0] > 1.0:
+            self.samples.popleft()
+
+    def at(self, now):
+        if not self.samples:
+            return None, [], []
+        elapsed = [sample for sample in self.samples if sample[0] <= now + 1e-5]
+        nearest = elapsed[-1] if elapsed else self.samples[0]
+        mode = nearest[1].get("planar", False)
+        # Restrict interpolation to the current detector run. 2D and 3D
+        # have different origins and scales.
+        samples = list(self.samples)
+        center = len(elapsed) - 1 if elapsed else 0
+        first, last = center, center + 1
+        while first and samples[first - 1][1].get("planar", False) == mode:
+            first -= 1
+        while last < len(samples) and samples[last][1].get("planar", False) == mode:
+            last += 1
+        samples = samples[first:last]
+        before = [x for x in samples if x[0] <= now + 1e-5]
+        after = [x for x in samples if x[0] > now + 1e-5]
+        output = {"planar": mode}
+        output["profile"] = nearest[1].get("profile", 0.0)
+        synthesized = set()
+
+        def evaluate(channel, index=None):
+            def point(frame):
+                group = frame.get(channel)
+                return group if index is None or group is None else group[index]
+
+            left = [(t, point(f)) for t, f, _ in reversed(before) if now - t <= 0.27]
+            right = [(t, point(f)) for t, f, _ in after if t - now <= 0.27]
+            a = next(((t, p) for t, p in left if p is not None), None)
+            b = next(((t, p) for t, p in right if p is not None), None)
+            if a and b and b[0] - a[0] <= 0.36:
+                if channel == "body" and (not before or point(before[-1][1]) is None):
+                    synthesized.add(index)
+                weight = max(0, min(1, (now - a[0]) / (b[0] - a[0])))
+                return mix(a[1], b[1], weight) if index is not None else [mix(x, y, weight) for x, y in zip(a[1], b[1])]
+            if a and (now - a[0] < 0.075 or (channel == "body" and index in (1, 2, 4, 5) and now - a[0] < 0.15)):
+                if channel == "body" and index in (1, 2, 4, 5) and now - a[0] > 0.001:
+                    old = next(((t, p) for t, p in left if p is not None and 0.023 <= a[0] - t <= 0.14), None)
+                    if old:
+                        synthesized.add(index)
+                        speed = math.dist(old[1], a[1]) / (a[0] - old[0])
+                        step = min(now - a[0], 0.055) * min(1, 1.0 / max(speed, 0.001))
+                        return mix(a[1], old[1], -step / (a[0] - old[0]))
+                return a[1]
+            return b[1] if b and b[0] - now <= 0.045 else None
+
+        body = [evaluate("body", i) for i in range(14)]
+        screen = [evaluate("_screen", i) for i in range(14)]
+        # When a wrist leaves the picture for longer than velocity can cover,
+        # briefly carry its last forearm direction with the observed elbow.
+        for elbow, wrist in ((1, 2), (4, 5)):
+            if body[elbow] is None or body[wrist] is not None:
+                continue
+            for t, frame, _ in reversed(before):
+                if now - t >= 0.24:
+                    break
+                old = frame.get("body")
+                if old and old[elbow] is not None and old[wrist] is not None:
+                    offset = [w - e for w, e in zip(old[wrist], old[elbow])]
+                    length = math.hypot(*offset)
+                    offset = mix(offset, [0.0, 0.0, -length], min(0.7, (now - t - 0.10) * 5))
+                    body[wrist] = [x + y for x, y in zip(body[elbow], offset)]
+                    synthesized.add(wrist)
+                    break
+        for a, b in BODY_LINKS:
+            if body[a] is None or body[b] is None or b not in synthesized:
+                continue
+            lengths = [math.dist(p[a], p[b]) for _, f, _ in samples
+                       if (p := f.get("body")) and p[a] is not None and p[b] is not None]
+            length = math.dist(body[a], body[b])
+            if lengths and length > 0.01:
+                limit = median(lengths) * 1.18
+                if length > limit:
+                    body[b] = mix(body[a], body[b], limit / length)
+        output["body"] = body
+        for key in ("head", "face", "left", "right"):
+            if (group := evaluate(key)) is not None:
+                output[key] = group
+        # Fade out a planted target before the first future swing sample.
+        feet = list(nearest[1]["feet"])
+        for side, foot in enumerate(feet):
+            if foot is not None:
+                release = next((t for t, f, _ in after if f["feet"][side] is None), None)
+                weight = min(foot["weight"], max(0, (release - now) / 0.09)) if release is not None else foot["weight"]
+                feet[side] = {**foot, "weight": weight}
+        output["feet"] = feet
+        return output, nearest[2], screen
 
 
 def limb_count(frame):
@@ -285,6 +497,7 @@ class PlanarPose:
         self.path = path
         self.net = None
         self.failed = False
+        self.crop = None
         self.mean = np.array([123.675, 116.28, 103.53], dtype=np.float32)
         self.std = np.array([58.395, 57.12, 57.375], dtype=np.float32)
 
@@ -296,10 +509,12 @@ class PlanarPose:
             if self.net is None:
                 self.net = cv2.dnn.readNetFromONNX(self.path)
             h, w = rgb.shape[:2]
-            scale = min(192 / w, 256 / h) / 1.15
-            offset = np.array([(192 - w * scale) / 2, (256 - h * scale) / 2], dtype=np.float32)
+            center_x, center_y, crop_w, crop_h = self.crop or (w / 2, h / 2, w * 1.15, h * 1.15)
+            scale = min(192 / crop_w, 256 / crop_h)
+            offset = np.array([96 - center_x * scale, 128 - center_y * scale], dtype=np.float32)
             transform = np.array([[scale, 0, offset[0]], [0, scale, offset[1]]], dtype=np.float32)
-            image = cv2.warpAffine(rgb, transform, (192, 256)).astype(np.float32)
+            image = cv2.warpAffine(rgb, transform, (192, 256), flags=cv2.INTER_CUBIC,
+                                   borderMode=cv2.BORDER_CONSTANT, borderValue=(128, 128, 128)).astype(np.float32)
             self.net.setInput(np.ascontiguousarray(((image - self.mean) / self.std).transpose(2, 0, 1)[None]))
             xs, ys = self.net.forward(["simcc_x", "simcc_y"])
             if xs.shape != (1, 17, 384) or ys.shape != (1, 17, 512):
@@ -312,11 +527,22 @@ class PlanarPose:
         points = [(float(x), float(y)) if score >= 0.28 and 0 <= x < w and 0 <= y < h else None
                   for (x, y), score in zip(xy, scores)]
         order = (5, 7, 9, 6, 8, 10, 11, 12, 13, 14, 15, 16)
+        core = [points[i] for i in order if points[i]]
+        if len(core) >= 9:
+            xx, yy = zip(*core)
+            if max(yy) - min(yy) >= h * 0.23:
+                desired = ((max(xx) + min(xx)) / 2, (max(yy) + min(yy)) / 2,
+                           max(w * 0.45, (max(xx) - min(xx)) * 1.68),
+                           max(h * 0.48, (max(yy) - min(yy)) * 1.55))
+                self.crop = mix(self.crop, desired, 0.30) if self.crop else desired
+        elif len(core) < 6:
+            self.crop = None
         # Planar estimates do not contain depth or reliable toe/face detail.
         body = [[0.0, (pt[0] - w / 2) / h * 1.65, (h / 2 - pt[1]) / h * 1.65] if pt else None
                 for pt in (points[i] for i in order)] + [None, None]
         groups = [[(pt[0] / w, pt[1] / h) for pt in (points[i] for i in order) if pt]]
-        return {"body": body, "planar": True}, groups
+        screen = [[0.0, pt[0] / h, -pt[1] / h] if pt else None for pt in (points[i] for i in order)] + [None, None]
+        return {"body": body, "_screen": screen, "planar": True}, groups
 
 
 class Tracking:
@@ -327,17 +553,19 @@ class Tracking:
         self.pending = None
         self.closed = False
         self.overlay = None
+        self.file_motion = FileMotion()
         self.revision = 0
 
     def submit(self, source_id, timestamp, image, still_preview=None, is_file=False):
         with self.changed:
-            self.pending = (source_id, self.revision, timestamp, image, still_preview, is_file)
+            self.pending = (source_id, self.revision, timestamp, image, still_preview, is_file, self.file_motion)
             self.changed.notify()
 
     def clear(self):
         with self.changed:
             self.pending = None
             self.overlay = None
+            self.file_motion = FileMotion()
             self.revision += 1
 
     def close(self):
@@ -375,7 +603,7 @@ class Tracking:
                     self.changed.wait_for(lambda: self.pending is not None or self.closed)
                     if self.closed:
                         return
-                    source_id, revision, timestamp, image, still_preview, is_file = self.pending
+                    source_id, revision, timestamp, image, still_preview, is_file, file_motion = self.pending
                     self.pending = None
                 source = (source_id, revision)
                 if last_source is not None and last_source != source:
@@ -384,6 +612,8 @@ class Tracking:
                     previous_pose = None
                     cropped = False
                     stable = StableLandmarks()
+                    if planar is not None:
+                        planar.crop = None
                     if last_source[0] != source_id:
                         misses = 0
                         use_planar = False
@@ -407,7 +637,7 @@ class Tracking:
                     body = body_task.result()
                     previous_pose = body.pose_landmarks
                     face_points = anchored_face(face_task.result(), region, previous_pose, height / width)
-                    frame, groups = landmarks(body, hand_task.result(), face_points, height / width)
+                    frame, groups = landmarks(body, hand_task.result(), face_points, height / width, is_file and not still_preview)
                     links = limb_count(frame)
                     saw_primary |= links >= 4
                     if is_file and planar is not None and not planar.failed and not saw_primary:
@@ -420,13 +650,16 @@ class Tracking:
                                     frame, groups = candidate, overlay
                                     stable = StableLandmarks()
                                     use_planar = True
-                if still_preview is None:
+                if not is_file and still_preview is None:
                     stable.apply(frame, timestamp)
                 sample = {"id": source_id, "frame": frame}
                 if still_preview:
                     sample["preview"] = {"jpeg": still_preview, "groups": groups}
                 with self.changed:
-                    if revision == self.revision:
+                    if is_file and still_preview is None:
+                        file_motion.add(timestamp, frame, groups)
+                    elif revision == self.revision:
+                        frame.pop("_screen", None)
                         self.overlay = (source_id, timestamp, groups)
                         emit(sample)
 
@@ -444,6 +677,95 @@ def preview_jpeg(cv2, image):
     return base64.b64encode(jpeg).decode("ascii") if ok else None
 
 
+class FileCycle:
+    def __init__(self, start, motion):
+        self.start = start
+        self.motion = motion
+        self.preview = deque()
+        self.end = None
+        self.inferred_at = -1.0
+        self.previewed_at = -1.0
+
+
+def file_playback(cv2, commands, tracking, emit, source, read, rewind, has_audio):
+    source_id = source["id"]
+    cycles = deque([FileCycle(0.0, tracking.file_motion)])
+    capture_at = output_at = 0.0
+    latest_jpeg = None
+    played = None
+    clock = time.monotonic()
+    while True:
+        delay = min(capture_at, FILE_LOOKAHEAD + output_at)
+        try:
+            return commands.get(timeout=max(0.0, clock + delay - time.monotonic()))
+        except Empty:
+            pass
+        now = time.monotonic() - clock
+        if capture_at <= now + 0.001:
+            cycle = cycles[-1]
+            item = read()
+            if item is None:
+                if cycle.previewed_at < 0:
+                    raise RuntimeError("The selected input did not return a frame.")
+                cycle.end = capture_at
+                if source["loop_video"]:
+                    rewind()
+                    tracking.clear()
+                    cycles.append(FileCycle(capture_at, tracking.file_motion))
+                else:
+                    capture_at = math.inf
+            else:
+                image, duration = item
+                # Limit model and JPEG work on high-rate files.
+                offset = capture_at - cycle.start
+                if offset - cycle.inferred_at >= 0.029:
+                    tracking.submit(source_id, offset, image, is_file=True)
+                    cycle.inferred_at = offset
+                if offset - cycle.previewed_at >= OUTPUT_INTERVAL - 0.001:
+                    if jpeg := preview_jpeg(cv2, image):
+                        cycle.preview.append((capture_at, jpeg, image.shape[0] / image.shape[1]))
+                        if latest_jpeg is None:
+                            latest_jpeg = jpeg
+                            emit({"id": source_id, "preview": {"jpeg": jpeg, "groups": []}})
+                    cycle.previewed_at = offset
+                capture_at += duration
+        if now + 0.001 < FILE_LOOKAHEAD + output_at:
+            continue
+        # Skip presentation ticks after a stall without queuing stale poses.
+        # Catch the decoder up only as far as frames actually read.
+        skip = min(now - FILE_LOOKAHEAD, capture_at) - output_at
+        output_at += max(0, int(skip / OUTPUT_INTERVAL)) * OUTPUT_INTERVAL
+        while cycles[0].end is not None and output_at >= cycles[0].end - 0.001:
+            cycles.popleft()
+            if not cycles:
+                emit({"id": source_id, "ended": True})
+                return {"stop": True}
+        cycle = cycles[0]
+        if played is not cycle:
+            if has_audio:
+                emit({"id": source_id, "video_started": True})
+            played = cycle
+        with tracking.changed:
+            frame, groups, screen = cycle.motion.at(output_at - cycle.start)
+        sample = {"id": source_id}
+        if frame is not None:
+            sample["frame"] = frame
+        preview = None
+        while cycle.preview and cycle.preview[0][0] <= output_at + 0.001:
+            preview = cycle.preview.popleft()
+        if preview:
+            _, jpeg, aspect = preview
+            groups = list(groups) + [[] for _ in range(4 - len(groups))]
+            if screen:
+                groups[0] = [(p[1] * aspect, -p[2]) for p in screen if p is not None]
+                groups.append([(screen[i][1] * aspect, -screen[i][2]) for a, b in BODY_GRAPH
+                               if screen[a] is not None and screen[b] is not None for i in (a, b)])
+            sample["preview"] = {"jpeg": jpeg, "groups": groups}
+        if len(sample) > 1:
+            emit(sample)
+        output_at += OUTPUT_INTERVAL
+
+
 def image_playback(cv2, commands, tracking, emit, source):
     import numpy as np
     from PIL import Image, ImageOps
@@ -455,47 +777,35 @@ def image_playback(cv2, commands, tracking, emit, source):
                 raise RuntimeError("Image is larger than 32 megapixels.")
             animated = picture.format == "GIF" and picture.is_animated
             frame_index = 0
-            deadline = time.monotonic()
-            while True:
-                try:
-                    return commands.get(timeout=max(0.0, deadline - time.monotonic()))
-                except Empty:
-                    pass
+
+            def read():
+                nonlocal frame_index
                 try:
                     picture.seek(frame_index)
                 except EOFError:
-                    if not source["loop_video"]:
-                        emit({"id": source_id, "ended": True})
-                        return {"stop": True}
-                    frame_index = 0
-                    picture.seek(0)
-                    tracking.clear()
+                    return None
                 frame = picture if animated else ImageOps.exif_transpose(picture)
                 rgba = frame.convert("RGBA")
                 rgba.thumbnail((FILE_TRACKING_SIZE, FILE_TRACKING_SIZE))
                 background = Image.new("RGBA", rgba.size, (128, 128, 128, 255))
                 rgb = Image.alpha_composite(background, rgba).convert("RGB")
                 image = cv2.cvtColor(np.asarray(rgb), cv2.COLOR_RGB2BGR)
-                timestamp = time.monotonic()
-                jpeg = preview_jpeg(cv2, image)
-                sample = {"id": source_id}
-                if not animated:
-                    sample["still"] = True
-                if jpeg:
-                    overlay = tracking.overlay
-                    groups = overlay[2] if animated and overlay and overlay[0] == source_id and timestamp - overlay[1] < 0.15 else []
-                    sample["preview"] = {"jpeg": jpeg, "groups": groups}
-                emit(sample)
-                tracking.submit(source_id, timestamp, image, jpeg if not animated else None, is_file=True)
-                if not animated:
-                    break
-                duration = max(10, picture.info.get("duration") or 100) / 1000
-                deadline += duration
-                # Keep the GIF's per-frame delays without replaying a backlog
-                # of overdue frames after a stall.
-                if deadline < timestamp:
-                    deadline = timestamp + duration
                 frame_index += 1
+                return image, max(10, picture.info.get("duration") or 100) / 1000
+
+            def rewind():
+                nonlocal frame_index
+                frame_index = 0
+
+            if animated:
+                return file_playback(cv2, commands, tracking, emit, source, read, rewind, False)
+            image, _ = read()
+            jpeg = preview_jpeg(cv2, image)
+            if jpeg:
+                emit({"id": source_id, "still": True, "preview": {"jpeg": jpeg, "groups": []}})
+                tracking.submit(source_id, time.monotonic(), image, jpeg, is_file=True)
+            else:
+                raise RuntimeError("Cannot preview the selected image.")
         return commands.get()
     except (OSError, Image.DecompressionBombError) as error:
         raise RuntimeError(f"Cannot read the selected image: {error}") from error
@@ -525,41 +835,27 @@ def playback(cv2, commands, tracking, emit, source):
             camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         fps = camera.get(cv2.CAP_PROP_FPS)
         interval = 1.0 / fps if 1 <= fps <= 240 else 1.0 / 30
-        next_frame = time.monotonic()
+        if video is not None:
+            def read():
+                ok, image = camera.read()
+                return (image, interval) if ok else None
+
+            def rewind():
+                if not camera.set(cv2.CAP_PROP_POS_FRAMES, 0):
+                    raise RuntimeError("Cannot loop the selected video.")
+
+            return file_playback(cv2, commands, tracking, emit, source, read, rewind, True)
         next_preview = 0.0
-        video_started = False
         while True:
-            now = time.monotonic()
             try:
-                return commands.get(timeout=max(0.0, next_frame - now) if video is not None else 0)
+                return commands.get_nowait()
             except Empty:
                 pass
-            if video is not None:
-                now = time.monotonic()
-                # Keep the file on its clock. Drop outdated pictures if decoding stalls.
-                overdue = min(5, int(max(0.0, now - next_frame) / interval))
-                for _ in range(overdue):
-                    if not camera.grab():
-                        break
-                next_frame = max(next_frame + (1 + overdue) * interval, now)
             ok, image = camera.read()
-            if not ok and video is not None and source["loop_video"]:
-                camera.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                ok, image = camera.read()
-                tracking.clear()
-                video_started = False
-                if not ok:
-                    raise RuntimeError("Cannot loop the selected video.")
             if not ok:
-                if video is None or next_preview == 0.0:
-                    raise RuntimeError("The selected input did not return a frame.")
-                emit({"id": source_id, "ended": True})
-                return {"stop": True}
-            if video is not None and not video_started:
-                emit({"id": source_id, "video_started": True})
-                video_started = True
+                raise RuntimeError("The selected input did not return a frame.")
             timestamp = time.monotonic()
-            tracking.submit(source_id, timestamp, image, is_file=video is not None)
+            tracking.submit(source_id, timestamp, image)
             if timestamp >= next_preview:
                 jpeg = preview_jpeg(cv2, image)
                 if jpeg:

@@ -214,14 +214,19 @@ impl Panel {
             painter.image(texture.id(), image, uv, egui::Color32::WHITE); // theme-guard: content — the video keeps its original colors
             if self.show_dots {
                 let painter = painter.with_clip_rect(image);
+                let project = |[x, y]: [f32; 2]| image.lerp_inside(egui::vec2(if mirror { 1.0 - x } else { x }, y));
+                if let Some(bones) = self.groups.get(4) {
+                    for segment in bones.chunks_exact(2) {
+                        painter.line_segment([project(segment[0]), project(segment[1])], egui::Stroke::new(1.25, palette.amber));
+                    }
+                }
                 for (points, color) in self
                     .groups
                     .iter()
                     .zip([palette.amber, palette.violet_light, palette.teal, palette.rose])
                 {
-                    for &[x, y] in points {
-                        let x = if mirror { 1.0 - x } else { x };
-                        painter.circle_filled(image.lerp_inside(egui::vec2(x, y)), 1.5, color);
+                    for &point in points {
+                        painter.circle_filled(project(point), 1.5, color);
                     }
                 }
             }

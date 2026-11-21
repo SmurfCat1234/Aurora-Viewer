@@ -548,6 +548,7 @@ impl Motion {
 pub struct Controller {
     pub(super) poser: Option<(Arc<crate::ik_edit::poser::SubjectPose>, Mat4)>,
     pub(super) webcam_pose: Option<Arc<crate::webcam::Pose>>,
+    webcam_feet: grounding::WebcamFeet,
     pub(super) ik: super::ik::Pose,
     /// LLControlAvatar disables default head / eye motions.
     pub control: bool,
@@ -1903,16 +1904,24 @@ impl Controller {
         });
         // Apply capture after animation blending. Paused and authored poses
         // keep their own controls, and the underlying animation keeps playing.
-        let tracked = if !hold_pose && edited.is_none() && !editing {
-            self.webcam_pose.as_ref().map(|pose| pose.rotations(rig, rotations))
-        } else {
-            None
-        };
+        let webcam = self.webcam_pose.as_ref().filter(|_| !hold_pose && edited.is_none() && !editing);
+        let mut tracked = webcam.map(|pose| pose.rotations(rig, rotations));
         let rotations = tracked.as_deref().unwrap_or(rotations);
-        let world = self.poser.as_ref().map_or_else(
+        let mut world = self.poser.as_ref().map_or_else(
             || rig.world_with(rotations, pelvis, positions, scale),
             |(pose, model)| pose.matrices(rig, *model),
         );
+        let feet = webcam.map_or([None; 2], |pose| pose.feet());
+        if let Some(tracked) = tracked
+            .as_mut()
+            .filter(|_| self.poser.is_none() && feet.iter().any(Option::is_some))
+        {
+            if self.webcam_feet.apply(rig, tracked, &world, feet) {
+                world = rig.world_with(tracked, pelvis, positions, scale);
+            }
+        } else {
+            self.webcam_feet = grounding::WebcamFeet::default();
+        }
         if !hold_pose {
             self.update_live_morphs(now);
         }

@@ -81,6 +81,7 @@ pub(crate) struct Pose {
     head: Option<Quat>,
     chest: Option<Quat>,
     pelvis: Option<Quat>,
+    feet: [Option<super::FootContact>; 2],
     strength: f32,
     channels: Channels,
 }
@@ -90,28 +91,43 @@ impl Pose {
         let neutral_face = neutral.and_then(|f| Face::measure(f.face?));
         let neutral_torso = neutral.and_then(|f| torso(&body_points(f)));
         let neutral_head = neutral.and_then(|f| coarse_head(f.head?));
-        Self::with_reference(frame, neutral_face, neutral_head, neutral_torso, strength, channels)
+        Self::with_reference(
+            frame,
+            neutral_face,
+            neutral_head,
+            neutral_torso.map(|q| (q, neutral.map_or(0.0, |f| f.profile))),
+            strength,
+            channels,
+        )
     }
 
     pub(super) fn still(frame: &Frame, channels: Channels) -> Self {
         // A photograph has no earlier frame to calibrate against.
-        Self::with_reference(frame, Some(Face::REST), Some(Quat::IDENTITY), Some(Quat::IDENTITY), 1.0, channels)
+        Self::with_reference(
+            frame,
+            Some(Face::REST),
+            Some(Quat::IDENTITY),
+            Some((Quat::IDENTITY, 0.0)),
+            1.0,
+            channels,
+        )
     }
 
     fn with_reference(
         frame: &Frame,
         neutral_face: Option<Face>,
         neutral_head: Option<Quat>,
-        neutral_torso: Option<Quat>,
+        neutral_torso: Option<(Quat, f32)>,
         strength: f32,
         channels: Channels,
     ) -> Self {
         let face = frame.face.and_then(Face::measure).zip(neutral_face);
         let body = body_points(frame);
         let torso_frame = torso(&body);
-        let torso_delta = torso_frame.zip(neutral_torso).map(|(current, rest)| current * rest.inverse());
+        let torso_orientation = torso_frame.zip(neutral_torso);
+        let torso_delta = torso_orientation.map(|(current, (rest, profile))| profile_torso(current, rest, frame.profile.max(profile)));
         let local_delta = |current: Quat, rest: Quat| {
-            if let Some((current_torso, neutral_torso)) = torso_frame.zip(neutral_torso) {
+            if let Some((current_torso, (neutral_torso, _))) = torso_orientation {
                 (current_torso.inverse() * current) * (neutral_torso.inverse() * rest).inverse()
             } else {
                 current * rest.inverse()
@@ -144,8 +160,22 @@ impl Pose {
             head,
             chest,
             pelvis,
+            feet: frame.feet,
             strength,
             channels,
+        }
+    }
+
+    pub(crate) fn feet(&self) -> [Option<super::FootContact>; 2] {
+        if self.channels.lower_body {
+            self.feet.map(|contact| {
+                contact.map(|mut foot| {
+                    foot.weight *= self.strength;
+                    foot
+                })
+            })
+        } else {
+            [None; 2]
         }
     }
 
@@ -326,6 +356,23 @@ fn torso(body: &[Option<Vec3>; 14]) -> Option<Quat> {
     let up = body[6].zip(body[7]).map_or(Vec3::Z, |(a, b)| (left + right - a - b) * 0.5);
     let across = left - right;
     basis(across.cross(up), across)
+}
+
+fn profile_torso(current: Quat, rest: Quat, profile: f32) -> Quat {
+    let delta = current * rest.inverse();
+    if profile <= 0.0 {
+        return delta;
+    }
+    // The shoulder axis becomes foreshortened in profile. Isolate the lean
+    // visible in the image from yaw, so a change in depth cannot tip the rig.
+    let up = |q: Quat| {
+        let v = q * Vec3::Z;
+        (-v.y).atan2(v.z)
+    };
+    let heading = delta * Vec3::X;
+    let yaw = heading.y.atan2(heading.x).clamp(-1.05, 1.05);
+    let lean = (up(current) - up(rest)).clamp(-0.60, 0.60);
+    delta.slerp(Quat::from_rotation_x(lean) * Quat::from_rotation_z(yaw), profile.clamp(0.0, 1.0))
 }
 
 fn basis(x: Vec3, y: Vec3) -> Option<Quat> {
