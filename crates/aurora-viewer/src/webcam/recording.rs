@@ -292,10 +292,11 @@ impl Recorder {
                     self.range[1] = self.range[1].max(self.range[0] + INTERVAL).min(duration);
                 }
                 ui.label(tr!("webcam-record-out"));
+                let earliest_end = (self.range[0] + INTERVAL).min(duration);
                 let after = ui
                     .add(
                         egui::DragValue::new(&mut self.range[1])
-                            .range((self.range[0] + INTERVAL).min(duration)..=duration)
+                            .range(earliest_end..=duration)
                             .speed(0.03)
                             .fixed_decimals(2),
                     )
