@@ -20054,7 +20054,9 @@ impl App {
                 self.poll_inventory_animation_stats();
                 self.show_imports(&ctx, &p);
                 self.show_blender_live(&ctx, &p);
-                self.webcam.show(&ctx, &p, self.demo, &self.world.avatar_lib.rig);
+                let webcam_media_audible = self.media_volume() > 0.0;
+                self.webcam
+                    .show(&ctx, &p, self.demo, &self.world.avatar_lib.rig, webcam_media_audible);
                 if let Some(recording) = self.webcam.take_recorded_upload() {
                     self.imports.authored_animation(
                         &self.world,

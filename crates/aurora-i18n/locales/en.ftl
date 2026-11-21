@@ -16114,3 +16114,5 @@ webcam-gesture-progress = Gesture assets uploaded: { $done } / { $total }
 webcam-gesture-create = Assemble gesture…
 webcam-gesture-permissions = The gesture needs the uploaded animation and sounds in inventory with copy, modify, and transfer permission.
 webcam-gesture-name = Webcam Gesture
+webcam-media-volume-off = Master or Media audio is turned off.
+webcam-media-no-sound = No playable soundtrack for this video.

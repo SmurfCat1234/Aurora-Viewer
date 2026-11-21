@@ -15975,3 +15975,5 @@ webcam-gesture-progress = ジェスチャー素材のアップロード：{ $don
 webcam-gesture-create = ジェスチャーを組み立てる…
 webcam-gesture-permissions = ジェスチャーには、コピー・編集・譲渡が許可されたアニメーションとサウンドがインベントリに必要です。
 webcam-gesture-name = ウェブカメラジェスチャー
+webcam-media-volume-off = マスター音量またはメディア音量がオフです。
+webcam-media-no-sound = この動画には再生できる音声トラックがありません。

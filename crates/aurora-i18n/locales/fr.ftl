@@ -16120,3 +16120,5 @@ webcam-gesture-progress = Fichiers du geste téléversés : { $done } / { $total
 webcam-gesture-create = Assembler le geste…
 webcam-gesture-permissions = Le geste nécessite l’animation et les sons téléversés dans l’inventaire avec les droits de copie, modification et transfert.
 webcam-gesture-name = Geste webcam
+webcam-media-volume-off = Le volume général ou celui des médias est coupé.
+webcam-media-no-sound = Aucune piste audio lisible pour cette vidéo.

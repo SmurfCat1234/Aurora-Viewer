@@ -247,7 +247,14 @@ fn file_label(file: &std::path::Path) -> String {
 }
 
 impl Webcam {
-    pub fn show(&mut self, ctx: &egui::Context, palette: &Palette, demo: bool, rig: &std::sync::Arc<crate::scene::anim::Rig>) {
+    pub fn show(
+        &mut self,
+        ctx: &egui::Context,
+        palette: &Palette,
+        demo: bool,
+        rig: &std::sync::Arc<crate::scene::anim::Rig>,
+        media_audible: bool,
+    ) {
         if !self.open {
             return;
         }
@@ -267,12 +274,13 @@ impl Webcam {
         }
         let mut open = self.open;
         let mut floater = widgets::Floater::new(WINDOW, tr!("webcam-title"), egui::pos2(72.0, 120.0), egui::vec2(460.0, 585.0))
-            .framed_header("video-filled");
+            .framed_header("video-filled")
+            .steady_size();
         floater.min_size = egui::vec2(390.0, 485.0);
         floater.show(ctx, palette, &mut open, |ui| {
             play_video |= self.source_controls(ui, palette);
             ui.add_space(4.0);
-            self.capture_controls(ui, palette);
+            self.capture_controls(ui, palette, media_audible);
             ui.add_space(6.0);
             self.preview_stage(ui, palette);
             widgets::divider(ui, palette);
@@ -422,7 +430,10 @@ impl Webcam {
                 super::recording::speed_picker(ui, "webcam_video_rate", &mut rate);
             });
             ui.horizontal(|ui| {
-                ui.spacing_mut().slider_width = (ui.available_width() - 124.0).max(80.0);
+                const TIME_WIDTH: f32 = 78.0;
+                const DURATION_WIDTH: f32 = 68.0;
+                ui.spacing_mut().slider_width =
+                    (ui.available_width() - TIME_WIDTH - DURATION_WIDTH - 2.0 * ui.spacing().item_spacing.x).max(32.0);
                 let mut slider_time = target.clamp(0.0, duration);
                 let slider = ui.add(egui::Slider::new(&mut slider_time, 0.0..=duration).show_value(false));
                 if slider.dragged() {
@@ -434,7 +445,8 @@ impl Webcam {
                 }
                 let mut exact = self.transport.scrub.unwrap_or(target).clamp(0.0, duration);
                 if ui
-                    .add(
+                    .add_sized(
+                        [TIME_WIDTH, ui.spacing().interact_size.y],
                         egui::DragValue::new(&mut exact)
                             .range(0.0..=duration)
                             .update_while_editing(false)
@@ -447,7 +459,10 @@ impl Webcam {
                     target = exact;
                     seek = true;
                 }
-                ui.label(format!("/ {:.1}", duration));
+                ui.add_sized(
+                    [DURATION_WIDTH, ui.spacing().interact_size.y],
+                    egui::Label::new(format!("/ {duration:.1}")).truncate(),
+                );
             });
             egui::CollapsingHeader::new(tr!("webcam-video-range")).show(ui, |ui| {
                 let mut range = self.transport.range();
@@ -603,7 +618,7 @@ impl Webcam {
         }
     }
 
-    fn capture_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
+    fn capture_controls(&mut self, ui: &mut egui::Ui, palette: &Palette, media_audible: bool) {
         ui.horizontal_wrapped(|ui| {
             if self.running {
                 let fresh = self.latest.as_ref().filter(|(at, _)| at.elapsed() < Duration::from_millis(500));
@@ -637,5 +652,16 @@ impl Webcam {
                 }
             }
         });
+        if self.transport.clock.is_some() && !self.video_muted.load(Ordering::Relaxed) {
+            if !media_audible {
+                ui.colored_label(palette.muted, tr!("webcam-media-volume-off"));
+            } else if self
+                .clip_audio
+                .as_ref()
+                .is_none_or(|sound| sound.status() == aurora_audio::LocalMediaStatus::Unavailable)
+            {
+                ui.colored_label(palette.muted, tr!("webcam-media-no-sound"));
+            }
+        }
     }
 }

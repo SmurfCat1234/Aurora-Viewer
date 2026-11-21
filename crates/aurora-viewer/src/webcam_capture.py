@@ -1076,14 +1076,22 @@ def platform_media(platform, url, folder):
     runtime = os.environ.get("AURORA_WEBCAM_DENO")
     has_deno = shutil.which(runtime or "deno") is not None
     can_merge = shutil.which("ffmpeg") is not None
-    muxed = "b[ext=mp4][height<=480][protocol=https]"
-    split = "bv[ext=mp4][height<=480][protocol=https]+ba[ext=m4a][protocol=https]"
     if platform == "youtube":
-        formats = (muxed, split if can_merge else None, "b[ext=mp4][height<=720][protocol=https]")
+        formats = (
+            "b[ext=mp4][acodec^=mp4a][height<=480][protocol=https]",
+            "bv[ext=mp4][height<=480][protocol=https]+ba[ext=m4a][protocol=https]" if can_merge else None,
+            "b[ext=mp4][height<=720][protocol=https]",
+            "bv[height<=720][protocol=https]+ba[protocol=https]" if can_merge else None,
+        )
     else:
-        # Some social clips are silent or come as MP4 over HLS. Prefer
-        # progressive MP4, then allow a merge or a video-only result.
-        formats = ("b[ext=mp4][protocol^=http]", "bv[ext=mp4]+ba[ext=m4a]" if can_merge else None, "b[ext=mp4]", "bv[ext=mp4]")
+        # Let muxed HLS and other available audio codecs outrank video only.
+        formats = (
+            "b[ext=mp4][acodec^=mp4a][protocol^=http]",
+            "b[ext=mp4][protocol^=http]",
+            "b[ext=mp4]",
+            "bv[ext=mp4]+ba" if can_merge else None,
+            "bv[ext=mp4]",
+        )
 
     def limit_download(status):
         nonlocal blocked
