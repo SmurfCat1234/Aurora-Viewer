@@ -8,11 +8,18 @@ import json
 from itertools import count
 import math
 import os
+from pathlib import Path
 from queue import Empty, Queue
+import re
+import shutil
 from statistics import median
+import subprocess
 import sys
+from tempfile import TemporaryDirectory
 from threading import Condition, Lock, Thread
 import time
+from urllib.parse import parse_qs, urlsplit
+from urllib.request import Request, urlopen
 
 
 FACE_INDICES = (263, 33, 10, 152, 13, 14, 61, 291, 362, 386, 374, 473, 133, 159, 145, 468)
@@ -24,6 +31,8 @@ FILE_TRACKING_SIZE = 720
 OUTPUT_INTERVAL = 1 / 30
 FILE_LOOKAHEAD = 0.28
 CONTACT_IDS = count(1)
+MEDIA_LIMIT = 128 * 1024 * 1024
+SCRIPT_BOOT = "import sys; _aurora_script = sys.stdin.buffer.read(int(sys.stdin.buffer.readline())); exec(compile(_aurora_script, '<aurora-webcam>', 'exec'))"
 
 
 def points(landmarks, indices, aspect=1.0):
@@ -667,7 +676,10 @@ class Tracking:
 def read_commands(commands):
     try:
         for line in sys.stdin.buffer:
-            commands.put(json.loads(line))
+            command = json.loads(line)
+            if command.get("shutdown"):
+                break
+            commands.put(command)
     finally:
         commands.put(None)
 
@@ -873,6 +885,190 @@ def playback(cv2, commands, tracking, emit, source):
         tracking.clear()
 
 
+class MediaLinkError(Exception):
+    pass
+
+
+def media_url(raw):
+    try:
+        url = urlsplit(raw)
+        if (url.scheme not in ("http", "https") or not url.hostname or url.username is not None
+                or url.password is not None or len(raw) > 4096 or any(c.isspace() for c in raw)):
+            raise ValueError
+        return url
+    except ValueError:
+        raise MediaLinkError("unsupported") from None
+
+
+def youtube_video(url):
+    host = url.hostname
+    parts = url.path.strip("/").split("/")
+    if host in ("youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com"):
+        if parts == ["watch"]:
+            video = parse_qs(url.query).get("v", [""])[0]
+        elif len(parts) == 2 and parts[0] in ("shorts", "embed", "live"):
+            video = parts[1]
+        else:
+            video = ""
+    elif host == "youtu.be":
+        video = parts[0] if len(parts) == 1 else ""
+    else:
+        return None
+    if not re.fullmatch(r"[a-zA-Z0-9_-]{11}", video):
+        raise MediaLinkError("unsupported")
+    return f"https://www.youtube.com/watch?v={video}"
+
+
+def media_extension(data):
+    # Sniff actual containers, including CDN links without file extensions.
+    # Web pages and stream manifests are never passed to the local decoder.
+    if data.startswith((b"GIF87a", b"GIF89a")):
+        return "gif"
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "png"
+    if data.startswith(b"\xff\xd8\xff"):
+        return "jpg"
+    if data.startswith(b"BM"):
+        return "bmp"
+    if data.startswith(b"RIFF"):
+        return {b"WEBP": "webp", b"AVI ": "avi"}.get(data[8:12])
+    if data.startswith(b"\x1a\x45\xdf\xa3"):
+        return "webm"
+    if data[4:8] in (b"ftyp", b"moov", b"mdat", b"wide"):
+        return "mp4"
+    return None
+
+
+def direct_media(url, folder):
+    request = Request(url, headers={"User-Agent": "Aurora-Viewer Webcam Tracking"})
+    with urlopen(request, timeout=8) as response:
+        media_url(response.geturl())
+        size = response.headers.get("Content-Length")
+        if size and size.isdecimal() and int(size) > MEDIA_LIMIT:
+            raise MediaLinkError("too_large")
+        header = response.read(64)
+        extension = media_extension(header)
+        if extension is None:
+            raise MediaLinkError("unsupported")
+        path = folder / f"media.{extension}"
+        with path.open("wb") as output:
+            output.write(header)
+            remaining = MEDIA_LIMIT - len(header)
+            while chunk := response.read(128 * 1024):
+                remaining -= len(chunk)
+                if remaining < 0:
+                    raise MediaLinkError("too_large")
+                output.write(chunk)
+    return path
+
+
+def youtube_media(url, folder):
+    try:
+        import yt_dlp
+    except ImportError:
+        raise MediaLinkError("dependencies") from None
+
+    class Logger:
+        def debug(self, _message):
+            pass
+
+        def warning(self, _message):
+            pass
+
+        def error(self, _message):
+            pass
+
+    blocked = None
+
+    def check(info, *, incomplete):
+        nonlocal blocked
+        if info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming"):
+            blocked = "unavailable"
+        return blocked
+
+    runtime = os.environ.get("AURORA_WEBCAM_DENO")
+    has_deno = shutil.which(runtime or "deno") is not None
+    can_merge = shutil.which("ffmpeg") is not None
+    muxed = "b[ext=mp4][height<=480][protocol=https]"
+    split = "bv[ext=mp4][height<=480][protocol=https]+ba[ext=m4a][protocol=https]"
+
+    def limit_download(status):
+        nonlocal blocked
+        if status.get("downloaded_bytes", 0) > MEDIA_LIMIT:
+            blocked = "too_large"
+            raise MediaLinkError(blocked)
+
+    # Prefer ready-to-play MP4 with audio. Fall back to merging separate
+    # MP4/M4A tracks when the player only offers those formats.
+    options = {
+        "format": "/".join(part for part in (muxed, split if can_merge else None, "b[ext=mp4][height<=720][protocol=https]") if part),
+        "merge_output_format": "mp4",
+        "outtmpl": str(folder / "media.%(ext)s"),
+        "noplaylist": True,
+        "max_filesize": MEDIA_LIMIT,
+        "socket_timeout": 8,
+        "retries": 1,
+        "fragment_retries": 1,
+        "quiet": True,
+        "noprogress": True,
+        "cachedir": False,
+        "logger": Logger(),
+        "match_filter": check,
+        "progress_hooks": [limit_download],
+        "js_runtimes": {"deno": {"path": runtime} if runtime else {}},
+    }
+    try:
+        with yt_dlp.YoutubeDL(options) as resolver:
+            resolver.extract_info(url, download=True)
+    except yt_dlp.utils.DownloadError:
+        raise MediaLinkError(blocked or ("unavailable" if has_deno and can_merge else "dependencies")) from None
+    path = folder / "media.mp4"
+    if not path.is_file():
+        raise MediaLinkError(blocked or "too_large")
+    if path.stat().st_size > MEDIA_LIMIT:
+        raise MediaLinkError("too_large")
+    return path
+
+
+def download_media(raw, folder):
+    url = media_url(raw)
+    youtube = youtube_video(url)
+    return youtube_media(youtube, folder) if youtube else direct_media(raw, folder)
+
+
+def resolve_media(commands, raw, folder):
+    script = globals().get("_aurora_script") or Path(__file__).read_bytes()
+    hide_window = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
+    # A dedicated downloader can be canceled even during DNS, extraction or
+    # a blocking network read without interrupting the pose models.
+    with subprocess.Popen(
+        [sys.executable, "-I", "-u", "-c", SCRIPT_BOOT, "--download-media", raw, str(folder)],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, **hide_window,
+    ) as process:
+        try:
+            process.stdin.write(f"{len(script)}\n".encode("ascii") + script)
+            process.stdin.close()
+            deadline = time.monotonic() + 150
+            while process.poll() is None:
+                try:
+                    return None, commands.get(timeout=0.08)
+                except Empty:
+                    if time.monotonic() >= deadline:
+                        raise MediaLinkError("download")
+            packet = json.loads(process.stdout.read(8192))
+            if "error" in packet:
+                raise MediaLinkError(packet["error"])
+            path = folder / Path(packet["file"]).name
+            if not path.is_file():
+                raise MediaLinkError("download")
+            return path, None
+        except (OSError, ValueError, KeyError):
+            raise MediaLinkError("download") from None
+        finally:
+            if process.poll() is None:
+                process.kill()
+
+
 def worker():
     import cv2
     cv2.setNumThreads(1)
@@ -897,6 +1093,8 @@ def worker():
     Thread(target=read_commands, args=(commands,), daemon=True).start()
     inference = Thread(target=infer, name="landmarks")
     inference.start()
+    folder = None
+    cached = None
     try:
         source = commands.get()
         while source is not None:
@@ -904,22 +1102,52 @@ def worker():
                 source = commands.get()
                 continue
             try:
+                if raw := source.get("url"):
+                    if not cached or cached[0] != raw:
+                        if folder is not None:
+                            folder.cleanup()
+                        cached = None
+                        folder = TemporaryDirectory(prefix="aurora-webcam-", ignore_cleanup_errors=True)
+                        path, next_source = resolve_media(commands, raw, Path(folder.name))
+                        if path is None:
+                            source = next_source
+                            continue
+                        cached = raw, path
+                    path = cached[1]
+                    emit({"id": source["id"], "link_media": str(path)})
+                    kind = "image" if path.suffix in (".gif", ".png", ".jpg", ".bmp", ".webp") else "video"
+                    source[kind] = str(path)
                 source = playback(cv2, commands, tracking, emit, source)
-            except (ImportError, RuntimeError, cv2.error) as error:
+            except MediaLinkError as error:
+                emit({"id": source["id"], "link_error": str(error)})
+                source = commands.get()
+            except (ImportError, RuntimeError, OSError, cv2.error) as error:
                 emit({"id": source["id"], "error": str(error)})
                 source = commands.get()
     finally:
         tracking.close()
         inference.join()
+        if folder is not None:
+            folder.cleanup()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--list-cameras", action="store_true")
+    parser.add_argument("--download-media", nargs=2, metavar=("URL", "DIRECTORY"))
     options = parser.parse_args()
     try:
         if options.list_cameras:
             list_cameras()
+        elif options.download_media:
+            raw, folder = options.download_media
+            try:
+                path = download_media(raw, Path(folder))
+                print(json.dumps({"file": path.name}))
+            except MediaLinkError as error:
+                print(json.dumps({"error": str(error)}))
+            except (OSError, ValueError):
+                print(json.dumps({"error": "download"}))
         else:
             worker()
     except (ImportError, RuntimeError) as error:

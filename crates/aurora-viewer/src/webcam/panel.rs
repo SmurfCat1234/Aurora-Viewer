@@ -7,7 +7,10 @@ use std::{
 
 use aurora_i18n::tr;
 
-use super::{Camera, Channels, Device, FileKind, IMAGE_EXTENSIONS, PreviewImage, Source, VIDEO_EXTENSIONS, WINDOW, Webcam, companion};
+use super::{
+    Camera, Channels, Device, FileKind, IMAGE_EXTENSIONS, LinkError, PreviewImage, Source, VIDEO_EXTENSIONS, WINDOW, Webcam,
+    enumerate_cameras,
+};
 use crate::{theme::Palette, ui::widgets};
 
 pub(super) struct Panel {
@@ -19,6 +22,7 @@ pub(super) struct Panel {
     devices: Vec<Device>,
     discovery: Option<mpsc::Receiver<Vec<Device>>>,
     picker: Option<mpsc::Receiver<Option<PathBuf>>>,
+    link: String,
     demo_clips: Vec<PathBuf>,
     texture: Option<egui::TextureHandle>,
     last_preview: Option<Instant>,
@@ -37,6 +41,7 @@ impl Default for Panel {
             devices: Vec::new(),
             discovery: None,
             picker: None,
+            link: String::new(),
             demo_clips: Vec::new(),
             texture: None,
             last_preview: None,
@@ -75,13 +80,7 @@ impl Panel {
         if std::thread::Builder::new()
             .name("webcam-devices".into())
             .spawn(move || {
-                let devices = companion()
-                    .arg("--list-cameras")
-                    .output()
-                    .ok()
-                    .filter(|out| out.status.success())
-                    .and_then(|out| serde_json::from_slice(&out.stdout).ok())
-                    .unwrap_or_default();
+                let devices = enumerate_cameras().unwrap_or_default();
                 let _ = send.send(devices);
             })
             .is_ok()
@@ -161,6 +160,7 @@ impl Panel {
                 .find(|device| device.camera == *camera)
                 .map_or_else(|| tr!("webcam-camera-number", number = camera.index), |device| device.name.clone()),
             Source::File(file, _) => file_label(file),
+            Source::Link(_) => tr!("webcam-link-source").to_owned(),
         };
         let mut play_video = false;
         egui::ComboBox::from_id_salt("webcam-source")
@@ -191,7 +191,7 @@ impl Panel {
     fn next_camera(&mut self) {
         let index = match self.source {
             Source::Camera(camera) => self.devices.iter().position(|device| device.camera == camera),
-            Source::File(..) => None,
+            Source::File(..) | Source::Link(_) => None,
         };
         let next = index.map_or(0, |index| (index + 1) % self.devices.len());
         self.source = Source::Camera(self.devices[next].camera);
@@ -266,7 +266,7 @@ impl Webcam {
             self.panel.update_preview(ctx, preview);
         }
         let mut open = self.open;
-        let mut floater = widgets::Floater::new(WINDOW, tr!("webcam-title"), egui::pos2(72.0, 120.0), egui::vec2(460.0, 555.0))
+        let mut floater = widgets::Floater::new(WINDOW, tr!("webcam-title"), egui::pos2(72.0, 120.0), egui::vec2(460.0, 585.0))
             .framed_header("video-filled");
         floater.min_size = egui::vec2(390.0, 485.0);
         floater.show(ctx, palette, &mut open, |ui| {
@@ -295,7 +295,7 @@ impl Webcam {
 
     fn source_controls(&mut self, ui: &mut egui::Ui, palette: &Palette) -> bool {
         widgets::section_header(ui, palette, "video-filled", &tr!("webcam-input"));
-        let play_video = self.panel.chooser(ui);
+        let mut play_video = self.panel.chooser(ui);
         ui.horizontal_wrapped(|ui| {
             if ui
                 .add_enabled(self.panel.discovery.is_none(), egui::Button::new(tr!("webcam-refresh")))
@@ -314,6 +314,27 @@ impl Webcam {
                 .clicked()
             {
                 self.panel.pick_file();
+            }
+        });
+        ui.horizontal(|ui| {
+            let label = tr!("webcam-link-play");
+            let font = egui::TextStyle::Button.resolve(ui.style());
+            let button_width = ui.fonts_mut(|fonts| fonts.layout_no_wrap(label.to_owned(), font, egui::Color32::WHITE).size().x);
+            let button_width = (button_width + 22.0).max(90.0);
+            let field = ui.add_sized(
+                [(ui.available_width() - button_width - ui.spacing().item_spacing.x).max(120.0), 26.0],
+                egui::TextEdit::singleline(&mut self.panel.link)
+                    .char_limit(4096)
+                    .hint_text(tr!("webcam-link-placeholder")),
+            );
+            let url = self.panel.link.trim();
+            let valid = url.split_once("://").is_some_and(|(scheme, rest)| {
+                (scheme.eq_ignore_ascii_case("https") || scheme.eq_ignore_ascii_case("http")) && !rest.is_empty()
+            });
+            let enter = field.lost_focus() && ui.input(|input| input.key_pressed(egui::Key::Enter));
+            if ui.add_enabled(valid, egui::Button::new(label)).clicked() || (valid && enter) {
+                self.panel.source = Source::Link(url.to_owned());
+                play_video = true;
             }
         });
         play_video
@@ -349,6 +370,8 @@ impl Webcam {
         });
         let empty = if self.error {
             tr!("webcam-preview-error")
+        } else if self.running && matches!(self.panel.source, Source::Link(_)) && self.link_path.is_none() {
+            tr!("webcam-link-fetching")
         } else if self.running {
             tr!("webcam-preview-opening")
         } else {
@@ -358,7 +381,14 @@ impl Webcam {
     }
 
     fn can_loop(&self) -> bool {
-        !self.still && matches!(self.panel.source.file_kind(), Some(FileKind::Video | FileKind::Gif))
+        !self.still && matches!(self.current_file_kind(), Some(FileKind::Video | FileKind::Gif))
+    }
+
+    fn current_file_kind(&self) -> Option<FileKind> {
+        self.link_path
+            .as_deref()
+            .and_then(FileKind::of)
+            .or_else(|| self.panel.source.file_kind())
     }
 
     fn controls(&mut self, ui: &mut egui::Ui, palette: &Palette) {
@@ -391,7 +421,15 @@ impl Webcam {
         });
         ui.colored_label(palette.muted, tr!("webcam-local"));
         if self.error {
-            ui.colored_label(palette.danger, tr!("webcam-error"));
+            let detail = match self.link_error {
+                Some(LinkError::Unsupported) => tr!("webcam-link-unsupported"),
+                Some(LinkError::Dependencies) => tr!("webcam-link-dependencies"),
+                Some(LinkError::Unavailable) => tr!("webcam-link-unavailable"),
+                Some(LinkError::TooLarge) => tr!("webcam-link-too-large"),
+                Some(LinkError::Download) => tr!("webcam-link-failed"),
+                None => tr!("webcam-error"),
+            };
+            ui.colored_label(palette.danger, detail);
         }
     }
 
@@ -413,7 +451,7 @@ impl Webcam {
                     self.neutral = fresh.map(|(_, frame)| frame.clone());
                 }
             } else {
-                let label = match self.panel.source.file_kind() {
+                let label = match self.current_file_kind() {
                     Some(FileKind::Image) => tr!("webcam-track-image"),
                     Some(_) => tr!("webcam-replay"),
                     None => tr!("webcam-start"),
@@ -422,7 +460,7 @@ impl Webcam {
                     self.start();
                 }
             }
-            if self.panel.source.file_kind() == Some(FileKind::Video) {
+            if self.current_file_kind() == Some(FileKind::Video) {
                 let mut muted = self.video_muted.load(Ordering::Relaxed);
                 if widgets::checkbox(ui, palette, &mut muted, tr!("webcam-mute-video")).changed() {
                     self.video_muted.store(muted, Ordering::Relaxed);

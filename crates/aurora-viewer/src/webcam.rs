@@ -20,6 +20,7 @@ pub(crate) use retarget::Pose;
 
 pub const WINDOW: &str = "webcam_tracking";
 const SCRIPT: &str = include_str!("webcam_capture.py");
+const LOAD_SCRIPT: &str = "import sys; _aurora_script = sys.stdin.buffer.read(int(sys.stdin.buffer.readline())); exec(compile(_aurora_script, '<aurora-webcam>', 'exec'))";
 const FRAME_BYTES: u64 = 131_072;
 
 #[derive(Clone, Copy, Deserialize)]
@@ -47,6 +48,8 @@ struct Sample {
     frame: Option<Frame>,
     preview: Option<PreviewFrame>,
     video_started: Option<bool>,
+    link_media: Option<PathBuf>,
+    link_error: Option<LinkError>,
     still: Option<bool>,
     ended: Option<bool>,
     error: Option<String>,
@@ -87,6 +90,8 @@ struct Latest {
     frame: Option<(Instant, Frame)>,
     preview: Option<PreviewImage>,
     video_started: Option<Instant>,
+    link_media: Option<PathBuf>,
+    link_error: Option<LinkError>,
     still: bool,
     finished: Option<bool>,
 }
@@ -108,6 +113,17 @@ struct Device {
 enum Source {
     Camera(Camera),
     File(PathBuf, FileKind),
+    Link(String),
+}
+
+#[derive(Clone, Copy, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum LinkError {
+    Unsupported,
+    Dependencies,
+    Unavailable,
+    TooLarge,
+    Download,
 }
 
 const VIDEO_EXTENSIONS: &[&str] = &["mp4", "m4v", "mov", "webm", "mkv", "avi"];
@@ -142,6 +158,7 @@ impl Source {
         match self {
             Self::Camera(_) => None,
             Self::File(_, kind) => Some(*kind),
+            Self::Link(_) => Some(FileKind::Video),
         }
     }
 }
@@ -153,7 +170,7 @@ impl Default for Source {
 }
 
 struct Capture {
-    child: Child,
+    child: Option<Child>,
     input: ChildStdin,
     serial: u64,
     latest: Arc<Mutex<Latest>>,
@@ -162,7 +179,8 @@ struct Capture {
 fn companion() -> Command {
     let python = std::env::var_os("AURORA_WEBCAM_PYTHON").unwrap_or_else(|| "python".into());
     let mut command = Command::new(python);
-    command.args(["-I", "-u", "-c", SCRIPT]).stdin(Stdio::null());
+    // Keep the script out of the Windows command line (32,767 characters).
+    command.args(["-I", "-u", "-c", LOAD_SCRIPT]).stdin(Stdio::piped());
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -171,15 +189,36 @@ fn companion() -> Command {
     command
 }
 
+fn send_script(input: &mut ChildStdin) -> std::io::Result<()> {
+    writeln!(input, "{}", SCRIPT.len())?;
+    input.write_all(SCRIPT.as_bytes())
+}
+
+fn enumerate_cameras() -> std::io::Result<Vec<Device>> {
+    let mut child = companion().arg("--list-cameras").stdout(Stdio::piped()).spawn()?;
+    send_script(&mut child.stdin.take().expect("piped webcam stdin"))?;
+    let output = child.wait_with_output()?;
+    if output.status.success() {
+        Ok(serde_json::from_slice(&output.stdout)?)
+    } else {
+        Ok(Vec::new())
+    }
+}
+
 impl Capture {
     fn launch() -> std::io::Result<Self> {
         let mut command = companion();
-        command.stdin(Stdio::piped()).stdout(Stdio::piped());
+        command.stdout(Stdio::piped());
         let mut child = command.spawn()?;
-        let input = child.stdin.take().expect("piped webcam stdin");
+        let mut input = child.stdin.take().expect("piped webcam stdin");
+        if let Err(error) = send_script(&mut input) {
+            let _ = child.kill();
+            let _ = child.wait();
+            return Err(error);
+        }
         let stdout = child.stdout.take().expect("piped webcam stdout");
         let capture = Self {
-            child,
+            child: Some(child),
             input,
             serial: 0,
             latest: Arc::default(),
@@ -205,6 +244,13 @@ impl Capture {
                         }
                         if sample.id.is_none() || slot.id != sample.id {
                             continue;
+                        }
+                        if let Some(error) = sample.link_error {
+                            slot.link_error = Some(error);
+                            slot.finished = Some(true);
+                        }
+                        if sample.link_media.is_some() {
+                            slot.link_media = sample.link_media;
                         }
                         if let Some(error) = sample.error {
                             log::warn!("webcam input failed: {error}");
@@ -248,8 +294,13 @@ impl Capture {
                 serde_json::json!({"id": id, "video": path.to_string_lossy(), "loop_video": loop_video})
             }
             Source::File(path, _) => serde_json::json!({"id": id, "image": path.to_string_lossy(), "loop_video": loop_video}),
+            Source::Link(url) => serde_json::json!({"id": id, "url": url, "loop_video": loop_video}),
         };
         self.send(message)
+    }
+
+    fn try_wait(&mut self) -> std::io::Result<Option<std::process::ExitStatus>> {
+        self.child.as_mut().expect("active webcam process").try_wait()
     }
 
     fn stop(&mut self) {
@@ -260,8 +311,20 @@ impl Capture {
 
 impl Drop for Capture {
     fn drop(&mut self) {
-        let _ = self.child.kill();
-        let _ = self.child.wait();
+        if let Some(mut child) = self.child.take() {
+            // Give the worker time to cancel a download and remove its files.
+            let _ = self.send(serde_json::json!({"shutdown": true}));
+            std::thread::spawn(move || {
+                for _ in 0..30 {
+                    if !matches!(child.try_wait(), Ok(None)) {
+                        return;
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(100));
+                }
+                let _ = child.kill();
+                let _ = child.wait();
+            });
+        }
     }
 }
 
@@ -276,6 +339,8 @@ pub(crate) struct Webcam {
     panel: panel::Panel,
     mirror: bool,
     error: bool,
+    link_error: Option<LinkError>,
+    link_path: Option<PathBuf>,
     latest: Option<(Instant, Frame)>,
     rendered: Option<(Instant, Frame)>,
     neutral: Option<Frame>,
@@ -308,13 +373,14 @@ impl Webcam {
         self.neutral = None;
         self.preview = None;
         self.clip_audio = None;
+        self.link_path = None;
         self.panel.clear_preview();
         self.fps = 0.0;
     }
 
     fn warm(&mut self) -> std::io::Result<&mut Capture> {
         if let Some(capture) = &mut self.capture
-            && !matches!(capture.child.try_wait(), Ok(None))
+            && !matches!(capture.try_wait(), Ok(None))
         {
             self.capture = None;
         }
@@ -340,6 +406,7 @@ impl Webcam {
 
     fn start(&mut self) {
         self.clear_input();
+        self.link_error = None;
         let source = self.panel.source.clone();
         let loop_video = self.panel.loop_video;
         match self.warm().and_then(|capture| capture.start(&source, loop_video)) {
@@ -366,7 +433,7 @@ impl Webcam {
             return None;
         }
         let capture = self.capture.as_mut()?;
-        let exit = capture.child.try_wait();
+        let exit = capture.try_wait();
         if !matches!(exit, Ok(None)) {
             self.capture = None;
             self.clear_input();
@@ -382,14 +449,20 @@ impl Webcam {
                 slot.preview.take(),
                 slot.frame.take(),
                 slot.video_started.take(),
+                slot.link_media.take(),
+                slot.link_error.take(),
                 slot.still,
             )
         });
-        if let Some((finished, preview, sample, video_started, still)) = pending {
+        if let Some((finished, preview, sample, video_started, link_media, link_error, still)) = pending {
             if let Some(error) = finished {
                 self.stop();
                 self.error = error;
+                self.link_error = link_error;
                 return None;
+            }
+            if let Some(path) = link_media {
+                self.link_path = Some(path);
             }
             if preview.is_some() {
                 self.preview = preview;
@@ -400,7 +473,12 @@ impl Webcam {
             }
             if let Some(started) = video_started {
                 self.clip_audio = None;
-                if let (Some(engine), Source::File(path, FileKind::Video)) = (audio, &self.panel.source) {
+                let path = match &self.panel.source {
+                    Source::File(path, FileKind::Video) => Some(path),
+                    Source::Link(_) => self.link_path.as_ref(),
+                    _ => None,
+                };
+                if let Some((engine, path)) = audio.zip(path) {
                     self.clip_audio = engine.play_local_media(path.clone(), started, self.video_muted.clone());
                 }
             }
