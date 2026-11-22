@@ -1271,7 +1271,6 @@ import-mesh = মেশ
 import-bulk = একাধিক
 import-choose-files = ফাইল যোগ করুন…
 import-loading = ফাইল পড়া হচ্ছে...
-import-limit-bulk-1k = টেক্সচার ১০২৪ পিক্সেল পর্যন্ত সীমাবদ্ধ করো
 import-files = ফাইল
 import-destination = গন্তব্য
 import-no-folder = কোন ফোল্ডার পাওয়া যাচ্ছে না
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = ঝাঁকুনিযুক্ত সংঘর্ষের শিকড় তৈরি করো
 import-physics-convex-help = ঝাঁকুনিযুক্ত শিকড় সংঘর্ষের আকার অনুমান করে এবং খোলা স্থান পূর্ণ করতে পারে । দৃশ্যমান LOD- এর পরিবর্তন হয় না । একটি উদ্ধৃতির জন্য অনুরোধ করার আগে পদার্থবিদ্যার প্রাকদর্শন পরীক্ষা করুন ।
-import-max-size = মাপ ১০২৪ x ১০২৫- এ সীমাবদ্ধ করো
 import-texture-size = আপলোডের মাপ: { $width } × { $height } পিক্সেল
 import-lossless = লসলেস কম্প্রেশন
 import-strip-alpha = প্রায় অস্বচ্ছ আলফা চ্যানেল অপসারণ করো
@@ -3488,7 +3486,6 @@ ui-sound-object-creation = বস্তু তৈরি করা হচ্ছ�
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = তৈরি করা যাবে না: অবৈধ ধরন, মাপ অথবা আপলোডের সংখ্যা।
 ui-contacts-create = তৈরি করো
 build-ui-tools-create-ctrl-4 = তৈরি করো (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = প্রাইম তৈরি করো (Ctrl+4)
 ui-places-create-folder = ফোল্ডার তৈরি করো
 ui-inventory-context-create-folder-from-selection = নির্বাচিত অংশ থেকে ফোল্ডার তৈরি করুন
 common-create-favorite = পছন্দের তালিকা তৈরি করো
@@ -5542,14 +5539,12 @@ ui-place-details-edit-this-landmark = এই চিহ্নটি সম্প�
 ui-appearance-edit-this-outfit = এই পোশাকটি সম্পাদন করুন
 ui-appearance-show-current-outfit = তালিকায় বর্তমান পোশাক প্রদর্শন করা হবে
 ui-appearance-current-outfit-not-in-my-outfits = বর্তমান পোশাকটি আমার পোশাকের মধ্যে সংরক্ষিত নয়
-ui-bars-edit-objects-ctrl-3 = বস্তু সম্পাদন করো (Ctrl+3)
 build-ui-tools-edit-parcel = প্যাকেজ সম্পাদন করুন
 ui-context-edit-shape = আকৃতি সম্পাদন করো
 ui-context-export-shape-xml = রং
 ui-context-edit-outfit = পোশাক সম্পাদন করুন
 ui-context-edit-pbr-material = PBR উপাদান সম্পাদন করুন
 ui-context-edit-land = দেশ সম্পাদন করো
-ui-bars-edit-land-ctrl-5 = দেশ সম্পাদন করো (Ctrl+5)
 ui-land-options-edit-land = দেশ সম্পাদন করো:
 build-ui-tools-edit-selected-land = নির্বাচিত ভূমি সম্পাদন করুন
 ui-profile-edit-text = টেক্সট সম্পাদন করুন
@@ -9033,7 +9028,6 @@ common-for-sale = বিক্রির জন্য:
 ui-land-general-for-sale-to = বিক্রির জন্য:
 ui-profile-coming-soon = শীঘ্রই আসছে
 ui-profile-aurora-my-profile = আমার প্রোফাইল
-ui-profile-aurora-help = একজন বাসিন্দার প্রোফাইল: তারা কে, তাদের সাথে আপনি কি করতে পারেন, তারপর তাদের পছন্দের স্থান, বিজ্ঞাপন, প্রথম জীবন, ওয়েব প্রোফাইলের এবং আপনার নোট। পছন্দে › অরোরা › প্রোফাইলে পুরোনো প্রদর্শক উইন্ডো ফিরে আনে।
 ui-profile-aurora-conversation = আড্ডা
 ui-profile-aurora-call = কল
 ui-profile-aurora-add-friend = বন্ধু হিসেবে যোগ করো
@@ -9065,7 +9059,6 @@ ui-profile-aurora-their-map = ম্যাপে তাদের খুঁজে
 ui-profile-aurora-their-objects = তাদের অবজেক্ট পরিবর্তন, মুছে ফেলা অথবা গ্রহণ করুন
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = প্রোফাইল
-ui-profile-aurora-tab-picks = পছন্দের স্থান
 ui-profile-aurora-tab-classifieds = শ্রেণীবিভাগ
 ui-profile-aurora-tab-first-life = প্রথম জীবন
 ui-profile-aurora-tab-web = ওয়েব
@@ -9099,13 +9092,7 @@ ui-profile-aurora-unsaved = অসংরক্ষিত পরিবর্তন
 ui-profile-aurora-part-bio = জীব
 ui-profile-aurora-part-first-life = প্রথম জীবন
 ui-profile-aurora-part-notes = নোট
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } স্থান
-       *[other] { $count } স্থান
-    }
 ui-profile-aurora-part-classified = শ্রেণীবিভাগ করা
-ui-profile-aurora-snapshot = স্থানের ছবি
 ui-profile-aurora-teleport = টেলিপোর্ট
 ui-profile-aurora-description = বর্ণনা
 ui-profile-aurora-category = শ্রেণীবিভাগ
@@ -9121,11 +9108,6 @@ ui-profile-aurora-copy-slurl = SLURL অনুলিপি করুন
 ui-profile-aurora-here = আমার অবস্থান এখানে
 ui-profile-aurora-add-here = আমি যেখানে আছি সেটি যোগ করো
 ui-profile-aurora-picks-count = { $count } এর { $limit } (অ্যাকাউন্ট সীমা)
-ui-profile-aurora-picks-empty = এখনো কোন পছন্দের স্থান নেই
-ui-profile-aurora-picks-empty-text = { $name } কোন স্থান শেয়ার করা হয়নি।
-ui-profile-aurora-picks-empty-own = আপনার পছন্দের স্থানগুলি শেয়ার করুন
-ui-profile-aurora-picks-empty-own-text = অন্য বাসিন্দারা আপনার প্রোফাইলে তাদের দেখতে পাবে এবং এক ক্লিকে সেখানে টেলিপোর্ট করবে।
-ui-profile-aurora-delete-pick = স্থান মুছে ফেলো "{ $name }"?
 ui-profile-aurora-classifieds-empty = কোন শ্রেণীবিভাগ নেই
 ui-profile-aurora-classifieds-empty-text = { $name } কোন শ্রেণীবিভাগ প্রকাশিত হয়নি।
 ui-profile-aurora-classifieds-empty-own = একটি স্থান বা সার্ভিসের পরিচয় প্রদান করুন
@@ -14513,10 +14495,6 @@ build-layout-drop-here = এখানে ফেলে দাও
 build-layout-drag-hint = সরাতে টেনে আনুন । উজ্জ্বল করা লক্ষ্যবস্তুতে ছেড়ে দিন ।
 build-layout-export = রপ্তানি
 # Compact material layout
-build-material-surface = পৃষ্ঠ
-build-material-relief-reflection = মুক্তকরণ এবং প্রতিফলন
-build-material-lighting = আলোর প্রতিক্রিয়া
-build-material-placement = টেক্সচার স্থাপন
 build-material-diffuse-tint = ঝলমলে রং
 build-material-specular-tint = প্রতিফলিত রং
 build-material-base-tint = মৌলিক রং
@@ -15874,7 +15852,7 @@ ui-options-camera-still-while-posing = পোজ দেওয়ার সময় �
 ui-options-camera-still-while-posing-tip = আপনি যখন পোজ দিচ্ছেন, তখন ক্যামেরা আভাটার অনুসরণ বন্ধ করে দেয়, এর ফোকাস এবং শরীরের অংশগুলোর দিকে নজর রাখে, এবং হাঁটলে এটি পুনরায় সেট করা হয় না। কক্ষপথ, জুম, প্যান এবং প্রাক-নির্ধারিত মানগুলি এখনও কাজ করে।
 ui-options-group-emotes-hint = Aurora চ্যাট স্টাইলে /me waves-এর মতো কোনো ইমোট ঠিক আগে বা পরে একই ব্যক্তি যে বার্তা পাঠিয়েছেন, তার শিরোনামের নিচেই দেখানো হয়। ইমোটের জন্য আলাদা শিরোনাম হয় না।
 content-perms-nested = বস্তুর মধ্যে বস্তু অন্তর্ভুক্ত করো
-content-perms-nested-help = এটি ইনস্টলকৃত বস্তুর বিষয়বস্তুও সম্পাদন করে, সর্বোচ্চ পাঁচ স্তর গভীরে । প্রতিটি বস্তুকে প্রাথমিকের দু' মিটার উপরে রাখা হয় যেখানে এটি রয়েছে । এর চলমান স্ক্রিপ্ট বন্ধ করা হয়, এর বিষয়বস্থা পরিবর্তন করা হয় এবং তার স্ক্রিপ্ট পুনরায় আরম্ভ করা হয় । বস্তুটি তখন কন্টেইনার- এ সংরক্ষণ করা হয়। কনটেইনারের মধ্যে বস্তুর অনুমতি নির্ধারণ করা হয় ও পরীক্ষা করা হয় পৃথিবীতে এর অস্থায়ী কপি মুছে ফেলার পূর্বে । আপনি যে বস্তুগুলি কপি করতে পারবেন না, স্থানান্তর করতে পারেন না অথবা পরিবর্তন করতে পারেন তা বন্ধ অবস্থায় থাকে । আপনার অবস্থান নির্মাণ করার জন্য অনুমতি প্রয়োজন ।
+content-perms-nested-help = এতে সর্বোচ্চ 5 স্তর পর্যন্ত ভেতরের অবজেক্টের সামগ্রীও বদলায়। প্রতিটি অবজেক্টকে যে প্রিমে রাখা আছে, তার 2 মিটার ওপরে জগতে রাখা হয়। চলমান স্ক্রিপ্ট থামিয়ে সামগ্রী বদলানো হয়, স্ক্রিপ্ট আবার চালু করে অবজেক্টটি যথাস্থানে সংরক্ষণ করা হয়। জগতের অস্থায়ী কপি মুছবার আগে ফেরত রাখা অবজেক্টের অনুমতি সেট ও যাচাই করা হয়। যেগুলো কপি, হস্তান্তর বা বদলানোর অনুমতি নেই, সেগুলো না খুলেই রাখা হয়। যেখানে অবজেক্ট রাখা হবে সেখানে নির্মাণের অনুমতি চাই।
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } বিষয়বস্তুতে অবজেক্ট খোলা হবে, ছাড়ো: { $skipped }.
@@ -16014,3 +15992,79 @@ phototools-director-lens = উইন্ডোটি খোলা থাকলে
 phototools-view-angle-viewfinder = ভিউফাইন্ডারের নিজস্ব প্রদর্শন কোণ আছে: এটি বন্ধ করা হলে আপনার কোণ ফিরে আসবে।
 ui-options-dof-show-focus-point = ফোকাস বিন্দু দেখাও
 ui-options-dof-show-focus-point-help = লেন্সের ফোকাস পয়েন্টের উপর একটি ছোট ক্রসহায়ার: হলুদ যখন এটি মুক্ত, লাল যখন এটি বন্ধ করা হয়েছে।
+
+### Updated release translations
+
+render-features-menu = রেন্ডারিং বৈশিষ্ট্য
+render-features-ui = ইন্টারফেস
+toolbar-command-ao-mini = মিনি AO
+keybinds-ui-feature = পুরো ইন্টারফেস দেখাও / আড়াল করো (রেন্ডারিং বৈশিষ্ট্য › UI)
+import-image-size-limit = ছবির সর্বোচ্চ মাপ
+import-image-size-single = ছবির সর্বোচ্চ মাপ
+import-image-size-inherit = সামগ্রিক সেটিং ({ $size } পিক্সেল)
+import-image-size-pixels = { $size } পিক্সেল
+import-image-size-inherit-help = গ্লোবাল বৈশিষ্ট্য নীচের ইম্পোর্ট- এর পাশে সীমা অনুসরণ করে। বর্তমান মানটি কোটেশনে দেখানো হবে। বড় ছবি স্বয়ংক্রিয়ভাবে নির্বাচিত সীমা পর্যন্ত সংকুচিত করা হবে।
+import-image-size-global-help = ইমপোর্ট করার জন্য ছবির সর্বোচ্চ আকার । ব্যক্তিগত ছবি এবং উপাদান নির্বাচন অগ্রাধিকার গ্রহণ করে । বড় ছবি স্বয়ংক্রিয়ভাবে সংকুচিত করা হয় ।
+ui-chat-applink-preferences-tip = পছন্দসমূহ-এ এই বৈশিষ্ট্যটি খোলো
+ui-options-bento-idle = Bento নিষ্ক্রিয় অ্যানিমেশন নির্ধারণ করুন
+ui-options-bento-idle-hint = অন্য সবগুলোর নিচে একটি অগ্রাধিকার ০ Bento অ্যানিমেশন চালায়, তাই হাত, মুখ, ডানা এবং লেজ একটি অ্যানিমেশনের পরে আটকে থাকার পরিবর্তে প্রাকৃতিক অবস্থানে ফিরে যায়; অন্যরাও এটি দেখতে পাবে
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] অবজেক্ট UUID অনুলিপি করা হয়েছে
+       *[other] অবজেক্ট UUIDs অনুলিপি করা হয়েছে
+    }
+ui-appearance-batch-choose-folder = { $folder } এ ছবি তোলার পোশাক
+ui-appearance-batch-all = সব পোশাক
+ui-appearance-batch-chosen = { $chosen } এর { $total }
+ui-appearance-batch-select-missing = ছবি ছাড়া
+ui-inventory-dialogs-detach-and-delete = খুলে মুছুন
+ui-inventory-dialogs-detach-and-delete-body = এই আইটেমগুলোর কিছু আপনার অ্যাভাটারে পরা আছে। প্রথমে সেগুলো খুলে তারপর ট্র্যাশে সরানো হবে।
+ui-inventory-delete-detach-cannot = পরা আইটেমগুলো আর খুলে মুছে ফেলা যাবে না।
+ui-inventory-delete-detach-refused = এই আইটেমটি সরিয়ে মুছে ফেলা যাবে না।
+ui-inventory-delete-detach-busy = আরেকটি ইনভেস্টমেন্ট পরিবর্তনের কাজ চলছে। শেষ হলে আবার চেষ্টা করুন।
+ui-inventory-delete-detach-timeout = পরা আইটেমগুলো খোলা যায়নি, তাই সেগুলো মুছে ফেলা হয়নি।
+common-modify = পরিবর্তন
+build-ui-contents-filters = বিষয়বস্তু ফিল্টার
+build-ui-contents-next-owner-permissions = পরবর্তী মালিকের অনুমতি
+ui-options-voice-output = শব্দ আউটপুট
+ui-options-voice-output-used-for-voice-chat = ভয়েস চ্যাটের জন্য ব্যবহৃত; বিশ্বের শব্দ, সঙ্গীত এবং মিডিয়া অডিও আউটপুট ব্যবহার করে
+ui-options-same-as-audio-output = অডিও আউটপুটের সমান
+ui-options-copy-setting-link = সেটিংস-এ লিঙ্ক অনুলিপি করুন
+ui-options-setting-unavailable = এই বৈশিষ্ট্যটি উপলব্ধ নয় ।
+ui-context-show-in-inventory-none = আপনার তালিকায় কোন বস্তু নেই যার নাম এই বস্তুর সমান।
+photo-vf-keep-framing = ফ্রেম রাখো
+ui-profile-aurora-help = একটি বসবাসকারীর প্রোফাইল: তারা কে, তাদের সাথে আপনি কি করতে পারেন, তারপর তাদের পছন্দ, বিজ্ঞাপন, প্রথম জীবন, ওয়েব প্রোফাইলের এবং আপনার নোট। পছন্দে › Aurora › প্রোফাইলে পুনরায় Legacy প্রদর্শক উইন্ডোটি এনেছে।
+ui-profile-aurora-tab-picks = পছন্দের সংগ্রহ
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] পছন্দের সংগ্রহ: { $count }
+       *[other] পছন্দের সংগ্রহ: { $count }
+    }
+ui-profile-aurora-snapshot = ছবি
+ui-profile-aurora-picks-empty = এখনো কোন পছন্দ নেই
+ui-profile-aurora-picks-empty-text = { $name } কোন পছন্দ শেয়ার করেননি।
+ui-profile-aurora-picks-empty-own = আপনার জন্য যা গুরুত্বপূর্ণ তা শেয়ার করুন
+ui-profile-aurora-picks-empty-own-text = আপনার পছন্দের জায়গা, মানুষ এবং জিনিসপত্র চিহ্নিত করতে পিক ব্যবহার করুন।
+ui-profile-aurora-delete-pick = নির্বাচন মুছে ফেলো "{ $name }"?
+script-search-whole-words = পুরো শব্দ
+people-groups-deactivate = নিষ্ক্রিয়
+ao-mini-title = মিনি AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: কোন অ্যানিমেশন নির্বাচিত হয়নি
+ao-quick-pin = ছোট আকারের খোলো AO উইন্ডো
+build-layout-button-icon = আইকন
+build-layout-button-label = লেবেল
+build-layout-button-both = আইকন এবং লেবেল
+build-detach-shown = তার নিজের উইন্ডোতে: এটি আড়াল করতে ক্লিক করুন। উইণ্ডোর শিরোনামের সাহায্যে নির্মাণ উইଣ୍ଡোর উপর তা টেনে এনে পুনরায় স্থাপন করুন।
+build-detach-hidden = তার নিজের উইন্ডোতে, লুকানো: এটি দেখানোর জন্য ক্লিক করুন ।
+build-material-save-as = বস্তুকে নতুন নামে সংরক্ষণ করো
+build-material-save-name = আপনার ইনভেস্টমেন্টে নতুন পদার্থের নাম:
+build-material-new-material = নতুন পদার্থ
+build-material-save-not-allowed = সংরক্ষণের জন্য প্রতিটি নির্বাচিত মুখে একটি PBR উপাদান, বস্তুর অনুলিপি এবং পরিবর্তন করার অধিকার এবং আপনার ইনভেস্টমেন্টের উপাদানের অনুলিপী প্রয়োজন যা অনুলিপন এবং পরিবর্তনের অধিকার সহ।
+build-material-saved = "{ $name }" পদার্থটি আপনার ইনভেস্টমেন্টে সংরক্ষণ করা হয়েছে।
+build-material-save-failed = বস্তুটি আপনার ইনভেন্টরিতে সংরক্ষণ করা যায়নি।
+toolbar-add-from-menu = টুলবার- এ যোগ করো
+toolbar-remove-from-menu = টুলবার থেকে অপসারণ করো
+toolbar-command-build-edit = বস্তু সম্পাদন করো
+toolbar-command-build-create = প্রাইম তৈরি করো
+toolbar-command-build-land = দেশ সম্পাদন করো

@@ -1271,7 +1271,6 @@ import-mesh = Mesh
 import-bulk = Meervoudig
 import-choose-files = Bestanden toevoegen…
 import-loading = Het lezen van bestanden…
-import-limit-bulk-1k = Texturen beperken tot 1024 px
 import-files = Bestanden
 import-destination = Bestemming
 import-no-folder = Geen map beschikbaar
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Maak convexe botsingsrompen
 import-physics-convex-help = Convexe rompen benaderen de botsingsvorm en kunnen openingen opvullen. Visuele LOD's blijven ongewijzigd. Controleer het fysicavoorbeeld voordat u een offerte aanvraagt.
-import-max-size = Beperk de grootte tot 1024 × 768
 import-texture-size = Upload grootte: { $width } × { $height } px
 import-lossless = Compressie zonder verlies
 import-strip-alpha = Verwijder het bijna ondoorzichtige alfakanaal
@@ -3488,7 +3486,6 @@ ui-sound-object-creation = Creatie van objecten
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Aanmaken geweigerd: ongeldig type, grootte of uploadaantal.
 ui-contacts-create = Aanmaken
 build-ui-tools-create-ctrl-4 = Aanmaken (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Prims maken (Ctrl+4)
 ui-places-create-folder = Maak een map aan
 ui-inventory-context-create-folder-from-selection = Map aanmaken vanuit selectie
 common-create-favorite = Maak favoriet aan
@@ -5542,14 +5539,12 @@ ui-place-details-edit-this-landmark = Deze bezienswaardigheid bewerken
 ui-appearance-edit-this-outfit = Bewerk deze outfit
 ui-appearance-show-current-outfit = Toon de huidige outfit in de lijst
 ui-appearance-current-outfit-not-in-my-outfits = De huidige outfit wordt niet opgeslagen in Mijn Outfits
-ui-bars-edit-objects-ctrl-3 = Objecten bewerken (Ctrl+3)
 build-ui-tools-edit-parcel = Pakket bewerken
 ui-context-edit-shape = Vorm bewerken
 ui-context-export-shape-xml = Exporteer vorm XML
 ui-context-edit-outfit = Outfit bewerken
 ui-context-edit-pbr-material = PBR materiaal bewerken
 ui-context-edit-land = Land bewerken
-ui-bars-edit-land-ctrl-5 = Land bewerken (Ctrl+5)
 ui-land-options-edit-land = Land bewerken:
 build-ui-tools-edit-selected-land = Geselecteerd land bewerken
 ui-profile-edit-text = Tekst bewerken
@@ -9033,7 +9028,6 @@ common-for-sale = Te koop: 1
 ui-land-general-for-sale-to = Te koop aan:
 ui-profile-coming-soon = Binnenkort beschikbaar
 ui-profile-aurora-my-profile = Bekijk mijn profiel
-ui-profile-aurora-help = Het profiel van een bewoner: wie ze zijn, wat je met hen kunt doen, dan hun favoriete plaatsen, advertenties, eerste leven, webprofiel en uw Voorkeuren › Aurora › Profielen brengt het venster van de Legacy Viewer terug.
 ui-profile-aurora-conversation = Gesprek
 ui-profile-aurora-call = Oproep
 ui-profile-aurora-add-friend = Voeg toe als vriend
@@ -9065,7 +9059,6 @@ ui-profile-aurora-their-map = Vind ze op de kaart
 ui-profile-aurora-their-objects = Wijzigen, verwijderen of nemen hun objecten
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Profiel
-ui-profile-aurora-tab-picks = Mijn favoriete plaatsen
 ui-profile-aurora-tab-classifieds = Kleine advertenties
 ui-profile-aurora-tab-first-life = Het eerste leven
 ui-profile-aurora-tab-web = Web
@@ -9099,13 +9092,7 @@ ui-profile-aurora-unsaved = Niet opgeslagen wijzigingen ({ $parts })
 ui-profile-aurora-part-bio = bio
 ui-profile-aurora-part-first-life = Het eerste leven
 ui-profile-aurora-part-notes = notities
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } plaats
-       *[other] { $count } plaatsen
-    }
 ui-profile-aurora-part-classified = geclassificeerd
-ui-profile-aurora-snapshot = Foto van de plaats
 ui-profile-aurora-teleport = Teleport
 ui-profile-aurora-description = Beschrijving
 ui-profile-aurora-category = CategoryName
@@ -9121,11 +9108,6 @@ ui-profile-aurora-copy-slurl = Kopieer de SLURL
 ui-profile-aurora-here = Mijn positie hier
 ui-profile-aurora-add-here = Voeg de plaats toe waar ik ben
 ui-profile-aurora-picks-count = { $count } of { $limit } (rekening limiet)
-ui-profile-aurora-picks-empty = Nog geen favoriete plek
-ui-profile-aurora-picks-empty-text = { $name } De eigenaar heeft nog geen plekken gedeeld.
-ui-profile-aurora-picks-empty-own = Deel uw favoriete plaatsen
-ui-profile-aurora-picks-empty-own-text = Andere bewoners zien ze op je profiel en teleporteren daar met één klik.
-ui-profile-aurora-delete-pick = Verwijder de plaats "{ $name }"?
 ui-profile-aurora-classifieds-empty = Nog geen advertenties
 ui-profile-aurora-classifieds-empty-text = { $name } Deze website heeft geen advertenties gepubliceerd.
 ui-profile-aurora-classifieds-empty-own = Een plaats of dienst bekend maken
@@ -14519,10 +14501,6 @@ build-layout-drop-here = Laat het hier vallen
 build-layout-drag-hint = Sleep om te verplaatsen. Laat los op een gemarkeerd doelwit.
 build-layout-export = Exporteren
 # Compact material layout
-build-material-surface = Oppervlak
-build-material-relief-reflection = Relief en reflectie
-build-material-lighting = Lichte reactie
-build-material-placement = Plaatsing van textuur
 build-material-diffuse-tint = Diffuse tint
 build-material-specular-tint = Een spiegelende tint
 build-material-base-tint = Basistint
@@ -15879,7 +15857,7 @@ ui-options-camera-still-while-posing = Houd de camera stil tijdens het poseren
 ui-options-camera-still-while-posing-tip = Terwijl je poseert, stopt de camera met het volgen van de avatar, de focus en lichaamsdelen. Lopen reset de camera niet. Orbit, zoom, pan en presets werken nog steeds.
 ui-options-group-emotes-hint = In de Aurora-chatstijl verschijnt een actie zoals ‘/me waves’ onder dezelfde kop als de berichten die dezelfde afzender vlak ervoor of erna verstuurt. De actie krijgt geen eigen kop.
 content-perms-nested = Objecten in objecten opnemen
-content-perms-nested-help = Dit bewerkt ook de inhoud van geneste objecten, tot vijf niveaus diep. Elk object wordt in de wereld geplaatst twee meter boven de primitief die het bevat. De draaiende scripts worden gestopt, de inhouden veranderd en de scripts opnieuw gestart. Het object wordt vervolgens weer opgeslagen in de container. De rechten van het object in de Container worden ingesteld en gecontroleerd voordat de tijdelijke kopie in de Wereld wordt verwijderd. Objecten die u niet kunt kopiëren, overbrengen of wijzigen blijven gesloten. U hebt toestemming nodig om te bouwen op de plaatsingslocatie.
+content-perms-nested-help = Bewerkt ook de inhoud van geneste objecten, tot 5 niveaus diep. Elk object wordt in de wereld geplaatst, 2 m boven de prim die het bevat. Actieve scripts worden gestopt, de inhoud wordt gewijzigd, scripts worden weer gestart en het object wordt terug opgeslagen. De rechten van het teruggeplaatste object worden ingesteld en gecontroleerd voordat de tijdelijke kopie in de wereld wordt verwijderd. Objecten die je niet mag kopiëren, overdragen of wijzigen, blijven dicht. Je hebt bouwrechten nodig op de plaats waar de objecten worden neergezet.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } Het object in de inhoud zal worden geopend, overgeslagen: { $skipped }.
@@ -16019,3 +15997,79 @@ phototools-director-lens = De lens van de Directeur wordt getoond terwijl het ve
 phototools-view-angle-viewfinder = De zoeker is eigenaar van de beeldhoek: die van jou komt terug als hij dichtgaat.
 ui-options-dof-show-focus-point = Scherpstelpunt weergeven
 ui-options-dof-show-focus-point-help = Een klein kruisje op het punt waar de lens scherpstelt: geel als het vrij is, rood als het vergrendeld is.
+
+### Updated release translations
+
+render-features-menu = Functies voor renderen
+render-features-ui = Interface
+toolbar-command-ao-mini = Klein AO-venster
+keybinds-ui-feature = De hele interface tonen / verbergen (Renderingfuncties › UI)
+import-image-size-limit = Maximale beeldgrootte
+import-image-size-single = Maximale beeldgrootte
+import-image-size-inherit = Algemene instelling ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = De algemene instelling volgt de limiet naast Importeren onderaan, waarvan de huidige waarde tussen haakjes wordt weergegeven. Grotere afbeeldingen worden automatisch verkleind tot de geselecteerde limiet.
+import-image-size-global-help = Maximale afbeeldingsgrootte voor importeren. Individuele afbeelding- en materiaalkeuzes hebben prioriteit. Grotere afbeeldingen worden automatisch verkleind.
+ui-chat-applink-preferences-tip = Open deze instelling in Voorkeuren
+ui-options-bento-idle = Fix Bento inactieve animatie
+ui-options-bento-idle-hint = Speelt een prioriteit 0 Bento animatie onder alle andere, dus handen, mond, vleugels en staart gaan terug naar een natuurlijke houding in plaats van vast te blijven zitten na een animatie; anderen zien het ook
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Object UUID gekopieerd
+       *[other] Object UUID's gekopieerd
+    }
+ui-appearance-batch-choose-folder = Outfits om te fotograferen in { $folder }
+ui-appearance-batch-all = Bekijk alle outfits
+ui-appearance-batch-chosen = { $chosen } van { $total }
+ui-appearance-batch-select-missing = Zonder afbeelding
+ui-inventory-dialogs-detach-and-delete = Afdoen en verwijderen
+ui-inventory-dialogs-detach-and-delete-body = Je avatar draagt enkele van deze items. Ze worden eerst afgedaan en daarna naar de prullenbak verplaatst.
+ui-inventory-delete-detach-cannot = De gedragen items kunnen niet meer worden afgedaan en verwijderd.
+ui-inventory-delete-detach-refused = Dit item kan niet worden afgenomen en verwijderd.
+ui-inventory-delete-detach-busy = Er is een nieuwe inventariswijziging aan de gang. Probeer het opnieuw zodra deze klaar is.
+ui-inventory-delete-detach-timeout = De gedragen items gingen niet af en zijn daarom niet verwijderd.
+common-modify = Wijzigen
+build-ui-contents-filters = Filters voor inhoud
+build-ui-contents-next-owner-permissions = Machtigingen van de volgende eigenaar
+ui-options-voice-output = De output van de stem
+ui-options-voice-output-used-for-voice-chat = Gebruikt voor voice chat; wereld geluid, muziek en media gebruiken Audio-uitgang
+ui-options-same-as-audio-output = Zelfde als audio-uitgang
+ui-options-copy-setting-link = Kopieer link naar instelling
+ui-options-setting-unavailable = Deze instelling is niet beschikbaar.
+ui-context-show-in-inventory-none = Geen enkel object in je inventaris heeft precies de naam van dit object.
+photo-vf-keep-framing = Houd de framing
+ui-profile-aurora-help = Het profiel van een bewoner: wie ze zijn, wat je met hen kunt doen, dan hun keuzes, advertenties, eerste leven, webprofiel en uw Voorkeuren › Aurora › Profielen brengt het venster van de Legacy Viewer terug.
+ui-profile-aurora-tab-picks = Uitgelicht
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Uitgelicht: { $count }
+       *[other] Uitgelicht: { $count }
+    }
+ui-profile-aurora-snapshot = Afbeelding
+ui-profile-aurora-picks-empty = Nog geen picks
+ui-profile-aurora-picks-empty-text = { $name } heeft geen keuzes gedeeld.
+ui-profile-aurora-picks-empty-own = Deel wat voor u belangrijk is
+ui-profile-aurora-picks-empty-own-text = Gebruik picks om plaatsen, mensen en dingen die u belangrijk vindt te markeren.
+ui-profile-aurora-delete-pick = De pick "{ $name }" verwijderen?
+script-search-whole-words = Volledige woorden
+people-groups-deactivate = Uitschakelen
+ao-mini-title = Klein AO-venster
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Geen animatie geselecteerd
+ao-quick-pin = Open mini AO venster
+build-layout-button-icon = Pictogram
+build-layout-button-label = Tekst
+build-layout-button-both = Pictogram en label
+build-detach-shown = In zijn eigen venster: klik om het te verbergen, sleep dat venster bij de titel naar het bouwvenster om het terug te zetten.
+build-detach-hidden = In een eigen venster, verborgen: klik om het te tonen.
+build-material-save-as = Materiaal opslaan als
+build-material-save-name = Naam van het nieuwe materiaal in je inventaris:
+build-material-new-material = Nieuw materiaal bestellen
+build-material-save-not-allowed = Voor het opslaan is een PBR-materiaal nodig op elk geselecteerd vlak, kopieer- en wijzigingsrechten voor het object en een kopie van het materiaal in uw inventaris met kopiëren- en wijzigingenrechten.
+build-material-saved = Materiaal "{ $name }" is toegevoegd aan je inventaris.
+build-material-save-failed = Het materiaal kon niet worden opgeslagen in uw inventaris.
+toolbar-add-from-menu = Aan werkbalk toevoegen
+toolbar-remove-from-menu = Verwijderen uit werkbalk
+toolbar-command-build-edit = Bewerk objecten
+toolbar-command-build-create = Maak prims aan
+toolbar-command-build-land = Land bewerken

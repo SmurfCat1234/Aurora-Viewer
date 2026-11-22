@@ -1292,7 +1292,6 @@ import-mesh = Меш
 import-bulk = Несколько файлов
 import-choose-files = Добавить файлы…
 import-loading = Чтение файлов…
-import-limit-bulk-1k = Ограничить текстуры размером 1024 пикс.
 import-files = Файлы
 import-destination = Папка назначения
 import-no-folder = Нет доступных папок
@@ -1359,7 +1358,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Создать выпуклые оболочки для столкновений
 import-physics-convex-help = Выпуклые оболочки приближённо описывают форму столкновений и могут закрыть отверстия. Визуальные уровни детализации сохраняются. Проверьте форму столкновений в предпросмотре перед расчётом стоимости.
-import-max-size = Ограничить размер до 1024 × 1024
 import-texture-size = Размер при загрузке: { $width } × { $height } пикс.
 import-lossless = Сжатие без потерь
 import-strip-alpha = Удалить почти непрозрачный альфа-канал
@@ -3556,7 +3554,6 @@ ui-sound-object-creation = Создание объекта
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Отказано в создании: недопустимый тип, размер или число загрузок.
 ui-contacts-create = Создать
 build-ui-tools-create-ctrl-4 = Создать (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Создать примы (Ctrl+4)
 ui-places-create-folder = Создать папку
 ui-inventory-context-create-folder-from-selection = Создать папку из выбранного
 common-create-favorite = Добавить в избранное
@@ -5648,14 +5645,12 @@ ui-place-details-edit-this-landmark = Изменить эту закладку
 ui-appearance-edit-this-outfit = Редактировать этот комплект
 ui-appearance-show-current-outfit = Показать текущий комплект в списке
 ui-appearance-current-outfit-not-in-my-outfits = Текущий комплект не сохранён в папке «Мои комплекты»
-ui-bars-edit-objects-ctrl-3 = Редактировать объекты (Ctrl+3)
 build-ui-tools-edit-parcel = Редактировать участок
 ui-context-edit-shape = Редактировать фигуру
 ui-context-export-shape-xml = Экспортировать фигуру в XML
 ui-context-edit-outfit = Редактировать комплект
 ui-context-edit-pbr-material = Редактировать PBR-материал
 ui-context-edit-land = Редактировать землю
-ui-bars-edit-land-ctrl-5 = Редактировать землю (Ctrl+5)
 ui-land-options-edit-land = Редактирование земли:
 build-ui-tools-edit-selected-land = Редактировать выбранную землю
 ui-profile-edit-text = Редактировать текст
@@ -9186,7 +9181,6 @@ common-for-sale = Продаётся:
 ui-land-general-for-sale-to = Покупатель:
 ui-profile-coming-soon = Скоро
 ui-profile-aurora-my-profile = Мой профиль
-ui-profile-aurora-help = Профиль жителя: сведения о нём, доступные действия, избранные места, объявления, реальная жизнь, веб-профиль и ваши заметки. В разделе «Настройки → Aurora → Профили» можно вернуть классическое окно.
 ui-profile-aurora-conversation = Разговор
 ui-profile-aurora-call = Позвонить
 ui-profile-aurora-add-friend = Добавить в друзья
@@ -9220,7 +9214,6 @@ ui-profile-aurora-their-map = Находить жителя на карте
 ui-profile-aurora-their-objects = Изменять, удалять или брать объекты жителя
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Профиль
-ui-profile-aurora-tab-picks = Избранные места
 ui-profile-aurora-tab-classifieds = Объявления
 ui-profile-aurora-tab-first-life = Реальная жизнь
 ui-profile-aurora-tab-web = Веб-профиль
@@ -9256,15 +9249,7 @@ ui-profile-aurora-unsaved = Несохранённые изменения ({ $pa
 ui-profile-aurora-part-bio = о себе
 ui-profile-aurora-part-first-life = реальная жизнь
 ui-profile-aurora-part-notes = заметки
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } место
-        [few] { $count } места
-        [many] { $count } мест
-       *[other] Мест: { $count }
-    }
 ui-profile-aurora-part-classified = объявление
-ui-profile-aurora-snapshot = Изображение места
 ui-profile-aurora-teleport = Телепортироваться
 ui-profile-aurora-description = Описание
 ui-profile-aurora-category = Категория
@@ -9280,11 +9265,6 @@ ui-profile-aurora-copy-slurl = Скопировать SLURL
 ui-profile-aurora-here = Моё положение здесь
 ui-profile-aurora-add-here = Добавить текущее место
 ui-profile-aurora-picks-count = { $count } из { $limit } (лимит аккаунта)
-ui-profile-aurora-picks-empty = Избранных мест пока нет
-ui-profile-aurora-picks-empty-text = Житель { $name } пока не добавил мест.
-ui-profile-aurora-picks-empty-own = Поделитесь любимыми местами
-ui-profile-aurora-picks-empty-own-text = Другие жители увидят их в профиле и смогут телепортироваться туда одним щелчком.
-ui-profile-aurora-delete-pick = Удалить место «{ $name }»?
 ui-profile-aurora-classifieds-empty = Объявлений нет
 ui-profile-aurora-classifieds-empty-text = У жителя { $name } нет опубликованных объявлений.
 ui-profile-aurora-classifieds-empty-own = Расскажите о месте или услуге
@@ -14840,10 +14820,6 @@ build-layout-drop-hidden = Перетащите сюда, чтобы скрыт�
 build-layout-drop-here = Перетащите сюда
 build-layout-drag-hint = Перетащите элемент и отпустите над подсвеченным местом.
 build-layout-export = Экспортировать
-build-material-surface = Поверхность
-build-material-relief-reflection = Рельеф и отражение
-build-material-lighting = Реакция на свет
-build-material-placement = Размещение текстуры
 build-material-diffuse-tint = Оттенок рассеянного цвета
 build-material-specular-tint = Оттенок бликов
 build-material-base-tint = Оттенок базового цвета
@@ -16192,7 +16168,6 @@ ui-options-camera-still-while-posing-tip = Когда вы позируете, �
 ui-options-group-emotes = Групповые эмоции с сообщениями отправителя
 ui-options-group-emotes-hint = В стиле чата Aurora действие наподобие «/me waves» отображается под тем же заголовком, что и сообщения того же отправителя непосредственно до или после него. Отдельный заголовок для действия не создаётся.
 content-perms-nested = Включение объектов внутри объектов
-content-perms-nested-help = Это также изменяет содержимое вложенных объектов, до пяти уровней глубины. Каждый объект размещается в мире на два метра выше примитива, который его содержит. Его выполняемые сценарии останавливаются, его содержание изменяется, и его сценарии перезапускаются. Затем объект сохраняется обратно в контейнер. Права доступа к объекту в контейнере устанавливаются и проверяются перед удалением его временной копии в мировом пространстве. Объекты, которые вы не можете копировать, передавать или изменять остаются закрытыми. Вам требуется разрешение для построения в месте размещения.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } объект в содержимом будет открыт, пропущен: { $skipped }.
@@ -16339,3 +16314,80 @@ phototools-director-lens = Объектив директора показыва�
 phototools-view-angle-viewfinder = Видоискатель владеет углом обзора: ваш возвращается, когда он закрывается.
 ui-options-dof-show-focus-point = Показать точку фокуса
 ui-options-dof-show-focus-point-help = Небольшой крест на точке фокусировки линзы: желтый, когда он свободен, красный, когда заблокирован.
+
+### Updated release translations
+
+photo-vf-keep-framing = Сохранять кадр
+people-groups-deactivate = Деактивировать
+content-perms-nested-help = Меняет и содержимое вложенных объектов до глубины 5 уровней. Каждый объект размещается в мире на 2 м выше прима, в котором он находится. Работающие скрипты останавливаются, содержимое меняется, скрипты запускаются вновь, а объект сохраняется обратно. Разрешения возвращённого объекта задаются и проверяются до удаления временной копии из мира. Объекты, которые нельзя копировать, передавать или изменять, не открываются. Нужны права на строительство в месте размещения объектов.
+render-features-menu = Особенности рендеринга
+render-features-ui = Интерфейс
+toolbar-command-ao-mini = Мини-окно AO
+keybinds-ui-feature = Показать / скрыть весь интерфейс (Особенности отображения › Интерфейс)
+import-image-size-limit = Максимальный размер изображения
+import-image-size-single = Максимальный размер изображения
+import-image-size-inherit = Общий параметр ({ $size } пикс.)
+import-image-size-pixels = { $size } пикс.
+import-image-size-inherit-help = Глобальное настройка следует ограничению рядом с Импорт в нижней части. Его текущее значение отображается в скобках. Большие изображения автоматически уменьшаются до выбранного предела.
+import-image-size-global-help = Максимальный размер изображения для импорта. Индивидуальный выбор изображения и материала имеет приоритет. Большие изображения автоматически уменьшаются.
+ui-chat-applink-preferences-tip = Открыть этот параметр в Настройках
+ui-options-bento-idle = Исправить Bento праздничной анимации
+ui-options-bento-idle-hint = Играет приоритетную анимацию Бенто под всеми остальными, так что руки, рот, крылья и хвост возвращаются в естественную позу, а не застревают после анимации; другие также видят это
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Объект UUID копирован
+       *[other] UUID объектов копированы
+    }
+ui-appearance-batch-choose-folder = Наряды для фотографии в { $folder }
+ui-appearance-batch-all = Все комплекты
+ui-appearance-batch-chosen = { $chosen } от { $total }
+ui-appearance-batch-select-missing = Без фотографии
+ui-inventory-dialogs-detach-and-delete = Снять и удалить
+ui-inventory-dialogs-detach-and-delete-body = Некоторые из этих предметов надеты на вашего аватара. Сначала их снимут, затем переместят в корзину.
+ui-inventory-delete-detach-cannot = Надетые на аватара предметы больше нельзя снять и удалить.
+ui-inventory-delete-detach-refused = Этот пункт не может быть снят и исключен.
+ui-inventory-delete-detach-busy = В настоящее время происходит еще одно изменение запасов. Попробуйте снова, как только это будет сделано.
+ui-inventory-delete-detach-timeout = Надетые предметы снять не удалось, поэтому они не были удалены.
+common-modify = Изменить
+build-ui-contents-filters = Фильтры контента
+build-ui-contents-next-owner-permissions = Разрешения следующего владельца
+ui-options-voice-output = Голосовой выход
+ui-options-voice-output-used-for-voice-chat = Используется для голосового чата; мир звука, музыки и медиа использования Аудио выход
+ui-options-same-as-audio-output = То же, что и аудиовыход
+ui-options-copy-setting-link = Копировать ссылку на настройки
+ui-options-setting-unavailable = Этот параметр недоступен.
+ui-context-show-in-inventory-none = Ни один объект в вашем инвентаре не имеет точного названия этого объекта.
+ui-profile-aurora-help = Профиль жителя: кто он, что вы можете с ним делать, затем его выборы, объявления, первая жизнь, веб-профиль и ваши заметки. Настройки › Aurora › Профили возвращает окно Legacy Viewer.
+ui-profile-aurora-tab-picks = Избранное в профиле
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Избранное в профиле: { $count }
+       *[other] Избранное в профиле: { $count }
+    }
+ui-profile-aurora-snapshot = Изображение
+ui-profile-aurora-picks-empty = Нет прогнозов
+ui-profile-aurora-picks-empty-text = { $name } не делится никакими прогнозами.
+ui-profile-aurora-picks-empty-own = Поделитесь тем, что важно для вас
+ui-profile-aurora-picks-empty-own-text = Используйте выбор, чтобы выделить места, людей и вещи, которые вам не безразличны.
+ui-profile-aurora-delete-pick = Удалить пик "{ $name }"?
+script-search-whole-words = Целые слова
+ao-mini-title = Мини-окно AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Анимация не выбрана
+ao-quick-pin = Открыть окно мини AO
+build-layout-button-icon = Иконы
+build-layout-button-label = Подпись
+build-layout-button-both = Значок и надпись
+build-detach-shown = В своем собственном окне: нажмите, чтобы скрыть его. Перетащите это окно по заголовку в окно сборки, чтобы вернуть его обратно.
+build-detach-hidden = В собственном окне, скрытом: нажмите, чтобы показать его.
+build-material-save-as = Сохранить материал как
+build-material-save-name = Название нового материала в вашем инвентаре:
+build-material-new-material = Новый материал
+build-material-save-not-allowed = Для сохранения требуется материал PBR на каждой выбранной поверхности, права копирования и модификации на объекте, а также копия материала в вашем инвентаре с правами копирования.
+build-material-saved = Материал "{ $name }" сохранен в вашем инвентаре.
+build-material-save-failed = Материал не может быть сохранен в инвентарь.
+toolbar-add-from-menu = Добавить в панель инструментов
+toolbar-remove-from-menu = Удалить с панели инструментов
+toolbar-command-build-edit = Редактирование объектов
+toolbar-command-build-create = Создание первичных
+toolbar-command-build-land = Редактировать землю

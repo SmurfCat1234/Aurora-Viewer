@@ -1271,7 +1271,6 @@ import-mesh = Verkko
 import-bulk = Moninkertainen
 import-choose-files = Lisää tiedostoja…
 import-loading = Tiedostoja luetaan…
-import-limit-bulk-1k = Rajoita tekstuurit 1024 pikseliin
 import-files = Tiedostot
 import-destination = Kohde
 import-no-folder = Kansiota ei ole käytettävissä
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Luo kupera törmäysrunko
 import-physics-convex-help = Kuperat rungot muodostavat törmäysmuodon ja voivat täyttää aukkoja. Visuaaliset LOD-arvot pysyvät ennallaan. Tarkista fysiikan esikatselu ennen tarjouksen pyytämistä.
-import-max-size = Rajoita koko 1024 × 1280 kuvapisteeseen
 import-texture-size = Lähetyksen koko: { $width } × { $height } pikseliä
 import-lossless = Häviötön pakkaus
 import-strip-alpha = Poista lähes läpinäkymätön alfakanava
@@ -3481,7 +3479,6 @@ ui-sound-object-creation = Objektin luominen
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Luonti evätty: virheellinen tyyppi, koko tai latausmäärä.
 ui-contacts-create = Luo
 build-ui-tools-create-ctrl-4 = Luo (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Luo alkuarvoja (Ctrl+4)
 ui-places-create-folder = Luo kansio
 ui-inventory-context-create-folder-from-selection = Luo kansio valinnasta
 common-create-favorite = Luo suosikki
@@ -5535,14 +5532,12 @@ ui-place-details-edit-this-landmark = Muokkaa tätä maamerkkiä
 ui-appearance-edit-this-outfit = Muokkaa tätä asua
 ui-appearance-show-current-outfit = Näytä nykyinen asu luettelossa
 ui-appearance-current-outfit-not-in-my-outfits = Nykyistä asua ei ole tallennettu Omiin asuihin
-ui-bars-edit-objects-ctrl-3 = Objektien muokkaaminen (Ctrl+3)
 build-ui-tools-edit-parcel = Muokkaa pakettia
 ui-context-edit-shape = Muokkaa muotoa
 ui-context-export-shape-xml = Vie muoto XML
 ui-context-edit-outfit = Muokkaa asua
 ui-context-edit-pbr-material = Muokkaa PBR-materiaalia
 ui-context-edit-land = Muokkaa maata
-ui-bars-edit-land-ctrl-5 = Muokkaa maata (Ctrl+5)
 ui-land-options-edit-land = Muokkaa maata:
 build-ui-tools-edit-selected-land = Muokkaa valittua maata
 ui-profile-edit-text = Muokkaa tekstiä
@@ -9028,7 +9023,6 @@ common-for-sale = Myytävänä: 1 kpl
 ui-land-general-for-sale-to = Myytävänä:
 ui-profile-coming-soon = Tulossa pian!
 ui-profile-aurora-my-profile = Oma profiili »
-ui-profile-aurora-help = Asukkaan profiili: kuka hän on, mitä voit tehdä hänen kanssaan, sitten hänen suosikkipaikkansa, ilmoitukset, ensimmäinen elämä, verkkoprofiili ja muistiinpanot.Asetukset › Aurora › Profiilit tuo takaisin Legacy Viewer -ikkunan.
 ui-profile-aurora-conversation = Keskustelu
 ui-profile-aurora-call = Soita
 ui-profile-aurora-add-friend = Lisää ystäväksi
@@ -9060,7 +9054,6 @@ ui-profile-aurora-their-map = Löydä ne kartalta
 ui-profile-aurora-their-objects = Muokata, poistaa tai ottaa heidän esineitä
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Profiili
-ui-profile-aurora-tab-picks = Suosikkipaikkoja
 ui-profile-aurora-tab-classifieds = Ilmoitukset
 ui-profile-aurora-tab-first-life = Ensimmäinen elämä
 ui-profile-aurora-tab-web = Verkko
@@ -9094,13 +9087,7 @@ ui-profile-aurora-unsaved = Tallentamattomat muutokset ({ $parts })
 ui-profile-aurora-part-bio = bio
 ui-profile-aurora-part-first-life = Ensimmäinen elämä
 ui-profile-aurora-part-notes = Huomautukset
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } paikka
-       *[other] { $count } paikat
-    }
 ui-profile-aurora-part-classified = salaista
-ui-profile-aurora-snapshot = Kuva paikasta
 ui-profile-aurora-teleport = Teleportti
 ui-profile-aurora-description = Kuvaus
 ui-profile-aurora-category = Luokka
@@ -9116,11 +9103,6 @@ ui-profile-aurora-copy-slurl = Kopioi SLURL-osoite
 ui-profile-aurora-here = Minun asemani täällä
 ui-profile-aurora-add-here = Lisää paikka, jossa olen
 ui-profile-aurora-picks-count = { $count } tai { $limit } (tiliraja)
-ui-profile-aurora-picks-empty = Ei suosikkipaikkaa vielä
-ui-profile-aurora-picks-empty-text = { $name } Käyttäjä ei ole jakanut yhtään paikkaa.
-ui-profile-aurora-picks-empty-own = Jaa suosikkipaikkasi
-ui-profile-aurora-picks-empty-own-text = Muut asukkaat näkevät ne profiilissasi ja teleporttaavat sinne yhdellä klikkauksella.
-ui-profile-aurora-delete-pick = Poista paikka "{ $name }"?
 ui-profile-aurora-classifieds-empty = Ei ilmoituksia
 ui-profile-aurora-classifieds-empty-text = { $name } Tällä käyttäjällä ei ole julkaistuja luokiteltuja.
 ui-profile-aurora-classifieds-empty-own = Tee paikasta tai palvelusta tunnetumpi
@@ -14509,10 +14491,6 @@ build-layout-drop-here = Pudota tähän
 build-layout-drag-hint = Vedä siirtääksesi. Vapauta korostetulla kohteella.
 build-layout-export = Vienti
 # Compact material layout
-build-material-surface = Pinta-ala
-build-material-relief-reflection = Relief ja heijastus
-build-material-lighting = Valovaste
-build-material-placement = Tekstuurin sijoittelu
 build-material-diffuse-tint = Diffuusi sävy
 build-material-specular-tint = Peilisävy
 build-material-base-tint = Perusväri
@@ -15870,7 +15848,7 @@ ui-options-camera-still-while-posing = Pidä kamera paikallaan poseeratessasi
 ui-options-camera-still-while-posing-tip = Poseeratessa kamera lakkaa seuraamasta avatar-hahmoa, sen tarkennusta ja kehon osia. Käveleminen ei nollaa sitä. Kiertorata, zoomaus, panorointi ja esiasetukset toimivat edelleen.
 ui-options-group-emotes-hint = Aurora-tyylisessä chatissa ele, kuten ”/me waves”, näytetään saman otsikon alla kuin saman lähettäjän juuri sitä ennen tai sen jälkeen lähettämät viestit. Eleelle ei luoda omaa otsikkoa.
 content-perms-nested = Objektien sisällyttäminen objektien sisään
-content-perms-nested-help = Tämä muokkaa myös sisäkkäisten objektien sisältöä, jopa viiden tason syvyyteen asti. Jokainen objekti sijoitetaan maailmaan kaksi metriä sen sisältävän primitiivin yläpuolelle. Sen käynnissä olevat skriptit pysäytetään, sen sisältö muuttuu ja sen skriptit käynnistetään uudelleen. Objekti tallennetaan sitten takaisin säiliöön. Säiliössä olevan objektin oikeudet asetetaan ja tarkistetaan ennen kuin sen väliaikainen kopio maailmassa poistetaan. Objektit, joita et voi kopioida, siirtää tai muokata, pysyvät suljettuina. Tarvitset oikeuden rakentaa sijoituspaikassa.
+content-perms-nested-help = Muokkaa myös sisäkkäisten esineiden sisältöä enintään 5 tasolla. Esine tuodaan maailmaan 2 m sen sisältävän primin yläpuolelle. Käynnissä olevat komentosarjat pysäytetään, sisältöä muutetaan, komentosarjat käynnistetään uudelleen ja esine tallennetaan takaisin. Palautetun esineen käyttöoikeudet asetetaan ja tarkistetaan ennen kuin väliaikainen kopio poistetaan maailmasta. Esineitä, joita et saa kopioida, siirtää tai muokata, ei avata. Tarvitset rakennusoikeuden esineiden sijoituspaikassa.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } Sisällön objekti avataan, ohitetaan: { $skipped }.
@@ -16010,3 +15988,79 @@ phototools-director-lens = Ohjaajan linssi näkyy, kun sen ikkuna on auki, alla 
 phototools-view-angle-viewfinder = Etsin hallitsee kuvakulmaa: sinun kuvakulmasi palaa takaisin, kun etsin suljetaan.
 ui-options-dof-show-focus-point = Näytä tarkennuspiste
 ui-options-dof-show-focus-point-help = Linssin tarkennuspisteessä on pieni tähtäinristi: keltainen, kun se on vapaa, punainen, jos se on lukittu.
+
+### Updated release translations
+
+render-features-menu = Renderointiominaisuudet
+render-features-ui = Käyttöliittymä
+toolbar-command-ao-mini = Pieni AO-ikkuna
+keybinds-ui-feature = Koko käyttöliittymän näyttäminen / piilottaminen (Renderointiominaisuudet › Käyttöliittymä)
+import-image-size-limit = Kuvan enimmäiskoko
+import-image-size-single = Kuvan enimmäiskoko
+import-image-size-inherit = Yleinen asetus ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = Yleinen asetus seuraa Tuo-kohdan vieressä olevaa rajaa, jonka nykyinen arvo näkyy sulkeissa. Suuremmat kuvat pienennetään automaattisesti valittuun rajaan.
+import-image-size-global-help = Kuvan enimmäiskoko tuontia varten. Yksilölliset kuva- ja materiaalivalinnat ovat etusijalla. Suuremmat kuvat pienenevät automaattisesti.
+ui-chat-applink-preferences-tip = Avaa tämä asetus Asetuksissa
+ui-options-bento-idle = Korjaa Bento tyhjäkäynti animaatio
+ui-options-bento-idle-hint = Toistaa Bento-animaation kaikkien muiden animaatioiden alapuolella, joten kädet, suu, siivet ja häntä palaavat luonnolliseen asentoon sen sijaan, että pysyisivät jumissa animaation jälkeen; muutkin näkevät sen
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Objekti UUID kopioitu
+       *[other] Objektin UUID kopioitu
+    }
+ui-appearance-batch-choose-folder = Asuja kuvattavaksi paikassa { $folder }
+ui-appearance-batch-all = Kaikki asut
+ui-appearance-batch-chosen = { $chosen } tai { $total }
+ui-appearance-batch-select-missing = Ilman kuvaa
+ui-inventory-dialogs-detach-and-delete = Riisu ja poista
+ui-inventory-dialogs-detach-and-delete-body = Avatarillasi on joitakin näistä esineistä yllään. Ne riisutaan ensin ja siirretään sitten roskakoriin.
+ui-inventory-delete-detach-cannot = Yllä olevia esineitä ei voi enää riisua ja poistaa.
+ui-inventory-delete-detach-refused = Tätä tuotetta ei voi poistaa ja poistaa.
+ui-inventory-delete-detach-busy = Toinen varaston muutos on käynnissä. Yritä uudelleen, kun se on tehty.
+ui-inventory-delete-detach-timeout = Yllä olevia esineitä ei voitu riisua, joten niitä ei poistettu.
+common-modify = Muuta
+build-ui-contents-filters = Sisältösuodattimet
+build-ui-contents-next-owner-permissions = Seuraavan omistajan käyttöoikeudet
+ui-options-voice-output = Äänilähtö
+ui-options-voice-output-used-for-voice-chat = Käytetään äänikeskusteluun; maailman äänet, musiikki ja media käyttävät Äänilähtö
+ui-options-same-as-audio-output = Sama kuin äänilähtö
+ui-options-copy-setting-link = Kopioi linkki asetuksiin
+ui-options-setting-unavailable = Tämä asetus ei ole käytettävissä.
+ui-context-show-in-inventory-none = Mikään esine tavaraluettelossasi ei ole täsmälleen tämän esineen nimeä.
+photo-vf-keep-framing = Säilytä kehystys
+ui-profile-aurora-help = Asukkaan profiili: kuka he ovat, mitä voit tehdä heidän kanssaan, sitten heidän valintansa, ilmoitukset, ensimmäinen elämä, verkkoprofiili ja muistiinpanot.Asetukset › Aurora › Profiilit tuo takaisin Legacy Viewer -ikkunan.
+ui-profile-aurora-tab-picks = Poiminnat
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Poiminnat: { $count }
+       *[other] Poiminnat: { $count }
+    }
+ui-profile-aurora-snapshot = Kuva
+ui-profile-aurora-picks-empty = Ei valintoja vielä
+ui-profile-aurora-picks-empty-text = { $name } ei ole jakanut yhtään valintaa.
+ui-profile-aurora-picks-empty-own = Jaa sinulle tärkeät asiat
+ui-profile-aurora-picks-empty-own-text = Käytä valintoja korostaaksesi paikkoja, ihmisiä ja asioita, joista pidät.
+ui-profile-aurora-delete-pick = Poista valinta "{ $name }"?
+script-search-whole-words = Kokonaiset sanat
+people-groups-deactivate = Poista käytöstä
+ao-mini-title = Pieni AO-ikkuna
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Ei animaatiota valittu
+ao-quick-pin = Avaa mini AO ikkuna
+build-layout-button-icon = Kuvake
+build-layout-button-label = Etiketti
+build-layout-button-both = Kuvake ja etiketti
+build-detach-shown = Omassa ikkunassaan: napsauta piilottaaksesi sen. Vedä ikkuna sen otsikosta rakennusikkunaan, jotta se tulee takaisin näkyviin.
+build-detach-hidden = Omassa ikkunassaan, piilotettu: klikkaa näyttääksesi sen.
+build-material-save-as = Tallenna materiaali nimellä
+build-material-save-name = Varastossa olevan uuden materiaalin nimi:
+build-material-new-material = Uusi materiaali
+build-material-save-not-allowed = Tallennukseen tarvitaan PBR-materiaali jokaiselle valitulle pinnalle, objektin kopiointi- ja muokkausoikeudet sekä kopio materiaalista inventaariossasi, jolla on kopiointi ja muutosoikeudet.
+build-material-saved = Materiaali "{ $name }" on tallennettu varastoosi.
+build-material-save-failed = Materiaalia ei voitu tallentaa varastoon.
+toolbar-add-from-menu = Lisää työkalupalkkiin
+toolbar-remove-from-menu = Poista työkaluriviltä
+toolbar-command-build-edit = Objektien muokkaaminen
+toolbar-command-build-create = Luo prims
+toolbar-command-build-land = Muokkaa maata

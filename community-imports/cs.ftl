@@ -1271,7 +1271,6 @@ import-mesh = Mesh
 import-bulk = Multiple
 import-choose-files = Přidat soubory…
 import-loading = Čtení souborů…
-import-limit-bulk-1k = Omezit textury na 1024 px
 import-files = Soubory
 import-destination = Destinace
 import-no-folder = Žádná složka není k dispozici
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Vytvoření konvexních kolizní trupů
 import-physics-convex-help = Konvexní trupy přibližují tvar kolize a mohou vyplnit mezery. Vizuální LOD zůstává nezměněno. Před žádostí o cenovou nabídku si prohlédněte náhled fyziky.
-import-max-size = Omezit velikost na 1024 × 1280
 import-texture-size = Velikost souboru: 1.0 MB { $width } × { $height } px
 import-lossless = Bezztrátová komprese
 import-strip-alpha = Odstranění téměř neprůhledného alfa kanálu
@@ -3486,7 +3484,6 @@ ui-sound-object-creation = Vytvoření objektu
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Vytvoření odmítnuto: neplatný typ, velikost nebo počet nahrávek.
 ui-contacts-create = Vytvořit
 build-ui-tools-create-ctrl-4 = Vytvořit (Ctrl + 4)
-ui-bars-create-prims-ctrl-4 = Vytvoření prvočísel (Ctrl+4)
 ui-places-create-folder = Vytvořit složku
 ui-inventory-context-create-folder-from-selection = Vytvořit složku z výběru
 common-create-favorite = Vytvořit oblíbenou položku
@@ -5540,14 +5537,12 @@ ui-place-details-edit-this-landmark = Upravit tuto památku
 ui-appearance-edit-this-outfit = Upravit tento outfit
 ui-appearance-show-current-outfit = Zobrazit aktuální outfit v seznamu
 ui-appearance-current-outfit-not-in-my-outfits = Aktuální outfit není uložen v Moje oblečení
-ui-bars-edit-objects-ctrl-3 = Upravit objekty (Ctrl+3)
 build-ui-tools-edit-parcel = Upravit parcelu
 ui-context-edit-shape = Upravit tvar
 ui-context-export-shape-xml = Export tvaru XML
 ui-context-edit-outfit = Edit outfit -
 ui-context-edit-pbr-material = Upravit PBR materiál
 ui-context-edit-land = Editovat zemi
-ui-bars-edit-land-ctrl-5 = Upravit zemi (Ctrl+5)
 ui-land-options-edit-land = Upravit zemi:
 build-ui-tools-edit-selected-land = Upravit vybranou zemi
 ui-profile-edit-text = Upravit text
@@ -9031,7 +9026,6 @@ common-for-sale = Na prodej: 1 ks
 ui-land-general-for-sale-to = Prodej do:
 ui-profile-coming-soon = Brzy se vrátíme
 ui-profile-aurora-my-profile = Můj profil -
-ui-profile-aurora-help = Profil obyvatele: kdo je, co s ním můžete dělat, pak jeho oblíbená místa, inzeráty, první život, webový profil a vaše poznámky.Předvolby › Aurora › Profily vrací okno Legacy Viewer.
 ui-profile-aurora-conversation = Konverzace
 ui-profile-aurora-call = Call
 ui-profile-aurora-add-friend = Přidat jako přítele
@@ -9063,7 +9057,6 @@ ui-profile-aurora-their-map = Najděte je na mapě
 ui-profile-aurora-their-objects = Upravit, smazat nebo převzít jejich objekty
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Profil
-ui-profile-aurora-tab-picks = Oblíbená místa
 ui-profile-aurora-tab-classifieds = Inzerce
 ui-profile-aurora-tab-first-life = První život
 ui-profile-aurora-tab-web = Web
@@ -9097,13 +9090,7 @@ ui-profile-aurora-unsaved = Neuložené změny ({ $parts })
 ui-profile-aurora-part-bio = bio
 ui-profile-aurora-part-first-life = První život
 ui-profile-aurora-part-notes = Poznámky
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } místo
-       *[other] { $count } místa
-    }
 ui-profile-aurora-part-classified = utajené
-ui-profile-aurora-snapshot = Obrázek místa
 ui-profile-aurora-teleport = Teleport
 ui-profile-aurora-description = Popis
 ui-profile-aurora-category = Kategorie
@@ -9119,11 +9106,6 @@ ui-profile-aurora-copy-slurl = Zkopírujte URL
 ui-profile-aurora-here = Moje pozice zde
 ui-profile-aurora-add-here = Přidat místo, kde jsem
 ui-profile-aurora-picks-count = { $count } z { $limit } (limit účtu)
-ui-profile-aurora-picks-empty = Zatím žádné oblíbené místo
-ui-profile-aurora-picks-empty-text = { $name } Společnost 123Reviews nesdílí žádné místo.
-ui-profile-aurora-picks-empty-own = Sdílejte svá oblíbená místa
-ui-profile-aurora-picks-empty-own-text = Ostatní obyvatelé je vidí na vašem profilu a teleportují se tam jedním kliknutím.
-ui-profile-aurora-delete-pick = Smazat místo "{ $name }"?
 ui-profile-aurora-classifieds-empty = Žádné inzeráty
 ui-profile-aurora-classifieds-empty-text = { $name } Tato stránka nemá žádné inzeráty.
 ui-profile-aurora-classifieds-empty-own = Uveďte místo nebo službu do povědomí
@@ -14519,10 +14501,6 @@ build-layout-drop-here = Drop tady
 build-layout-drag-hint = Přetáhněte pro pohyb. Uvolněte na zvýrazněný cíl.
 build-layout-export = Export
 # Compact material layout
-build-material-surface = Povrch
-build-material-relief-reflection = Reliéf a odraz
-build-material-lighting = Světelná odezva
-build-material-placement = Umístění textury
 build-material-diffuse-tint = Difúzní odstín
 build-material-specular-tint = Zrcadlový odstín
 build-material-base-tint = Základní odstín
@@ -15880,7 +15858,7 @@ ui-options-camera-still-while-posing = Udržujte fotoaparát při pózování v 
 ui-options-camera-still-while-posing-tip = Když pózujete, fotoaparát přestane sledovat avatara, jeho zaostření a části těla. Při chůzi fotoaparátu se nezresetuje. Orbit, zoom, pan a presety stále fungují.
 ui-options-group-emotes-hint = Ve stylu chatu Aurora se emote, například „/me waves“, zobrazí pod stejným záhlavím jako zprávy stejného uživatele těsně před ním nebo po něm. Nevytváří vlastní záhlaví.
 content-perms-nested = Zahrnutí objektů uvnitř objektů
-content-perms-nested-help = Toto také upravuje obsah vnořených objektů, až do hloubky pěti úrovní. Každý objekt je umístěn ve světě dva metry nad primitivem, který jej obsahuje. Jeho spuštěné skripty jsou zastaveny, jeho obsah změněn a jeho skripty restartovány. Objekt je pak uložen zpět do kontejneru. Oprávnění objektu v kontejneri jsou nastavena a zkontrolována předtím, než je jeho dočasná kopie ve světe smazána. Objekty, které nelze kopírovat, přenášet nebo upravovat, zůstávají zavřené. Potřebujete oprávnění k vytvoření v umístění umísťování.
+content-perms-nested-help = Upraví také obsah objektů vnořených až do 5 úrovní. Každý objekt se umístí do světa 2 m nad základní prvek (prim), který jej obsahuje. Běžící skripty se zastaví, obsah se upraví, skripty se znovu spustí a objekt se uloží zpět. Oprávnění vráceného objektu se nastaví a ověří ještě před smazáním dočasné kopie ze světa. Objekty bez práv ke kopírování, předání nebo úpravám zůstanou zavřené. V místě umístění objektů musíte mít právo stavět.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } objekt v obsahu bude otevřen, přeskočen: { $skipped }.
@@ -16020,3 +15998,79 @@ phototools-director-lens = Objektiv režiséra je zobrazen, když je jeho okno o
 phototools-view-angle-viewfinder = Hledáček vlastní zorný úhel: ten váš se vrátí, když se zavře.
 ui-options-dof-show-focus-point = Zobrazit bod zaostření
 ui-options-dof-show-focus-point-help = Malý zaměřovací kříž na místě, kde se objektiv zaostřuje: žlutý, když je volný, červený, když se uzamkne.
+
+### Updated release translations
+
+render-features-menu = Funkce vykreslování
+render-features-ui = Rozhraní
+toolbar-command-ao-mini = Malé okno AO
+keybinds-ui-feature = Zobrazit / skrýt celé rozhraní (Vlastnosti vykreslování › UI)
+import-image-size-limit = Maximální velikost obrázku
+import-image-size-single = Maximální velikost obrázku
+import-image-size-inherit = Globální nastavení ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = Globální nastavení následuje limit vedle Import v dolní části a jeho aktuální hodnota je zobrazena v závorkách. Větší obrázky jsou automaticky zmenšeny na zvolený limit.
+import-image-size-global-help = Maximální velikost obrázku pro import. Přednost mají individuální volby obrázků a materiálů. Větší obrázky se automaticky zmenšují.
+ui-chat-applink-preferences-tip = Otevřete toto nastavení v Předvolbách
+ui-options-bento-idle = Fix Bento nečinná animace
+ui-options-bento-idle-hint = Hraje prioritní animaci Bento pod všemi ostatními, takže ruce, ústa, křídla a ocas se vrátí do přirozené polohy místo toho, aby zůstaly po animaci uvízlé; ostatní to také vidí
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Objekt UUID kopírován
+       *[other] Zkopírované UUID objektů
+    }
+ui-appearance-batch-choose-folder = Oblečení k fotografování v { $folder }
+ui-appearance-batch-all = Všechny outfity
+ui-appearance-batch-chosen = { $chosen } nebo { $total }
+ui-appearance-batch-select-missing = Bez obrázku
+ui-inventory-dialogs-detach-and-delete = Sejmout a odstranit
+ui-inventory-dialogs-detach-and-delete-body = Některé z těchto položek má váš avatar nasazené. Nejprve se sejmou a potom se přesunou do koše.
+ui-inventory-delete-detach-cannot = Nasazené položky už nelze sejmout a odstranit.
+ui-inventory-delete-detach-refused = Tuto položku nelze sundat a smazat.
+ui-inventory-delete-detach-busy = Probíhá další změna inventáře. Zkuste to znovu, jakmile bude dokončena.
+ui-inventory-delete-detach-timeout = Nasazené položky se nepodařilo sejmout, proto se nesmazaly.
+common-modify = Změnit
+build-ui-contents-filters = Filtry obsahu
+build-ui-contents-next-owner-permissions = Oprávnění dalšího vlastníka
+ui-options-voice-output = Hlasový výstup
+ui-options-voice-output-used-for-voice-chat = Používá se pro hlasový chat; svět zvuku, hudby a médií používá Audio výstup
+ui-options-same-as-audio-output = Stejné jako zvukový výstup
+ui-options-copy-setting-link = Zkopírovat odkaz na nastavení
+ui-options-setting-unavailable = Toto nastavení není k dispozici.
+ui-context-show-in-inventory-none = Žádný objekt ve vašem inventáři nemá přesně název tohoto objektu.
+photo-vf-keep-framing = Nechte si rámování
+ui-profile-aurora-help = Profil obyvatele: kdo je, co s ním můžete dělat, pak jeho výběry, inzeráty, první život, webový profil a vaše poznámky.Preferences › Aurora › Profiles přináší zpět okno Legacy Viewer.
+ui-profile-aurora-tab-picks = Výběr
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Výběr: { $count }
+       *[other] Výběr: { $count }
+    }
+ui-profile-aurora-snapshot = Obrázek
+ui-profile-aurora-picks-empty = Zatím žádné tipy
+ui-profile-aurora-picks-empty-text = { $name } nesdílel(a) žádné tipy.
+ui-profile-aurora-picks-empty-own = Sdílejte to, co je pro vás důležité
+ui-profile-aurora-picks-empty-own-text = Pomocí výběrů můžete zvýraznit místa, lidi a věci, na kterých vám záleží.
+ui-profile-aurora-delete-pick = Smazat výběr "{ $name }"?
+script-search-whole-words = Celá slova
+people-groups-deactivate = Deaktivovat
+ao-mini-title = Malé okno AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Není vybrána žádná animace
+ao-quick-pin = Otevřete okno mini AO
+build-layout-button-icon = Ikona
+build-layout-button-label = Popisek
+build-layout-button-both = Ikona a štítek
+build-detach-shown = V jeho vlastním okně: kliknutím ho skryjete, přetažením za název okna do okna sestavy jej vrátíte zpět.
+build-detach-hidden = Ve vlastním okně, skryté: kliknutím jej zobrazíte.
+build-material-save-as = Uložit materiál jako
+build-material-save-name = Název nového materiálu v inventáři:
+build-material-new-material = Nový materiál
+build-material-save-not-allowed = Uložení vyžaduje PBR materiál na každé vybrané ploše, kopírovací a modifikační oprávnění k objektu a kopii materiálu ve vašem inventáři s kopírovacími a modifikujícími právy.
+build-material-saved = Materiál "{ $name }" byl uložen do vašeho inventáře.
+build-material-save-failed = Materiál se nepodařilo uložit do vašeho inventáře.
+toolbar-add-from-menu = Přidat do panelu nástrojů
+toolbar-remove-from-menu = Odebrat z panelu nástrojů
+toolbar-command-build-edit = Úprava objektů
+toolbar-command-build-create = Vytvořit primy
+toolbar-command-build-land = Editovat zemi

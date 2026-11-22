@@ -1271,7 +1271,6 @@ import-mesh = ตาข่าย
 import-bulk = หลาย
 import-choose-files = เพิ่มแฟ้ม...
 import-loading = กำลังอ่านแฟ้ม...
-import-limit-bulk-1k = จำกัดเนื้อหาให้เป็น 1024 พิกเซล
 import-files = แฟ้ม
 import-destination = จุดหมาย
 import-no-folder = ไม่มีโฟลเดอร์อยู่
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = สร้างรูปแบบการชนที่โค้ง
 import-physics-convex-help = รูปร่างของหอคอยที่โค้งจะใกล้เคียงกับรูปแบบการชนกัน และอาจจะเติมช่องว่างได้ LOD ทางภาพยังคงไม่เปลี่ยนแปลง ตรวจสอบตัวอย่างฟิสิกส์ก่อนที่จะขอคำแนะนำ
-import-max-size = จำกัดขนาดให้เป็น 1024 x 768
 import-texture-size = ขนาดการอัปโหลด: { $width } × { $height } พิกเซล
 import-lossless = บีบอัดแบบไม่มีการสูญเสีย
 import-strip-alpha = ลบช่องอัลฟ่าที่เกือบจะไม่โปร่งใส
@@ -3481,7 +3479,6 @@ ui-sound-object-creation = การสร้างวัตถุ
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = ปฏิเสธการสร้าง: ชนิด, ขนาด หรือจำนวนการอัปโหลดไม่ถูกต้อง
 ui-contacts-create = สร้าง
 build-ui-tools-create-ctrl-4 = สร้าง (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = สร้างตัวเลขหลัก (Ctrl+4)
 ui-places-create-folder = สร้างโฟลเดอร์
 ui-inventory-context-create-folder-from-selection = สร้างโฟลเดอร์จากสิ่งที่เลือกไว้
 common-create-favorite = สร้างรายการโปรด
@@ -5535,14 +5532,12 @@ ui-place-details-edit-this-landmark = แก้ไขจุดหมายปล
 ui-appearance-edit-this-outfit = แก้ไขชุดนี้
 ui-appearance-show-current-outfit = แสดงชุดเครื่องแบบปัจจุบันในรายการ
 ui-appearance-current-outfit-not-in-my-outfits = เครื่องแต่งกายปัจจุบันไม่ได้บันทึกไว้ในรายการเครื่องแต่งตัวของฉัน
-ui-bars-edit-objects-ctrl-3 = แก้ไขวัตถุ (Ctrl+3)
 build-ui-tools-edit-parcel = แก้ไข
 ui-context-edit-shape = แก้ไขรูปร่าง
 ui-context-export-shape-xml = ส่งออกรูปร่าง XML
 ui-context-edit-outfit = แก้ไขชุด
 ui-context-edit-pbr-material = แก้ไขวัสดุ PBR
 ui-context-edit-land = แก้ไขประเทศ
-ui-bars-edit-land-ctrl-5 = แก้ไขพื้นที่ (Ctrl+5)
 ui-land-options-edit-land = แก้ไขประเทศ:
 build-ui-tools-edit-selected-land = แก้ไขพื้นที่ที่เลือกไว้
 ui-profile-edit-text = แก้ไขข้อความ
@@ -9028,7 +9023,6 @@ common-for-sale = ขาย:
 ui-land-general-for-sale-to = ขายให้:
 ui-profile-coming-soon = กำลังจะมา
 ui-profile-aurora-my-profile = โปรไฟล์ของฉัน
-ui-profile-aurora-help = โปรไฟล์ของผู้อยู่อาศัย: พวกเขาเป็นใคร คุณสามารถทำอะไรกับพวกเขาได้บ้าง จากนั้นก็สถานที่โปรดของพวกเขา, โฆษณา, ชีวิตแรก, โปรแกรมเว็บและโน้ตของคุณ ตัวเลือก › Aurora › โปรฟิล์ม จะนำหน้าต่างของเครื่องดูหนังแบบเก่ากลับมา
 ui-profile-aurora-conversation = ข้อความ
 ui-profile-aurora-call = โทร
 ui-profile-aurora-add-friend = เพิ่มเป็นเพื่อน
@@ -9060,7 +9054,6 @@ ui-profile-aurora-their-map = หาพวกเขาบนแผนที่
 ui-profile-aurora-their-objects = แก้ไข ลบ หรือเอาวัตถุของมันออกไป
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = โพรไฟล์
-ui-profile-aurora-tab-picks = สถานที่โปรด
 ui-profile-aurora-tab-classifieds = ประกาศ
 ui-profile-aurora-tab-first-life = ชีวิตแรก
 ui-profile-aurora-tab-web = เว็บไซต์
@@ -9094,13 +9087,7 @@ ui-profile-aurora-unsaved = การเปลี่ยนแปลงที่�
 ui-profile-aurora-part-bio = ชีวภาพ
 ui-profile-aurora-part-first-life = ชีวิตแรก
 ui-profile-aurora-part-notes = ข้อความ
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } สถานที่
-       *[other] { $count } จำนวนที่นั่ง
-    }
 ui-profile-aurora-part-classified = จัดเป็นประเภท
-ui-profile-aurora-snapshot = รูปของที่นี่
 ui-profile-aurora-teleport = พาหนะ
 ui-profile-aurora-description = คำอธิบาย
 ui-profile-aurora-category = หมวดหมู่
@@ -9116,11 +9103,6 @@ ui-profile-aurora-copy-slurl = คัดลอก SLURL
 ui-profile-aurora-here = ฉันอยู่ตรงนี้
 ui-profile-aurora-add-here = เพิ่มที่ที่ฉันอยู่
 ui-profile-aurora-picks-count = { $count } ของ { $limit } (จำกัดบัญชี)
-ui-profile-aurora-picks-empty = ยังไม่ได้เลือกที่พักโปรด
-ui-profile-aurora-picks-empty-text = { $name } ยังไม่ได้แบ่งปันที่อยู่ใดๆ
-ui-profile-aurora-picks-empty-own = แบ่งปันสถานที่โปรดของคุณ
-ui-profile-aurora-picks-empty-own-text = คนอื่นๆเห็นมันในโปรไฟล์ของคุณ และส่งไปที่นั่นด้วยการคลิกเดียว
-ui-profile-aurora-delete-pick = ลบที่อยู่ "{ $name }"?
 ui-profile-aurora-classifieds-empty = ไม่มีประกาศ
 ui-profile-aurora-classifieds-empty-text = { $name } ไม่มีรายละเอียดที่เปิดเผย
 ui-profile-aurora-classifieds-empty-own = ทำให้สถานที่หรือบริการเป็นที่รู้จัก
@@ -14510,10 +14492,6 @@ build-layout-drop-here = วางตรงนี้
 build-layout-drag-hint = ลากเพื่อย้าย ปล่อยเมื่อเป้าหมายถูกเน้น
 build-layout-export = ส่งออก
 # Compact material layout
-build-material-surface = พื้นผิว
-build-material-relief-reflection = ความลึกลับและภาพสะท้อน
-build-material-lighting = แสงตอบสนอง
-build-material-placement = วางเนื้อหา
 build-material-diffuse-tint = สีที่แผ่กระจาย
 build-material-specular-tint = สีที่ดูเหมือนกระจก
 build-material-base-tint = สีพื้นฐาน
@@ -15871,7 +15849,7 @@ ui-options-camera-still-while-posing = เก็บกล้องไว้ท�
 ui-options-camera-still-while-posing-tip = ขณะที่คุณโพสต์ภาพ กล้องจะหยุดติดตามอวตาร โฟกัส และส่วนต่างๆของร่างกาย และการเดินไม่สามารถรีเซ็ตมันได้ วงโคจร, การปรับขนาด, ปั่นและค่าตั้งค่าก่อนหน้ายังทำงานได้
 ui-options-group-emotes-hint = ในรูปแบบแชต Aurora อีโมตอย่าง “/me waves” จะแสดงใต้หัวข้อเดียวกับข้อความที่คนเดียวกันส่งก่อนหน้าหรือถัดไปทันที โดยไม่มีหัวข้อแยก
 content-perms-nested = เพิ่มวัตถุเข้าไปในวัตต์อื่น
-content-perms-nested-help = ตัวเลือกนี้ยังสามารถแก้ไขเนื้อหาของวัตถุที่ซ่อนอยู่ได้อีกด้วย โดยมีความลึกสูงสุดถึงห้าระดับ ทุกวัตต์จะถูกวางไว้ในโลก2เมตรเหนือจากโปรไฟล์พื้นฐานที่เก็บมันไว้ สคริปต์ที่ทำงานอยู่จะถูกหยุด การเปลี่ยนเนื้อหา และเริ่มสคริพต์ใหม่ จากนั้นวัตตต์ก็จะถูกบันทึกกลับไปยังพื้นที่เก็บข้อมูล สิทธิ์ในการใช้งานของวั ตถุในพื้นที่เก็บอนุญาตจะถูกตั้งค่าและตรวจสอบก่อนที่จะทำการลบสำเนาชั่วคราวออกจากโลก วั ตต์ที่คุณไม่สามารถคัดลอก, ย้ายหรือแก้ไขอ้างอิงจะยังคงปิดอยู่ คุณจำเป็นต้องมีสิทธิ์เพื่อสร้างในตำแหน่งที่วาง
+content-perms-nested-help = แก้ไขเนื้อหาของวัตถุที่ซ้อนกันได้ลึกถึง 5 ชั้นด้วย แต่ละวัตถุจะถูกสร้างในโลกที่ตำแหน่งสูงกว่าไพรม์ที่เก็บวัตถุนั้น 2 เมตร ระบบหยุดสคริปต์ที่กำลังทำงาน แก้ไขเนื้อหา เริ่มสคริปต์ใหม่ แล้วบันทึกวัตถุกลับที่เดิม ระบบตั้งค่าและตรวจสอบสิทธิ์ของวัตถุที่บันทึกกลับก่อนลบสำเนาชั่วคราวจากโลก วัตถุที่คุณไม่มีสิทธิ์คัดลอก โอน หรือแก้ไขจะไม่ถูกเปิด ต้องมีสิทธิ์สร้างในตำแหน่งที่สร้างวัตถุ
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } วัตถุในรายการเนื้อหาจะถูกเปิด โดยข้ามไป: { $skipped }.
@@ -16011,3 +15989,79 @@ phototools-director-lens = เลนส์ของผู้กำกับจ�
 phototools-view-angle-viewfinder = มุมมองของกล้องจะขึ้นอยู่กับเครื่องมองภาพ ของคุณจะกลับมาเมื่อมันปิด
 ui-options-dof-show-focus-point = แสดงจุดโฟกัส
 ui-options-dof-show-focus-point-help = เส้นตรงเล็ก ๆ ที่จุดที่เลนส์มองเห็น สีเหลืองเมื่อมันเป็นอิสระ แดงเมื่อมันล็อค
+
+### Updated release translations
+
+render-features-menu = การแสดงผลลักษณะ
+render-features-ui = ส่วนติดต่อผู้ใช้
+toolbar-command-ao-mini = หน้าต่าง AO ขนาดเล็ก
+keybinds-ui-feature = แสดง/ ซ่อนส่วนติดต่อทั้งหมด (คุณสมบัติการแสดงผล › UI)
+import-image-size-limit = ขนาดภาพสูงสุด
+import-image-size-single = ขนาดภาพสูงสุด
+import-image-size-inherit = การตั้งค่าส่วนกลาง ({ $size } พิกเซล)
+import-image-size-pixels = { $size } พิกเซล
+import-image-size-inherit-help = การตั้งค่าทั่วไปจะทำตามข้อจำกัดที่อยู่ด้านล่างของตัวเลือก นำเข้า โดยค่าปัจจุบันจะปรากฏอยู่ในวงกลม ภาพขนาดใหญ่ จะถูกลดขนาดอัตโนมัติให้เท่ากับขอบเขตที่เลือกไว้
+import-image-size-global-help = ขนาดภาพสูงสุดสำหรับนำเข้า รูปภาพและวัสดุที่เลือกแต่ละชิ้นจะได้รับความสำคัญมากที่สุด ภาพที่มีขนาดใหญ่กว่านี้ จะถูกลดขนาดโดยอัตโนมัติ
+ui-chat-applink-preferences-tip = เปิดการตั้งค่านี้ในส่วนปรับแต่ง
+ui-options-bento-idle = แก้ไขการเคลื่อนไหวของ Bento ที่ไม่ทำงาน
+ui-options-bento-idle-hint = เล่นแอนิเมชัน Bento ด้วยความสำคัญ 0, อยู่ใต้อื่นๆทั้งหมด ดังนั้นมือ ปาก ปีก และหาง จะกลับมาเป็นรูปธรรมชาติแทนที่จะติดอยู่หลังการทำแอนิมิตชั่น คนอื่นๆก็จะเห็นมันด้วย
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] คัดลอกวัตถุ UUID
+       *[other] คัดลอก UUID ของวัตถุ
+    }
+ui-appearance-batch-choose-folder = เสื้อผ้าที่จะถ่ายรูปใน { $folder }
+ui-appearance-batch-all = ทุกชุด
+ui-appearance-batch-chosen = { $chosen } ของ { $total }
+ui-appearance-batch-select-missing = ไม่มีรูปภาพ
+ui-inventory-dialogs-detach-and-delete = ถอดและลบ
+ui-inventory-dialogs-detach-and-delete-body = อวตารของคุณสวมไอเทมเหล่านี้อยู่บางชิ้น ระบบจะถอดออกก่อน แล้วจึงย้ายไปที่ถังขยะ
+ui-inventory-delete-detach-cannot = ไม่สามารถถอดและลบไอเทมที่อวตารสวมอยู่ได้อีก
+ui-inventory-delete-detach-refused = รายการนี้ไม่สามารถถอดออกและลบได้
+ui-inventory-delete-detach-busy = กำลังมีการเปลี่ยนแปลงรายการสินค้าอีกครั้ง ลองใหม่เมื่อเสร็จแล้ว
+ui-inventory-delete-detach-timeout = ถอดไอเทมที่สวมอยู่ไม่สำเร็จ จึงไม่ได้ลบไอเทมเหล่านั้น
+common-modify = แก้ไข
+build-ui-contents-filters = ตัวกรองเนื้อหา
+build-ui-contents-next-owner-permissions = สิทธิ์ของเจ้าของถัดไป
+ui-options-voice-output = ข้อมูลออกเสียง
+ui-options-voice-output-used-for-voice-chat = ใช้สำหรับพูดคุยทางเสียง; เสียงทั่วโลก, เพลงและสื่อใช้ผลลัพธ์เสียง
+ui-options-same-as-audio-output = เหมือนกับผลลัพธ์เสียง
+ui-options-copy-setting-link = คัดลอกลิงก์ไปยังการตั้งค่า
+ui-options-setting-unavailable = ไม่มีการตั้งค่านี้อยู่
+ui-context-show-in-inventory-none = ไม่มีวัตถุในรายการของคุณ มีชื่อที่ถูกต้องของสิ่งนี้
+photo-vf-keep-framing = เก็บกรอบไว้
+ui-profile-aurora-help = โปรไฟล์ของผู้อยู่อาศัย: พวกเขาเป็นใคร, คุณสามารถทำอะไรกับพวกเขาได้, จากนั้นก็เลือกพวกเขา, ประกาศ, ชีวิตแรก, โปรแกรมเว็บและโน้ตของคุณ Aurora โพรไฟล์ นำกลับมาใช้หน้าต่างของโปรแกรมแสดงผลแบบเก่า
+ui-profile-aurora-tab-picks = รายการแนะนำ
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] รายการแนะนำ: { $count }
+       *[other] รายการแนะนำ: { $count }
+    }
+ui-profile-aurora-snapshot = รูปภาพ
+ui-profile-aurora-picks-empty = ยังไม่มีการเลือก
+ui-profile-aurora-picks-empty-text = { $name } ยังไม่ได้แบ่งปันการคัดเลือกใดๆ
+ui-profile-aurora-picks-empty-own = แบ่งปันสิ่งที่สำคัญกับคุณ
+ui-profile-aurora-picks-empty-own-text = ใช้ปุ่มเลือกเพื่อเน้นสถานที่ คน และสิ่งต่างๆ ที่คุณสนใจ
+ui-profile-aurora-delete-pick = ลบตัวเลือก "{ $name }"?
+script-search-whole-words = คำเต็ม
+people-groups-deactivate = ปิดการใช้งาน
+ao-mini-title = หน้าต่าง AO ขนาดเล็ก
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: ยังไม่ได้เลือกการเคลื่อนไหว
+ao-quick-pin = เปิดหน้าต่าง Mini AO
+build-layout-button-icon = ไอคอน
+build-layout-button-label = แท็ก
+build-layout-button-both = ไอคอนและป้ายกำกับ
+build-detach-shown = ในหน้าต่างของมันเอง: คลิกเพื่อซ่อนมัน ลากหน้าต่างนั้นด้วยหัวเรื่องไปยังหน้าต่างการสร้าง เพื่อนำกลับมาใช้ใหม่
+build-detach-hidden = ในหน้าต่างของมันเอง ซ่อนไว้: คลิกเพื่อแสดงมัน
+build-material-save-as = บันทึกวัสดุเป็น
+build-material-save-name = ชื่อของวัสดุใหม่ในคลังสินค้าของคุณ:
+build-material-new-material = วัสดุใหม่
+build-material-save-not-allowed = การบันทึกต้องใช้วัสดุ PBR บนทุกหน้าที่เลือก สิทธิ์ในการคัดลอกและแก้ไขของวัตถุ และสำเนาของวัสดุนั่น ในรายการของคุณ
+build-material-saved = วัสดุ "{ $name }" บันทึกไว้ในรายการของคุณ
+build-material-save-failed = ไม่สามารถบันทึกวัตถุดิบเข้าไปในรายการของคุณได้
+toolbar-add-from-menu = เพิ่มไปยังแถบเครื่องมือ
+toolbar-remove-from-menu = ลบจากแถบเครื่องมือ
+toolbar-command-build-edit = แก้ไขวัตถุ
+toolbar-command-build-create = สร้างตัวพิมพ์หลัก
+toolbar-command-build-land = แก้ไขประเทศ

@@ -1271,7 +1271,6 @@ import-mesh = Πλέγμα
 import-bulk = Πολλαπλές
 import-choose-files = Προσθήκη αρχείων…
 import-loading = Ανάγνωση αρχείων…
-import-limit-bulk-1k = Περιορισμός υφών σε 1024 εικ.
 import-files = Αρχεία
 import-destination = Προορισμός
 import-no-folder = Δεν υπάρχει διαθέσιμος φάκελος
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Δημιουργία κυρτών ταρσών σύγκρουσης
 import-physics-convex-help = Τα κυρτά κύματα προσεγγίζουν το σχήμα σύγκρουσης και μπορεί να γεμίσουν τα ανοίγματα. Τα οπτικά παραμένουν αμετάβλητα. Ελέγξτε την προεπισκόπηση φυσικής πριν ζητήσετε μια προσφορά.
-import-max-size = Περιορισμός μεγέθους σε 1024 × 1280
 import-texture-size = Μέγεθος φόρτωσης: { $width } × { $height } px
 import-lossless = Συμπίεση χωρίς απώλειες
 import-strip-alpha = Αφαίρεση του σχεδόν αδιαφανούς καναλιού άλφα
@@ -3481,7 +3479,6 @@ ui-sound-object-creation = Δημιουργία αντικειμένων
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Απορρίφθηκε η δημιουργία: μη έγκυρος τύπος, μέγεθος ή αριθμός αποστολής.
 ui-contacts-create = Δημιουργία
 build-ui-tools-create-ctrl-4 = Δημιουργία (Κεντρική σελίδα)
-ui-bars-create-prims-ctrl-4 = Δημιουργία πρωτοβάθμιων (Κατηγορίες:
 ui-places-create-folder = Δημιουργία φακέλου
 ui-inventory-context-create-folder-from-selection = Δημιουργία φακέλου από την επιλογή
 common-create-favorite = Δημιουργία αγαπημένου
@@ -5535,14 +5532,12 @@ ui-place-details-edit-this-landmark = Επεξεργαστείτε αυτό το
 ui-appearance-edit-this-outfit = Επεξεργαστείτε αυτό το ντύσιμο
 ui-appearance-show-current-outfit = Εμφάνιση του τρέχοντος ντυσίματος στη λίστα
 ui-appearance-current-outfit-not-in-my-outfits = Το τρέχον ντύσιμο δεν αποθηκεύεται στα Ντύσιμά μου
-ui-bars-edit-objects-ctrl-3 = Επεξεργασία αντικειμένων (Επεξεργασία αντικειμένου
 build-ui-tools-edit-parcel = Επεξεργασία αγροτεμαχίου
 ui-context-edit-shape = Επεξεργασία σχήματος
 ui-context-export-shape-xml = Εξαγωγή σχήματος
 ui-context-edit-outfit = Επεξεργασία του ντύσιμου
 ui-context-edit-pbr-material = Επεξεργασία υλικού
 ui-context-edit-land = Επεξεργασία γης
-ui-bars-edit-land-ctrl-5 = Επεξεργασία γης (Επιλογή)
 ui-land-options-edit-land = Επεξεργασία γης:
 build-ui-tools-edit-selected-land = Επεξεργασία επιλεγμένου εδάφους
 ui-profile-edit-text = Επεξεργασία κειμένου
@@ -9026,7 +9021,6 @@ common-for-sale = Προς πώληση: 100 τμ
 ui-land-general-for-sale-to = Πωλείται σε:
 ui-profile-coming-soon = Έρχεται σύντομα!
 ui-profile-aurora-my-profile = Το προφίλ μου
-ui-profile-aurora-help = Το προφίλ ενός κατοίκου: ποιοι είναι, τι μπορείτε να κάνετε με αυτούς, στη συνέχεια τα αγαπημένα τους μέρη, τις μικρές αγγελίες, την πρώτη ζωή, το προφίλ και τις σημειώσεις σας.Προτιμήσεις › Προφίλ επαναφέρει το παράθυρο του παλιού προγράμματος προβολής.
 ui-profile-aurora-conversation = Συζήτηση
 ui-profile-aurora-call = Κλήση
 ui-profile-aurora-add-friend = Προσθήκη ως φίλου
@@ -9058,7 +9052,6 @@ ui-profile-aurora-their-map = Βρείτε τα στο χάρτη
 ui-profile-aurora-their-objects = Τροποποιήστε, διαγράψτε ή πάρτε τα αντικείμενα τους
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Προφίλ
-ui-profile-aurora-tab-picks = Τα αγαπημένα μέρη
 ui-profile-aurora-tab-classifieds = Αγγελίες
 ui-profile-aurora-tab-first-life = Η πρώτη ζωή
 ui-profile-aurora-tab-web = Ιστοσελίδα
@@ -9092,13 +9085,7 @@ ui-profile-aurora-unsaved = Μη αποθηκευμένες αλλαγές ({ $p
 ui-profile-aurora-part-bio = βιολογικά
 ui-profile-aurora-part-first-life = Η πρώτη ζωή
 ui-profile-aurora-part-notes = Σημειώσεις
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } θέση
-       *[other] { $count } θέσεις
-    }
 ui-profile-aurora-part-classified = απόρρητο
-ui-profile-aurora-snapshot = Εικόνα του τόπου
 ui-profile-aurora-teleport = Τηλεμεταφορά
 ui-profile-aurora-description = Περιγραφή
 ui-profile-aurora-category = Κατηγορία
@@ -9114,11 +9101,6 @@ ui-profile-aurora-copy-slurl = Αντιγράψτε το κείμενο
 ui-profile-aurora-here = Η θέση μου εδώ
 ui-profile-aurora-add-here = Προσθέστε το μέρος όπου βρίσκομαι
 ui-profile-aurora-picks-count = { $count } του { $limit } (όριο λογαριασμού)
-ui-profile-aurora-picks-empty = Κανένα αγαπημένο μέρος ακόμα
-ui-profile-aurora-picks-empty-text = { $name } Ο χρήστης δεν έχει μοιραστεί κανένα μέρος.
-ui-profile-aurora-picks-empty-own = Μοιραστείτε τα αγαπημένα σας μέρη
-ui-profile-aurora-picks-empty-own-text = Άλλοι κάτοικοι τους βλέπουν στο προφίλ σας και τηλεμεταφέρονται εκεί με ένα κλικ.
-ui-profile-aurora-delete-pick = Διαγραφή του τόπου "{ $name }"?
 ui-profile-aurora-classifieds-empty = Δεν υπάρχουν αγγελίες
 ui-profile-aurora-classifieds-empty-text = { $name } Δεν έχει δημοσιευθεί καμία αγγελία.
 ui-profile-aurora-classifieds-empty-own = Κάντε γνωστό ένα μέρος ή μια υπηρεσία
@@ -14512,10 +14494,6 @@ build-layout-drop-here = Πέτα το εδώ
 build-layout-drag-hint = Σύρετε για να μετακινηθείτε. Αφήστε το σε έναν επισημασμένο στόχο.
 build-layout-export = Εξαγωγή
 # Compact material layout
-build-material-surface = Επιφάνεια
-build-material-relief-reflection = Ανακούφιση και αντανάκλαση
-build-material-lighting = 100 Ελαφριά απάντηση
-build-material-placement = Τοποθέτηση της υφής
 build-material-diffuse-tint = Διάχυτη απόχρωση
 build-material-specular-tint = Καθρέφτης απόχρωσης
 build-material-base-tint = Απόχρωση βάσης
@@ -15876,7 +15854,7 @@ ui-options-camera-still-while-posing = Κρατήστε τη φωτογραφι�
 ui-options-camera-still-while-posing-tip = Όταν ποζάρετε, η κάμερα σταματά να παρακολουθεί το άβαταρ, την εστίαση και τα μέρη του σώματος και δεν επαναφέρεται με το περπάτημα.Η τροχιά, το ζουμ, η μετατόπιση και οι προκαθορισμένες ρυθμίσεις εξακολουθούν να λειτουργούν.
 ui-options-group-emotes-hint = Στο στυλ συνομιλίας Aurora, μια ενέργεια όπως «/me waves» εμφανίζεται κάτω από την ίδια επικεφαλίδα με τα μηνύματα του ίδιου ατόμου ακριβώς πριν ή μετά, χωρίς δική της επικεφαλίδα.
 content-perms-nested = Συμπερίληψη αντικειμένων μέσα σε αντικείμενα
-content-perms-nested-help = Αυτό επεξεργάζεται επίσης τα περιεχόμενα των ένθετων αντικειμένων, μέχρι πέντε επίπεδα βάθους. Κάθε αντικείμενο τοποθετείται στον κόσμο δύο μέτρα πάνω από το πρωτότυπο που το περιέχει. Οι εκτελούμενες δέσμες ενεργειών του σταματούν, αλλάζουν το περιεχόμενο του και οι δέσμές ενεργειών του επανεκκινούνται. Το αντικείμενα αποθηκεύεται ξανά στο κοντέινερ. Τα δικαιώματα του αντικειμένου στο δοχείο ορίζονται και ελέγχονται πριν διαγραφεί το προσωρινό αντίγραφό του στον κόσμο. Αντικείμενα που δεν μπορείτε να αντιγράψετε, μεταφέρετε ή τροποποιήσετε παραμένουν κλειστά. Χρειάζεστε άδεια για να δημιουργήσετε στη θέση τοποθέτησης.
+content-perms-nested-help = Τροποποιεί και τα περιεχόμενα εμφωλευμένων αντικειμένων έως 5 επίπεδα. Κάθε αντικείμενο τοποθετείται στον κόσμο 2 m πάνω από το βασικό στοιχείο (prim) που το περιέχει. Τα ενεργά σενάρια σταματούν, τα περιεχόμενα αλλάζουν, τα σενάρια ξεκινούν ξανά και το αντικείμενο αποθηκεύεται πίσω. Τα δικαιώματα του αποθηκευμένου αντικειμένου ορίζονται και ελέγχονται πριν διαγραφεί το προσωρινό αντίγραφο στον κόσμο. Αντικείμενα χωρίς δικαίωμα αντιγραφής, μεταβίβασης ή τροποποίησης μένουν κλειστά. Χρειάζεστε δικαίωμα δόμησης στο σημείο τοποθέτησης.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } αντικείμενο στα περιεχόμενα θα ανοίξει, παραλείπεται: { $skipped }.
@@ -16016,3 +15994,79 @@ phototools-director-lens = Ο φακός του σκηνοθέτη εμφανί�
 phototools-view-angle-viewfinder = Η γωνία θέασης ανήκει στο σκόπευτρο: η δική σας επιστρέφει όταν κλείνει.
 ui-options-dof-show-focus-point = Εμφάνιση σημείου εστίασης
 ui-options-dof-show-focus-point-help = Ένας μικρός σταυρός στο σημείο στο οποίο εστιάζει ο φακός: κίτρινος όταν είναι ελεύθερος, κόκκινος όταν είναι κλειδωμένος.
+
+### Updated release translations
+
+render-features-menu = Χαρακτηριστικά γνωρίσματα απόδοσης
+render-features-ui = Περιβάλλον χρήστη
+toolbar-command-ao-mini = Μικρό παράθυρο AO
+keybinds-ui-feature = Εμφάνιση / απόκρυψη ολόκληρης της διεπαφής (Χαρακτηριστικά απόδοσης › Περιβάλλον χρήστη)
+import-image-size-limit = Μέγιστο μέγεθος εικόνας
+import-image-size-single = Μέγιστο μέγεθος εικόνας
+import-image-size-inherit = Καθολική ρύθμιση ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = Η καθολική ρύθμιση ακολουθεί το όριο δίπλα στην επιλογή Εισαγωγή στο κάτω μέρος. Η τρέχουσα τιμή εμφανίζεται σε παρενθέσεις. Οι μεγαλύτερες εικόνες μειώνονται αυτόματα στο επιλεγμένο όριο.
+import-image-size-global-help = Μέγιστο μέγεθος εικόνας για εισαγωγές. Οι μεμονωμένες επιλογές εικόνων και υλικών έχουν προτεραιότητα. Οι μεγαλύτερες εικόνες μειώνονται αυτόματα.
+ui-chat-applink-preferences-tip = Άνοιγμα αυτής της ρύθμισης στις Προτιμήσεις
+ui-options-bento-idle = Διορθώστε την κινούμενη εικόνα αδράνειας
+ui-options-bento-idle-hint = Παίζει ένα κινούμενο σχέδιο με προτεραιότητα 0 κάτω από όλα τα άλλα, έτσι ώστε τα χέρια, το στόμα, τα φτερά και η ουρά να επιστρέφουν σε μια φυσική στάση αντί να μένουν κολλημένα μετά από ένα κινούμενο σχέδιο. Το βλέπουν και οι άλλοι
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Αντικείμενο UUID αντιγράφηκε
+       *[other] Αντιγραφή αντικειμένων
+    }
+ui-appearance-batch-choose-folder = Ρούχα για φωτογράφηση σε { $folder }
+ui-appearance-batch-all = Όλα τα σύνολα
+ui-appearance-batch-chosen = { $chosen } του { $total }
+ui-appearance-batch-select-missing = Χωρίς εικόνα
+ui-inventory-dialogs-detach-and-delete = Αφαίρεση και διαγραφή
+ui-inventory-dialogs-detach-and-delete-body = Το άβατάρ σας φοράει ορισμένα από αυτά τα αντικείμενα. Θα τα βγάλει πρώτα και μετά θα μετακινηθούν στον κάδο.
+ui-inventory-delete-detach-cannot = Τα αντικείμενα που φοράει το άβαταρ δεν μπορούν πλέον να αφαιρεθούν και να διαγραφούν.
+ui-inventory-delete-detach-refused = Αυτό το στοιχείο δεν μπορεί να αφαιρεθεί και να διαγραφεί.
+ui-inventory-delete-detach-busy = Μια άλλη αλλαγή αποθεμάτων είναι σε εξέλιξη. Δοκιμάστε ξανά μόλις γίνει.
+ui-inventory-delete-detach-timeout = Τα φορεμένα αντικείμενα δεν βγήκαν, οπότε δεν διαγράφηκαν.
+common-modify = Τροποποίηση
+build-ui-contents-filters = Φίλτρα περιεχομένου
+build-ui-contents-next-owner-permissions = Δικαιώματα επόμενου κατόχου
+ui-options-voice-output = Εξόδου φωνής 100%
+ui-options-voice-output-used-for-voice-chat = Χρησιμοποιημένος για τη φωνητική συνομιλία παγκόσμιος ήχος, μουσική και χρήση μέσων Έξοδος ήχου
+ui-options-same-as-audio-output = Ίδιος με την ακουστική παραγωγή
+ui-options-copy-setting-link = Αντιγραφή συνδέσμου στη ρύθμιση
+ui-options-setting-unavailable = Αυτή η ρύθμιση δεν είναι διαθέσιμη.
+ui-context-show-in-inventory-none = Κανένα αντικείμενο στο απόθεμά σας δεν έχει ακριβώς το όνομα αυτού του αντικειμένου.
+photo-vf-keep-framing = Κρατήστε το πλαίσιο
+ui-profile-aurora-help = Το προφίλ ενός κατοίκου: ποιοι είναι, τι μπορείτε να κάνετε με αυτούς, στη συνέχεια τις επιλογές τους, τις μικρές αγγελίες, την πρώτη ζωή, το προφίλ και τις σημειώσεις σας.Προτιμήσεις › Aurora › Προφίλ επαναφέρει το παράθυρο του παλιού προγράμματος προβολής.
+ui-profile-aurora-tab-picks = Επιλογές προφίλ
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Επιλογές προφίλ: { $count }
+       *[other] Επιλογές προφίλ: { $count }
+    }
+ui-profile-aurora-snapshot = Εικόνα
+ui-profile-aurora-picks-empty = Δεν υπάρχουν επιλογές ακόμα
+ui-profile-aurora-picks-empty-text = Ο χρήστης { $name } δεν έχει μοιραστεί ακόμη καμία επιλογή.
+ui-profile-aurora-picks-empty-own = Μοιραστείτε ό,τι έχει σημασία για εσάς
+ui-profile-aurora-picks-empty-own-text = Χρησιμοποιήστε επιλογές για να επισημάνετε μέρη, άτομα και πράγματα που σας ενδιαφέρουν.
+ui-profile-aurora-delete-pick = Διαγραφή της επιλογής "{ $name }";
+script-search-whole-words = Ολόκληρες λέξεις
+people-groups-deactivate = Απενεργοποίηση
+ao-mini-title = Μικρό παράθυρο AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Δεν έχει επιλεγεί κίνηση
+ao-quick-pin = Ανοίξτε το μίνι παράθυρο AO
+build-layout-button-icon = Εικονίδιο
+build-layout-button-label = Ετικέτα
+build-layout-button-both = Εικονίδιο και ετικέτα
+build-detach-shown = Στο δικό του παράθυρο: κάντε κλικ για να το αποκρύψετε.Σύρετε αυτό το παράθυρα από τον τίτλο του στο παράθυρo κατασκευής για να την τοποθετήσετε πίσω.
+build-detach-hidden = Στο δικό του παράθυρο, κρυμμένο: κάντε κλικ για να το εμφανίσετε.
+build-material-save-as = Αποθήκευση υλικού ως
+build-material-save-name = Όνομα του νέου υλικού στην αποθήκη σας:
+build-material-new-material = Το νέο υλικό
+build-material-save-not-allowed = Η αποθήκευση χρειάζεται ένα υλικό σε κάθε επιλεγμένο πρόσωπο, δικαιώματα αντιγραφής και τροποποίησης στο αντικείμενο, και ένα αντίγραφο του υλικού στην απογραφή σας με τα δικαιώματα αντίγραφου και αλλαγής.
+build-material-saved = Το υλικό "{ $name }" αποθηκεύτηκε στο απόθεμά σας.
+build-material-save-failed = Το υλικό δεν μπόρεσε να αποθηκευτεί στο απόθεμά σας.
+toolbar-add-from-menu = Προσθήκη στη γραμμή εργαλείων
+toolbar-remove-from-menu = Κατάργηση από τη γραμμή εργαλείων
+toolbar-command-build-edit = Επεξεργασία αντικειμένων
+toolbar-command-build-create = Δημιουργία πρωτοτύπων
+toolbar-command-build-land = Επεξεργασία γης

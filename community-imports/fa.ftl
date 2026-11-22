@@ -1271,7 +1271,6 @@ import-mesh = شبکه
 import-bulk = چند
 import-choose-files = افزودن پرونده...
 import-loading = خواندن پرونده‌ها...
-import-limit-bulk-1k = محدود کردن بافتها به ۱۰۲۴ پیکسل
 import-files = پرونده‌ها
 import-destination = مقصد
 import-no-folder = پوشه‌ای موجود نیست
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = ایجاد پوسته‌های برخورد محدب
 import-physics-convex-help = بدنۀ محدب شکل برخورد را تقریب می‌کند و ممکن است حفره ها را پر کند. LODهای بصری تغییر نمی‌کنند. قبل از درخواست قیمت ، پیش‌نمایش فیزیک را بررسی کنید.
-import-max-size = محدود کردن اندازۀ به ۱۰۲۴×۱۰۲۴
 import-texture-size = بارگذاری { $width } × { $height } پیکسل
 import-lossless = فشرده‌سازی بدون از دست دادن
 import-strip-alpha = حذف کانال آلفای تقریباً شفاف
@@ -3490,7 +3488,6 @@ ui-sound-object-creation = ایجاد شیء
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = ایجاد رد شد: نوع، اندازه یا شمارۀ بارگیری نامعتبر.
 ui-contacts-create = ایجاد
 build-ui-tools-create-ctrl-4 = ایجاد) Ctrl+4 (
-ui-bars-create-prims-ctrl-4 = ایجاد اعداد اول) Ctrl+4 (
 ui-places-create-folder = ایجاد پوشه
 ui-inventory-context-create-folder-from-selection = ایجاد پوشه از گزینش
 common-create-favorite = ایجاد مورد علاقه
@@ -5544,14 +5541,12 @@ ui-place-details-edit-this-landmark = ویرایش این نقطه عطف
 ui-appearance-edit-this-outfit = ویرایش این لباس
 ui-appearance-show-current-outfit = نمایش لباس جاری در فهرست
 ui-appearance-current-outfit-not-in-my-outfits = لباس جاری در پوشه‌های من ذخیره نشده است
-ui-bars-edit-objects-ctrl-3 = ویرایش اشیا) Ctrl+3 (
 build-ui-tools-edit-parcel = ویرایش بسته
 ui-context-edit-shape = ویرایش شکل
 ui-context-export-shape-xml = صادرات شکل XML
 ui-context-edit-outfit = ویرایش لباس
 ui-context-edit-pbr-material = ویرایش مواد PBR
 ui-context-edit-land = ویرایش کشور
-ui-bars-edit-land-ctrl-5 = ویرایش زمین) Ctrl+5 (
 ui-land-options-edit-land = ویرایش کشور:
 build-ui-tools-edit-selected-land = ویرایش سرزمین انتخاب‌شده
 ui-profile-edit-text = ویرایش متن
@@ -9037,7 +9032,6 @@ common-for-sale = براي فروش:
 ui-land-general-for-sale-to = فروش به:
 ui-profile-coming-soon = به زودي مياد
 ui-profile-aurora-my-profile = مشخصات من
-ui-profile-aurora-help = این برنامه‌ها شامل: جستجوی محلی، جستجو در وب، جستوجو در اینترنت، جسته گریختن از سایت‌های مختلف، جستندگی در وب‌گاه‌های مختلف و جستنگی در وبلاگ‌ها است.
 ui-profile-aurora-conversation = مکالمه
 ui-profile-aurora-call = تماس
 ui-profile-aurora-add-friend = افزودن به عنوان دوست
@@ -9069,7 +9063,6 @@ ui-profile-aurora-their-map = اونا رو روي نقشه پيدا کن
 ui-profile-aurora-their-objects = تغییر، حذف یا گرفتن اشیاشان
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = پروفایل
-ui-profile-aurora-tab-picks = مکانهای مورد علاقه
 ui-profile-aurora-tab-classifieds = طبقه‌بندی
 ui-profile-aurora-tab-first-life = زندگي اول
 ui-profile-aurora-tab-web = وب
@@ -9103,13 +9096,7 @@ ui-profile-aurora-unsaved = تغییرات ذخیره‌شده ({ $parts })
 ui-profile-aurora-part-bio = بیولوژیکی
 ui-profile-aurora-part-first-life = زندگي اول
 ui-profile-aurora-part-notes = یادداشتها
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } مکان
-       *[other] { $count } مکانها
-    }
 ui-profile-aurora-part-classified = طبقه‌بندی شده
-ui-profile-aurora-snapshot = عکس از محل
 ui-profile-aurora-teleport = انتقال
 ui-profile-aurora-description = توصیف
 ui-profile-aurora-category = دسته
@@ -9125,11 +9112,6 @@ ui-profile-aurora-copy-slurl = رونوشت از SLURL
 ui-profile-aurora-here = موقعيت من اينجا
 ui-profile-aurora-add-here = جايي رو که من هستم اضافه کن
 ui-profile-aurora-picks-count = { $count } از { $limit } (محدودیت حساب)
-ui-profile-aurora-picks-empty = هنوز جاي مورد علاقه اي نيست
-ui-profile-aurora-picks-empty-text = { $name } هیچ مکان مشترکی را به اشتراک نگذارده است.
-ui-profile-aurora-picks-empty-own = اشتراک‌گذاری مکان‌های مورد علاقه‌تان
-ui-profile-aurora-picks-empty-own-text = دیگر ساکنین آنها را در پروفایل شما می‌بینند و با یک کلیک به آنجا منتقل می‌شوند.
-ui-profile-aurora-delete-pick = حذف مکان{ $name }"?
 ui-profile-aurora-classifieds-empty = هیچ‌گونه طبقه‌بندی
 ui-profile-aurora-classifieds-empty-text = { $name } هيچ رازي منتشر نشده
 ui-profile-aurora-classifieds-empty-own = یک مکان یا خدمات را شناخته کنید
@@ -14511,10 +14493,6 @@ build-layout-drop-here = اينجا بذارينش
 build-layout-drag-hint = براي حرکت کشيدن. روي هدف برجسته آزادش کنيد
 build-layout-export = صادرات
 # Compact material layout
-build-material-surface = سطح
-build-material-relief-reflection = . آرامش و بازتاب
-build-material-lighting = پاسخ نور
-build-material-placement = قرار دادن بافت
 build-material-diffuse-tint = رنگ پراکنده
 build-material-specular-tint = سایه آینه
 build-material-base-tint = رنگ پایه
@@ -15875,7 +15853,7 @@ ui-options-camera-still-while-posing = دوربین را در حین عکاسی 
 ui-options-camera-still-while-posing-tip = هنگامی که شما در حال پویش هستید ، دوربین از دنبال کردن آواتار ، تمرکز آن و قسمت‌های بدنش متوقف می‌شود ، و راه رفتن آن را بازنگرداند. مدار ، بزرگنمایی ، چرخش و پیش‌فرض‌ها همچنان کار می‌کنند.
 ui-options-group-emotes-hint = در سبک گفت‌وگوی Aurora، حرکت نمایشی مانند «/me waves» زیر همان عنوان پیام‌هایی نمایش داده می‌شود که همان شخص بلافاصله پیش یا پس از آن فرستاده است. این حرکت عنوان جداگانه‌ای ندارد.
 content-perms-nested = شامل شیء در شیء
-content-perms-nested-help = این همچنین محتوای اشیا تو در تو را تا عمق پنج سطوح ویرایش می‌کند. هر شیء در جهان دو متر بالاتر از ابتدایی که آن را شامل می‌شود قرار می‌گیرد. دست‌نوشته‌های در حال اجرا متوقف می‌شوند ، محتوای آن تغییر می‌کند ، و دست‌نویس‌های آن دوباره آغاز می‌شوند. سپس شیء به داخل ظرف ذخیره می‌شود. مجوزهای شیئ در ظرف قبل از حذف رونوشت موقت آن در جهان تنظیم و بررسی می‌شوند. اشیاء که نمی‌توانید رونوشتی کنید ، انتقال دهید یا تغییر دهید بسته باقی می‌مانند. برای ساختن در موقعیت قرار دادن ، نیاز به مجوز دارید.
+content-perms-nested-help = محتویات اشیای تودرتو تا 5 سطح نیز تغییر می‌کند. هر شیء 2 متر بالاتر از جزء پایه (prim) که آن را در خود دارد در جهان قرار می‌گیرد. اسکریپت‌های در حال اجرا متوقف می‌شوند، محتویات تغییر می‌کند، اسکریپت‌ها دوباره اجرا می‌شوند و شیء به محفظه بازگردانده و ذخیره می‌شود. مجوزهای شیء بازگردانده‌شده پیش از حذف نسخهٔ موقت از جهان تنظیم و بررسی می‌شوند. اشیای بدون اجازهٔ کپی، انتقال یا ویرایش باز نمی‌شوند. به اجازهٔ ساخت‌وساز در محل قرار دادن اشیا نیاز دارید.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } شیء در محتوا باز خواهد شد ، پرش: { $skipped }.
@@ -16015,3 +15993,79 @@ phototools-director-lens = لنز کارگردان هنگامی که پنجره 
 phototools-view-angle-viewfinder = ناظر زاویه دید را در اختیار دارد: زاویه شما وقتی بسته می‌شود برمی‌گردد.
 ui-options-dof-show-focus-point = نمایش نقطه تمرکز
 ui-options-dof-show-focus-point-help = یک صلیب کوچک بر روی نقطه ای که لنز تمرکز می‌کند: زرد هنگامی که آزاد است، قرمز زمانی که قفل شده‌است.
+
+### Updated release translations
+
+render-features-menu = ویژگیهای نمایش
+render-features-ui = رابط کاربری
+toolbar-command-ao-mini = پنجرهٔ کوچک AO
+keybinds-ui-feature = نمایش / مخفی کردن کل واسط) ویژگیهای ترسیم › UI (
+import-image-size-limit = اندازۀ بیشینه تصویر
+import-image-size-single = اندازۀ بیشینه تصویر
+import-image-size-inherit = تنظیم سراسری ({ $size } پیکسل)
+import-image-size-pixels = { $size } پیکسل
+import-image-size-inherit-help = تنظیمات جهانی ، محدودیت کنار واردات در پایین را دنبال می‌کند. مقدار جاری آن در پرانتزها ظاهر می‌شود. تصاویر بزرگتر به طور خودکار به حد برگزیده کوچک می‌شوند.
+import-image-size-global-help = اندازۀ بیشینۀ تصویر برای واردات. انتخابهای فردی تصویر و ماده اولویت دارند. تصاویر بزرگتر به طور خودکار کوچک می‌شوند.
+ui-chat-applink-preferences-tip = باز کردن این تنظیم در ترجیحات
+ui-options-bento-idle = تصحیح پویانمایی بی‌کار Bento
+ui-options-bento-idle-hint = انیمیشن بنتو با اولویت صفر را زیر همۀ بقیه پخش می‌کند ، بنابراین دستها ، دهان ، بالها و دم به جای گیر کردن بعد از یک انیميشن به حالت طبیعی برمی‌گردند؛ دیگران نیز آن را می‌بینند
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] شیء UUID کپی شد
+       *[other] UUIDهای شیء رونوشت شد
+    }
+ui-appearance-batch-choose-folder = لباس هايي که تو { $folder } عکس ميگيرند
+ui-appearance-batch-all = همه لباسها
+ui-appearance-batch-chosen = { $chosen } از { $total }
+ui-appearance-batch-select-missing = بدون تصویر
+ui-inventory-dialogs-detach-and-delete = جدا کردن و حذف
+ui-inventory-dialogs-detach-and-delete-body = آواتار شما بعضی از این موارد را پوشیده است. ابتدا جدا می‌شوند و سپس به سطل زباله منتقل می‌شوند.
+ui-inventory-delete-detach-cannot = مواردی که آواتار پوشیده است دیگر قابل جدا کردن و حذف نیستند.
+ui-inventory-delete-detach-refused = این عنصر را نمی‌توان حذف کرد.
+ui-inventory-delete-detach-busy = یک تغییر موجودی دیگر در حال انجام است. وقتی تمام شد دوباره سعی کنید.
+ui-inventory-delete-detach-timeout = موارد پوشیده‌شده جدا نشدند، بنابراین حذف نشدند.
+common-modify = تغییر
+build-ui-contents-filters = پالایۀ محتوا
+build-ui-contents-next-owner-permissions = مجوزهای صاحب بعدی
+ui-options-voice-output = خروجی صدا
+ui-options-voice-output-used-for-voice-chat = برای گپ صوتی استفاده می‌شود؛ صدای جهان، موسیقی و رسانه از خروجی صوتی بهره می‌برند
+ui-options-same-as-audio-output = همانند خروجی صوتی
+ui-options-copy-setting-link = رونوشت پیوند به تنظیمات
+ui-options-setting-unavailable = این تنظیم موجود نیست.
+ui-context-show-in-inventory-none = هیچ شیئی در فهرست شما دقیقاً نام این شیء را ندارد.
+photo-vf-keep-framing = چارچوب رو نگه دار
+ui-profile-aurora-help = پروفایل یک ساکن: او کیست، چه کاری می‌تواند با او انجام دهد، سپس انتخاب‌های او، آگهی‌های تبلیغاتی، زندگی اول، پروفایل وب و یادداشت‌های شما. Aurora › Profiles پنجره Legacy Viewer را برمی‌گرداند.
+ui-profile-aurora-tab-picks = گزیده‌ها
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] گزیده‌ها: { $count }
+       *[other] گزیده‌ها: { $count }
+    }
+ui-profile-aurora-snapshot = تصویر
+ui-profile-aurora-picks-empty = هنوز انتخابی وجود ندارد
+ui-profile-aurora-picks-empty-text = { $name } هیچ انتخابی را به اشتراک نگذارده است.
+ui-profile-aurora-picks-empty-own = چيزايي که براي تو مهمه رو به اشتراک بذار
+ui-profile-aurora-picks-empty-own-text = از انتخاب‌ها برای برجسته کردن مکان‌ها، افراد و چیزهایی که اهمیت می‌دهید استفاده کنید.
+ui-profile-aurora-delete-pick = حذف انتخاب "{ $name }"؟
+script-search-whole-words = کلمات کامل
+people-groups-deactivate = غیرفعال کردن
+ao-mini-title = پنجرهٔ کوچک AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: پویانمایی برگزیده نشده
+ao-quick-pin = باز کردن پنجرۀ miniAO
+build-layout-button-icon = شمایل
+build-layout-button-label = برچسب
+build-layout-button-both = شمایل و برچسب
+build-detach-shown = در پنجرۀ خود: برای مخفی کردن آن کلیک کنید. برای بازگرداندن آن ، آن پنجره را با عنوانش به پنجره‌ی ساخت بکشید.
+build-detach-hidden = در پنجره خود، مخفی: برای نمایش آن کلیک کنید.
+build-material-save-as = ذخیرۀ ماده به عنوان
+build-material-save-name = نام مادهٔ جدید در فهرست شما:
+build-material-new-material = ماده جدید
+build-material-save-not-allowed = ذخیره‌سازی نیازمند یک ماده PBR در هر چهره انتخاب شده، کپی و اصلاح حقوق بر روی شیء، و یک کپی از مواد در فهرست شما با کپی کردن و اصلاح حق است.
+build-material-saved = ماده "{ $name }" در فهرست شما ذخيره شد
+build-material-save-failed = نمی‌توان این ماده را در فهرست شما ذخیره کرد.
+toolbar-add-from-menu = افزودن به میله ابزار
+toolbar-remove-from-menu = حذف از نوار ابزار
+toolbar-command-build-edit = ویرایش شیء
+toolbar-command-build-create = ایجاد یک عدد اول
+toolbar-command-build-land = ویرایش کشور

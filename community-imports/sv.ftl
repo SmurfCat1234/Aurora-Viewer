@@ -1271,7 +1271,6 @@ import-mesh = Mesh
 import-bulk = Flera
 import-choose-files = Lägg till filer…
 import-loading = Läser filer…
-import-limit-bulk-1k = Begränsa texturer till 1024 px
 import-files = Filer
 import-destination = Destination
 import-no-folder = Ingen mapp tillgänglig
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Skapa konvexa kollisionsskrov
 import-physics-convex-help = Konvexa skrov uppskattar kollisionsformen och kan fylla öppningar. Visuell LOD förblir oförändrad. Kontrollera fysikförhandsgranskningen innan du begär en offert.
-import-max-size = Begränsa storleken till 1024 × 768
 import-texture-size = Uppladdningsstorlek: { $width } × { $height } px
 import-lossless = Förlustfri komprimering
 import-strip-alpha = Ta bort den nästan ogenomskinliga alfakanalen
@@ -3473,7 +3471,6 @@ ui-sound-object-creation = Skapa ett objekt
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Skapande nekades: ogiltig typ, storlek eller uppladdningsantal.
 ui-contacts-create = Skapa
 build-ui-tools-create-ctrl-4 = Skapa (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Skapa primtal (Ctrl+4)
 ui-places-create-folder = Skapa en mapp
 ui-inventory-context-create-folder-from-selection = Skapa mapp från markering
 common-create-favorite = Skapa en favorit
@@ -5527,14 +5524,12 @@ ui-place-details-edit-this-landmark = Redigera detta landmärke
 ui-appearance-edit-this-outfit = Redigera denna outfit
 ui-appearance-show-current-outfit = Visa aktuell outfit i listan
 ui-appearance-current-outfit-not-in-my-outfits = Den aktuella outfiten sparas inte i Mina Outfits
-ui-bars-edit-objects-ctrl-3 = Redigera objekt (Ctrl+3)
 build-ui-tools-edit-parcel = Redigera paket
 ui-context-edit-shape = Redigera form
 ui-context-export-shape-xml = Exportera form XML
 ui-context-edit-outfit = Redigera outfit
 ui-context-edit-pbr-material = Redigera PBR-material
 ui-context-edit-land = Redigera land
-ui-bars-edit-land-ctrl-5 = Redigera land (Ctrl+5)
 ui-land-options-edit-land = Redigera land:
 build-ui-tools-edit-selected-land = Redigera valt land
 ui-profile-edit-text = Redigera text
@@ -9018,7 +9013,6 @@ common-for-sale = Till salu: 1 st
 ui-land-general-for-sale-to = Till salu till:
 ui-profile-coming-soon = Kommer snart tillbaka!
 ui-profile-aurora-my-profile = » Min profil
-ui-profile-aurora-help = En invånares profil: vem de är, vad du kan göra med dem, sedan deras favoritplatser, annonser, första livet, webbprofil och dina Inställningar › Aurora › Profiler tar tillbaka Legacy Viewers fönster.
 ui-profile-aurora-conversation = Konversation
 ui-profile-aurora-call = Ring
 ui-profile-aurora-add-friend = Lägg till som vän
@@ -9050,7 +9044,6 @@ ui-profile-aurora-their-map = Hitta dem på kartan
 ui-profile-aurora-their-objects = Ändra, ta bort eller ta sina objekt
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Profil
-ui-profile-aurora-tab-picks = Mina favoritplatser
 ui-profile-aurora-tab-classifieds = Annonser
 ui-profile-aurora-tab-first-life = Det första livet
 ui-profile-aurora-tab-web = Webb
@@ -9084,13 +9077,7 @@ ui-profile-aurora-unsaved = Osparade ändringar ({ $parts })
 ui-profile-aurora-part-bio = bio
 ui-profile-aurora-part-first-life = Mitt första liv
 ui-profile-aurora-part-notes = anmärkningar
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } plats
-       *[other] { $count } platser
-    }
 ui-profile-aurora-part-classified = sekretessbelagd
-ui-profile-aurora-snapshot = Bild på platsen
 ui-profile-aurora-teleport = Teleport
 ui-profile-aurora-description = Beskrivning
 ui-profile-aurora-category = Kategori
@@ -9106,11 +9093,6 @@ ui-profile-aurora-copy-slurl = Kopiera länken
 ui-profile-aurora-here = Min position här
 ui-profile-aurora-add-here = Lägg till platsen där jag är
 ui-profile-aurora-picks-count = { $count } av { $limit } (gräns för konto)
-ui-profile-aurora-picks-empty = Inget favoritställe än
-ui-profile-aurora-picks-empty-text = { $name } har inte delat någon plats.
-ui-profile-aurora-picks-empty-own = Dela dina favoritplatser
-ui-profile-aurora-picks-empty-own-text = Andra invånare ser dem på din profil och teleporterar dit med ett klick.
-ui-profile-aurora-delete-pick = Ta bort platsen "{ $name }"?
 ui-profile-aurora-classifieds-empty = Inga annonser hittades
 ui-profile-aurora-classifieds-empty-text = { $name } har ingen annons publicerad.
 ui-profile-aurora-classifieds-empty-own = Gör en plats eller tjänst känd
@@ -14503,10 +14485,6 @@ build-layout-drop-here = Släpp här.
 build-layout-drag-hint = Dra för att flytta. Släpp på ett markerat mål.
 build-layout-export = Exportera
 # Compact material layout
-build-material-surface = Yta
-build-material-relief-reflection = Relief och reflektion
-build-material-lighting = Svar på ljus
-build-material-placement = Placering av texturer
 build-material-diffuse-tint = Diffus nyans
 build-material-specular-tint = Spegelfärgad ton
 build-material-base-tint = Basfärg
@@ -15864,7 +15842,7 @@ ui-options-camera-still-while-posing = Håll kameran stilla när du poserar
 ui-options-camera-still-while-posing-tip = När du poserar slutar kameran att följa avataren, dess fokus och kroppsdelar. Kameran återställs inte när du går. Omlopp, zoomning, panorering och förinställningar fungerar fortfarande.
 ui-options-group-emotes-hint = I chattstilen Aurora visas en emote som ”/me waves” under samma rubrik som meddelanden från samma avsändare precis före eller efter. Den får ingen egen rubrik.
 content-perms-nested = Inkludera objekt inuti objekt
-content-perms-nested-help = Detta redigerar även innehållet i kapslade objekt, upp till fem nivåer djupt. Varje objekt placeras i världen två meter ovanför primitiven som innehåller det. Dess körande script stoppas, dess innehåll ändras och dess script startas om. Objektet sparas sedan tillbaka in i behållaren. Behörigheterna för objektet i behållaren sätts och kontrolleras innan dess temporära kopia i värld raderas. Objekt som du inte kan kopiera, överföra eller modifiera förblir stängda. Du behöver behörighet att bygga på placeringsplatsen.
+content-perms-nested-help = Ändrar även innehållet i kapslade objekt, upp till 5 nivåer. Varje objekt placeras i världen 2 m ovanför primmen som innehåller det. Aktiva skript stoppas, innehållet ändras, skripten startas igen och objektet sparas tillbaka. Behörigheterna för det återförda objektet ställs in och kontrolleras innan den tillfälliga kopian tas bort från världen. Objekt som du saknar rätt att kopiera, överföra eller ändra öppnas inte. Du behöver byggrättigheter där objekten placeras.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } objekt i innehållet kommer att öppnas, hoppas över: { $skipped }.
@@ -16004,3 +15982,79 @@ phototools-director-lens = Director's Lens visas när dess fönster är öppet, 
 phototools-view-angle-viewfinder = Sökaren äger betraktningsvinkeln: din kommer tillbaka när den stängs.
 ui-options-dof-show-focus-point = Visa fokuspunkt
 ui-options-dof-show-focus-point-help = Ett litet hårkors på den punkt som linsen fokuserar på: gult när det är fritt, rött när den är låst.
+
+### Updated release translations
+
+render-features-menu = Funktioner för rendering
+render-features-ui = Gränssnitt
+toolbar-command-ao-mini = Litet AO-fönster
+keybinds-ui-feature = Visa/dölj hela gränssnittet (Rendering features › UI)
+import-image-size-limit = Maximal bildstorlek
+import-image-size-single = Maximal bildstorlek
+import-image-size-inherit = Global inställning ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = Den globala inställningen följer gränsen bredvid Importera längst ned och dess aktuella värde visas inom parentes. Större bilder reduceras automatiskt till den valda gränsen.
+import-image-size-global-help = Maximal bildstorlek för import. Individuella bild- och materialval prioriteras, större bilder reduceras automatiskt.
+ui-chat-applink-preferences-tip = Öppna inställningen i Inställningar
+ui-options-bento-idle = Fix Bento inaktiv animering
+ui-options-bento-idle-hint = Spelar en prioriterad 0 Bento animation under alla andra, så händer, mun, vingar och svans går tillbaka till en naturlig pose istället för att fastna efter en animation; andra ser det också
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Objekt UUID kopierat
+       *[other] Objekt UUID kopierade
+    }
+ui-appearance-batch-choose-folder = Outfits att fotografera i { $folder }
+ui-appearance-batch-all = Visa alla outfits
+ui-appearance-batch-chosen = { $chosen } av { $total }
+ui-appearance-batch-select-missing = Utan bild
+ui-inventory-dialogs-detach-and-delete = Ta av och ta bort
+ui-inventory-dialogs-detach-and-delete-body = Din avatar bär några av de här föremålen. De tas av först och flyttas sedan till papperskorgen.
+ui-inventory-delete-detach-cannot = Föremålen som avataren bär kan inte längre tas av och tas bort.
+ui-inventory-delete-detach-refused = Detta objekt kan inte tas av och raderas.
+ui-inventory-delete-detach-busy = En annan inventeringsändring pågår. Försök igen när den är klar.
+ui-inventory-delete-detach-timeout = De burna föremålen kunde inte tas av och togs därför inte bort.
+common-modify = Ändra
+build-ui-contents-filters = Innehållsfilter
+build-ui-contents-next-owner-permissions = Nästa ägares behörigheter
+ui-options-voice-output = Röst utgång
+ui-options-voice-output-used-for-voice-chat = Används för röstchatt; världsljud, musik och media använder Ljudutgång
+ui-options-same-as-audio-output = Samma som ljudutgång
+ui-options-copy-setting-link = Kopiera länk till inställning
+ui-options-setting-unavailable = Den här inställningen är inte tillgänglig.
+ui-context-show-in-inventory-none = Inget föremål i din inventering har exakt detta objekts namn.
+photo-vf-keep-framing = Behåll inramningen
+ui-profile-aurora-help = En boendes profil: vem de är, vad du kan göra med dem, sedan deras val, annonser, första livet, webbprofil och dina Inställningar › Aurora › Profiler tar tillbaka Legacy Viewer-fönstret.
+ui-profile-aurora-tab-picks = Utvalda
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Utvalda: { $count }
+       *[other] Utvalda: { $count }
+    }
+ui-profile-aurora-snapshot = Bild
+ui-profile-aurora-picks-empty = Inga val ännu
+ui-profile-aurora-picks-empty-text = { $name } har inte delat några val.
+ui-profile-aurora-picks-empty-own = Dela det som är viktigt för dig
+ui-profile-aurora-picks-empty-own-text = Använd val för att markera platser, människor och saker du bryr dig om.
+ui-profile-aurora-delete-pick = Ta bort valet "{ $name }"?
+script-search-whole-words = Hela ord
+people-groups-deactivate = Inaktivera
+ao-mini-title = Litet AO-fönster
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Ingen animering vald
+ao-quick-pin = Öppna mini AO fönster
+build-layout-button-icon = Ikon
+build-layout-button-label = Etikett
+build-layout-button-both = Ikon och etikett
+build-detach-shown = I sitt eget fönster: klicka för att dölja det, dra fönstret med dess titel till byggfönstret för att sätta tillbaka det.
+build-detach-hidden = I eget fönster, dolt: klicka för att visa det.
+build-material-save-as = Spara material som
+build-material-save-name = Namn på det nya materialet i ditt lager:
+build-material-new-material = Nytt material
+build-material-save-not-allowed = Spara behöver ett PBR material på varje vald yta, kopiera och ändra rättigheter på objektet, och en kopia av materialet i ditt lager med kopiering och ändring rättigheter.
+build-material-saved = Materialet "{ $name }" har sparats till ditt lager.
+build-material-save-failed = Materialet kunde inte sparas till ditt lager.
+toolbar-add-from-menu = Lägg till i verktygsfältet
+toolbar-remove-from-menu = Ta bort från verktygsfältet
+toolbar-command-build-edit = Redigera objekt
+toolbar-command-build-create = Skapa prims
+toolbar-command-build-land = Redigera land

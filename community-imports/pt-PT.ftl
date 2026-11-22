@@ -1266,7 +1266,6 @@ import-mesh = Malha
 import-bulk = Vários
 import-choose-files = Adicionar ficheiros…
 import-loading = A ler os ficheiros…
-import-limit-bulk-1k = Limitar as texturas a 1024 px
 import-files = Ficheiros
 import-destination = Destino
 import-no-folder = Nenhuma pasta disponível
@@ -1331,7 +1330,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Criar cascos de colisão convexos
 import-physics-convex-help = Os cascos convexos aproximam a forma de colisão e podem tapar aberturas. Os LOD visuais ficam inalterados. Verifique a pré-visualização da física antes de pedir um orçamento.
-import-max-size = Limitar o tamanho a 1024 × 1024
 import-texture-size = Tamanho do envio: { $width } × { $height } px
 import-lossless = Compressão sem perdas
 import-strip-alpha = Remover o canal alfa quase opaco
@@ -3492,7 +3490,6 @@ ui-sound-object-creation = Criação de objetos
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Criação recusada: tipo, tamanho ou número de envios inválido.
 ui-contacts-create = Criar
 build-ui-tools-create-ctrl-4 = Criar (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Criar prims (Ctrl+4)
 ui-places-create-folder = Criar pasta
 ui-inventory-context-create-folder-from-selection = Criar pasta a partir da seleção
 common-create-favorite = Criar favorito
@@ -5545,14 +5542,12 @@ ui-place-details-edit-this-landmark = Editar esta landmark
 ui-appearance-edit-this-outfit = Editar este visual
 ui-appearance-show-current-outfit = Mostrar o visual atual na lista
 ui-appearance-current-outfit-not-in-my-outfits = O visual atual não está guardado em «Os meus visuais»
-ui-bars-edit-objects-ctrl-3 = Editar objetos (Ctrl+3)
 build-ui-tools-edit-parcel = Editar a parcela
 ui-context-edit-shape = Editar a forma
 ui-context-export-shape-xml = Exportar a forma em XML
 ui-context-edit-outfit = Editar o visual
 ui-context-edit-pbr-material = Editar o material PBR
 ui-context-edit-land = Editar o terreno
-ui-bars-edit-land-ctrl-5 = Editar o terreno (Ctrl+5)
 ui-land-options-edit-land = Editar o terreno:
 build-ui-tools-edit-selected-land = Editar o terreno selecionado
 ui-profile-edit-text = Editar o texto
@@ -9037,7 +9032,6 @@ common-for-sale = À venda:
 ui-land-general-for-sale-to = À venda a:
 ui-profile-coming-soon = Em breve
 ui-profile-aurora-my-profile = O meu perfil
-ui-profile-aurora-help = O perfil de um residente: quem é, o que pode fazer com ele, depois os seus lugares favoritos, classificados, primeira vida, perfil web e as suas notas. Preferências › Aurora › Perfis repõe a janela do Legacy Viewer.
 ui-profile-aurora-conversation = Conversa
 ui-profile-aurora-call = Ligar
 ui-profile-aurora-add-friend = Adicionar como amigo
@@ -9069,7 +9063,6 @@ ui-profile-aurora-their-map = Encontrar a pessoa no mapa
 ui-profile-aurora-their-objects = Modificar, eliminar ou pegar nos objetos da pessoa
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Perfil
-ui-profile-aurora-tab-picks = Lugares favoritos
 ui-profile-aurora-tab-classifieds = Classificados
 ui-profile-aurora-tab-first-life = Primeira vida
 ui-profile-aurora-tab-web = Web
@@ -9103,13 +9096,7 @@ ui-profile-aurora-unsaved = Alterações não guardadas ({ $parts })
 ui-profile-aurora-part-bio = bio
 ui-profile-aurora-part-first-life = primeira vida
 ui-profile-aurora-part-notes = notas
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } lugar
-       *[other] { $count } lugares
-    }
 ui-profile-aurora-part-classified = classificado
-ui-profile-aurora-snapshot = Imagem do lugar
 ui-profile-aurora-teleport = Teleportar
 ui-profile-aurora-description = Descrição
 ui-profile-aurora-category = Categoria
@@ -9125,11 +9112,6 @@ ui-profile-aurora-copy-slurl = Copiar o SLURL
 ui-profile-aurora-here = A minha posição aqui
 ui-profile-aurora-add-here = Adicionar o lugar onde estou
 ui-profile-aurora-picks-count = { $count } de { $limit } (limite da conta)
-ui-profile-aurora-picks-empty = Ainda não há lugares favoritos
-ui-profile-aurora-picks-empty-text = { $name } não partilhou nenhum lugar.
-ui-profile-aurora-picks-empty-own = Partilhe os seus lugares favoritos
-ui-profile-aurora-picks-empty-own-text = Os outros residentes veem-nos no seu perfil e teleportam-se para lá com um clique.
-ui-profile-aurora-delete-pick = Eliminar o lugar «{ $name }»?
 ui-profile-aurora-classifieds-empty = Sem classificados
 ui-profile-aurora-classifieds-empty-text = { $name } não tem nenhum classificado publicado.
 ui-profile-aurora-classifieds-empty-own = Divulgar um lugar ou serviço
@@ -14503,10 +14485,6 @@ build-layout-drop-hidden = Largar aqui para ocultar
 build-layout-drop-here = Largar aqui
 build-layout-drag-hint = Arraste para mover. Largue num alvo realçado.
 build-layout-export = Exportar
-build-material-surface = Superfície
-build-material-relief-reflection = Relevo e reflexão
-build-material-lighting = Resposta à luz
-build-material-placement = Colocação da textura
 build-material-diffuse-tint = Tonalidade difusa
 build-material-specular-tint = Tonalidade especular
 build-material-base-tint = Tonalidade base
@@ -15838,7 +15816,6 @@ ui-options-camera-still-while-posing-tip = Enquanto você posa, a câmera pára 
 ui-options-group-emotes = Emotes de grupo com as mensagens do remetente
 ui-options-group-emotes-hint = No estilo de conversa Aurora, uma acção como «/me waves» aparece sob o mesmo cabeçalho das mensagens que a mesma pessoa enviou imediatamente antes ou depois. A acção não tem cabeçalho próprio.
 content-perms-nested = Incluir objetos dentro de objetos
-content-perms-nested-help = Isso também edita o conteúdo de objetos aninhados, até cinco níveis de profundidade. Cada objeto é colocado no mundo dois metros acima da primitiva que o contém. Seus scripts em execução são interrompidos, seu Conteúdo é alterado e seus scripts são reiniciados. O objeto é então salvo novamente no container. As permissões do objeto no container são definidas e verificadas antes que sua cópia temporária no mundo seja excluída. Objetos que você não pode copiar, transferir ou modificar permanecem fechados. Você precisa de permissão para construir no local de colocação.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } objeto no conteúdo será aberto, ignorado: { $skipped }.
@@ -15985,3 +15962,80 @@ phototools-director-lens = A lente do Diretor é mostrada enquanto sua janela es
 phototools-view-angle-viewfinder = O visor possui o ângulo de visão: o seu volta quando fecha.
 ui-options-dof-show-focus-point = Mostrar ponto de foco
 ui-options-dof-show-focus-point-help = Uma pequena cruz no ponto em que a lente foca: amarela quando está livre, vermelha quando está bloqueada.
+
+### Updated release translations
+
+photo-vf-keep-framing = Manter o enquadramento
+people-groups-deactivate = Desativar
+content-perms-nested-help = Também altera o conteúdo de objetos aninhados, até 5 níveis. Cada objeto é colocado no mundo 2 m acima do prim que o contém. Os scripts em execução são interrompidos, o conteúdo é alterado, os scripts são reiniciados e o objeto é guardado novamente. As permissões do objeto devolvido são definidas e verificadas antes de eliminar a cópia temporária do mundo. Os objetos que não pode copiar, transferir ou modificar ficam fechados. É necessária permissão de construção no local onde os objetos são colocados.
+render-features-menu = Recursos de renderização
+render-features-ui = Interface
+toolbar-command-ao-mini = Janela mini de AO
+keybinds-ui-feature = Mostrar / ocultar toda a interface (Recursos de renderização › UI)
+import-image-size-limit = Tamanho máximo da imagem
+import-image-size-single = Tamanho máximo da imagem
+import-image-size-inherit = Definição global ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = A configuração global segue o limite ao lado de Importar na parte inferior, e seu valor atual aparece entre parênteses. Imagens maiores são automaticamente reduzidas para o limite selecionado.
+import-image-size-global-help = Tamanho máximo da imagem para importações. As escolhas individuais de imagens e materiais têm prioridade. Imagens maiores são reduzidas automaticamente.
+ui-chat-applink-preferences-tip = Abra esta configuração em Preferências
+ui-options-bento-idle = Fix Bento animação ociosa
+ui-options-bento-idle-hint = Reproduz uma animação prioritária 0 Bento abaixo de todas as outras, então mãos, boca, asas e cauda voltam para uma pose natural ao invés de ficarem presas após uma animações; outros também veem isso
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Objeto UUID copiado
+       *[other] UUIDs de objeto copiados
+    }
+ui-appearance-batch-choose-folder = Roupas para fotografar em { $folder }
+ui-appearance-batch-all = Todos os visuais
+ui-appearance-batch-chosen = { $chosen } de { $total }
+ui-appearance-batch-select-missing = Sem imagem
+ui-inventory-dialogs-detach-and-delete = Retirar e eliminar
+ui-inventory-dialogs-detach-and-delete-body = O seu avatar tem alguns destes itens vestidos. Serão retirados primeiro e depois movidos para o Lixo.
+ui-inventory-delete-detach-cannot = Já não é possível retirar e eliminar os itens que o avatar está a usar.
+ui-inventory-delete-detach-refused = Este item não pode ser removido e excluído.
+ui-inventory-delete-detach-busy = Outra alteração de inventário está em andamento. Tente novamente quando terminar.
+ui-inventory-delete-detach-timeout = Não foi possível retirar os itens vestidos, pelo que não foram eliminados.
+common-modify = Modificar
+build-ui-contents-filters = Filtros de conteúdo
+build-ui-contents-next-owner-permissions = Permissões do próximo proprietário
+ui-options-voice-output = Saída de voz
+ui-options-voice-output-used-for-voice-chat = Usado para bate-papo de voz; uso de som, música e mídia do mundo
+ui-options-same-as-audio-output = Mesmo que a saída de áudio
+ui-options-copy-setting-link = Copiar link para configuração
+ui-options-setting-unavailable = Esta definição não está disponível.
+ui-context-show-in-inventory-none = Nenhum objeto em seu inventário tem exatamente o nome deste objeto.
+ui-profile-aurora-help = Perfil de um residente: quem ele é, o que você pode fazer com ele, então suas escolhas, classificados, primeira vida, perfil web e suas notas.Preferências › Aurora › Perfis traz de volta a janela do Legacy Viewer.
+ui-profile-aurora-tab-picks = Destaques
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Destaques: { $count }
+       *[other] Destaques: { $count }
+    }
+ui-profile-aurora-snapshot = Imagem
+ui-profile-aurora-picks-empty = Nenhuma escolha ainda
+ui-profile-aurora-picks-empty-text = { $name } não compartilhou nenhuma escolha.
+ui-profile-aurora-picks-empty-own = Compartilhe o que é importante para você
+ui-profile-aurora-picks-empty-own-text = Use as seleções para destacar lugares, pessoas e coisas que você gosta.
+ui-profile-aurora-delete-pick = Excluir a escolha "{ $name }"?
+script-search-whole-words = Palavras inteiras
+ao-mini-title = Janela mini de AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Nenhuma animação selecionada
+ao-quick-pin = Abrir mini AO janela
+build-layout-button-icon = Ícone
+build-layout-button-label = Etiqueta
+build-layout-button-both = Ícone e rótulo
+build-detach-shown = Em sua própria janela: clique para ocultá-la.Arraste essa janela pelo título para a janela de compilação para colocá-la de volta.
+build-detach-hidden = Em sua própria janela, oculta: clique para mostrá-lo.
+build-material-save-as = Salvar material como
+build-material-save-name = Nome do novo material em seu inventário:
+build-material-new-material = Novo material
+build-material-save-not-allowed = Salvar precisa de um material PBR em cada face selecionada, direitos de cópia e modificação no objeto e uma cópia do material em seu inventário com direitos para copiar e modificar.
+build-material-saved = Material "{ $name }" salvo no seu inventário.
+build-material-save-failed = O material não pôde ser salvo em seu inventário.
+toolbar-add-from-menu = Adicionar à barra de ferramentas
+toolbar-remove-from-menu = Remover da barra de ferramentas
+toolbar-command-build-edit = Editar objetos
+toolbar-command-build-create = Criar prims
+toolbar-command-build-land = Editar o terreno

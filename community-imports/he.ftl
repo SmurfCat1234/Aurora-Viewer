@@ -1271,7 +1271,6 @@ import-mesh = רשת
 import-bulk = כפולה
 import-choose-files = הוסף קבצים...
 import-loading = קריאת קבצים...
-import-limit-bulk-1k = הגבלת טקסטורות ל- 1024 פיקסלים
 import-files = קבצים
 import-destination = יעד
 import-no-folder = אין תיקייה זמינה
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = יצירת גוף התנגשות קמור
 import-physics-convex-help = הגוף הקמור מקרב את צורת התנגשות ויכול למלא פתחים. LOD הויזואליים נשארים ללא שינוי. בדוק את תצוגת הפיזיקה לפני שתבקש הצעת מחיר.
-import-max-size = מוגבל לגודל של 1024 x 768
 import-texture-size = גודל העלאה: { $width } × { $height } פיקסלים
 import-lossless = דחיסה ללא אובדן
 import-strip-alpha = הסר את ערוץ האלפא כמעט שקוף
@@ -3474,7 +3472,6 @@ ui-sound-object-creation = יצירת אובייקט
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = יצירה נדחתה: סוג, גודל או מספר העלאות לא תקינים.
 ui-contacts-create = יצור
 build-ui-tools-create-ctrl-4 = יצור (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = יצור סדרות ראשוניות (Ctrl+4)
 ui-places-create-folder = יצירת תיקיה
 ui-inventory-context-create-folder-from-selection = יצירת תיקיה מהבחירה
 common-create-favorite = יצור אהוב
@@ -5528,14 +5525,12 @@ ui-place-details-edit-this-landmark = ערוך את הנקודה הזו
 ui-appearance-edit-this-outfit = ערוך את התלבושת הזו
 ui-appearance-show-current-outfit = הראה את התלבושת הנוכחית ברשימה
 ui-appearance-current-outfit-not-in-my-outfits = התלבושת הנוכחית לא נשמרה ב"התלבושות שלי"
-ui-bars-edit-objects-ctrl-3 = עריכת עצמים (Ctrl+3)
 build-ui-tools-edit-parcel = עריכת חבילה
 ui-context-edit-shape = עריכת צורה
 ui-context-export-shape-xml = ייצוא צורה XML
 ui-context-edit-outfit = ערוך את התלבושת
 ui-context-edit-pbr-material = עריכת חומר PBR
 ui-context-edit-land = עריכת הארץ
-ui-bars-edit-land-ctrl-5 = עריכת הארץ (Ctrl+5)
 ui-land-options-edit-land = עריכת מדינה:
 build-ui-tools-edit-selected-land = ערוך את הארץ הנבחרת
 ui-profile-edit-text = עריכת טקסט
@@ -9021,7 +9016,6 @@ common-for-sale = למכירה:
 ui-land-general-for-sale-to = למכירה:
 ui-profile-coming-soon = בקרוב.
 ui-profile-aurora-my-profile = הפרופיל שלי
-ui-profile-aurora-help = פרופיל של תושב: מי הם, מה אתה יכול לעשות איתם, אז המקומות האהובים עליהם, קטגוריות, החיים הראשונים, פרופיל האינטרנט וההערות שלך. העדפות › Aurora › פרופילים מחזיר את חלון הצגת המורשת.
 ui-profile-aurora-conversation = שיחה
 ui-profile-aurora-call = התקשר.
 ui-profile-aurora-add-friend = הוסף כחבר
@@ -9053,7 +9047,6 @@ ui-profile-aurora-their-map = תמצא אותם על המפה.
 ui-profile-aurora-their-objects = לשנות, למחוק או לקחת את העצמים שלהם
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = פרופיל
-ui-profile-aurora-tab-picks = מקומות אהובים
 ui-profile-aurora-tab-classifieds = מודעות
 ui-profile-aurora-tab-first-life = חיים ראשונים.
 ui-profile-aurora-tab-web = רשת
@@ -9087,13 +9080,7 @@ ui-profile-aurora-unsaved = שינויים לא נשמרו ({ $parts })
 ui-profile-aurora-part-bio = ביולוגי
 ui-profile-aurora-part-first-life = חיים ראשונים
 ui-profile-aurora-part-notes = הערות
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } מקום
-       *[other] { $count } מקומות
-    }
 ui-profile-aurora-part-classified = מסווג
-ui-profile-aurora-snapshot = תמונה של המקום.
 ui-profile-aurora-teleport = טלפורט
 ui-profile-aurora-description = תיאור
 ui-profile-aurora-category = קטגוריה
@@ -9109,11 +9096,6 @@ ui-profile-aurora-copy-slurl = העתק את SLURL
 ui-profile-aurora-here = העמדה שלי כאן
 ui-profile-aurora-add-here = הוסף את המקום בו אני נמצא
 ui-profile-aurora-picks-count = { $count } של { $limit } (גבול חשבון)
-ui-profile-aurora-picks-empty = עדיין אין מקום אהוב.
-ui-profile-aurora-picks-empty-text = { $name } לא שיתף אף מקום.
-ui-profile-aurora-picks-empty-own = שיתפו את המקומות האהובים עליכם
-ui-profile-aurora-picks-empty-own-text = תושבים אחרים רואים אותם בפרופיל שלך וטלפורט שם בקליק אחד.
-ui-profile-aurora-delete-pick = מחק את המקום"{ $name }"?
 ui-profile-aurora-classifieds-empty = אין מודעות.
 ui-profile-aurora-classifieds-empty-text = { $name } לא פורסם שום מידע מסווג.
 ui-profile-aurora-classifieds-empty-own = להכריז על מקום או שירות
@@ -14508,10 +14490,6 @@ build-layout-drop-here = תוריד את זה.
 build-layout-drag-hint = גרור כדי לזוז, שחרר על מטרה מסומנת.
 build-layout-export = ייצוא
 # Compact material layout
-build-material-surface = משטח
-build-material-relief-reflection = הקלה והשתקפות.
-build-material-lighting = תגובת אור
-build-material-placement = מיקומי טקסטורות
 build-material-diffuse-tint = צבעים מפוזר
 build-material-specular-tint = צבע מראה
 build-material-base-tint = צבע בסיס
@@ -15869,7 +15847,7 @@ ui-options-camera-still-while-posing = שמור את המצלמה במצב יצ�
 ui-options-camera-still-while-posing-tip = בזמן שאתה פוזה, המצלמה מפסיקת לעקוב אחרי האווטאר, המיקוד שלו וחלקי הגוף שלו, והליכה לא מאפסת אותו. מסלול, זום, פנורמה והגדרות מראש עדיין עובדות.
 ui-options-group-emotes-hint = בסגנון הצ׳אט של Aurora, פעולה כמו ‎/me waves‎ מוצגת תחת אותה כותרת כמו הודעות שאותו אדם שלח מיד לפניה או אחריה. לא נפתחת עבורה כותרת נפרדת.
 content-perms-nested = כולל עצמים בתוך עצמים
-content-perms-nested-help = זה גם מעבד את תוכן האובייקטים הקשורים, עד חמש רמות בעומק. כל אובייקט מוצב בעולם מטריים מעל הפרימיטיבי שמכיל אותו. התסריטים שלו נעצרים, התוכן שלו משתנה והתסריטות שלו מתחילות מחדש. לאחר מכן האוביקט נשמר בחזרה במכל. הרשות של האובייקטים במכל מוגדרת ובוחנת לפני שהעותק הזמני שלהם בעולם נמחקה. עצמים שאינך יכול להעתיק, להעביר או לשנות נשארים סגור. אתה זקוק לרשות כדי לבנות במקום ההנחה.
+content-perms-nested-help = הפעולה משנה גם את התכולה של אובייקטים מקוננים, עד 5 רמות. כל אובייקט מוצב בעולם 2 מטרים מעל הפרים שמכיל אותו. הסקריפטים הפעילים נעצרים, התכולה משתנה, הסקריפטים מופעלים מחדש והאובייקט נשמר בחזרה. ההרשאות של האובייקט המוחזר מוגדרות ונבדקות לפני מחיקת העותק הזמני מהעולם. אובייקטים שאין לכם הרשאה להעתיק, להעביר או לשנות נשארים סגורים. נדרשת הרשאת בנייה במקום ההצבה.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } אובייקט בתוכן ייפתח, נדחה: { $skipped }.
@@ -16009,3 +15987,79 @@ phototools-director-lens = עדשת הבמאי מופיעה בזמן שהחלו�
 phototools-view-angle-viewfinder = הספקטרום הוא בעל זווית התצפית: שלך חוזר כשהוא סגור.
 ui-options-dof-show-focus-point = הראה נקודה של מיקוד
 ui-options-dof-show-focus-point-help = צלב קטן על הנקודה שבה העדשה ממוקדת: צהוב כשהיא חופשית, אדום כשהיא נעולת.
+
+### Updated release translations
+
+render-features-menu = תכונות ריצוף
+render-features-ui = ממשק
+toolbar-command-ao-mini = חלון AO מוקטן
+keybinds-ui-feature = הראה / הסתר את כל הממשק (תכונות ריצוף › ממשק משתמש)
+import-image-size-limit = גודל תמונה מקסימלי
+import-image-size-single = גודל תמונה מקסימלי
+import-image-size-inherit = הגדרה כללית ({ $size } פיקסלים)
+import-image-size-pixels = { $size } פיקסלים
+import-image-size-inherit-help = ההגדרה הגלובלית עוקבת אחר המגבלה ליד ייבוא בחלק התחתון. הערך הנוכחי שלה מופיע בתוך צופן. תמונות גדולות יותר מופחתות אוטומטית למגבלה הנבחרת.
+import-image-size-global-help = גודל התמונה המקסימלי עבור ייבוא. בחירת תמונות וחומרים נפרדים מקבלים עדיפות. תמונות גדולות יותר מוקטנות אוטומטית.
+ui-chat-applink-preferences-tip = פתח את ההגדרה הזו באפשרויות
+ui-options-bento-idle = תיקון האנימציה של בנטו בזמן עיכוב
+ui-options-bento-idle-hint = מנגן אנימציה של בנטו עם עדיפות 0 מתחת לכל השאר, כך שהידיים, הפה, הכנפיים והזנב חוזרים למצב טבעי במקום להישאר תקועים אחרי האנימציה; גם אחרים רואים את זה
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] אובייקט UUID הועתק.
+       *[other] UUIDs של האובייקט הועתקו
+    }
+ui-appearance-batch-choose-folder = תלבושות לצלם ב { $folder }
+ui-appearance-batch-all = כל התלבושות
+ui-appearance-batch-chosen = { $chosen } של { $total }
+ui-appearance-batch-select-missing = ללא תמונה
+ui-inventory-dialogs-detach-and-delete = הסרה מהאווטאר ומחיקה
+ui-inventory-dialogs-detach-and-delete-body = האווטאר שלכם לובש חלק מהפריטים האלה. תחילה הם יוסרו ממנו ולאחר מכן יועברו לאשפה.
+ui-inventory-delete-detach-cannot = לא ניתן עוד להסיר מהאווטאר ולמחוק את הפריטים שהוא לובש.
+ui-inventory-delete-detach-refused = לא ניתן להוריד ולמחוק את הפריט הזה.
+ui-inventory-delete-detach-busy = שינוי אחר של המזומנים מתרחש, נסה שוב כשזה ייגמר.
+ui-inventory-delete-detach-timeout = הפריטים שנלבשו לא הוסרו מהאווטאר, ולכן לא נמחקו.
+common-modify = שינוי
+build-ui-contents-filters = מסנני תוכן
+build-ui-contents-next-owner-permissions = הרשאות הבעל הבא
+ui-options-voice-output = פלט קול
+ui-options-voice-output-used-for-voice-chat = משמש לצ'אט קולי; צליל עולמי, מוזיקה ומדיה משתמשים בפלט אודיוName
+ui-options-same-as-audio-output = אותו הדבר כמו פלט אודיו
+ui-options-copy-setting-link = העתק את הקישור להגדרות
+ui-options-setting-unavailable = ההגדרה הזו אינה זמינה.
+ui-context-show-in-inventory-none = אף חפץ במזומנים שלך יש בדיוק את שם החפץ הזה.
+photo-vf-keep-framing = שמור על המסגרת.
+ui-profile-aurora-help = פרופיל של תושב: מי הם, מה אתה יכול לעשות איתם, אז הבחירות שלהם, מודעות, החיים הראשונים, פרופיל האינטרנט וההערות שלך. Preferences › Aurora › Profiles מחזיר את חלון הצגת המורשת.
+ui-profile-aurora-tab-picks = בחירות מומלצות
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] בחירות מומלצות: { $count }
+       *[other] בחירות מומלצות: { $count }
+    }
+ui-profile-aurora-snapshot = תמונה
+ui-profile-aurora-picks-empty = עדיין אין בחירות
+ui-profile-aurora-picks-empty-text = { $name } לא שיתף כל בחירות.
+ui-profile-aurora-picks-empty-own = שיתפו את מה שחשוב לכם.
+ui-profile-aurora-picks-empty-own-text = השתמש בבחירות כדי להדגיש מקומות, אנשים ודברים שאכפת לך מהם.
+ui-profile-aurora-delete-pick = למחוק את הבחירה "{ $name }"?
+script-search-whole-words = מילים שלמות
+people-groups-deactivate = נכבה
+ao-mini-title = חלון AO מוקטן
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: לא נבחרה הנפשה
+ao-quick-pin = פתיחת חלון מיני AO
+build-layout-button-icon = אייקון
+build-layout-button-label = תגיות
+build-layout-button-both = אייקון ותווית
+build-detach-shown = בחלון הפרטי שלו: לחץ כדי להסתיר אותו. גרר את החלון על ידי השם שלו לתוך חלון הבניה כדי לשים אותו בחזרה.
+build-detach-hidden = בחלון משלו, חבוי: לחץ כדי להראות אותו.
+build-material-save-as = שמור חומר כ
+build-material-save-name = שם החומר החדש במלאי שלך:
+build-material-new-material = חומר חדש
+build-material-save-not-allowed = כדי להציל, צריך חומר PBR על כל פנים שנבחרו, זכויות העתק ושינוי על האובייקט, ועתק של החומר במלאי שלך עם זכויות עתק ושינוים.
+build-material-saved = חומר "{ $name }" נשמר למחסן שלך.
+build-material-save-failed = לא ניתן היה לשמור את החומר למחסן שלך.
+toolbar-add-from-menu = הוסף לסרגל הכלים
+toolbar-remove-from-menu = הסר מסרגל הכלים
+toolbar-command-build-edit = עריכת עצמים
+toolbar-command-build-create = יצירת קבוצות ראשוניות
+toolbar-command-build-land = עריכת הארץ

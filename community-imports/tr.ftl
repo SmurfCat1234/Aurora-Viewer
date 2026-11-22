@@ -1266,7 +1266,6 @@ import-mesh = Örgü
 import-bulk = Çoklu
 import-choose-files = Dosya Ekle…
 import-loading = Dosyalar okunuyor…
-import-limit-bulk-1k = Dokuları 1024 px ile sınırla
 import-files = Dosyalar
 import-destination = Hedef
 import-no-folder = Kullanılabilir klasör yok
@@ -1331,7 +1330,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Dışbükey çarpışma gövdeleri oluştur
 import-physics-convex-help = Dışbükey gövdeler çarpışma şeklini yaklaşık olarak verir ve açıklıkları doldurabilir. Görsel LOD'lar değişmez. Fiyat teklifi istemeden önce fizik önizlemesini kontrol edin.
-import-max-size = Boyutu 1024 × 1024 ile sınırla
 import-texture-size = Karşıya yükleme boyutu: { $width } × { $height } px
 import-lossless = Kayıpsız sıkıştırma
 import-strip-alpha = Neredeyse opak alfa kanalını kaldır
@@ -3492,7 +3490,6 @@ ui-sound-object-creation = Nesne oluşturma
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Oluşturma reddedildi: geçersiz tür, boyut veya karşıya yükleme sayısı.
 ui-contacts-create = Oluştur
 build-ui-tools-create-ctrl-4 = Oluştur (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Prim oluştur (Ctrl+4)
 ui-places-create-folder = Klasör Oluştur
 ui-inventory-context-create-folder-from-selection = Seçimden klasör oluştur
 common-create-favorite = Favori Oluştur
@@ -5545,14 +5542,12 @@ ui-place-details-edit-this-landmark = Bu yer imini düzenle
 ui-appearance-edit-this-outfit = Bu dış görünümü düzenle
 ui-appearance-show-current-outfit = Geçerli dış görünümü listede göster
 ui-appearance-current-outfit-not-in-my-outfits = Geçerli dış görünüm Dış Görünümlerim'e kaydedilmemiş
-ui-bars-edit-objects-ctrl-3 = Nesneleri Düzenle (Ctrl+3)
 build-ui-tools-edit-parcel = Parseli düzenle
 ui-context-edit-shape = Şekli Düzenle
 ui-context-export-shape-xml = Şekil XML'ini Dışa Aktar
 ui-context-edit-outfit = Dış Görünümü Düzenle
 ui-context-edit-pbr-material = PBR Malzemesini Düzenle
 ui-context-edit-land = Araziyi Düzenle
-ui-bars-edit-land-ctrl-5 = Araziyi düzenle (Ctrl+5)
 ui-land-options-edit-land = Araziyi düzenle:
 build-ui-tools-edit-selected-land = Seçili araziyi düzenle
 ui-profile-edit-text = Metni Düzenle
@@ -9037,7 +9032,6 @@ common-for-sale = Satılık:
 ui-land-general-for-sale-to = Şu kişiye satılık:
 ui-profile-coming-soon = Yakında
 ui-profile-aurora-my-profile = Profilim
-ui-profile-aurora-help = Bir sakinin profili: kim olduğu, onunla neler yapabileceğiniz, ardından favori yerleri, ilanları, ilk hayatı, web profili ve notlarınız. Tercihler › Aurora › Profiller, Legacy Viewer'ın penceresini geri getirir.
 ui-profile-aurora-conversation = Sohbet
 ui-profile-aurora-call = Ara
 ui-profile-aurora-add-friend = Arkadaş olarak ekle
@@ -9069,7 +9063,6 @@ ui-profile-aurora-their-map = Haritada bulabilir
 ui-profile-aurora-their-objects = Nesnelerini değiştirebilir, silebilir veya alabilir
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Profil
-ui-profile-aurora-tab-picks = Favori yerler
 ui-profile-aurora-tab-classifieds = İlanlar
 ui-profile-aurora-tab-first-life = İlk hayat
 ui-profile-aurora-tab-web = Web
@@ -9103,13 +9096,7 @@ ui-profile-aurora-unsaved = Kaydedilmemiş değişiklikler ({ $parts })
 ui-profile-aurora-part-bio = biyo
 ui-profile-aurora-part-first-life = ilk hayat
 ui-profile-aurora-part-notes = notlar
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } yer
-       *[other] { $count } yer
-    }
 ui-profile-aurora-part-classified = ilan
-ui-profile-aurora-snapshot = Yerin resmi
 ui-profile-aurora-teleport = Işınla
 ui-profile-aurora-description = Açıklama
 ui-profile-aurora-category = Kategori
@@ -9125,11 +9112,6 @@ ui-profile-aurora-copy-slurl = SLURL'yi kopyala
 ui-profile-aurora-here = Buradaki konumum
 ui-profile-aurora-add-here = Bulunduğum yeri ekle
 ui-profile-aurora-picks-count = { $count } / { $limit } (hesap sınırı)
-ui-profile-aurora-picks-empty = Henüz favori yer yok
-ui-profile-aurora-picks-empty-text = { $name } hiçbir yer paylaşmadı.
-ui-profile-aurora-picks-empty-own = Favori yerlerinizi paylaşın
-ui-profile-aurora-picks-empty-own-text = Diğer sakinler onları profilinizde görür ve tek tıklamayla oraya ışınlanır.
-ui-profile-aurora-delete-pick = “{ $name }” yeri silinsin mi?
 ui-profile-aurora-classifieds-empty = İlan yok
 ui-profile-aurora-classifieds-empty-text = { $name } yayınlanmış bir ilana sahip değil.
 ui-profile-aurora-classifieds-empty-own = Bir yeri veya hizmeti tanıt
@@ -14499,10 +14481,6 @@ build-layout-drop-hidden = Gizlemek için buraya bırakın
 build-layout-drop-here = Buraya bırakın
 build-layout-drag-hint = Taşımak için sürükleyin. Vurgulanan bir hedefin üzerinde bırakın.
 build-layout-export = Dışa Aktar
-build-material-surface = Yüzey
-build-material-relief-reflection = Kabartma ve yansıma
-build-material-lighting = Işık tepkisi
-build-material-placement = Doku yerleşimi
 build-material-diffuse-tint = Dağınık renk
 build-material-specular-tint = Speküler renk
 build-material-base-tint = Temel renk
@@ -15834,7 +15812,6 @@ ui-options-camera-still-while-posing-tip = Poze ederken, kamera avatar'ı takip 
 ui-options-group-emotes = Göndericinin mesajlarıyla grup emojileri
 ui-options-group-emotes-hint = Aurora sohbet stilinde, “/me waves” gibi bir eylem, aynı kişinin hemen önce veya sonra gönderdiği mesajlarla aynı başlık altında gösterilir. Eyleme ayrı bir başlık açılmaz.
 content-perms-nested = Nesneleri nesnelerin içine dahil et
-content-perms-nested-help = Bu aynı zamanda, beş seviyeye kadar derinliğe sahip, yuvalanmış nesnelerin içeriğini de düzenler. Her nesnenin kendisini barındıran temelin iki metre üstünde yerleştirildiği dünyadır. Çalışan scriptleri durdurulur, içeriği değiştirilir ve scriptleri yeniden başlatılır. Nesne daha sonra konteynerin içine geri kaydedilir. Konteynerdeki nesneenin izinleri, dünyadaki geçici kopyası silinmeden önce ayarlanır ve kontrol edilir. Kopyalayamadığınız, taşıyamadığınız veya değiştiremediğiniz nesneler kapalı kalır. Yerleştirme yerinde inşa etmek için izin gerekiyor.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } içerikteki nesne açılacak, atlatılacaktır: { $skipped }.
@@ -15981,3 +15958,80 @@ phototools-director-lens = Yönetmenin lensi, penceresi açıkken aşağıda yer
 phototools-view-angle-viewfinder = Gözlemci görüş açısına sahiptir: kapandığında sizinki geri gelir.
 ui-options-dof-show-focus-point = Odak noktasını göster
 ui-options-dof-show-focus-point-help = Lensin odaklandığı noktada küçük bir haç: serbest olduğunda sarı, kilitlendiği zaman kırmızıdır.
+
+### Updated release translations
+
+photo-vf-keep-framing = Kadrajı koru
+people-groups-deactivate = Devre Dışı Bırak
+content-perms-nested-help = İç içe nesnelerin içeriğini de 5 düzeye kadar değiştirir. Her nesne, onu içeren primin 2 m üstünde dünyaya yerleştirilir. Çalışan komut dosyaları durdurulur, içerik değiştirilir, dosyalar yeniden başlatılır ve nesne yerine kaydedilir. Dünyadaki geçici kopya silinmeden önce geri kaydedilen nesnenin izinleri ayarlanır ve denetlenir. Kopyalayamadığınız, devredemediğiniz veya değiştiremediğiniz nesneler açılmaz. Nesnelerin yerleştirildiği yerde inşa izni gerekir.
+render-features-menu = Görüntüleme özellikleri
+render-features-ui = Arayüz
+toolbar-command-ao-mini = Mini AO penceresi
+keybinds-ui-feature = Tüm arayüzü göster / sakla (Renderleme özellikleri › UI)
+import-image-size-limit = Maksimum resim boyutu
+import-image-size-single = Maksimum resim boyutu
+import-image-size-inherit = Genel ayar ({ $size } piksel)
+import-image-size-pixels = { $size } piksel
+import-image-size-inherit-help = Küresel ayar, alttaki İthalat'ın yanındaki sınırı takip eder. Güncel değeri parantez içinde görüntülenir. Daha büyük resimler otomatik olarak seçilen sınıra küçültülür.
+import-image-size-global-help = İthalat için en büyük resim boyutu. Bireysel resim ve malzeme seçimleri önceliklidir. Daha büyük resimler otomatik olarak küçültülür.
+ui-chat-applink-preferences-tip = Bu ayarları Seçenekler'de aç
+ui-options-bento-idle = Bento'nun boşluk animasyonunu düzelt
+ui-options-bento-idle-hint = Bento animasyonunu diğerlerinin altında öncelikli 0 olarak oynatır, böylece el, ağız, kanat ve kuyruk bir animasyondan sonra sıkışmak yerine doğal bir pozisyona döner; diğerleri de bunu görür
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Nesne UUID kopyalandı.
+       *[other] Nesne UUID'leri kopyalandı
+    }
+ui-appearance-batch-choose-folder = { $folder }'de fotoğraf çekilecek kıyafetler
+ui-appearance-batch-all = Tüm dış görünümler
+ui-appearance-batch-chosen = { $chosen } ya da { $total }
+ui-appearance-batch-select-missing = Resimsiz
+ui-inventory-dialogs-detach-and-delete = Çıkar ve sil
+ui-inventory-dialogs-detach-and-delete-body = Avatarınız bu öğelerden bazılarını takıyor. Öğeler önce çıkarılır, ardından Çöp Kutusu’na taşınır.
+ui-inventory-delete-detach-cannot = Avatarın taktığı öğeler artık çıkarılıp silinemiyor.
+ui-inventory-delete-detach-refused = Bu öğe kaldırılamaz ve silinmez.
+ui-inventory-delete-detach-busy = Başka bir stok değişikliği devam ediyor. Bittiğinde tekrar deneyin.
+ui-inventory-delete-detach-timeout = Takılı öğeler çıkarılamadığı için silinmedi.
+common-modify = Değiştir
+build-ui-contents-filters = İçerik filtreleri
+build-ui-contents-next-owner-permissions = Bir sonraki sahibin izinleri
+ui-options-voice-output = Ses çıkışı
+ui-options-voice-output-used-for-voice-chat = Sesli sohbet için kullanılır; dünya sesleri, müzik ve medya kullanır Audio output
+ui-options-same-as-audio-output = Ses çıkışı ile aynı
+ui-options-copy-setting-link = Ayarlara bağlantıyı kopyala
+ui-options-setting-unavailable = Bu ayar kullanılamaz.
+ui-context-show-in-inventory-none = Envanterinizdeki hiçbir nesne tam olarak bu nesnenin adını taşımıyor.
+ui-profile-aurora-help = Bir sakinin profili: kimler, onlarla ne yapabilirsin, sonra seçimleri, ilanları, ilk hayatı, web profili ve notlarınız. Seçenekler › Aurora › Profiller Legacy Viewer penceresini geri getirir.
+ui-profile-aurora-tab-picks = Öne çıkarılanlar
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Öne çıkarılanlar: { $count }
+       *[other] Öne çıkarılanlar: { $count }
+    }
+ui-profile-aurora-snapshot = Resim
+ui-profile-aurora-picks-empty = Henüz seçim yapılmadı
+ui-profile-aurora-picks-empty-text = { $name } hiçbir seçim paylaşmadı.
+ui-profile-aurora-picks-empty-own = Senin için önemli olan şeyleri paylaş
+ui-profile-aurora-picks-empty-own-text = Yerleri, insanları ve önemsediğiniz şeyleri vurgulamak için seçicileri kullanın.
+ui-profile-aurora-delete-pick = "{ $name }" seçimini siliyor musun?
+script-search-whole-words = Tüm kelimeler
+ao-mini-title = Mini AO penceresi
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Animasyon seçilmedi
+ao-quick-pin = Mini AO penceresini aç
+build-layout-button-icon = İkon
+build-layout-button-label = Etiket
+build-layout-button-both = İkon ve etiket
+build-detach-shown = Kendi penceresinde: gizlemek için tıklayın. Geri koymak için bu pencereyi başlığından inşa penceresine çekin.
+build-detach-hidden = Kendi penceresinde, gizli: göstermek için tıklayın.
+build-material-save-as = Maddeyi Aynı Adla Kaydet
+build-material-save-name = Envanterinizdeki yeni maddenin adı:
+build-material-new-material = Yeni Madde
+build-material-save-not-allowed = Kaydetme, seçilen her yüz üzerinde bir PBR malzemesine, nesne üzerinde kopyalama ve değiştirme hakkına, ve envanterinizdeki materyalin kopyalanmasına ihtiyaç duyar. kopyalama, değiştirme hakkı ile.
+build-material-saved = "{ $name }" maddesi envanterine kaydedildi.
+build-material-save-failed = Madde envanterine kaydedilemedi.
+toolbar-add-from-menu = Araç çubuğuna ekle
+toolbar-remove-from-menu = Araç çubuğundan kaldır
+toolbar-command-build-edit = Nesneleri Düzenle
+toolbar-command-build-create = Primler oluştur
+toolbar-command-build-land = Araziyi Düzenle

@@ -1271,7 +1271,6 @@ import-mesh = Lưới
 import-bulk = Nhiều
 import-choose-files = Thêm tập tin...
 import-loading = Đang đọc tập tin...
-import-limit-bulk-1k = Giới hạn kết cấu đến 1024 px
 import-files = Tập tin
 import-destination = Địa điểm
 import-no-folder = Không có thư mục
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Tạo vỏ va chạm lồi
 import-physics-convex-help = Lớp vỏ cong xấp xỉ hình dạng va chạm và có thể lấp đầy các khoảng trống. LOD hiển thị không thay đổi. Kiểm tra xem trước vật lý trước khi yêu cầu báo giá.
-import-max-size = Giới hạn kích thước là 1024 x 1280
 import-texture-size = Tải lên { $width } × { $height } px
 import-lossless = Bản nén không mất
 import-strip-alpha = Gỡ bỏ kênh alpha gần như mờ
@@ -3462,7 +3460,6 @@ ui-sound-object-creation = Tạo đối tượng
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Tạo từ chối: kiểu, kích thước hoặc số lượng tải lên không hợp lệ.
 ui-contacts-create = Tạo
 build-ui-tools-create-ctrl-4 = Tạo (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Tạo nguyên tố (Ctrl+4)
 ui-places-create-folder = Tạo thư mục
 ui-inventory-context-create-folder-from-selection = Tạo thư mục từ những gì chọn
 common-create-favorite = Tạo mục yêu thích
@@ -5516,14 +5513,12 @@ ui-place-details-edit-this-landmark = Sửa điểm dừng này
 ui-appearance-edit-this-outfit = Sửa trang phục này
 ui-appearance-show-current-outfit = Hiện trang phục hiện tại trong danh sách
 ui-appearance-current-outfit-not-in-my-outfits = Trang phục hiện tại không được lưu trong trang phục của tôi
-ui-bars-edit-objects-ctrl-3 = Sửa đối tượng (Ctrl+3)
 build-ui-tools-edit-parcel = Sửa gói
 ui-context-edit-shape = Sửa hình dạng
 ui-context-export-shape-xml = Xuất hình dạng XML
 ui-context-edit-outfit = Sửa trang phục
 ui-context-edit-pbr-material = Sửa vật liệu PBR
 ui-context-edit-land = Sửa đất nước
-ui-bars-edit-land-ctrl-5 = Sửa đất nước (Ctrl+5)
 ui-land-options-edit-land = Sửa quốc gia:
 build-ui-tools-edit-selected-land = Sửa đất đã chọn
 ui-profile-edit-text = Sửa văn bản
@@ -9007,7 +9002,6 @@ common-for-sale = Để bán:
 ui-land-general-for-sale-to = Để bán cho:
 ui-profile-coming-soon = Sớm thôi.
 ui-profile-aurora-my-profile = Hồ sơ của tôi
-ui-profile-aurora-help = Thông tin cá nhân của cư dân: họ là ai, bạn có thể làm gì với họ, sau đó là những nơi yêu thích của họ, danh mục, cuộc sống đầu tiên, hồ sơ web và ghi chú của bạn. Preferences › Aurora › Profiles brings back the Legacy Viewer' s window.
 ui-profile-aurora-conversation = Thảo luận
 ui-profile-aurora-call = Gọi
 ui-profile-aurora-add-friend = Thêm như bạn
@@ -9039,7 +9033,6 @@ ui-profile-aurora-their-map = Tìm họ trên bản đồ.
 ui-profile-aurora-their-objects = Sửa đổi, xóa hoặc lấy đối tượng của chúng
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Hồ sơ
-ui-profile-aurora-tab-picks = Địa điểm yêu thích
 ui-profile-aurora-tab-classifieds = Thông báo
 ui-profile-aurora-tab-first-life = Cuộc sống đầu tiên
 ui-profile-aurora-tab-web = Web
@@ -9073,13 +9066,7 @@ ui-profile-aurora-unsaved = Sửa đổi chưa lưu ({ $parts })
 ui-profile-aurora-part-bio = sinh học
 ui-profile-aurora-part-first-life = Cuộc sống đầu tiên
 ui-profile-aurora-part-notes = ghi chú
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } vị trí
-       *[other] { $count } vị trí
-    }
 ui-profile-aurora-part-classified = bí mật
-ui-profile-aurora-snapshot = Bức ảnh của nơi này
 ui-profile-aurora-teleport = Di chuyển
 ui-profile-aurora-description = Mô tả
 ui-profile-aurora-category = Danh mục
@@ -9095,11 +9082,6 @@ ui-profile-aurora-copy-slurl = Sao chép SLURL
 ui-profile-aurora-here = Vị trí của tôi ở đây.
 ui-profile-aurora-add-here = Thêm nơi tôi đang ở
 ui-profile-aurora-picks-count = { $count } của { $limit } (giới hạn tài khoản)
-ui-profile-aurora-picks-empty = Vẫn chưa có nơi yêu thích
-ui-profile-aurora-picks-empty-text = { $name } chưa chia sẻ bất kỳ địa điểm nào.
-ui-profile-aurora-picks-empty-own = Chia sẻ những nơi yêu thích của bạn
-ui-profile-aurora-picks-empty-own-text = Những cư dân khác thấy chúng trên hồ sơ của bạn và chuyển đến đó bằng một cú click.
-ui-profile-aurora-delete-pick = Xoá nơi này đi.{ $name }"?
 ui-profile-aurora-classifieds-empty = Không có phân loại
 ui-profile-aurora-classifieds-empty-text = { $name } không có mật danh nào.
 ui-profile-aurora-classifieds-empty-own = Tạo ra một nơi hay dịch vụ được biết đến
@@ -14482,10 +14464,6 @@ build-layout-drop-here = Bỏ xuống đây.
 build-layout-drag-hint = Kéo để di chuyển. Thả xuống mục tiêu được tô sáng.
 build-layout-export = Xuất
 # Compact material layout
-build-material-surface = Bề mặt
-build-material-relief-reflection = Tăng và phản xạ
-build-material-lighting = Phản ứng ánh sáng
-build-material-placement = Đặt kết cấu
 build-material-diffuse-tint = Màu phổ biến
 build-material-specular-tint = Màu sắc gương
 build-material-base-tint = Màu cơ bản
@@ -15842,7 +15820,7 @@ ui-options-camera-still-while-posing = Giữ máy ảnh yên khi chụp hình
 ui-options-camera-still-while-posing-tip = Trong khi bạn đứng, máy ảnh dừng theo dõi hình tượng, tập trung và các phần cơ thể của nó, và đi không khởi động lại. Quỹ đạo, phóng to, xoay và mặc định vẫn hoạt động.
 ui-options-group-emotes-hint = Trong kiểu trò chuyện Aurora, một hành động như “/me waves” hiển thị dưới cùng tiêu đề với các tin nhắn do chính người đó gửi ngay trước hoặc sau hành động. Hành động không có tiêu đề riêng.
 content-perms-nested = Tạo hình ảnh
-content-perms-nested-help = Điều này cũng chỉnh sửa nội dung của các đối tượng lồng nhau, sâu tới năm cấp. Mỗi đối tượng được đặt trong thế giới hai mét trên nguyên thủy chứa nó. Các văn lệnh chạy của nó sẽ bị dừng lại, nội dung thay đổi, và các văn lược bắt đầu lại. Sau đó đối tượng sẽ được lưu lại vào hộp chứa. Quyền truy cập của đối tượng trong hộp được thiết lập và kiểm tra trước khi sao tạm thời của nó trong thế gian bị xóa. Các đối tượng không thể sao chép, chuyển hoặc sửa đổi vẫn đóng lại. Bạn cần quyền xây dựng tại vị trí đặt.
+content-perms-nested-help = Cũng sửa nội dung của các đối tượng lồng nhau, sâu đến 5 cấp. Mỗi đối tượng được đưa ra thế giới ở vị trí cao hơn prim đang chứa nó 2 m. Tập lệnh đang chạy được dừng, nội dung được sửa, tập lệnh được chạy lại rồi đối tượng được lưu trở lại. Quyền của đối tượng đã trả về được đặt và kiểm tra trước khi xóa bản sao tạm khỏi thế giới. Các đối tượng bạn không có quyền sao chép, chuyển giao hoặc sửa đổi vẫn đóng. Bạn cần quyền xây dựng tại nơi đưa đối tượng ra.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } vật thể trong nội dung sẽ được mở, bỏ qua: { $skipped }.
@@ -15879,7 +15857,7 @@ content-perms-nested-not-ours = Dừng lại: đối tượng được đặt tr
 content-perms-nested-unverified = Dừng lại: đối tượng xuất hiện cho "{ $name }" không thể được kiểm tra như được đặt trong thế giới từ nội dung này, vì vậy nó được để lại trong thế gian.
 content-perms-nested-group-split = Đã dừng: “ { $name } ” (một số đối tượng được lưu như một) trở lại như một đối tượng duy nhất. Các phần của nó được đặt trong thế giới được giữ trong thế gian: chọn tất cả chúng và lấy chúng để tạo nhóm lại.
 content-perms-nested-failed = “{ $name }Không thay đổi: { $reason }.
-content-perms-nested-original-gone = “{ $name }” được giữ trong thế giới: lưu lại của nó đã không được xác nhận và mục đích ban đầu của nó bị mất.
+content-perms-nested-original-gone = “{ $name }” được giữ lại trong thế giới vì chưa xác nhận được việc lưu trả và vật phẩm gốc không còn.
 content-perms-nested-gone = vật thể đã rời khỏi thế giới
 content-perms-nested-land-denied = Dừng: bạn không thể xây dựng trên đối tượng nguyên thủy này, nơi các đối tượng sẽ được đặt trong thế giới.
 content-perms-nested-parcel-full = Dừng lại: gói không còn chỗ cho các bản sao tạm thời trên thế giới.
@@ -15982,3 +15960,79 @@ phototools-director-lens = Thấu kính của đạo diễn được hiển th�
 phototools-view-angle-viewfinder = Kính nhìn sở hữu góc nhìn: của bạn trở lại khi nó đóng.
 ui-options-dof-show-focus-point = Hiện điểm tập trung
 ui-options-dof-show-focus-point-help = Một dấu chéo nhỏ trên điểm mà thấu kính tập trung vào: màu vàng khi nó tự do, đỏ khi nó bị khóa.
+
+### Updated release translations
+
+render-features-menu = Tính năng vẽ
+render-features-ui = Giao diện
+toolbar-command-ao-mini = Cửa sổ AO thu nhỏ
+keybinds-ui-feature = Hiện / ẩn toàn bộ giao diện (Tính năng vẽ › Giao diện người dùng)
+import-image-size-limit = Cỡ ảnh tối đa
+import-image-size-single = Cỡ ảnh tối đa
+import-image-size-inherit = Thiết lập chung ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = Thiết lập toàn cục theo giới hạn bên cạnh Nhập vào ở dưới. Giá trị hiện tại của nó xuất hiện trong ngoặc kép. Các hình ảnh lớn hơn sẽ tự động thu nhỏ đến giới hạn đã chọn.
+import-image-size-global-help = Kích thước ảnh tối đa để nhập. Các lựa chọn hình ảnh và vật liệu cá nhân được ưu tiên. Những hình ảnh lớn hơn sẽ tự động bị thu nhỏ.
+ui-chat-applink-preferences-tip = Mở thiết lập này trong Tùy chọn
+ui-options-bento-idle = Sửa hoạt hình Bento trống
+ui-options-bento-idle-hint = Đánh động Bento ưu tiên 0 dưới tất cả các hoạt hình khác, vì thế tay, miệng, cánh và đuôi trở lại tư thế tự nhiên thay vì bị kẹt sau khi hoạt hình; những người khác cũng thấy nó
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Vật thể UUID đã được sao chép.
+       *[other] UUID đối tượng đã sao chép
+    }
+ui-appearance-batch-choose-folder = Quần áo để chụp ảnh ở { $folder }
+ui-appearance-batch-all = Mọi trang phục
+ui-appearance-batch-chosen = { $chosen } của { $total }
+ui-appearance-batch-select-missing = Không có hình ảnh
+ui-inventory-dialogs-detach-and-delete = Tháo và xóa
+ui-inventory-dialogs-detach-and-delete-body = Ảnh đại diện của bạn đang mang một số vật phẩm này. Hệ thống sẽ tháo chúng ra trước, rồi chuyển vào Thùng rác.
+ui-inventory-delete-detach-cannot = Không còn có thể tháo và xóa các vật phẩm nhân vật đang mang.
+ui-inventory-delete-detach-refused = Mục này không thể được gỡ bỏ và xóa.
+ui-inventory-delete-detach-busy = Một thay đổi kho hàng khác đang diễn ra. Thử lại sau khi hoàn thành.
+ui-inventory-delete-detach-timeout = Không tháo được các vật phẩm đang mang nên chúng chưa bị xóa.
+common-modify = Sửa đổi
+build-ui-contents-filters = Bộ lọc nội dung
+build-ui-contents-next-owner-permissions = Quyền của chủ kế tiếp
+ui-options-voice-output = Đầu ra giọng nói
+ui-options-voice-output-used-for-voice-chat = Dùng cho trò chuyện bằng giọng nói; âm thanh thế giới, âm nhạc và phương tiện dùng đầu ra Âm thanh
+ui-options-same-as-audio-output = Giống như kết xuất âm thanh
+ui-options-copy-setting-link = Sao chép liên kết vào thiết lập
+ui-options-setting-unavailable = Thiết lập này không có.
+ui-context-show-in-inventory-none = Không có đối tượng nào trong kho của anh có tên chính xác của đối tượng này.
+photo-vf-keep-framing = Giữ khung hình.
+ui-profile-aurora-help = Thông tin cá nhân của một cư dân: họ là ai, bạn có thể làm gì với họ, sau đó chọn lựa của họ, quảng cáo, cuộc sống đầu tiên, hồ sơ web và ghi chú của bạn. Preferences › Aurora › Profiles brings back the Legacy Viewer' s window.
+ui-profile-aurora-tab-picks = Mục nổi bật
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Mục nổi bật: { $count }
+       *[other] Mục nổi bật: { $count }
+    }
+ui-profile-aurora-snapshot = Hình ảnh
+ui-profile-aurora-picks-empty = Vẫn chưa chọn
+ui-profile-aurora-picks-empty-text = { $name } chưa chia sẻ bất kỳ lựa chọn nào.
+ui-profile-aurora-picks-empty-own = Hãy chia sẻ những gì quan trọng với anh
+ui-profile-aurora-picks-empty-own-text = Dùng chọn để tô đậm các nơi, người và những thứ bạn quan tâm.
+ui-profile-aurora-delete-pick = Xóa cái "{ $name }"?
+script-search-whole-words = Toàn bộ từ
+people-groups-deactivate = Tắt
+ao-mini-title = Cửa sổ AO thu nhỏ
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }: Không có hoạt hình nào được chọn
+ao-quick-pin = Mở cửa sổ mini AO
+build-layout-button-icon = Biểu tượng
+build-layout-button-label = Tiêu đề
+build-layout-button-both = Biểu tượng và nhãn
+build-detach-shown = Trong cửa sổ riêng của nó: nhấn để ẩn nó. Kéo cửa sập đó bằng tiêu đề vào cửa sạch xây dựng để đặt lại.
+build-detach-hidden = Trong cửa sổ riêng của nó, ẩn: nhấn để hiển thị.
+build-material-save-as = Lưu vật liệu như
+build-material-save-name = Tên của vật liệu mới trong kho:
+build-material-new-material = Vật liệu mới
+build-material-save-not-allowed = Việc lưu trữ cần một vật liệu PBR trên mỗi mặt được chọn, quyền sao chép và sửa đổi đối tượng, và một bản sao của vật liệu trong kho với các quyền copy và thay đổi.
+build-material-saved = Vật liệu "{ $name }" đã được lưu vào kho của anh.
+build-material-save-failed = Không thể lưu vật liệu vào kho của bạn.
+toolbar-add-from-menu = Thêm vào thanh công cụ
+toolbar-remove-from-menu = Xoá khỏi thanh công cụ
+toolbar-command-build-edit = Sửa đối tượng
+toolbar-command-build-create = Tạo prim
+toolbar-command-build-land = Sửa đất nước

@@ -1271,7 +1271,6 @@ import-mesh = Jalur
 import-bulk = Berbilang
 import-choose-files = Tambah fail...
 import-loading = Membaca fail...
-import-limit-bulk-1k = Hadkan tekstur ke 1024 piksel
 import-files = Fail
 import-destination = Destinasi
 import-no-folder = Tiada folder tersedia
@@ -1336,7 +1335,6 @@ import-degenerate-physics =
     }
 import-physics-convex-repair = Cipta shell tabrakan cembung
 import-physics-convex-help = Kulit lengkung kira-kira bentuk tabrakan dan mungkin mengisi lubang. LOD visual tidak berubah. Semak pralihat fizik sebelum meminta kutipan.
-import-max-size = Hadkan saiz kepada 1024 x 1280
 import-texture-size = Saiz muat naik: { $width } × { $height } px
 import-lossless = Mampatan Tanpa Kerugian
 import-strip-alpha = Buang Saluran Alfa Hampir Kelegapan
@@ -3488,7 +3486,6 @@ ui-sound-object-creation = Penciptaan objek
 session-inventory-upload-creation-denied-invalid-type-size-or-upload-count = Penciptaan ditolak: jenis, saiz atau kiraan muat naik tidak sah.
 ui-contacts-create = Cipta
 build-ui-tools-create-ctrl-4 = Cipta (Ctrl+4)
-ui-bars-create-prims-ctrl-4 = Cipta prim (Ctrl+4)
 ui-places-create-folder = Cipta folder
 ui-inventory-context-create-folder-from-selection = Cipta folder dari pemilihan
 common-create-favorite = Cipta Favorit
@@ -5542,14 +5539,12 @@ ui-place-details-edit-this-landmark = Edit tanda tempat ini
 ui-appearance-edit-this-outfit = Sunting pakaian ini
 ui-appearance-show-current-outfit = Papar pakaian semasa dalam senarai
 ui-appearance-current-outfit-not-in-my-outfits = Pakaian semasa tidak disimpan dalam Pakaian Saya
-ui-bars-edit-objects-ctrl-3 = Edit objek (Ctrl+3)
 build-ui-tools-edit-parcel = Edit parcel
 ui-context-edit-shape = Edit Bentuk
 ui-context-export-shape-xml = Eksport bentuk XML
 ui-context-edit-outfit = Edit pakaian
 ui-context-edit-pbr-material = Sunting bahan PBR
 ui-context-edit-land = Edit negara
-ui-bars-edit-land-ctrl-5 = Edit tanah (Ctrl+5)
 ui-land-options-edit-land = Edit negara:
 build-ui-tools-edit-selected-land = Edit tanah yang dipilih
 ui-profile-edit-text = Edit teks
@@ -9033,7 +9028,6 @@ common-for-sale = Untuk dijual:
 ui-land-general-for-sale-to = Untuk dijual kepada:
 ui-profile-coming-soon = Akan datang
 ui-profile-aurora-my-profile = Profil Saya
-ui-profile-aurora-help = Profil penduduk: siapa mereka, apa yang anda boleh buat dengan mereka, kemudian tempat kegemaran mereka, iklan, kehidupan pertama, profil web dan nota anda. Keutamaan › Aurora › Profil membawa semula tetingkap Pelihat Legasi.
 ui-profile-aurora-conversation = Perbualan
 ui-profile-aurora-call = Panggil
 ui-profile-aurora-add-friend = Tambah sebagai rakan
@@ -9065,7 +9059,6 @@ ui-profile-aurora-their-map = Cari mereka di peta
 ui-profile-aurora-their-objects = Ubahsuai, padam atau ambil objek mereka
 ui-profile-aurora-received-tip = { $right }: { $state }
 ui-profile-aurora-tab-profile = Profil
-ui-profile-aurora-tab-picks = Tempat kegemaran
 ui-profile-aurora-tab-classifieds = Disenaraikan
 ui-profile-aurora-tab-first-life = Hidup pertama
 ui-profile-aurora-tab-web = Web
@@ -9099,13 +9092,7 @@ ui-profile-aurora-unsaved = Perubahan tak disimpan ({ $parts })
 ui-profile-aurora-part-bio = bio
 ui-profile-aurora-part-first-life = hidup pertama
 ui-profile-aurora-part-notes = nota
-ui-profile-aurora-part-places =
-    { $count ->
-        [one] { $count } tempat
-       *[other] { $count } tempat
-    }
 ui-profile-aurora-part-classified = diklasifikasikan
-ui-profile-aurora-snapshot = Gambar tempat
 ui-profile-aurora-teleport = Teleport
 ui-profile-aurora-description = Huraian
 ui-profile-aurora-category = Kategori
@@ -9121,11 +9108,6 @@ ui-profile-aurora-copy-slurl = Salin SLURL
 ui-profile-aurora-here = Posisi saya di sini
 ui-profile-aurora-add-here = Tambah tempat di mana saya berada
 ui-profile-aurora-picks-count = { $count } dari { $limit } (had akaun)
-ui-profile-aurora-picks-empty = Tiada tempat kegemaran lagi
-ui-profile-aurora-picks-empty-text = { $name } tidak berkongsi sebarang tempat.
-ui-profile-aurora-picks-empty-own = Kongsi tempat kegemaran anda
-ui-profile-aurora-picks-empty-own-text = Penduduk lain melihat mereka pada profil anda dan teleport ke sana dalam satu klik.
-ui-profile-aurora-delete-pick = Hapuskan tempat "{ $name }"?
 ui-profile-aurora-classifieds-empty = Tiada klasifikasi
 ui-profile-aurora-classifieds-empty-text = { $name } tidak mempunyai apa-apa yang diklasifikasikan diterbitkan.
 ui-profile-aurora-classifieds-empty-own = Buat tempat atau perkhidmatan dikenali
@@ -14511,10 +14493,6 @@ build-layout-drop-here = Drop di sini
 build-layout-drag-hint = Seret untuk bergerak. Lepaskan pada sasaran yang ditonjolkan.
 build-layout-export = Eksport
 # Compact material layout
-build-material-surface = Permukaan
-build-material-relief-reflection = Relief dan refleksi
-build-material-lighting = Balasan cahaya
-build-material-placement = Pemasangan tekstur
 build-material-diffuse-tint = Warna Tersebar
 build-material-specular-tint = Warna cermin
 build-material-base-tint = Warna asas
@@ -15872,7 +15850,7 @@ ui-options-camera-still-while-posing = Kekalkan kamera tetap semasa berpose
 ui-options-camera-still-while-posing-tip = Semasa anda berpose, kamera berhenti mengikuti avatar, fokusnya dan bahagian badannya, dan berjalan tidak menetapkannya semula. Orbit, zum, pan dan preset masih berfungsi.
 ui-options-group-emotes-hint = Dalam gaya sembang Aurora, emot seperti “/me waves” dipaparkan di bawah tajuk yang sama dengan mesej yang dihantar oleh orang yang sama sejurus sebelum atau selepasnya. Emot tidak mempunyai tajuk tersendiri.
 content-perms-nested = Termasuk objek di dalam objek
-content-perms-nested-help = Ini juga mengedit kandungan objek bersarang, sehingga lima aras dalam. Setiap objek ditempatkan dalam dunia dua meter di atas primitif yang mengandunginya. Skrip berjalannya dihentikan, kandungannya diubah, dan skripnya dimulakan semula. Objek kemudian disimpan kembali ke dalam bekas. Keizinan objek dalam bekas ditetapkan dan diperiksa sebelum salinan sementaranya dalam dunia dipadam. Objet yang anda tidak boleh salin, pindah atau ubahsuai tetap tertutup. Anda memerlukan keizinan untuk bina pada lokasi penempatan.
+content-perms-nested-help = Operasi ini turut mengubah kandungan objek bersarang sehingga 5 aras. Setiap objek dimunculkan di dunia 2 m di atas prim yang menyimpannya. Skrip aktif dihentikan, kandungannya diubah, skrip dimulakan semula, kemudian objek disimpan kembali. Kebenaran objek yang dikembalikan ditetapkan dan disemak sebelum salinan sementara di dunia dipadamkan. Objek yang tidak boleh disalin, dipindah milik atau diubah kekal tertutup. Anda perlu kebenaran membina di tempat objek dimunculkan.
 content-perms-nested-preview =
     { $objects ->
         [one] { $objects } objek dalam kandungan akan dibuka, dilangkau: { $skipped }.
@@ -16012,3 +15990,79 @@ phototools-director-lens = Lensa Sutradara dipaparkan bila tetingkapnya dibuka, 
 phototools-view-angle-viewfinder = Pelihat mempunyai sudut pandangan: anda kembali apabila ia ditutup.
 ui-options-dof-show-focus-point = Tunjukkan titik fokus
 ui-options-dof-show-focus-point-help = Satu garis salib kecil pada titik fokus lensa: kuning bila ia bebas, merah bila ia dikunci.
+
+### Updated release translations
+
+render-features-menu = Ciri-ciri Render
+render-features-ui = Antara muka
+toolbar-command-ao-mini = Tetingkap mini AO
+keybinds-ui-feature = Papar / sembunyikan keseluruhan antaramuka (Fitur Render › UI)
+import-image-size-limit = Saiz imej maksimum
+import-image-size-single = Saiz imej maksimum
+import-image-size-inherit = Tetapan global ({ $size } px)
+import-image-size-pixels = { $size } px
+import-image-size-inherit-help = Tetapan global mengikut had di sebelah Import di bawah. Nilai semasanya muncul dalam kurungan. Imej yang lebih besar secara automatik dikurangkan ke had dipilih.
+import-image-size-global-help = Saiz imej maksimum untuk import. Pilihan individu imej dan bahan mengambil keutamaan. Imej besar dikurangkan secara automatik.
+ui-chat-applink-preferences-tip = Buka tetapan ini dalam Keutamaan
+ui-options-bento-idle = Baiki animasi kosong Bento
+ui-options-bento-idle-hint = Mainkan animasi Bento keutamaan 0 di bawah semua yang lain, jadi tangan, mulut, sayap dan ekor kembali ke posisi semulajadi daripada terperangkap selepas animasi; orang lain juga melihatnya
+build-ui-copied-object-uuids =
+    { $count ->
+        [one] Objek UUID disalin
+       *[other] Objek UUIDs disalin
+    }
+ui-appearance-batch-choose-folder = Pakaian untuk gambar di { $folder }
+ui-appearance-batch-all = Semua pakaian
+ui-appearance-batch-chosen = { $chosen } dari { $total }
+ui-appearance-batch-select-missing = Tiada gambar
+ui-inventory-dialogs-detach-and-delete = Tanggalkan dan padam
+ui-inventory-dialogs-detach-and-delete-body = Avatar anda sedang memakai beberapa item ini. Item akan ditanggalkan dahulu sebelum dipindahkan ke Tong Sampah.
+ui-inventory-delete-detach-cannot = Item yang sedang dipakai tidak lagi boleh ditanggalkan dan dipadamkan.
+ui-inventory-delete-detach-refused = Item ini tidak boleh ditanggalkan dan dipadam.
+ui-inventory-delete-detach-busy = Perubahan inventori lain sedang dijalankan. Cuba lagi bila ia selesai.
+ui-inventory-delete-detach-timeout = Item yang dipakai tidak dapat ditanggalkan, jadi item tersebut tidak dipadamkan.
+common-modify = Ubahsuai
+build-ui-contents-filters = Penapis kandungan
+build-ui-contents-next-owner-permissions = Keizinan pemilik seterusnya
+ui-options-voice-output = Output Suara
+ui-options-voice-output-used-for-voice-chat = Digunakan untuk sembang suara; bunyi dunia, muzik dan media menggunakan output Audio
+ui-options-same-as-audio-output = Sama seperti output audio
+ui-options-copy-setting-link = Salin pautan ke tetapan
+ui-options-setting-unavailable = Tetapan ini tidak tersedia.
+ui-context-show-in-inventory-none = Tiada objek dalam inventori anda mempunyai nama yang tepat bagi objek ini.
+photo-vf-keep-framing = Kekalkan bingkaian
+ui-profile-aurora-help = Profil penduduk: siapa mereka, apa yang anda boleh buat dengan mereka, kemudian pilihan mereka, sebutan, kehidupan pertama, profil web dan nota anda. Keutamaan › Aurora › Profil membawa semula tetingkap Pelihat Legasi.
+ui-profile-aurora-tab-picks = Pilihan profil
+ui-profile-aurora-part-places =
+    { $count ->
+        [one] Pilihan profil: { $count }
+       *[other] Pilihan profil: { $count }
+    }
+ui-profile-aurora-snapshot = Gambar
+ui-profile-aurora-picks-empty = Tiada pilihan lagi
+ui-profile-aurora-picks-empty-text = { $name } belum berkongsi sebarang pilihan.
+ui-profile-aurora-picks-empty-own = Kongsi apa yang penting untuk anda
+ui-profile-aurora-picks-empty-own-text = Guna pilihan untuk menonjolkan tempat, orang dan perkara yang anda peduli.
+ui-profile-aurora-delete-pick = Hapuskan pilihan "{ $name }"?
+script-search-whole-words = Perkataan Penuh
+people-groups-deactivate = Nyahaktifkan
+ao-mini-title = Tetingkap mini AO
+ao-now-playing = { $state }: { $name }
+ao-now-playing-none = { $state }Tiada animasi dipilih
+ao-quick-pin = Buka tetingkap mini AO
+build-layout-button-icon = Ikon
+build-layout-button-label = Teks
+build-layout-button-both = Ikon dan label
+build-detach-shown = Dalam tetingkap sendiri: klik untuk sembunyikannya. Seret tetingkap itu dengan tajuknya ke tetingkap binaan untuk meletakkannya semula.
+build-detach-hidden = Dalam tetingkap sendiri, tersembunyi: klik untuk paparkannya.
+build-material-save-as = Simpan bahan sebagai
+build-material-save-name = Nama bahan baru dalam inventori anda:
+build-material-new-material = Bahan Baru
+build-material-save-not-allowed = Menyimpan memerlukan bahan PBR pada setiap muka yang dipilih, hak salin dan ubahsuai pada objek, dan salinan bahan dalam inventori anda dengan hak salin serta ubah suai.
+build-material-saved = Bahan "{ $name }" disimpan ke inventori anda.
+build-material-save-failed = Bahan tidak dapat disimpan ke inventori anda.
+toolbar-add-from-menu = Tambah ke toolbar
+toolbar-remove-from-menu = Buang dari toolbar
+toolbar-command-build-edit = Edit objek
+toolbar-command-build-create = Cipta prims
+toolbar-command-build-land = Edit negara
