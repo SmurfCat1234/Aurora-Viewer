@@ -689,7 +689,7 @@ impl Imports {
         name: String,
         bytes: Arc<Vec<u8>>,
         animation: Arc<Animation>,
-    ) {
+    ) -> Uuid {
         let mut entry = Entry::new(
             PathBuf::from(format!("{name}.anim")),
             Ok(Source::Animation {
@@ -700,10 +700,20 @@ impl Imports {
             self.load_preferences.texture(),
         );
         entry.folder = Self::default_folder(world, prefs, Kind::Animation);
-        self.active = Some(entry.id);
+        let id = entry.id;
+        self.active = Some(id);
         self.entries.push(entry);
         self.open(Choice::Animation);
+        id
     }
+
+    pub(crate) fn review_webcam_uploads(&mut self, ctx: &egui::Context, ids: &[Uuid]) {
+        for entry in &mut self.entries {
+            entry.selected = ids.contains(&entry.id);
+        }
+        self.open_window(ctx);
+    }
+
     /// The shortcut and menu use the same saved entry point.
     pub fn toggle_import(&mut self, ctx: &egui::Context, prefs: &Preferences) {
         if prefs.icon_bar {
