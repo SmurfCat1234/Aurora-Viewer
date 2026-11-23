@@ -1958,7 +1958,10 @@ impl Controller {
         let rotations = bent.as_deref().unwrap_or(rotations);
         // Apply capture after animation blending. Paused and authored poses
         // keep their own controls, and the underlying animation keeps playing.
-        let webcam = self.webcam_pose.as_ref().filter(|_| !hold_pose && edited.is_none() && bent.is_none() && !editing);
+        let webcam = self
+            .webcam_pose
+            .as_ref()
+            .filter(|_| !hold_pose && edited.is_none() && bent.is_none() && !editing);
         let mut tracked = webcam.map(|pose| pose.rotations(rig, rotations));
         let rotations = tracked.as_deref().unwrap_or(rotations);
         let mut world = self.poser.as_ref().map_or_else(
