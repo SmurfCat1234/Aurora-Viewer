@@ -2243,9 +2243,7 @@ ui-options-chat-text-size-hint = Rozmiar wiadomości w czacie w pobliżu i w roz
 ui-options-chat-beyond-range = Jasność poza zasięgiem czatu
 ui-options-chat-beyond-range-hint = Wiersze od rezydentów i obiektów znajdujących się dalej niż zasięg czatu (20 m), słyszane np. dzięki krzykowi, są rysowane z tą jasnością: 1 zachowuje jasność taką jak w pozostałych, niższe wartości bardziej je przyciemniają. Domyślnie 0,8, jak w Legacy Viewer.
 ui-options-chat-keep-focus = Pozostaw pasek czatu aktywny po wysłaniu
-ui-options-chat-keep-focus-hint = Enter wysyła wiadomość, a pasek pozostaje gotowy na następną; Enter na pustym pasku lub kliknięcie gdzie indziej przywraca poruszanie się. Po wiadomości czat w pobliżu w oknie Rozmowy działa tak samo.
 ui-options-chat-enter-toggles = Enter przełącza pisanie w rozmowach
-ui-options-chat-enter-toggles-hint = Enter na pustym polu przywraca poruszanie się również w oknie Rozmowy (czat w pobliżu, IM i czaty grup), tak jak na pasku czatu; Enter ze świata ponownie rozpoczyna pisanie.
 ui-options-chat-enter-last-field = Enter wraca do ostatnio używanego pola czatu
 ui-options-chat-enter-last-field-hint = Ze świata Enter wraca do ostatnio używanego pola czatu (klikniętego lub tego, w którym toczyła się rozmowa): w pobliżu, grupy lub IM, gdy jego okno jest otwarte, zamiast zawsze do paska czatu. Po wyłączeniu lub przy zamkniętym oknie Enter używa paska czatu.
 ui-options-gesture-autocomplete = Uzupełniaj gesty w czacie w pobliżu
@@ -3808,7 +3806,6 @@ common-double-sided = Dwustronny
 ui-minimap-double-click = Podwójne kliknięcie
 ui-inventory-controls-double-click-add-objects = Dwuklik: dodaj obiekty
 ui-inventory-controls-double-click-add-clothes = Dwuklik: dodaj ubrania
-ui-profile-double-click-group-chat = Dwuklik: czat grupy
 ui-minimap-double-click-to-open-the-map = Kliknij dwukrotnie, aby otworzyć mapę
 ui-minimap-double-click-to-teleport = Kliknij dwukrotnie, aby się teleportować
 build-ui-floaters-double-click-a-group = Kliknij dwukrotnie grupę.
@@ -6307,7 +6304,6 @@ ui-minimap-near = Blisko
 common-profile = Profil
 ui-context-object-profile = Profil obiektu
 ui-appearance-items-object-profile = Profil obiektu
-ui-profile-group-profile-coming-soon = Profil grupy (już wkrótce)
 common-place-profile = Profil miejsca
 common-profile-2 = Profil…
 ui-bars-profile = Profil…
@@ -8347,7 +8343,6 @@ photo-looks = Filtry
 photo-looks-tip = Filtry: wygląd zdjęcia, pokazywany na żywo
 photo-look-none = Brak filtru
 photo-look-strength = Siła
-photo-look-compare = Przed / po
 photo-look-compare-tip = Po lewej stronie linii scena bez zmian, po prawej z filtrem; przeciągnij linię, aby ją przesunąć
 photo-look-before = Przed
 photo-look-after = Po
@@ -8381,24 +8376,13 @@ photo-look-spotlight = Reflektor
 photo-look-the-matrix = Matrix
 photo-look-toy-camera = Aparat zabawkowy
 photo-look-video = Wideo
-photo-looks-replace = Zastąp wybrany
-photo-looks-add = Dodaj na wierzch
-photo-looks-stack = Aktywne filtry ({ $count })
-photo-looks-empty = Brak filtrów: wybierz jeden poniżej.
-photo-looks-on-tip = Rysuj ten filtr (odznaczony: zostaje na liście, nie jest rysowany)
-photo-looks-choose-tip = Pokazuje jego ustawienia; kliknięcie na liście go zastępuje
-photo-looks-remove = Usuń ten filtr
-photo-looks-up = Przesuń w górę (rysowany wcześniej)
-photo-looks-down = Przesuń w dół (rysowany później)
 photo-looks-settings = Ustawienia: { $name }
 photo-looks-reset = Wartości domyślne
-photo-looks-legacy-note = Filtry przeglądarki Legacy Viewer nie mają ustawień, tak jak w Legacy Viewer: tylko ich siłę.
 photo-looks-lut-note = LUT jest stosowany bez zmian: ustawia się tylko jego siłę.
 photo-knob-amount = Ilość
 photo-knob-grain-size = Wielkość ziarna
 photo-knob-contrast = Kontrast
 photo-knob-grain = Ziarno
-photo-knob-strength = Siła
 photo-knob-shadows = Cienie
 photo-knob-lights = Światła
 photo-knob-middle = Średnie tony
@@ -10558,7 +10542,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Scal
 build-compact-unlink-action = Rozłącz
 build-compact-link-value = Część { $number }
-build-compact-face-value = Strona { $number }
 build-compact-move = Przesuwanie
 build-compact-rotate = Obracanie (Ctrl)
 build-compact-stretch = Rozciąganie (Ctrl+Shift)
@@ -16397,3 +16380,141 @@ toolbar-remove-from-menu = Usuń z paska narzędzi
 toolbar-command-build-edit = Edycja obiektów
 toolbar-command-build-create = Tworzenie pierwiastków
 toolbar-command-build-land = Edytuj teren
+
+### Updated release translations
+
+inventory-search-no-copy = bez prawa kopiowania
+inventory-search-no-modify = Nie może być modyfikowany
+inventory-search-no-transfer = bez prawa transferu
+ui-options-chat-keep-focus-hint = Enter wysyła wiadomość, a pasek czatu pozostaje aktywny dla kolejnej wiadomości, także po naciśnięciu Enter w pustym polu. Naciśnij Esc lub kliknij w świecie, aby wrócić do sterowania ruchem.
+ui-options-chat-enter-toggles-hint = Enter w pustym polu okna Rozmowy przywraca sterowanie ruchem na czacie w pobliżu, w wiadomościach prywatnych i na czatach grupowych. Naciśnij Enter w świecie, aby znów pisać.
+build-ui-features-physics-none-root-hint = Tylko pierwiastki potomne zestawu linków mogą używać kształtu fizycznego None: pierwiastek główny, lub pierwiasek sam w sobie, zachowuje Prim lub Convex hull.
+controls-position-tip = Pozycja kamery: ustaw, gdzie kamera spoczywa za awatarem, dokładnie
+camera-position-hint = W metrach od awatara: X do przodu, Y w lewo, Z w górę. Ctrl + kółko podnosi kamerę, Shift + krążek ustawia punkt ostrości.
+camera-position-save = Zapisz jako pozycję kamery…
+photo-looks-replace = Zastąp
+photo-looks-empty = Wskaż filtr poniżej, aby go wypróbować, a następnie kliknij go lub przeciągnij tutaj.
+photo-looks-active = Aktywne
+photo-looks-count = { $count } z { $max }
+photo-looks-expand-all = Rozwiń wszystko
+photo-looks-collapse-all = Zwiń wszystko
+photo-looks-hint = Zastosowane od góry do dołu. Przeciągnij kartę, aby zmienić jej kolejność lub naciśnij Alt + ↑ ↓ na niej. Kliknij prawym przyciskiem myszy kartę aby ją wyjąć.
+photo-looks-right-click-out = Kliknięcie prawym przyciskiem myszy: wyjmij z aktywnych efektów
+photo-looks-drop = Przeciągnij efekt tutaj lub kliknij jeden poniżej
+photo-looks-full = { $max } z { $max }: wybierz jedną z nich lub włącz opcję Zastąp, aby ją zamienić.
+photo-looks-catalogue = Katalog efektów
+photo-looks-catalogue-tip = Wskaż efekt, aby wypróbować go na zdjęciu; kliknij go, aby dodać lub przeciągnąć go między aktywnymi
+photo-looks-catalogue-fold = Pokaż lub ukryj katalog
+photo-looks-replace-tip = Zastąp: kliknięcie w katalogu zamienia wybraną kartę zamiast dodawania nowej
+photo-looks-replacing = Kliknięcie swaps { $name }
+photo-looks-done = Gotowe
+photo-looks-take-out-zone = Spadaj tu, żeby to wyciągnąć
+photo-looks-hide = Hide { $name } (zachowuje swoje miejsce)
+photo-looks-show = Pokaż { $name }
+photo-looks-more = Więcej akcji
+photo-looks-move-up = Przesuń w górę
+photo-looks-move-down = Przesuń w dół
+photo-looks-replace-one = Zastąp…
+photo-looks-take-out = Usuń
+photo-looks-not-in-360-tag = Nie w 360°
+photo-looks-all = Wszystko
+photo-looks-favorites = Ulubione: każdy efekt, w którym wystąpiłeś
+photo-looks-favorites-empty = Wskaż na efekt i kliknij jego gwiazdkę: pojawi się on jako pierwszy na liście, a tutaj.
+photo-looks-favorite = Dodaj do ulubionych
+photo-looks-unfavorite = Usuń z ulubionych
+photo-looks-card = { $name }, { $place } z { $count }. Alt + klawisze strzałek przenieść go.
+photo-looks-legacy-note = Filtry Legacy Viewer nie mają dodatkowych ustawień.
+photo-knob-toning = Tonowanie
+photo-knob-local-contrast = Kontrast lokalny
+build-face-button = Twarz { $number }: wybierz go na każdym wybranym prim. Shift+click: dodać lub usunąć.
+build-face-invert = Odwrócenie zaznaczonych twarzy
+build-face-all = Zaznaczanie każdej twarzy
+ui-options-aurora-controls-compact = Kompaktowe sterowanie kamerą
+ui-options-aurora-controls-compact-help = Okno Controls otwiera się kompaktowo na kamerze: joysticki, zoom i roll. Jego przycisk paska tytułowego przełącza między kompaktowym a pełnym, a także ustawia to.
+ui-options-aurora-controls-compact-movement = Kompaktowe sterowanie ruchem
+ui-options-aurora-controls-compact-movement-help = Zakładka Ruch w oknie Sterowanie otwiera się kompaktowo: przyciski ruchu i chodzenia, biegania i latania. Jej przycisk paska tytułu przełącza między kompaktowym a pełnym, a także ustawia to.
+poser-face-position-drag = Przeciągnij, aby przesunąć połączenie o 0,1 mm na piksel lub kliknij, by wpisać pozycję.
+build-layout-clicks = Kliknięcia na obiekty
+build-ui-floaters-shift-click = Shift + kliknięcie
+build-ui-floaters-ctrl-click = Ctrl + kliknięcie
+build-ui-floaters-click-object = Dodaj lub usuń obiekt
+build-ui-floaters-click-face = Wybierz twarz
+build-ui-floaters-clicks-hint = Przy użyciu narzędzia Edycja, poza wyrównaniem Ctrl + Shift + kliknięcie dodaje klikniętą powierzchnię lub usuwa ją.
+build-ui-floaters-ctrl-right-click = Ctrl + prawy przycisk myszy
+build-ui-floaters-right-click-menu = Otwórz menu
+build-ui-floaters-right-click-edit = Edytuj obiekt
+build-ui-floaters-double-click-linked = Dwukrotne kliknięcie na prim: przełącznik „Edytuj powiązane części”
+blender-live-tab-place = Położenie
+blender-live-tab-avatar = Awatar
+blender-live-objects-help = Siatki wysyłane przez Blender. Wybierz jedną, aby ją umieścić lub zaimportuj z menu.
+blender-live-more = Więcej
+blender-live-place = Położenie
+blender-live-linked-prims = Pokaż lub ukryj połączone elementy podstawowe
+blender-live-tag-rigged = Ze szkieletem
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Trójkąty: { $triangles }
+       *[other] Trójkąty: { $triangles }
+    }
+blender-live-card-static =
+    Statyczny · { $triangles ->
+        [one] Trójkąty: { $triangles }
+       *[other] Trójkąty: { $triangles }
+    }
+blender-live-card-linkset =
+    Statyczny · { $prims ->
+        [one] Primy: { $prims }
+       *[other] Primy: { $prims }
+    } · { $triangles ->
+        [one] Trójkąty: { $triangles }
+       *[other] Trójkąty: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Trójkąty: { $triangles }
+       *[other] Trójkąty: { $triangles }
+    }
+blender-live-place-help = Gdzie znajduje się wybrana siatka statyczna. Zmodyfikowane siatki zawsze podążają za twoim awatarem.
+blender-live-place-none = Wybierz obiekt statyczny, aby go umieścić.
+blender-live-where = Gdzie
+blender-live-transform = Pozycja, obrót i rozmiar
+blender-live-size-note = Rozmiar mnoży to, co Blender wysyła, więc późniejsze edycje w Blenderze zachowują go.
+blender-live-avatar-help = W przypadku siatki z ryglem: wyślij swój kształt do Blendera, aby go zamodelować.
+blender-live-shape-section = Twój kształt w Blenderze
+blender-live-import-help = Zamraża migawkę obiektu dla zwykłego importu: recenzja, cena, a następnie potwierdzenie. Późniejsze edycje w Blenderze nie zmieniają go.
+blender-live-from = Od
+blender-live-plugins-help = Aurora instaluje odpowiednią wtyczkę w każdym Blenderze, zachowuje kopię poprzedniej i nigdy nie instaluje starszej wersji.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } min
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Czas od ostatniej zmiany tego obiektu przez Blender
+blender-live-show-all = Pokaż wszystkie
+blender-live-hide-all = Ukryj wszystko
+blender-live-bend-section = Sprawdź ciężary
+blender-live-elbows = Łokcie
+blender-live-knees = Kolano
+blender-live-bend-hold = Trzymaj tę pozę zamiast moich animacji
+blender-live-bend-note = Tylko ty widzisz zakręt na swoim awatarze, twoje animacje, widok innych mieszkańców i import pozostają bez zmian.
+blender-live-levels = Poziomy szczegółowości
+blender-live-levels-pending = Blender przygotowuje poziomy szczegółowości po kliknięciu Importuj.
+blender-live-levels-note = Przygotowane w Blenderze z ustawień LiveMesh każdego obiektu.
+blender-live-quick-look-tip = Szybkie spojrzenie: zobacz ten obiekt większy
+blender-live-quick-look-drag = Przeciągnij, aby go obrócić, kliknij dwukrotnie, aby zmierzyć się z nim ponownie.
+blender-live-quick-look-changed = Zmieniono w Blenderze { $ago } lat temu.
+blender-live-quick-look-bend = Zgięte jak w zakładce Avatar: łokcie { $elbows }°, kolana { $knees }°.
+blender-live-undo = Cofnij
+blender-live-undo-derez = Derezzed { $name } · wciąż na liście Blendera
+blender-live-undo-detach = { $name } · wciąż na liście Blendera
+blender-live-undo-drop = Zrzucił { $name } na ziemię
+blender-live-undo-attach = Przeniesiono { $name } do punktu { $point }
+parcel-environment-apply-save = Zastosuj się tylko do siebie, dla tej paczki
+parcel-environment-save = Zapisz to środowisko dla tej paczki: wraca, gdy tylko jesteś tutaj
+parcel-environment-forget = Zapomnij o środowisku zapisanym dla tej paczki
+parcel-environment-not-saved = Ta działka nie była jeszcze znana, więc jej otoczenie nie zostało zapisane. Spróbuj ponownie za chwilę.
+parcel-environment-left = Opuściłeś paczkę zanim jej środowisko mogło zostać zapisane, więc nie została ona zapisana.
+parcel-environment-title = Środowiska zapisane dla pakietów
+parcel-environment-help = Twoje własne środowisko dla paczki: zastępuje ono twoje lokalne środowiska, gdy tam stoisz, a to, co miałeś wcześniej, wraca po wyjściu. Tylko ty go widzisz. Zapisz je z okna Środowisko lub menu przedmiotu środowiskowego w swoim ekwipunku.
+parcel-environment-empty = Brak zapisanych środowisk
+parcel-environment-remove-all = Usuń wszystko
+parcel-environment-remove-all-title = Usuń każde środowisko zapisane dla paczki?
+parcel-environment-remove-all-text = Środowiska zapisane dla działek w tej sieci zostaną usunięte. Środowiska w innych sieciach pozostaną bez zmian. Tej operacji nie można cofnąć.

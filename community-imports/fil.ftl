@@ -2190,9 +2190,7 @@ ui-options-chat-text-size-hint = Ang laki ng mga mensahe sa malapit na chat at m
 ui-options-chat-beyond-range = Lumiwanag sa labas ng chat range
 ui-options-chat-beyond-range-hint = Linya mula sa mga residente at mga bagay na mas malayo kaysa sa chat range (20 m), narinig sa pamamagitan ng isang sumigaw halimbawa, ay inilabas sa liwanag na ito: 1 pinapanatili ang mga ito bilang maliwanag tulad ng iba, mas mababang halaga madilim sila higit pa. 0.8 sa default, tulad ng sa Legacy Viewer.
 ui-options-chat-keep-focus = Panatilihin ang chat bar na aktibo pagkatapos ng pagpapadala
-ui-options-chat-keep-focus-hint = Ang Enter ay nagpapadala at ang bar ay nananatiling handa para sa susunod na mensahe; Ang Enter sa isang walang laman na bar o pag-click sa ibang lugar ay bumalik sa paglipat. Pagkatapos ng isang mensahe, sinusundan din ito ng malapit na chat ng window ng Konversasyon.
 ui-options-chat-enter-toggles = Mag-entry ng mga toggle sa pag-type sa mga pag-uusap
-ui-options-chat-enter-toggles-hint = Ang pagpasok sa isang walang laman na patlang ay bumalik sa paglipat sa window ng Konversasyon din (kalapit chat, IMs at grupo chat), tulad ng ginagawa nito sa chat bar; Pasok mula sa mundo ay nagsisimulang mag-type muli.
 ui-options-chat-enter-last-field = Mag-type ng mga bumalik sa huling chat field na ginagamit
 ui-options-chat-enter-last-field-hint = Mula sa mundo, bumalik ang Enter sa huling field ng chat na ginamit mo (na-click o nagsalita ka), malapit, isang grupo o IM, kapag bukas ang window nito, sa halip na palaging ang bar ng chat. Hindi gumagana, o may saradong window, ginagamit ng Enter ang bar na chat.
 ui-options-gesture-autocomplete = Kumpletuhin ang mga gesture sa malapit na chat
@@ -3730,7 +3728,6 @@ common-double-sided = Dalawang panig
 ui-minimap-double-click = I-double-click
 ui-inventory-controls-double-click-add-objects = Double-click: magdagdag ng mga bagay
 ui-inventory-controls-double-click-add-clothes = I-double-click: magdagdag ng damit
-ui-profile-double-click-group-chat = I-double-click: group chat
 ui-minimap-double-click-to-open-the-map = Mag-double-click upang buksan ang mapa
 ui-minimap-double-click-to-teleport = Mag-double-click upang magteleport
 build-ui-floaters-double-click-a-group = I-double-click ang isang grupo.
@@ -6177,7 +6174,6 @@ ui-minimap-near = Malapit
 common-profile = Profile
 ui-context-object-profile = Profile ng Object
 ui-appearance-items-object-profile = Profile ng Object
-ui-profile-group-profile-coming-soon = Profile ng grupo (darating sa lalong madaling panahon)
 common-place-profile = Lugar profile
 common-profile-2 = Profile...
 ui-bars-profile = Profile...
@@ -8191,7 +8187,6 @@ photo-looks = Mga filter
 photo-looks-tip = Filter: ang hitsura ng larawan, ipinapakita live
 photo-look-none = Walang filter
 photo-look-strength = Lakas
-photo-look-compare = Bago / pagkatapos
 photo-look-compare-tip = Ang eksena bilang ito ay kaliwa ng linya, na may filter sa kanyang kanang; i-drag ang linya upang ilipat ito
 photo-look-before = Bago
 photo-look-after = Pagkatapos
@@ -8225,24 +8220,13 @@ photo-look-spotlight = Spotlight
 photo-look-the-matrix = Ang Matrix
 photo-look-toy-camera = Kamera
 photo-look-video = Video
-photo-looks-replace = Palitan ang napili isa
-photo-looks-add = Magdagdag sa tuktok
-photo-looks-stack = Aktibong hitsura ({ $count })
-photo-looks-empty = Walang hitsura pa: pumili ng isa sa ibaba.
-photo-looks-on-tip = I-draw ang hitsurang ito (unticked: pinapanatili sa listahan, hindi inilabas)
-photo-looks-choose-tip = Ipakita ang mga setting nito; isang click sa listahan ay papalitan ito
-photo-looks-remove = Kumuha ng ito tumingin out
-photo-looks-up = Maglipat pataas (na-draw na mas maaga)
-photo-looks-down = Maglipat pababa (i-draw mamaya)
 photo-looks-settings = Mga setting ng { $name }
 photo-looks-reset = Mga default na halaga
-photo-looks-legacy-note = Ang mga filter ng Legacy Viewer ay walang mga setting, tulad ng sa Legacy viewer: lamang ang kanilang lakas.
 photo-looks-lut-note = Ang isang LUT ay inilapat bilang ito ay: lamang ang lakas nito.
 photo-knob-amount = Dami
 photo-knob-grain-size = Grain laki
 photo-knob-contrast = Kontrasta
 photo-knob-grain = Grain
-photo-knob-strength = Lakas
 photo-knob-shadows = Mga lilim
 photo-knob-lights = Ilaw
 photo-knob-middle = Gitnang tono
@@ -10370,7 +10354,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Mag-link
 build-compact-unlink-action = I-unlink
 build-compact-link-value = Mag-link { $number }
-build-compact-face-value = Mukha { $number }
 build-compact-move = Ilipat
 build-compact-rotate = I-rotate (Ctrl)
 build-compact-stretch = Pag-angat (Ctrl+Shift)
@@ -16072,3 +16055,141 @@ toolbar-remove-from-menu = Alisin mula sa toolbar
 toolbar-command-build-edit = I-edit ang mga bagay
 toolbar-command-build-create = Lumikha ng mga prims
 toolbar-command-build-land = I-edit ang bansa
+
+### Updated release translations
+
+inventory-search-no-copy = walang kopya
+inventory-search-no-modify = hindi maaaring baguhin
+inventory-search-no-transfer = walang paglipat
+ui-options-chat-keep-focus-hint = Ipinapadala ng Enter ang mensahe at nananatiling aktibo ang chat bar para sa susunod na mensahe, kahit walang laman ang bar. Pindutin ang Esc o mag-click sa mundo para muling gumalaw.
+ui-options-chat-enter-toggles-hint = Sa window ng Mga Pag-uusap, ibinabalik ka ng Enter sa pagkilos kapag blangko ang field sa nearby chat, pribadong mensahe, o group chat. Pindutin ang Enter mula sa mundo para muling mag-type.
+build-ui-features-physics-none-root-hint = Ang mga anak na babae ng isang prinsesa ay maaaring mag-asawa sa isang prinsipe o reyna, at ang mga anak ni prinsesa o reyna ay maaaring magpakasal sa ibang prinsesa.
+controls-position-tip = Posisyon ng kamera: itakda kung saan ang camera ay namamalagi sa likod ng avatar, eksakto
+camera-position-hint = Sa metro mula sa avatar: X pasulong, Y kaliwa, Z up. Ctrl + gulong tumataas ang camera, Shift + gulo ang focus point.
+camera-position-save = I-save bilang posisyon ng camera…
+photo-looks-replace = Palitan
+photo-looks-empty = Walang epekto pa. Mag-point sa isang filter sa ibaba upang subukan ito, pagkatapos ay i-click o i-drag ito dito.
+photo-looks-active = Aktibo
+photo-looks-count = { $count } ng { $max }
+photo-looks-expand-all = I-expand ang lahat
+photo-looks-collapse-all = I-collapse ang lahat
+photo-looks-hint = Inilalapat mula sa itaas hanggang sa ibaba. I-drag ang isang card upang muling ayusin ito, o pindutin ang Alt + ↑ ↓ sa mga ito. Right-click ang isang kard upang kumuha ito out.
+photo-looks-right-click-out = Right-click: kumuha ito sa labas ng mga aktibong epekto
+photo-looks-drop = I-drag ang isang epekto dito, o i-click ang isa sa ibaba
+photo-looks-full = { $max } ng { $max }: kumuha ng isa out, o i-on ang Palitan upang palitan ang isa.
+photo-looks-catalogue = Katalogo ng mga Epekto
+photo-looks-catalogue-tip = I-point ang isang epekto upang subukan ito sa larawan; i-click ito para idagdag, o i-drag ito sa pagitan ng mga aktibong isa
+photo-looks-catalogue-fold = Ipakita o itago ang katalogo
+photo-looks-replace-tip = Palitan: isang pag-click sa katalogo swaps ang napiling card sa halip ng pagdaragdag ng isang bagong isa
+photo-looks-replacing = Isang pag-click swaps { $name }
+photo-looks-done = Natapos
+photo-looks-take-out-zone = Mag-drop dito upang dalhin ito out
+photo-looks-hide = Itago { $name } (ito ay nananatiling sa kanyang lugar)
+photo-looks-show = Ipakita ang { $name }
+photo-looks-more = Higit pang mga pagkilos
+photo-looks-move-up = Maglipat pataas
+photo-looks-move-down = Maglipat pababa
+photo-looks-replace-one = Palitan...
+photo-looks-take-out = Kumuha ng out
+photo-looks-not-in-360-tag = Hindi sa 360 °
+photo-looks-all = Lahat
+photo-looks-favorites = Mga paborito: bawat epekto na iyong ginampanan
+photo-looks-favorites-empty = Walang mga paboritong pa. Point sa isang epekto at i-click ang kanyang bituin: ito ay nagpapakita ng unang sa kanyang listahan, at dito.
+photo-looks-favorite = Magdagdag sa mga paboritong
+photo-looks-unfavorite = Alisin mula sa mga paboritong
+photo-looks-card = { $name }, { $place } ng { $count }. Alt + arrow key ilipat ito.
+photo-looks-legacy-note = Legacy Viewer filter ay walang karagdagang mga setting.
+photo-knob-toning = Pagtono
+photo-knob-local-contrast = Lokal na kontrasto
+build-face-button = Mukha { $number }: piliin ito sa bawat napiling prim. Shift+click: magdagdag ito o kumuha ito out.
+build-face-invert = I-invert ang mga napiling mukha
+build-face-all = Piliin ang bawat mukha
+ui-options-aurora-controls-compact = Compact na mga kontrol ng camera
+ui-options-aurora-controls-compact-help = Ang Controls window ay bubukas compact sa camera: nito joystick, zoom at roll. nito title bar button switches sa pagitan ng compact at buong, at set ito masyadong.
+ui-options-aurora-controls-compact-movement = Compact na kontrol sa paggalaw
+ui-options-aurora-controls-compact-movement-help = Ang Controls window's Movement tab ay nagbukas compact: ang paggalaw ng mga pindutan at lumakad, tumakbo at lumipad. nito title bar button switches sa pagitan ng compact at buong, at set ito masyadong.
+poser-face-position-drag = I-drag upang ilipat ang joint sa pamamagitan ng 0.1 mm bawat pixel, o mag-click upang mag-type ng isang posisyon.
+build-layout-clicks = Mag-click sa mga bagay
+build-ui-floaters-shift-click = Shift + i-click
+build-ui-floaters-ctrl-click = Ctrl + i-click
+build-ui-floaters-click-object = Magdagdag o tanggalin ang object
+build-ui-floaters-click-face = Piliin ang mukha
+build-ui-floaters-clicks-hint = Gamit ang Edit tool, sa labas Align. Ctrl + Shift + i-click ay nagdaragdag ng na-click na mukha o tumatagal ito out.
+build-ui-floaters-ctrl-right-click = Ctrl + kanang-click
+build-ui-floaters-right-click-menu = Buksan ang menu
+build-ui-floaters-right-click-edit = I-edit ang object
+build-ui-floaters-double-click-linked = Double-click sa isang prim: switch “I-edit ang naka-link na bahagi”
+blender-live-tab-place = Lugar
+blender-live-tab-avatar = Avatar
+blender-live-objects-help = Ang mga meshes Blender ay pagpapadala. Pumili ng isa upang ilagay ito, o i-import ito mula sa menu nito.
+blender-live-more = Higit pa
+blender-live-place = Lugar
+blender-live-linked-prims = Ipakita o itago ang naka-link na prims
+blender-live-tag-rigged = May rig
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Mga tatsulok: { $triangles }
+       *[other] Mga tatsulok: { $triangles }
+    }
+blender-live-card-static =
+    Static · { $triangles ->
+        [one] Mga tatsulok: { $triangles }
+       *[other] Mga tatsulok: { $triangles }
+    }
+blender-live-card-linkset =
+    Static · { $prims ->
+        [one] Mga prim: { $prims }
+       *[other] Mga prim: { $prims }
+    } · { $triangles ->
+        [one] Mga tatsulok: { $triangles }
+       *[other] Mga tatsulok: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Mga tatsulok: { $triangles }
+       *[other] Mga tatsulok: { $triangles }
+    }
+blender-live-place-help = Kung saan ang napili static mesh ay. Rigged meshes palaging sundin ang iyong avatar.
+blender-live-place-none = Piliin ang isang static na bagay upang ilagay ito.
+blender-live-where = Saan
+blender-live-transform = Posisyon, pag-ikot at laki
+blender-live-size-note = Ang laki multiplies kung ano ang Blender ay nagpapadala, kaya mamaya edits sa Blender panatilihin ito.
+blender-live-avatar-help = Para sa rigged meshes: ipadala ang iyong hugis sa Blender upang modelo sa ito.
+blender-live-shape-section = Ang iyong hugis sa Blender
+blender-live-import-help = Freezes isang snapshot ng bagay para sa normal na import: review, presyo, pagkatapos ay kumpirmahin. Mamaya edit sa Blender hindi baguhin ito.
+blender-live-from = Mula sa
+blender-live-plugins-help = Ang Aurora ay nag-install ng katumbas na plug-in sa bawat Blender, pinapanatili ang isang backup ng nakaraang isa at hindi kailanman naka-install ang isang mas lumang bersyon.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } min
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Oras mula noong huling binago ng Blender ang bagay na ito
+blender-live-show-all = Ipakita ang lahat
+blender-live-hide-all = Itago ang lahat
+blender-live-bend-section = Tingnan ang timbang
+blender-live-elbows = Mga kamay
+blender-live-knees = Tuhod
+blender-live-bend-hold = Ipagpatuloy ang pose na ito sa halip ng aking mga animasyon
+blender-live-bend-note = Lamang mo makita ang baluktot, sa iyong avatar. Ang iyong mga animations, iba pang residente 'view at ang import ay hindi nagbago.
+blender-live-levels = Antas ng detalye
+blender-live-levels-pending = Blender naghahanda ang mga antas ng detalye kapag nag-click ka Import.
+blender-live-levels-note = Ang mga ito ay nauugnay sa mga selula ng katawan ng tao.
+blender-live-quick-look-tip = Mabilis na tingnan: makita ang bagay na ito mas malaki
+blender-live-quick-look-drag = I-drag upang i-on ito, double-click upang harapin ito muli.
+blender-live-quick-look-changed = Nabago sa Blender { $ago } taon na ang nakakaraan.
+blender-live-quick-look-bend = Baluktot tulad ng sa Avatar tab: tuhod { $elbows }°, tuhod { $knees }°.
+blender-live-undo = Ibalik
+blender-live-undo-derez = Derezzed { $name } · pa rin sa listahan ng Blender
+blender-live-undo-detach = Detached { $name } · pa rin sa listahan ng Blender
+blender-live-undo-drop = Nahulog { $name } sa lupa
+blender-live-undo-attach = Inilipat ang { $name } sa { $point }
+parcel-environment-apply-save = Mag-apply sa aking sarili lamang, para sa parcel na ito
+parcel-environment-save = I-save ang kapaligiran na ito para sa parcel na ito: ito ay bumalik kapag ikaw ay dito
+parcel-environment-forget = Alisin ang kapaligiran na nai-save para sa parcel na ito
+parcel-environment-not-saved = Ang parcel na ito ay hindi pa kilala, kaya ang kapaligiran nito ay hindi nai-save. Subukan muli sa isang sandali.
+parcel-environment-left = Kayo ay umalis sa parcel bago ang kapaligiran nito ay maaaring i-save, kaya ito ay hindi nai-save.
+parcel-environment-title = Kapaligiran nai-save para sa mga parcels
+parcel-environment-help = Ang iyong sariling kapaligiran para sa isang parcel: ito ay palitan ang iyong lokal na kapaligirang habang ikaw ay nakatayo doon, at kung ano ang mayroon ka bago ay bumalik kapag umalis ka. Lamang mo makita ito. I-save ang isa mula sa Environment window o isang menu ng item ng kapaligiranang sa iyong imbentaryo.
+parcel-environment-empty = Walang naka-save na kapaligiran
+parcel-environment-remove-all = Alisin ang lahat
+parcel-environment-remove-all-title = Alisin ang bawat kapaligiran na nai-save para sa isang parcel?
+parcel-environment-remove-all-text = Aalisin ang mga kapaligirang na-save mo para sa mga lote sa grid na ito. Mananatili ang nasa ibang grid. Hindi na ito mababawi.

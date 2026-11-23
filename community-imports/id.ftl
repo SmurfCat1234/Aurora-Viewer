@@ -2178,9 +2178,7 @@ ui-options-chat-text-size-hint = Ukuran pesan dalam obrolan dekat dan percakapan
 ui-options-chat-beyond-range = Kecerahan diluar rentang chat
 ui-options-chat-beyond-range-hint = Garis dari penduduk dan objek yang lebih jauh dari jangkauan obrolan (20 m), terdengar melalui sebuah teriakan misalnya, digambar pada kecerahan ini: 1 menjaga mereka secerah yang lain, nilai yang lebih rendah mengecilkan mereka lebih. 0.8 secara default, seperti dalam Legacy Viewer.
 ui-options-chat-keep-focus = Jaga bar obrolan aktif setelah mengirim
-ui-options-chat-keep-focus-hint = Enter mengirim dan bar tetap siap untuk pesan berikutnya; Enter pada bar kosong atau klik di tempat lain kembali ke gerakan. Setelah pesan, obrolan dekat dari jendela Percakapan juga mengikutinya.
 ui-options-chat-enter-toggles = Masukkan togol ketika mengetik dalam percakapan
-ui-options-chat-enter-toggles-hint = Enter pada medan kosong kembali untuk bergerak di jendela Percakapan juga (chat dekat, IMs dan grup chat), seperti yang dilakukan dalam bar chat; Enter dari dunia mulai mengetik lagi.
 ui-options-chat-enter-last-field = Masukkan kembali ke medan obrolan terakhir yang digunakan
 ui-options-chat-enter-last-field-hint = Dari dunia, Enter kembali ke medan obrolan terakhir yang Anda gunakan (diklik atau berbicara), dekat, kelompok atau IM, ketika jendelanya terbuka, bukan selalu bar obrolan. Mati, atau dengan jendela itu tertutup, Enter menggunakan bar obrola.
 ui-options-gesture-autocomplete = Selesaikan gesture di obrolan terdekat
@@ -3718,7 +3716,6 @@ common-double-sided = Double-sided
 ui-minimap-double-click = Klik dua kali
 ui-inventory-controls-double-click-add-objects = Klik dua kali: tambahkan objek
 ui-inventory-controls-double-click-add-clothes = Klik dua kali: tambahkan pakaian
-ui-profile-double-click-group-chat = Klik dua kali: obrolan kelompok
 ui-minimap-double-click-to-open-the-map = Klik dua kali untuk membuka peta
 ui-minimap-double-click-to-teleport = Klik dua kali untuk teleport
 build-ui-floaters-double-click-a-group = Klik dua kali pada sebuah kelompok.
@@ -6165,7 +6162,6 @@ ui-minimap-near = Dekat
 common-profile = Profil
 ui-context-object-profile = Profil Objek
 ui-appearance-items-object-profile = Profil Objek
-ui-profile-group-profile-coming-soon = Profil kelompok (segera)
 common-place-profile = Profil Tempat
 common-profile-2 = Profil...
 ui-bars-profile = Profil...
@@ -8179,7 +8175,6 @@ photo-looks = Filter
 photo-looks-tip = Filter: tampilan foto, ditampilkan secara langsung
 photo-look-none = Tidak ada filter
 photo-look-strength = Kekuatan
-photo-look-compare = Sebelum / setelah
 photo-look-compare-tip = Scene di sebelah kiri garis, dengan filter di sebelah kanan; seret garis untuk memindahkan
 photo-look-before = Sebelum
 photo-look-after = Setelah
@@ -8213,24 +8208,13 @@ photo-look-spotlight = Spotlight
 photo-look-the-matrix = The Matrix
 photo-look-toy-camera = Kamera mainan
 photo-look-video = Video
-photo-looks-replace = Ganti yang dipilih
-photo-looks-add = Tambahkan di atas
-photo-looks-stack = Aktif melihat ({ $count })
-photo-looks-empty = Belum ada tampilan: pilih salah satu di bawah.
-photo-looks-on-tip = Gambar tampilan ini (tidak ditandai: disimpan dalam daftar, tidak digambar)
-photo-looks-choose-tip = Tampilkan pengaturannya; klik di daftar akan menggantikan
-photo-looks-remove = Ambil ini lihat keluar
-photo-looks-up = Pindah ke atas (digambar sebelumnya)
-photo-looks-down = Pindah ke bawah (digambar kemudian)
 photo-looks-settings = Pengaturan dari { $name }
 photo-looks-reset = Nilai default
-photo-looks-legacy-note = Filter Legacy Viewer tidak memiliki pengaturan, seperti dalam LegacyViewer: hanya kekuatan mereka.
 photo-looks-lut-note = Sebuah LUT diterapkan sebagaimana adanya: hanya kekuatannya.
 photo-knob-amount = Jumlah
 photo-knob-grain-size = Ukuran biji
 photo-knob-contrast = Kontras
 photo-knob-grain = Buah
-photo-knob-strength = Kekuatan
 photo-knob-shadows = Bayangan
 photo-knob-lights = Cahaya
 photo-knob-middle = Tone tengah
@@ -10358,7 +10342,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Link
 build-compact-unlink-action = Nyahhubungkan
 build-compact-link-value = Link { $number }
-build-compact-face-value = Wajah { $number }
 build-compact-move = Pindah
 build-compact-rotate = Putar (Ctrl)
 build-compact-stretch = Rentang (Ctrl+Shift)
@@ -16049,3 +16032,141 @@ toolbar-remove-from-menu = Buang dari toolbar
 toolbar-command-build-edit = Sunting objek
 toolbar-command-build-create = Buat prims
 toolbar-command-build-land = Sunting negara
+
+### Updated release translations
+
+inventory-search-no-copy = tidak ada salinan
+inventory-search-no-modify = tidak dapat diubah
+inventory-search-no-transfer = tidak dapat ditransfer
+ui-options-chat-keep-focus-hint = Enter mengirim pesan dan bilah obrolan tetap aktif untuk pesan berikutnya, bahkan saat Enter ditekan pada bilah kosong. Tekan Esc atau klik di dunia untuk kembali mengendalikan gerakan.
+ui-options-chat-enter-toggles-hint = Pada jendela Percakapan, menekan Enter di kolom kosong mengembalikan kontrol gerakan, baik untuk obrolan sekitar, pesan pribadi, maupun obrolan grup. Tekan Enter dari dunia untuk mulai mengetik lagi.
+build-ui-features-physics-none-root-hint = Hanya anak prim dari sebuah linkset dapat menggunakan bentuk fisika None: root prim, atau prim sendiri, menyimpan Prim atau Convex hull.
+controls-position-tip = Posisi kamera: tetapkan di mana kamera berada di belakang avatar, tepatnya
+camera-position-hint = Dalam meter dari avatar: X ke depan, Y ke kiri, Z ke atas. Ctrl + roda menaikkan kamera, Shift + roda titik fokus.
+camera-position-save = Simpan sebagai posisi kamera…
+photo-looks-replace = Ganti
+photo-looks-empty = Belum ada efek. Tunjukkan filter di bawah untuk mencobanya, lalu klik atau seret ke sini.
+photo-looks-active = Aktif
+photo-looks-count = { $count } dari { $max }
+photo-looks-expand-all = Kembangkan semua
+photo-looks-collapse-all = Menggulung semua
+photo-looks-hint = Diterapkan dari atas ke bawah. Seret kartu untuk menyusun ulang, atau tekan Alt + ↑ ↓ padanya. Klik kanan pada kartu untuk mengeluarkannya.
+photo-looks-right-click-out = Klik kanan: buang dari efek aktif
+photo-looks-drop = Seret efek ke sini, atau klik salah satu di bawah
+photo-looks-full = { $max } dari { $max }: buang satu, atau aktifkan Penggantian untuk menukar satu.
+photo-looks-catalogue = Katalog efek
+photo-looks-catalogue-tip = Tunjukkan efek untuk mencobanya pada foto; klik untuk menambahkannya, atau seret di antara yang aktif
+photo-looks-catalogue-fold = Tampilkan atau sembunyikan katalog
+photo-looks-replace-tip = Penggantian: klik di katalog untuk menukar kartu yang dipilih daripada menambahkan yang baru
+photo-looks-replacing = Sebuah klik swap { $name }
+photo-looks-done = Selesai
+photo-looks-take-out-zone = Drop di sini untuk mengambilnya keluar
+photo-looks-hide = Sembunyikan { $name } (itu tetap di tempatnya)
+photo-looks-show = Tunjukkan { $name }
+photo-looks-more = Lebih banyak aksi
+photo-looks-move-up = Naik
+photo-looks-move-down = Bergerak ke bawah
+photo-looks-replace-one = Ganti...
+photo-looks-take-out = Keluarkan.
+photo-looks-not-in-360-tag = Tidak dalam 360 derajat
+photo-looks-all = Semua
+photo-looks-favorites = Favorit: setiap efek yang Anda bintangi
+photo-looks-favorites-empty = Belum ada favorit. Tunjukkan pada efek dan klik bintangnya: efek ini muncul pertama dalam daftarnya, dan di sini.
+photo-looks-favorite = Tambah ke Favorit
+photo-looks-unfavorite = Buang dari Favorit
+photo-looks-card = { $name }, { $place } dari { $count }. Alt + panah untuk memindahkan.
+photo-looks-legacy-note = Filter Viewer Legacy tidak memiliki pengaturan tambahan.
+photo-knob-toning = Pewarnaan nada
+photo-knob-local-contrast = Kontras Lokal
+build-face-button = Wajah { $number }: pilih pada setiap prim yang dipilih. Shift+click: tambahkan atau buang.
+build-face-invert = Balikkan wajah yang dipilih
+build-face-all = Pilih setiap wajah
+ui-options-aurora-controls-compact = Kendali kamera kompak
+ui-options-aurora-controls-compact-help = Jendela Kendali terbuka pada kamera: joystick, zoom dan roll-nya. Tombol bar judulnya beralih antara kompak dan penuh, dan menetapkan ini juga.
+ui-options-aurora-controls-compact-movement = Pengendali pergerakan kompak
+ui-options-aurora-controls-compact-movement-help = Tab Gerakan jendela Kendali terbuka kompak: tombol gerak dan berjalan, lari dan terbang. Butang bar judulnya bertukar antara kompak dan penuh, dan menetapkan ini juga.
+poser-face-position-drag = Seret untuk memindahkan sendi sebesar 0.1 mm per piksel, atau klik untuk menaip posisi.
+build-layout-clicks = Klik pada objek
+build-ui-floaters-shift-click = Shift + klik
+build-ui-floaters-ctrl-click = Ctrl + klik
+build-ui-floaters-click-object = Tambah atau buang objek
+build-ui-floaters-click-face = Pilih wajah
+build-ui-floaters-clicks-hint = Dengan alat Edit, di luar Jajarkan. Ctrl + Shift + klik menambahkan wajah yang diklik atau mengeluarkannya.
+build-ui-floaters-ctrl-right-click = Ctrl + klik kanan
+build-ui-floaters-right-click-menu = Buka menu
+build-ui-floaters-right-click-edit = Sunting objek
+build-ui-floaters-double-click-linked = Klik dua kali pada sebuah prim: togol "Edit bagian terhubung"
+blender-live-tab-place = Tempat
+blender-live-tab-avatar = Avatar
+blender-live-objects-help = Jaringan yang Blender kirimkan. Pilih satu untuk ditempatkan, atau impor dari menunya.
+blender-live-more = Lebih
+blender-live-place = Tempat
+blender-live-linked-prims = Tampilkan atau sembunyikan prim yang terhubung
+blender-live-tag-rigged = Berkerangka
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Segitiga: { $triangles }
+       *[other] Segitiga: { $triangles }
+    }
+blender-live-card-static =
+    Statis · { $triangles ->
+        [one] Segitiga: { $triangles }
+       *[other] Segitiga: { $triangles }
+    }
+blender-live-card-linkset =
+    Statis · { $prims ->
+        [one] Prim: { $prims }
+       *[other] Prim: { $prims }
+    } · { $triangles ->
+        [one] Segitiga: { $triangles }
+       *[other] Segitiga: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Segitiga: { $triangles }
+       *[other] Segitiga: { $triangles }
+    }
+blender-live-place-help = Dimana jaring statis yang dipilih berada. Jaring yang dimanipulasi selalu mengikuti avatar Anda.
+blender-live-place-none = Pilih objek statis untuk ditempatkan.
+blender-live-where = Dimana
+blender-live-transform = Posisi, rotasi dan ukuran
+blender-live-size-note = Ukuran melipatgandakan apa yang dikirim Blender, sehingga pengeditan selanjutnya di Blender mempertahankannya.
+blender-live-avatar-help = Untuk jaring-jaring yang terpasang: kirimkan bentuk Anda ke Blender untuk dimodelkan.
+blender-live-shape-section = Bentuk Anda di Blender
+blender-live-import-help = Menyimpan keadaan objek saat ini untuk proses impor biasa. Tinjau objek dan harganya sebelum mengonfirmasi. Perubahan berikutnya di Blender tidak akan mengubah salinan ini.
+blender-live-from = Dari
+blender-live-plugins-help = Aurora menginstal plug-in yang sesuai di setiap Blender, menyimpan salinan dari versi sebelumnya dan tidak pernah menginstal versi yang lebih tua.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } menit
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Waktu sejak Blender terakhir mengubah objek ini
+blender-live-show-all = Tampilkan semua
+blender-live-hide-all = Sembunyikan semua
+blender-live-bend-section = Periksa beratnya
+blender-live-elbows = Siku
+blender-live-knees = Lutut.
+blender-live-bend-hold = Pegang pose ini dibandingkan animasi saya
+blender-live-bend-note = Hanya kau yang melihat benturan itu, pada avatarmu animasimu, pandangan penduduk lain dan impor tidak berubah.
+blender-live-levels = Tingkat rincian
+blender-live-levels-pending = Blender mempersiapkan tingkat detil ketika Anda klik Impor.
+blender-live-levels-note = Disiapkan di Blender dari pengaturan LiveMesh setiap objek.
+blender-live-quick-look-tip = Lihat cepat: lihat objek ini lebih besar
+blender-live-quick-look-drag = Seret untuk memutarnya, klik dua kali untuk melihatnya lagi.
+blender-live-quick-look-changed = Diubah dalam Blender { $ago } tahun yang lalu.
+blender-live-quick-look-bend = Bend seperti pada tab Avatar: elbows { $elbows }°, lutut { $knees }°.
+blender-live-undo = Batalkan
+blender-live-undo-derez = Derezzed { $name } · masih dalam daftar Blender
+blender-live-undo-detach = Terpisah { $name } · masih dalam daftar Blender
+blender-live-undo-drop = Terjatuh { $name } ke tanah
+blender-live-undo-attach = { $name } dipindahkan ke { $point }
+parcel-environment-apply-save = Lakukan untuk diri sendiri saja, untuk paket ini
+parcel-environment-save = Simpan lingkungan ini untuk paket ini: ia kembali setiap kali Anda berada di sini
+parcel-environment-forget = Lupakan lingkungan yang disimpan untuk paket ini
+parcel-environment-not-saved = Paket ini belum diketahui, sehingga lingkungannya tidak disimpan. Coba lagi nanti.
+parcel-environment-left = Kau meninggalkan paket sebelum lingkungannya bisa diselamatkan, jadi itu tidak terselamatkan.
+parcel-environment-title = Lingkungan yang disimpan untuk paket
+parcel-environment-help = Lingkungan Anda sendiri untuk sebuah paket: ini menggantikan lingkungan lokal Anda saat Anda berdiri di sana, dan apa yang Anda miliki sebelumnya kembali ketika Anda pergi. Hanya Anda yang melihatnya. Simpan satu dari jendela Lingkup atau menu item lingkup dalam inventarisasi Anda.
+parcel-environment-empty = Tidak ada lingkungan yang disimpan
+parcel-environment-remove-all = Hapus semua
+parcel-environment-remove-all-title = Hapus semua lingkungan yang disimpan untuk paket?
+parcel-environment-remove-all-text = Lingkungan yang Anda simpan untuk petak tanah pada grid ini akan dihapus. Lingkungan di grid lain tetap tersimpan. Tindakan ini tidak dapat diurungkan.

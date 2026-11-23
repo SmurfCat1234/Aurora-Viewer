@@ -2177,9 +2177,7 @@ ui-options-chat-text-size-hint = 외관 › 텍스트 크기를 제외한 인근
 ui-options-chat-beyond-range = 채팅 범위를 넘어선 밝기
 ui-options-chat-beyond-range-hint = 채팅 범위(20m)에서 멀리 떨어진 주민과 물체로부터의 선은, 예를 들어 소리를 통해 들을 수 있으며, 이 밝기로 그려집니다: 1은 다른 것들과 같이 밝게 유지하며, 더 낮은 값은 더 흐릿하게 만듭니다. 기본값은 레거시 뷰어와 마찬가지로 0.8입니다.
 ui-options-chat-keep-focus = 보낸 후 채팅 바를 활성화 유지
-ui-options-chat-keep-focus-hint = Enter 키를 누르면 보내고 바는 다음 메시지에 대비하여 준비되어 있습니다. 비어 있는 바에서 Enter 를 눌러서 또는 다른 곳을 클릭하면 이동으로 돌아갑니다. 메세지가 전달된 후, 대화창의 인근 채팅도 그 뒤를 따릅니다.
 ui-options-chat-enter-toggles = 대화에서 입력하는 Enter 토글
-ui-options-chat-enter-toggles-hint = 빈 필드에서 Enter를 누르면 대화 바와 마찬가지로 대화 창(인근 채팅, IM 및 그룹 채트)에서도 이동합니다. 세계에서 Enter 를 눌러 입력을 다시 시작합니다.
 ui-options-chat-enter-last-field = 입력은 마지막으로 사용된 채팅 필드로 반환
 ui-options-chat-enter-last-field-hint = 월드에서 Enter 키를 누르면 마지막으로 사용한 채팅 필드(클릭하거나 대화)로 돌아갑니다. 또는 항상 채트 바가 아닌 인근 그룹 또는 IM 창이 열려 있을 때 이러한 창으로 되돌아옵니다.
 ui-options-gesture-autocomplete = 인근 채팅에서 제스처 완료
@@ -3713,7 +3711,6 @@ common-double-sided = 양면
 ui-minimap-double-click = 두 번 클릭
 ui-inventory-controls-double-click-add-objects = 두 번 클릭하여 물체 추가 착용
 ui-inventory-controls-double-click-add-clothes = 두 번 클릭하여 의상 추가 착용
-ui-profile-double-click-group-chat = 두 번 클릭: 그룹 채팅
 ui-minimap-double-click-to-open-the-map = 지도를 열려면 두 번 클릭
 ui-minimap-double-click-to-teleport = 두 번 클릭하여 텔레포트
 build-ui-floaters-double-click-a-group = 그룹을 이중 클릭합니다.
@@ -6160,7 +6157,6 @@ ui-minimap-near = 가까이
 common-profile = 프로필
 ui-context-object-profile = 개체 프로필
 ui-appearance-items-object-profile = 개체 프로필
-ui-profile-group-profile-coming-soon = 그룹 프로필 (곧 출시)
 common-place-profile = 장소 프로필
 common-profile-2 = 프로필...
 ui-bars-profile = 프로필...
@@ -8172,7 +8168,6 @@ photo-looks = 필터
 photo-looks-tip = 필터: 사진의 모습, 라이브로 보여
 photo-look-none = 필터 없음
 photo-look-strength = 강도
-photo-look-compare = 적용 전후 비교
 photo-look-compare-tip = 왼쪽에는 원본이, 오른쪽에는 필터를 적용한 모습이 표시됩니다. 선을 끌어 움직일 수 있습니다.
 photo-look-before = 적용 전
 photo-look-after = 적용 후
@@ -8206,24 +8201,13 @@ photo-look-spotlight = 스포트라이트
 photo-look-the-matrix = 매트릭스
 photo-look-toy-camera = 장난감 카메라
 photo-look-video = 동영상
-photo-looks-replace = 선택한 필터 바꾸기
-photo-looks-add = 필터 위에 추가
-photo-looks-stack = 적용 중인 필터 ({ $count }개)
-photo-looks-empty = 아직 필터가 없습니다. 아래에서 선택해 주세요.
-photo-looks-on-tip = 이 필터를 적용합니다. 선택을 해제하면 목록에만 남습니다.
-photo-looks-choose-tip = 필터 설정을 표시합니다. 목록에서 다른 필터를 클릭하면 바뀝니다.
-photo-looks-remove = 필터 제거
-photo-looks-up = 위로 이동 (먼저 적용)
-photo-looks-down = 아래로 이동 (나중에 적용)
 photo-looks-settings = { $name } 설정
 photo-looks-reset = 기본값
-photo-looks-legacy-note = 기존 뷰어와 마찬가지로 강도만 조정할 수 있습니다.
 photo-looks-lut-note = LUT는 그대로 적용됩니다: 단지 강도만.
 photo-knob-amount = 금액
 photo-knob-grain-size = 입자 크기
 photo-knob-contrast = 대비
 photo-knob-grain = 곡물
-photo-knob-strength = 강도
 photo-knob-shadows = 그림자
 photo-knob-lights = 조명
 photo-knob-middle = 중간 톤
@@ -10354,7 +10338,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = 링크
 build-compact-unlink-action = 연결 해제
 build-compact-link-value = 링크 { $number }
-build-compact-face-value = 얼굴 { $number }
 build-compact-move = 이동
 build-compact-rotate = 회전 (Ctrl)
 build-compact-stretch = 늘림 (Ctrl+Shift)
@@ -16039,3 +16022,141 @@ toolbar-remove-from-menu = 도구 모음에서 제거
 toolbar-command-build-edit = 개체 편집
 toolbar-command-build-create = 초기값 만들기
 toolbar-command-build-land = 국가 편집
+
+### Updated release translations
+
+inventory-search-no-copy = 복사하지 않음
+inventory-search-no-modify = 수정할 수 없음
+inventory-search-no-transfer = 전송하지 않음
+ui-options-chat-keep-focus-hint = Enter를 누르면 메시지를 보내고 채팅 입력줄은 다음 메시지를 입력할 수 있도록 계속 활성화됩니다. 빈 입력줄에서 Enter를 눌러도 활성화 상태가 유지됩니다. 다시 움직이려면 Esc를 누르거나 월드를 클릭하세요.
+ui-options-chat-enter-toggles-hint = 대화 창에서 빈 입력란에 Enter를 누르면 주변 채팅, 개인 메시지, 그룹 채팅 모두 이동 조작으로 돌아갑니다. 월드에서 Enter를 누르면 다시 입력할 수 있습니다.
+build-ui-features-physics-none-root-hint = 링크집합의 자식 프림만이 물리학 모양 None을 사용할 수 있다: 루트 프롬 또는 프럼은 Prim 또는 Convex hull을 유지한다.
+controls-position-tip = 카메라 위치: 정확히 아바타 뒤에 있는 곳을 설정합니다
+camera-position-hint = 아바타에서 미터로: X 앞으로, Y 왼쪽, Z 위로. Ctrl + 휠은 카메라를 올려, Shift + ホイール 포커스 지점.
+camera-position-save = 다른 이름으로 저장
+photo-looks-replace = 대체
+photo-looks-empty = 아직 효과가 없습니다. 아래의 필터를 가리켜 시도한 다음 여기로 클릭하거나 드래그하십시오.
+photo-looks-active = 활성
+photo-looks-count = { $count } 다음 중 하나 { $max }
+photo-looks-expand-all = 모두 확장
+photo-looks-collapse-all = 모두 축소
+photo-looks-hint = 위에서 아래로 적용됩니다. 카드를 끌어서 순서를 바꾸거나, Alt + ↑ ↓ 키를 누르십시오. 오른쪽 버튼으로 클릭하여 카트를 꺼냅니다.
+photo-looks-right-click-out = 오른쪽 클릭: 활성화된 효과에서 제거
+photo-looks-drop = 여기로 효과를 드래그하거나 아래에서 하나를 클릭하십시오.
+photo-looks-full = { $max } 다음 중 하나 { $max }: 하나를 제거하거나 대치를 켜서 하나를 교환합니다.
+photo-looks-catalogue = 효과 목록
+photo-looks-catalogue-tip = 효과를 가리켜 사진에서 시도하거나, 클릭하여 추가하며, 활성화된 효력 중에 드래그합니다.
+photo-looks-catalogue-fold = 카탈로그 보기 또는 가리기
+photo-looks-replace-tip = 대체: 카탈로그에서 클릭하면 새 카드를 추가하는 대신 선택한 카트를 교환합니다.
+photo-looks-replacing = 클릭 스왑 { $name }
+photo-looks-done = 완료됨
+photo-looks-take-out-zone = 여기로 떨어뜨려요
+photo-looks-hide = 숨기기 { $name } (그것은 그 자리를 유지)
+photo-looks-show = 보여주기 { $name }
+photo-looks-more = 더 많은 작업
+photo-looks-move-up = 위로 이동
+photo-looks-move-down = 아래로 이동
+photo-looks-replace-one = 바꾸기
+photo-looks-take-out = 내보내기
+photo-looks-not-in-360-tag = 360도에서 아닙니다
+photo-looks-all = 모두
+photo-looks-favorites = 즐겨찾기: 주연한 모든 효과
+photo-looks-favorites-empty = 아직 즐겨찾기가 없습니다. 효과를 가리키고 그 별을 클릭하십시오: 목록에서 처음으로 나타납니다.
+photo-looks-favorite = 즐겨찾기 추가
+photo-looks-unfavorite = 즐겨찾기에서 제거
+photo-looks-card = { $name }, { $place } 다음 중 하나 { $count }Alt + 화살표 키를 이동합니다.
+photo-looks-legacy-note = 레거시 뷰어 필터에는 추가 설정이 없습니다.
+photo-knob-toning = 색조 조정
+photo-knob-local-contrast = 로컬 대비
+build-face-button = 얼굴 { $number }: 선택한 모든 prim에서 선택합니다. Shift+click: 추가하거나 제거합니다.
+build-face-invert = 선택한 얼굴 반전
+build-face-all = 모든 얼굴 선택
+ui-options-aurora-controls-compact = 소형 카메라 제어
+ui-options-aurora-controls-compact-help = 컨트롤 창은 조이스틱, 줌 및 롤을 포함하여 카메라에서 컴팩트로 열립니다. 제목 표시줄 버튼은 콤팩트와 전체 사이를 전환하고 이것도 설정합니다.
+ui-options-aurora-controls-compact-movement = 소형 모션 컨트롤러
+ui-options-aurora-controls-compact-movement-help = 컨트롤 창의 이동 탭이 컴팩트로 열립니다: 이동 단추와 걸음, 달리기 및 비행. 제목 막대 버튼은 콤팩트와 전체 사이를 전환하고 이것도 설정합니다.
+poser-face-position-drag = 드래그하여 관절을 픽셀당 0.1mm 이동하거나 클릭하여 위치를 입력합니다.
+build-layout-clicks = 개체에 대한 클릭
+build-ui-floaters-shift-click = Shift + 클릭
+build-ui-floaters-ctrl-click = Ctrl + 클릭
+build-ui-floaters-click-object = 대상체 추가 또는 제거하기
+build-ui-floaters-click-face = 얼굴 선택
+build-ui-floaters-clicks-hint = 편집 도구를 사용하여 정렬 외부에서 Ctrl + Shift + 클릭하면 클리크한 면을 추가하거나 제거합니다.
+build-ui-floaters-ctrl-right-click = Ctrl + 오른쪽 클릭
+build-ui-floaters-right-click-menu = 메뉴 열기
+build-ui-floaters-right-click-edit = 대상체 편집
+build-ui-floaters-double-click-linked = 프림을 두 번 클릭: 스위치 "링크된 부분 편집"
+blender-live-tab-place = 위치
+blender-live-tab-avatar = 아바타
+blender-live-objects-help = 블렌더가 보내는 메쉬. 하나를 선택하여 배치하거나 메뉴에서 가져옵니다.
+blender-live-more = 더 보기
+blender-live-place = 위치
+blender-live-linked-prims = 연결된 프림 보기 또는 숨기기
+blender-live-tag-rigged = 리깅됨
+blender-live-card-rigged =
+    { $triangles ->
+        [one] 삼각형: { $triangles }
+       *[other] 삼각형: { $triangles }
+    }
+blender-live-card-static =
+    정적 · { $triangles ->
+        [one] 삼각형: { $triangles }
+       *[other] 삼각형: { $triangles }
+    }
+blender-live-card-linkset =
+    정적 · { $prims ->
+        [one] 프림: { $prims }
+       *[other] 프림: { $prims }
+    } · { $triangles ->
+        [one] 삼각형: { $triangles }
+       *[other] 삼각형: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] 삼각형: { $triangles }
+       *[other] 삼각형: { $triangles }
+    }
+blender-live-place-help = 선택한 정적 메쉬가 있는 위치입니다. 변형된 메시는 항상 아바타를 따릅니다.
+blender-live-place-none = 정적 대상체를 선택하여 배치합니다.
+blender-live-where = 어디
+blender-live-transform = 위치, 회전 및 크기
+blender-live-size-note = 크기는 블렌더가 보내는 것을 곱하여 나중에 블런더에서 편집할 때 그것을 유지합니다.
+blender-live-avatar-help = 리그드 메시의 경우: 모양을 Blender로 보내서 모델링합니다.
+blender-live-shape-section = 블렌더에서의 모양
+blender-live-import-help = 일반 가져오기에 사용할 오브젝트의 현재 상태를 복사해 고정합니다. 오브젝트와 가격을 확인한 뒤 확정하세요. 이후 Blender에서 편집해도 이 복사본은 바뀌지 않습니다.
+blender-live-from = 보내는 사람
+blender-live-plugins-help = Aurora은 각 블렌더에 일치하는 플러그인을 설치하고, 이전 버전의 백업을 유지하며, 이후 버젼은 설치하지 않는다.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } 분
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = 블렌더가 이 개체를 마지막으로 변경한 시간
+blender-live-show-all = 모두 보이기
+blender-live-hide-all = 모두 숨기기
+blender-live-bend-section = 무게를 확인하십시오
+blender-live-elbows = 팔꿈치
+blender-live-knees = 무릎
+blender-live-bend-hold = 내 애니메이션 대신 이 포즈를 유지
+blender-live-bend-note = 아바타에 곡선을 보는 사람은 당신뿐입니다. 당신의 애니메이션, 다른 거주자들의 뷰, 가져온 내용은 변경되지 않습니다.
+blender-live-levels = 세부 사항 수준
+blender-live-levels-pending = 가져오기 를 클릭하면 Blender가 세부 수준을 준비합니다.
+blender-live-levels-note = 각 개체의 LiveMesh 설정에서 Blender에서 준비합니다.
+blender-live-quick-look-tip = 빠른 보기: 이 개체를 더 크게 보기
+blender-live-quick-look-drag = 드래그하여 회전시키고, 두 번 클릭하여 다시 대면하십시오.
+blender-live-quick-look-changed = 블렌더에서 변경 { $ago } 전에.
+blender-live-quick-look-bend = 아바타 탭에서와 같이 구부리기: 팔꿈치 { $elbows }°, 무릎 { $knees }°.
+blender-live-undo = 실행 취소
+blender-live-undo-derez = 레벨 { $name } · 여전히 블렌더의 목록에
+blender-live-undo-detach = 분리됨 { $name } · 여전히 블렌더의 목록에
+blender-live-undo-drop = { $name }을 지상에 떨어뜨렸습니다
+blender-live-undo-attach = { $name }을(를) { $point }에 옮겼습니다
+parcel-environment-apply-save = 이 패키지에 대해서만 내 자신에게 적용
+parcel-environment-save = 이 패키지에 대한이 환경을 저장: 당신이 여기에있을 때마다 다시 온다
+parcel-environment-forget = 이 패킷에 저장된 환경 잊어버리기
+parcel-environment-not-saved = 이 패키지는 아직 알려져 있지 않으므로 환경이 저장되지 않았습니다. 잠시 후에 다시 시도하십시오.
+parcel-environment-left = 환경이 저장되기 전에 소포를 떠났으니까 저장이 안됐어요
+parcel-environment-title = 패키지에 저장된 환경
+parcel-environment-help = 패키지에 대한 자신만의 환경: 당신이 그곳에 서 있는 동안 로컬 환 경을 대체하고, 당신의 이전 환 경은 떠날 때 다시 돌아옵니다. 당신만이 그것을 볼 수 있습니다. 환 기 창 또는 인벤토리에서 환기 아이템의 메뉴에서 하나를 저장하십시오.
+parcel-environment-empty = 저장된 환경 없음
+parcel-environment-remove-all = 모두 삭제
+parcel-environment-remove-all-title = 패킷에 저장된 모든 환경을 제거하시겠습니까?
+parcel-environment-remove-all-text = 이 그리드의 구획에 저장한 환경을 삭제합니다. 다른 그리드에 저장한 환경은 유지됩니다. 이 작업은 취소할 수 없습니다.

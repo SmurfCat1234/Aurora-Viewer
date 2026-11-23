@@ -2153,9 +2153,7 @@ ui-options-chat-text-size-hint = 附近聊天、对话中的消息以及聊天�
 ui-options-chat-beyond-range = 超出聊天范围的文字亮度
 ui-options-chat-beyond-range-hint = 来自超出聊天范围（20 米）的居民与物件的文字，例如通过喊话听到的，以此亮度显示：1 与其他文字一样亮，数值越低越暗。默认 0.8，与传统查看器一致。
 ui-options-chat-keep-focus = 发送后保持聊天栏激活
-ui-options-chat-keep-focus-hint = Enter 发送，聊天栏继续待命以输入下一条；在空聊天栏按 Enter 或点击别处则恢复移动控制。发送后，对话窗口中的附近聊天也会跟随。
 ui-options-chat-enter-toggles = 在对话中按 Enter 切换输入
-ui-options-chat-enter-toggles-hint = 在空输入框中按 Enter 时，对话窗口（附近聊天、私聊与群组聊天）也会回到移动控制状态，与聊天栏相同；从世界中按 Enter 会重新开始输入。
 ui-options-chat-enter-last-field = Enter 返回上次使用的聊天输入框
 ui-options-chat-enter-last-field-hint = 从世界中按 Enter 会回到您上次使用的聊天输入框（点击过或发言过的），附近聊天、群组聊天或私聊，且其窗口已打开；否则始终使用聊天栏。关闭该项或该窗口已关闭时，Enter 使用聊天栏。
 ui-options-gesture-autocomplete = 在附近聊天中补全手势
@@ -3701,7 +3699,6 @@ common-double-sided = 双面
 ui-minimap-double-click = 双击
 ui-inventory-controls-double-click-add-objects = 双击：添加物件
 ui-inventory-controls-double-click-add-clothes = 双击：添加服装
-ui-profile-double-click-group-chat = 双击：群组聊天
 ui-minimap-double-click-to-open-the-map = 双击打开地图
 ui-minimap-double-click-to-teleport = 双击瞬间传送
 build-ui-floaters-double-click-a-group = 双击一个群组。
@@ -6120,7 +6117,6 @@ ui-minimap-near = 近
 common-profile = 个人档案
 ui-context-object-profile = 物件档案
 ui-appearance-items-object-profile = 物件档案
-ui-profile-group-profile-coming-soon = 群组档案（即将推出）
 common-place-profile = 地点档案
 common-profile-2 = 个人档案…
 ui-bars-profile = 个人档案…
@@ -8120,7 +8116,6 @@ photo-looks = 滤镜
 photo-looks-tip = 滤镜：照片的观感，实时显示
 photo-look-none = 无滤镜
 photo-look-strength = 强度
-photo-look-compare = 前 / 后
 photo-look-compare-tip = 分割线左侧为原场景，右侧为滤镜效果；拖动分割线可移动
 photo-look-before = 之前
 photo-look-after = 之后
@@ -8154,24 +8149,13 @@ photo-look-spotlight = 聚光
 photo-look-the-matrix = 黑客帝国
 photo-look-toy-camera = 玩具相机
 photo-look-video = 录像
-photo-looks-replace = 替换所选风格
-photo-looks-add = 在顶层添加
-photo-looks-stack = 启用的风格（{ $count }）
-photo-looks-empty = 尚无风格：在下方选择一个。
-photo-looks-on-tip = 绘制此风格（取消勾选：保留在列表中但不绘制）
-photo-looks-choose-tip = 显示其设置；在列表中单击即替换
-photo-looks-remove = 移除此风格
-photo-looks-up = 上移（更早绘制）
-photo-looks-down = 下移（更晚绘制）
 photo-looks-settings = { $name } 的设置
 photo-looks-reset = 默认值
-photo-looks-legacy-note = 传统查看器的滤镜与传统查看器一样没有设置项，只能调强度。
 photo-looks-lut-note = LUT 原样应用，只能调强度。
 photo-knob-amount = 数量
 photo-knob-grain-size = 颗粒大小
 photo-knob-contrast = 对比度
 photo-knob-grain = 颗粒
-photo-knob-strength = 强度
 photo-knob-shadows = 阴影
 photo-knob-lights = 高光
 photo-knob-middle = 中间调
@@ -10279,7 +10263,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = 联结
 build-compact-unlink-action = 取消联结
 build-compact-link-value = 联结 { $number }
-build-compact-face-value = 面 { $number }
 build-compact-move = 移动
 build-compact-rotate = 旋转（Ctrl）
 build-compact-stretch = 拉伸（Ctrl+Shift）
@@ -15860,3 +15843,141 @@ toolbar-remove-from-menu = 从工具栏中删除
 toolbar-command-build-edit = 编辑对象
 toolbar-command-build-create = 创建基本体
 toolbar-command-build-land = 编辑土地
+
+### Updated release translations
+
+inventory-search-no-copy = 不可复制
+inventory-search-no-modify = 无法修改
+inventory-search-no-transfer = 不可转让
+ui-options-chat-keep-focus-hint = 按 Enter 发送消息，聊天栏会保持输入焦点，空栏时按 Enter 也一样。按 Esc 或点击场景可恢复移动操作。
+ui-options-chat-enter-toggles-hint = 在「对话」窗口的空白输入框按 Enter 可恢复移动操作，适用于附近聊天、私聊和群聊。在场景中按 Enter 可再次输入。
+build-ui-features-physics-none-root-hint = 只有链接集的子素数才能使用物理形状 None:根素数,或单独的素数保持 Prim 或 Convex hull。
+controls-position-tip = 摄像头位置:设置摄像机在头像后面的位置,准确
+camera-position-hint = 从头像的米:X向前,Y左边,Z上。 Ctrl +轮提高相机,Shift +轮焦点。
+camera-position-save = 保存为相机位置 . .
+photo-looks-replace = 替换
+photo-looks-empty = 还没有效果。 指向下面的过滤器试用,然后点击或拖动到这里。
+photo-looks-active = 进行中
+photo-looks-count = { $count } 2013年1月1日至 { $max }
+photo-looks-expand-all = 全部展开
+photo-looks-collapse-all = 全部折叠
+photo-looks-hint = 效果从上到下应用。拖动卡片或选中卡片后按 Alt + ↑ ↓ 可调整顺序。右键单击卡片可移除效果。
+photo-looks-right-click-out = 右键单击:将其从活动效果中移除
+photo-looks-drop = 在这里拖动效果,或点击下面的一个
+photo-looks-full = { $max } 2013年1月1日至 { $max }:删除一个,或打开"替换"以交换一个。
+photo-looks-catalogue = 效應目錄
+photo-looks-catalogue-tip = 指向效果以在照片上试用;点按它以添加它,或将其拖到活动效果中
+photo-looks-catalogue-fold = 显示或隐藏目录
+photo-looks-replace-tip = 替换:在目录中点击将替换选定的卡片,而不是添加新卡片
+photo-looks-replacing = 点击交换 { $name }
+photo-looks-done = 完成
+photo-looks-take-out-zone = 下来拿出来
+photo-looks-hide = 隐藏{ $name }(它保持其位置)
+photo-looks-show = 表演{ $name }
+photo-looks-more = 更多操作
+photo-looks-move-up = 上移
+photo-looks-move-down = 下移
+photo-looks-replace-one = 替换.
+photo-looks-take-out = 取出
+photo-looks-not-in-360-tag = 不在360度
+photo-looks-all = 全部
+photo-looks-favorites = 收藏夹:您主演的每个效果
+photo-looks-favorites-empty = 指向某个效果并点击它的星标:它会在列表中显示第一,并且在这里。
+photo-looks-favorite = 添加到收藏夹
+photo-looks-unfavorite = 从收藏夹中删除
+photo-looks-card = { $name }, { $place } 2013年1月1日至 { $count }Alt + 箭头键移动它。
+photo-looks-legacy-note = 传统查看器过滤器没有额外设置。
+photo-knob-toning = 色调调整
+photo-knob-local-contrast = 局部对比
+build-face-button = 面部 { $number }: 在每个选定的prim上选择它。 Shift+click: 添加或删除它。
+build-face-invert = 翻转所选面孔
+build-face-all = 选择每个面孔
+ui-options-aurora-controls-compact = 紧凑型相机控制
+ui-options-aurora-controls-compact-help = Controls 窗口在相机上打开紧凑:它的操纵杆、缩放和滚动。 它的标题栏按钮在紧凑和全部之间切换,并设置这一点。
+ui-options-aurora-controls-compact-movement = 紧凑型运动控制器
+ui-options-aurora-controls-compact-movement-help = 控制窗口的移动标签打开紧凑:移动按钮和走路,跑步和飞行。 其标题栏按钮在紧凑和全部之间切换,并设置这一点。
+poser-face-position-drag = 拖动以每像素 0.1 mm 移动接头,或点按以键入位置。
+build-layout-clicks = 点击对象
+build-ui-floaters-shift-click = Shift + 单击
+build-ui-floaters-ctrl-click = Ctrl + 单击
+build-ui-floaters-click-object = 添加或移除对象
+build-ui-floaters-click-face = 选择面孔
+build-ui-floaters-clicks-hint = 使用编辑工具,在对齐之外,Ctrl + Shift + 单击添加或删除点击的面。
+build-ui-floaters-ctrl-right-click = Ctrl + 右键单击
+build-ui-floaters-right-click-menu = 打开菜单
+build-ui-floaters-right-click-edit = 编辑对象
+build-ui-floaters-double-click-linked = 双击prim:切换“编辑链接部分”
+blender-live-tab-place = 位置
+blender-live-tab-avatar = 化身
+blender-live-objects-help = Blender 发送的网格。 选择一个放置它,或从菜单中导入它。
+blender-live-more = 更多
+blender-live-place = 位置
+blender-live-linked-prims = 显示或隐藏链接的prim
+blender-live-tag-rigged = 已绑定骨骼
+blender-live-card-rigged =
+    { $triangles ->
+        [one] 三角形: { $triangles }
+       *[other] 三角形: { $triangles }
+    }
+blender-live-card-static =
+    静态 · { $triangles ->
+        [one] 三角形: { $triangles }
+       *[other] 三角形: { $triangles }
+    }
+blender-live-card-linkset =
+    静态 · { $prims ->
+        [one] 基本体: { $prims }
+       *[other] 基本体: { $prims }
+    } · { $triangles ->
+        [one] 三角形: { $triangles }
+       *[other] 三角形: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] 三角形: { $triangles }
+       *[other] 三角形: { $triangles }
+    }
+blender-live-place-help = 所选静态网格的位置。 被操纵的网格总是跟随你的头像。
+blender-live-place-none = 选择静态对象以放置它。
+blender-live-where = 哪里
+blender-live-transform = 位置、旋转和大小
+blender-live-size-note = 此尺寸设置按比例缩放 Blender 发送的模型。在 Blender 里继续编辑时，这个缩放比例会保留。
+blender-live-avatar-help = 对于装饰网格:将形状发送到 Blender 以在其上建模。
+blender-live-shape-section = 在Blender中创建你的形状
+blender-live-import-help = 将对象的当前状态固定为快照，供常规导入使用。查看对象和价格后再确认。在 Blender 里继续编辑不会改变此快照。
+blender-live-from = 从
+blender-live-plugins-help = Aurora 在每个Blender中安装匹配的插件,保留前一个插件的备份并且永远不会安装旧版本。
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count }分钟
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Blender 上次更改此对象以来的时间
+blender-live-show-all = 全部显示
+blender-live-hide-all = 隐藏所有
+blender-live-bend-section = 检查重量
+blender-live-elbows = 肘部
+blender-live-knees = 膝蓋
+blender-live-bend-hold = 保持这个姿势,而不是我的动画
+blender-live-bend-note = 只有你在你的头像上看到弯曲,你的动画、其他居民的视图和导入不会改变。
+blender-live-levels = 详细程度
+blender-live-levels-pending = 当您点击"导入"时,Blender 会准备详细级别。
+blender-live-levels-note = 在 Blender 中从每个对象的 LiveMesh 设置中准备。
+blender-live-quick-look-tip = 快速查看:查看此对象更大
+blender-live-quick-look-drag = 拖动旋转它,双击再次面对它。
+blender-live-quick-look-changed = 改变在Blender { $ago }年前。
+blender-live-quick-look-bend = 弯曲如在头像选项卡:肘部 { $elbows }°，膝盖 { $knees }°.
+blender-live-undo = 撤销
+blender-live-undo-derez = 德雷兹泽德 { $name } ·仍然在Blender的列表
+blender-live-undo-detach = 分离 { $name } ·仍然在Blender的列表
+blender-live-undo-drop = 把{ $name }扔到地上
+blender-live-undo-attach = 已将 { $name } 移到 { $point }
+parcel-environment-apply-save = 仅对自己应用并为此地块保存
+parcel-environment-save = 保存这个环境的包裹:它会回来,每当你在这里
+parcel-environment-forget = 忘记为此包裹保存的环境
+parcel-environment-not-saved = 该包尚未被识别,因此其环境没有保存。 稍后再试。
+parcel-environment-left = 您在环境能够保存之前离开了包,因此它没有被保存。
+parcel-environment-title = 为包保存的环境
+parcel-environment-help = 您可以为地块保存个人环境。进入地块时，即会替换您当前的本地环境，离开后恢复原有环境。只有您看得见。可在环境窗口保存，也可从物品栏的环境物品菜单保存。
+parcel-environment-empty = 没有保存环境
+parcel-environment-remove-all = 删除所有
+parcel-environment-remove-all-title = 删除为包裹保存的每个环境?
+parcel-environment-remove-all-text = 您为当前网格的地块保存的环境将被删除。其他网格的保存记录会保留。此操作无法撤销。

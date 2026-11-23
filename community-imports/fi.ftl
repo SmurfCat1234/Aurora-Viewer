@@ -2190,9 +2190,7 @@ ui-options-chat-text-size-hint = Lähellä olevan keskustelun ja keskustelujen v
 ui-options-chat-beyond-range = Kirkkaus chat-alueen ulkopuolella
 ui-options-chat-beyond-range-hint = Viivat, jotka tulevat chat-alueen ulkopuolelta (20 m) asuvista ihmisistä ja kohteista, kuten huudot, piirretään tällä kirkkaudella: 1 pitää ne yhtä kirkkaina kuin muutkin, pienemmät arvot himmentävät niitä enemmän. Oletuksena 0.8, kuten Legacy Viewerissa.
 ui-options-chat-keep-focus = Pidä chat-palkki aktiivisena lähettämisen jälkeen
-ui-options-chat-keep-focus-hint = Enter-näppäin lähettää viestin ja palkki pysyy valmiina seuraavaa viestiä varten. Enter-painike tyhjässä palkissa tai muussa kohdassa napsauttamalla palautuu siirtymään. Viestin jälkeen myös Keskustelut-ikkunan lähellä oleva keskustelu seuraa sitä.
 ui-options-chat-enter-toggles = Enter-valitsimet kirjoittaessa keskusteluissa
-ui-options-chat-enter-toggles-hint = Enter tyhjässä kentässä palaa liikkumaan myös Keskustelut-ikkunassa (läheiset keskustelut, pikaviestit ja ryhmäkeskustelu), kuten se tekee keskustelupalkissa; Enter maailmasta alkaa kirjoittaa uudelleen.
 ui-options-chat-enter-last-field = Enter palaa viimeksi käytettyyn chat-kenttään
 ui-options-chat-enter-last-field-hint = Maailmasta Enter palauttaa viimeksi käytettyyn keskustelukenttään (jota napsautit tai johon puhuit), lähellä olevaan ryhmään tai pikaviestiin, kun sen ikkuna on auki, aina keskustelualueen sijasta. Poissa käytöstä tai ikkunan ollessa suljettu Enter käyttää keskustelun palkkia.
 ui-options-gesture-autocomplete = Täydelliset eleet lähellä olevassa chatissa
@@ -3730,7 +3728,6 @@ common-double-sided = Kaksipuolinen
 ui-minimap-double-click = Kaksoisnapsauta
 ui-inventory-controls-double-click-add-objects = Kaksoisnapsautus: lisää objekteja
 ui-inventory-controls-double-click-add-clothes = Kaksoisnapsauta: lisää vaatteita
-ui-profile-double-click-group-chat = Kaksoisnapsauta: ryhmäkeskustelu
 ui-minimap-double-click-to-open-the-map = Avaa kartta kaksoisnapsauttamalla
 ui-minimap-double-click-to-teleport = Kaksoisnapsauta teleporttataksesi
 build-ui-floaters-double-click-a-group = Kaksoisnapsauta ryhmää.
@@ -6177,7 +6174,6 @@ ui-minimap-near = Lähellä
 common-profile = Profiili
 ui-context-object-profile = Objektiprofiili
 ui-appearance-items-object-profile = Objektiprofiili
-ui-profile-group-profile-coming-soon = Ryhmäprofiili (tulossa pian)
 common-place-profile = Paikkaprofiili
 common-profile-2 = Profiili...
 ui-bars-profile = Profiili...
@@ -8191,7 +8187,6 @@ photo-looks = Suodattimet
 photo-looks-tip = Suodattimet: valokuvan ulkonäkö, näytetty livenä
 photo-look-none = Ei suodattimia
 photo-look-strength = Vahvuus
-photo-look-compare = Ennen / jälkeen
 photo-look-compare-tip = Kohtaus rivin vasemmalla puolella, suodatin sen oikealla puolen. Siirrä kohtaus vetämällä riviä
 photo-look-before = Ennen
 photo-look-after = Jälkeen
@@ -8225,24 +8220,13 @@ photo-look-spotlight = Spotlight
 photo-look-the-matrix = Matrix -elokuva
 photo-look-toy-camera = Lelu kamera 2
 photo-look-video = Video
-photo-looks-replace = Korvaa valittu
-photo-looks-add = Lisää yläosaan
-photo-looks-stack = Aktiiviset ilmeet ({ $count })
-photo-looks-empty = Ei vielä asua: valitse yksi alla.
-photo-looks-on-tip = Piirrä tämä ulkoasu (poista valinta: säilytetään luettelossa, ei piirretä)
-photo-looks-choose-tip = Näytä sen asetukset; napsautus luettelossa korvaa sen
-photo-looks-remove = Ota tämä look ulos
-photo-looks-up = Siirrä ylöspäin (piirretty aiemmin)
-photo-looks-down = Siirrä alaspäin (piirretään myöhemmin)
 photo-looks-settings = Asetukset { $name }
 photo-looks-reset = Oletusarvot
-photo-looks-legacy-note = Legacy Viewerin suodattimilla ei ole asetuksia, kuten Legacy-katselussa: vain niiden voimakkuus.
 photo-looks-lut-note = LUT-taulukkoa käytetään sellaisena kuin se on: vain sen vahvuus.
 photo-knob-amount = Määrä
 photo-knob-grain-size = Rakekoko
 photo-knob-contrast = Kontrasti
 photo-knob-grain = Vilja
-photo-knob-strength = Vahvuus
 photo-knob-shadows = Varjot
 photo-knob-lights = Valot
 photo-knob-middle = Keskiäänet
@@ -10370,7 +10354,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Linkki
 build-compact-unlink-action = Irrota linkki
 build-compact-link-value = Linkki { $number }
-build-compact-face-value = Kasvot { $number }
 build-compact-move = Siirrä
 build-compact-rotate = Kierrä (Ctrl)
 build-compact-stretch = Venytys (Ctrl+Shift)
@@ -16064,3 +16047,141 @@ toolbar-remove-from-menu = Poista työkaluriviltä
 toolbar-command-build-edit = Objektien muokkaaminen
 toolbar-command-build-create = Luo prims
 toolbar-command-build-land = Muokkaa maata
+
+### Updated release translations
+
+inventory-search-no-copy = Ei kopiota
+inventory-search-no-modify = Ei voi muokata
+inventory-search-no-transfer = Ei siirtoa
+ui-options-chat-keep-focus-hint = Enter lähettää viestin ja jättää chatkentän aktiiviseksi seuraavaa viestiä varten, vaikka Enteriä painettaisiin tyhjässä kentässä. Palaa liikkumiseen Escillä tai napsauttamalla maailmaa.
+ui-options-chat-enter-toggles-hint = Keskusteluikkunassa Enter tyhjässä kentässä palauttaa liikkumisen lähichatissa, yksityisviesteissä ja ryhmächatissa. Aloita kirjoittaminen uudelleen painamalla Enteriä maailmassa.
+build-ui-features-physics-none-root-hint = Vain linkkijoukon lapset voivat käyttää fysikaalista muotoa Ei mitään: juuriprim, tai prim itsessään, pitää Prim- tai Convex-kuoren.
+controls-position-tip = Kameran sijainti: aseta missä kamera lepää avatarin takana, täsmälleen
+camera-position-hint = Metreinä avatarista: X eteenpäin, Y vasemmalle, Z ylös. Ctrl + pyörä nostaa kameran, Shift + pyöriä tarkennuspistettä.
+camera-position-save = Tallenna kameran sijainti…
+photo-looks-replace = Korvaa
+photo-looks-empty = Kokeile alla olevaa suodatinta osoittamalla sitä hiiren osoittimella ja napsauttamalla tai vetämällä se sitten tähän.
+photo-looks-active = Aktiivinen
+photo-looks-count = { $count } tai { $max }
+photo-looks-expand-all = Laajenna kaikki
+photo-looks-collapse-all = Kutista kaikki
+photo-looks-hint = Käytetään ylhäältä alaspäin. Vedä kortti uuteen järjestykseen tai paina Alt + ↑ ↓ -näppäintä sen päällä. Napsauta hiiren kakkospainikkeella korttia poistaaksesi sen.
+photo-looks-right-click-out = Oikea napsautus: poista se aktiivisista tehosteista
+photo-looks-drop = Vedä tehoste tähän tai napsauta alla olevaa
+photo-looks-full = { $max } tai { $max }: poista yksi tai vaihda toinen ottamalla Korvaa-toiminto käyttöön.
+photo-looks-catalogue = Tehosteiden luettelo
+photo-looks-catalogue-tip = Osoita tehostetta, jos haluat kokeilla sitä kuvassa. Lisää se napsauttamalla tai vedä se aktiivisten tehosteiden joukkoon
+photo-looks-catalogue-fold = Näytä tai piilota luettelo
+photo-looks-replace-tip = Korvaa: luettelon klikkaus vaihtaa valitun kortin sen sijaan, että lisättäisiin uusi kortti
+photo-looks-replacing = Napsauttamalla swaps { $name }
+photo-looks-done = Valmis
+photo-looks-take-out-zone = Pudota tänne ottaa se pois
+photo-looks-hide = Piilota { $name } (se pysyy paikoillaan)
+photo-looks-show = Näytä { $name }
+photo-looks-more = Lisää toimintoja
+photo-looks-move-up = Siirry ylös
+photo-looks-move-down = Siirrä alas
+photo-looks-replace-one = Korvaa...
+photo-looks-take-out = Ota ulos
+photo-looks-not-in-360-tag = Ei 360°:ssa
+photo-looks-all = Kaikki
+photo-looks-favorites = Suosikit: jokainen tehoste, jonka tähdit
+photo-looks-favorites-empty = Osoita tehostetta ja napsauta sen tähtiä: se näkyy ensimmäisenä sen luettelossa, ja täällä.
+photo-looks-favorite = Lisää suosikkeihin
+photo-looks-unfavorite = Poista suosikeista
+photo-looks-card = { $name }, { $place } tai { $count }. Alt + nuolinäppäimet siirtää sitä.
+photo-looks-legacy-note = Vanhoissa Viewer-suodattimissa ei ole lisäasetuksia.
+photo-knob-toning = Sävytys
+photo-knob-local-contrast = Paikallinen kontrasti
+build-face-button = Kasvot { $number }: valitse se jokaisella valitulla primillä. Shift+click: lisää se tai poista se.
+build-face-invert = Käännä valitut kasvot
+build-face-all = Valitse kaikki kasvot
+ui-options-aurora-controls-compact = Kompakti kameran säätimet
+ui-options-aurora-controls-compact-help = Controls-ikkuna avautuu kompaktina kamerassa: sen joystickit, zoomaus ja rullaus. Sen otsikkopalkin painike vaihtaa kompaktin ja täyden välillä ja asettaa tämän myös.
+ui-options-aurora-controls-compact-movement = Kompaktit liikeohjaimet
+ui-options-aurora-controls-compact-movement-help = Controls-ikkunan Liike-välilehti avautuu kompaktiksi: liikepainikkeet ja kävely, juoksu ja lentäminen. Sen otsikkopalkin painike vaihtaa kompaktin ja täyden välillä, ja asettaa myös tämän.
+poser-face-position-drag = Siirrä liitosta 0,1 mm pikseliä kohti vetämällä tai kirjoita sijainti napsauttamalla.
+build-layout-clicks = Klikkaukset kohteisiin
+build-ui-floaters-shift-click = Vaihto + klikkaus
+build-ui-floaters-ctrl-click = Ctrl + napsautus
+build-ui-floaters-click-object = Objektin lisääminen tai poistaminen
+build-ui-floaters-click-face = Valitse kasvot
+build-ui-floaters-clicks-hint = Muokkaustyökalulla Tasaa-kohdan ulkopuolella Ctrl + Vaihto + napsautus lisää klikatun pinnan tai poistaa sen.
+build-ui-floaters-ctrl-right-click = Ctrl + hiiren oikea painike
+build-ui-floaters-right-click-menu = Avaa valikko
+build-ui-floaters-right-click-edit = Objektin muokkaaminen
+build-ui-floaters-double-click-linked = Kaksoisnapsauta prim: kytkin “Muokkaa linkitettyjä osia”
+blender-live-tab-place = Paikka
+blender-live-tab-avatar = Avatar
+blender-live-objects-help = Blenderin lähettämät verkot. Valitse jokin ja sijoita se tai tuo se valikosta.
+blender-live-more = Lisää
+blender-live-place = Paikka
+blender-live-linked-prims = Näytä tai piilota linkitetyt prim-arvot
+blender-live-tag-rigged = Luustolla
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Kolmiot: { $triangles }
+       *[other] Kolmiot: { $triangles }
+    }
+blender-live-card-static =
+    Staattinen · { $triangles ->
+        [one] Kolmiot: { $triangles }
+       *[other] Kolmiot: { $triangles }
+    }
+blender-live-card-linkset =
+    Staattinen · { $prims ->
+        [one] Primit: { $prims }
+       *[other] Primit: { $prims }
+    } · { $triangles ->
+        [one] Kolmiot: { $triangles }
+       *[other] Kolmiot: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Kolmiot: { $triangles }
+       *[other] Kolmiot: { $triangles }
+    }
+blender-live-place-help = Missä valittu staattinen verkko on. Rigged-verkot seuraavat aina avatariasi.
+blender-live-place-none = Sijoita staattinen objekti valitsemalla se.
+blender-live-where = Missä
+blender-live-transform = Sijainti, kierto ja koko
+blender-live-size-note = Koko moninkertaistaa sen, mitä Blender lähettää, joten myöhemmät muokkaukset Blenderissä säilyttävät sen.
+blender-live-avatar-help = Rigged meshes: lähetä muotosi Blenderiin mallintaaksesi sitä.
+blender-live-shape-section = Muotosi Blenderissä
+blender-live-import-help = Jäädyttää objektin tilannekuvan normaalia tuontiprosessia varten: arvostelu, hinta ja vahvistus. Myöhemmät muokkaukset Blenderissä eivät muuta sitä.
+blender-live-from = Lähettäjä
+blender-live-plugins-help = Aurora asentaa vastaavan liitännäisen jokaiseen Blenderiin, pitää varmuuskopion edellisestä eikä koskaan asenna vanhempaa versiota.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } min
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Aika siitä, kun Blender viimeksi muutti tätä objektia
+blender-live-show-all = Näytä kaikki tuotteet
+blender-live-hide-all = Piilota kaikki
+blender-live-bend-section = Tarkista painot
+blender-live-elbows = Kyynärpäät
+blender-live-knees = Polvet
+blender-live-bend-hold = Pidä tätä asentoa animaatioiden sijaan
+blender-live-bend-note = Vain sinä näet taivutuksen avatarissasi, animaatiosi, muiden asukkaiden näkymä ja tuonti pysyvät ennallaan.
+blender-live-levels = Yksityiskohtaisuustasot
+blender-live-levels-pending = Blender valmistelee yksityiskohtaisuustasot, kun napsautat Tuo-painiketta.
+blender-live-levels-note = Valmistettu Blenderissä kunkin objektin LiveMesh-asetuksista.
+blender-live-quick-look-tip = Pikakatsaus: katso tämä kohde suurempana
+blender-live-quick-look-drag = Vedä kääntää se, kaksoisnapsauta kohdata sen uudelleen.
+blender-live-quick-look-changed = Muutettu Blender { $ago } sitten.
+blender-live-quick-look-bend = Taivuta kuten Avatar-välilehdellä: kyynärpäät { $elbows }°, polvet { $knees }°.
+blender-live-undo = Kumoa
+blender-live-undo-derez = Derezzed { $name } · vielä Blenderin luettelossa
+blender-live-undo-detach = Erillinen { $name } · vielä Blenderin luettelossa
+blender-live-undo-drop = Pudotti { $name } maahan
+blender-live-undo-attach = { $name } siirrettiin kiinnityspisteeseen { $point }
+parcel-environment-apply-save = Hae vain itselleni, tähän pakettiin
+parcel-environment-save = Tallenna tämä ympäristö tälle paketille: se palaa aina kun olet täällä
+parcel-environment-forget = Unohda tähän pakettiin tallennettu ympäristö
+parcel-environment-not-saved = Tämä paketti ei ollut vielä tiedossa, joten sen ympäristöä ei tallennettu. Yritä hetken kuluttua uudelleen.
+parcel-environment-left = Jätit paketin ennen kuin sen ympäristöä voitiin tallentaa, joten sitä ei tallennettu.
+parcel-environment-title = Paketeille tallennetut ympäristöt
+parcel-environment-help = Oma ympäristö paketille: se korvaa paikallisen ympäristön, kun olet siellä, ja se, mikä sinulla oli aiemmin, palaa takaisin, kun poistut. Vain sinä näet sen. Tallenna yksi Ympäristöt-ikkunasta tai ympäröivän kohteen valikosta inventaariossasi.
+parcel-environment-empty = Ympäristöjä ei ole tallennettu
+parcel-environment-remove-all = Poista kaikki
+parcel-environment-remove-all-title = Poistaa kaikki paketille tallennetut ympäristöt?
+parcel-environment-remove-all-text = Tämän verkon maa-alueille tallentamasi ympäristöt poistetaan. Muiden verkkojen ympäristöt säilyvät. Tätä toimintoa ei voi perua.

@@ -2193,9 +2193,7 @@ ui-options-chat-text-size-hint = Dimensiunea mesajelor din chat-ul din apropiere
 ui-options-chat-beyond-range = Luminozitate dincolo de intervalul de chat
 ui-options-chat-beyond-range-hint = Liniile de la rezidenți și obiecte aflate mai departe decât raza chat-ului (20 m), auzite printr-un strigăt, de exemplu, sunt desenate la această luminozitate: 1 le menține la fel de luminoase ca celelalte, valorile mai mici le diminuează mai mult.
 ui-options-chat-keep-focus = Păstrați bara de chat activă după trimitere
-ui-options-chat-keep-focus-hint = Enter trimite și bara rămâne pregătită pentru următorul mesaj; Enter pe o bară goală sau un clic în altă parte revine la mutare.După un mesaj, chat-ul din apropiere al ferestrei Conversații îl urmează și el.
 ui-options-chat-enter-toggles = Introduceți comutatoarele de tastare în conversații
-ui-options-chat-enter-toggles-hint = Enter pe un câmp gol revine la deplasarea în fereastra Conversații, de asemenea (chat din apropiere, IM și chat-uri de grup), așa cum se face în bara de chat; Enter din lume începe să tastați din nou.
 ui-options-chat-enter-last-field = Introduceți întoarce la ultimul câmp de chat utilizat
 ui-options-chat-enter-last-field-hint = Din lume, Enter se întoarce la câmpul de chat pe care l-ați utilizat ultima dată (ați făcut clic sau ați vorbit), în apropiere, un grup sau un IM, atunci când fereastra este deschisă, în loc să fie întotdeauna bara de chat.Dezactivat sau cu acea fereastră închisă, Enter utilizează bara de Chat.
 ui-options-gesture-autocomplete = Gesturi complete în chat din apropiere
@@ -3740,7 +3738,6 @@ common-double-sided = Dublu-față
 ui-minimap-double-click = Dublu clic
 ui-inventory-controls-double-click-add-objects = Dublu clic: adăugați obiecte
 ui-inventory-controls-double-click-add-clothes = Dublu-clic: adauga haine
-ui-profile-double-click-group-chat = Dublu-clic: chat de grup
 ui-minimap-double-click-to-open-the-map = Dublu clic pentru a deschide harta
 ui-minimap-double-click-to-teleport = Dublu-clic pentru a teleporta
 build-ui-floaters-double-click-a-group = Faceți dublu clic pe un grup.
@@ -6187,7 +6184,6 @@ ui-minimap-near = În apropiere
 common-profile = Profil
 ui-context-object-profile = Profilul obiectului
 ui-appearance-items-object-profile = Profilul obiectului
-ui-profile-group-profile-coming-soon = Profilul grupului (în curând)
 common-place-profile = Profilul locului
 common-profile-2 = Profilul tău...
 ui-bars-profile = Profilul meu...
@@ -8199,7 +8195,6 @@ photo-looks = Filtre
 photo-looks-tip = Filtre: aspectul fotografiei, afișat în direct
 photo-look-none = Fără filtru
 photo-look-strength = Concentraţie
-photo-look-compare = Înainte / după
 photo-look-compare-tip = Scena în stânga liniei, cu filtrul în dreapta; trageți linia pentru a o muta
 photo-look-before = Înainte
 photo-look-after = După
@@ -8233,24 +8228,13 @@ photo-look-spotlight = Spotlight
 photo-look-the-matrix = Filme cu The Matrix
 photo-look-toy-camera = Cameră de jucărie
 photo-look-video = Video
-photo-looks-replace = Înlocuiește-l pe cel ales
-photo-looks-add = Adaugă pe listă
-photo-looks-stack = Aspecte active ({ $count })
-photo-looks-empty = Niciun look încă: alege unul mai jos.
-photo-looks-on-tip = Desenează acest aspect (debifat: păstrat în listă, nu desenat)
-photo-looks-choose-tip = Afișează setările sale; un clic în listă îl înlocuiește
-photo-looks-remove = Ia acest look afară
-photo-looks-up = Mutare în sus (desenată mai devreme)
-photo-looks-down = Deplasare în jos (desenată mai târziu)
 photo-looks-settings = Setările de securitate { $name }
 photo-looks-reset = Valori implicite
-photo-looks-legacy-note = Filtrele Legacy Viewer nu au setări, ca în LegacyViewer: doar puterea lor.
 photo-looks-lut-note = Un LUT este aplicat așa cum este: doar puterea sa.
 photo-knob-amount = Suma
 photo-knob-grain-size = Dimensiunea granulelor
 photo-knob-contrast = Contrast
 photo-knob-grain = Cereale
-photo-knob-strength = Concentraţie
 photo-knob-shadows = Umbre
 photo-knob-lights = Lumini
 photo-knob-middle = Tonuri de mijloc
@@ -10381,7 +10365,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Legătură
 build-compact-unlink-action = Deconectare
 build-compact-link-value = Legătură { $number }
-build-compact-face-value = Faţă { $number }
 build-compact-move = Mutare
 build-compact-rotate = Rotire (Ctrl)
 build-compact-stretch = Întindere (Ctrl+Shift)
@@ -16076,3 +16059,141 @@ toolbar-remove-from-menu = Eliminați din bara de instrumente
 toolbar-command-build-edit = Editarea obiectelor
 toolbar-command-build-create = Creați prims
 toolbar-command-build-land = Editează terenul
+
+### Updated release translations
+
+inventory-search-no-copy = Nici o copie
+inventory-search-no-modify = Nu poate fi modificat
+inventory-search-no-transfer = Fără transfer
+ui-options-chat-keep-focus-hint = Enter trimite mesajul și lasă bara de chat activă pentru mesajul următor, chiar dacă bara este goală. Apasă Esc sau fă clic în lume pentru a reveni la controlul mișcării.
+ui-options-chat-enter-toggles-hint = În fereastra Conversații, Enter într-un câmp gol revine la controlul mișcării în chatul din apropiere, mesajele private și chaturile de grup. Apasă Enter din lume pentru a scrie din nou.
+build-ui-features-physics-none-root-hint = Numai primele copil ale unui linkset pot folosi forma fizică None: prima rădăcină, sau o primă de sine stătătoare, păstrează Prim sau Convex hull.
+controls-position-tip = Poziția camerei: setați în cazul în care camera se sprijină în spatele avatarului, exact
+camera-position-hint = În metri de la avatar: X înainte, Y stânga, Z sus. Ctrl + roata ridică camera, Shift + roată punctul de focalizare.
+camera-position-save = Salvați ca poziția camerei…
+photo-looks-replace = Înlocuire
+photo-looks-empty = Indicați spre un filtru de mai jos pentru a-l încerca, apoi faceți clic pe acesta sau glisați-l aici.
+photo-looks-active = Activ
+photo-looks-count = { $count } din { $max }
+photo-looks-expand-all = Extinde toate
+photo-looks-collapse-all = Retrage toate
+photo-looks-hint = Aplicat de sus în jos. Trageți o carte pentru a o reordona, sau apăsați Alt + ↑ ↓ pe ea. Faceți clic dreapta pe o carte ca să o scoateți.
+photo-looks-right-click-out = Click dreapta: scoate-l din efectele active
+photo-looks-drop = Trageți un efect aici sau faceți clic pe unul de mai jos
+photo-looks-full = { $max } din { $max }: scoateți unul sau activați Înlocuire pentru a schimba unul.
+photo-looks-catalogue = Catalog de efecte
+photo-looks-catalogue-tip = Indicați spre un efect pentru a-l încerca pe fotografie; faceți clic pe el pentru a îl adăuga sau trageți-l printre cele active
+photo-looks-catalogue-fold = Afișarea sau ascunderea catalogului
+photo-looks-replace-tip = Înlocuire: un click în catalog schimbă cardul ales în loc să adauge unul nou
+photo-looks-replacing = Un click schimbă { $name }
+photo-looks-done = Efectuat
+photo-looks-take-out-zone = Lasă aici să-l scoți afară
+photo-looks-hide = Ascunde { $name } (își păstrează locul)
+photo-looks-show = Arată { $name }
+photo-looks-more = Mai multe acțiuni
+photo-looks-move-up = Mutare în sus
+photo-looks-move-down = Mutare în jos
+photo-looks-replace-one = Înlocuiește…
+photo-looks-take-out = Ia afară
+photo-looks-not-in-360-tag = Nu în 360°
+photo-looks-all = Toate
+photo-looks-favorites = Favorite: fiecare efect pe care l-ai jucat
+photo-looks-favorites-empty = Indicați spre un efect și faceți clic pe steaua acestuia: acesta apare primul în lista sa, iar aici.
+photo-looks-favorite = Adauga la favorite
+photo-looks-unfavorite = Eliminați din favorite
+photo-looks-card = { $name }, { $place } din { $count }. Alt + tastele săgeată pentru a muta.
+photo-looks-legacy-note = Filtrele Viewer moștenite nu au setări suplimentare.
+photo-knob-toning = Tonare
+photo-knob-local-contrast = Contrast local
+build-face-button = Faţă { $number }: selectați-l pe fiecare prim selectat. Shift+click: adăugați-l sau scoateți-o.
+build-face-invert = Inversați fețele selectate
+build-face-all = Selectarea fiecărei fețe
+ui-options-aurora-controls-compact = Comenzi compacte pentru cameră
+ui-options-aurora-controls-compact-help = Fereastra Controls se deschide compact pe cameră: joystick-urile, zoomul și rularea.Butonul din bara de titlu comută între compact și full, și setează și acest lucru.
+ui-options-aurora-controls-compact-movement = Comandă compactă de mişcare
+ui-options-aurora-controls-compact-movement-help = Tab-ul Mișcare din fereastra Controale se deschide compact: butoanele de mișcare și mersul, alergarea și zborul.Butonul din bara de titlu comută între compact și plin și setează și acest lucru.
+poser-face-position-drag = Trageți pentru a muta îmbinarea cu 0,1 mm pe pixel sau faceți clic pentru a introduce o poziție.
+build-layout-clicks = Click-uri pe obiecte
+build-ui-floaters-shift-click = Shift + clic
+build-ui-floaters-ctrl-click = Ctrl + clic
+build-ui-floaters-click-object = Adăugarea sau eliminarea obiectului
+build-ui-floaters-click-face = Selectați fața
+build-ui-floaters-clicks-hint = Cu instrumentul Edit, în afara Align.Ctrl + Shift + click adaugă fața selectată sau o scoate.
+build-ui-floaters-ctrl-right-click = Ctrl + clic dreapta
+build-ui-floaters-right-click-menu = Deschide meniul
+build-ui-floaters-right-click-edit = Editarea obiectului
+build-ui-floaters-double-click-linked = Dublu clic pe o primă: comutați „Editați părțile legate”
+blender-live-tab-place = Locul
+blender-live-tab-avatar = Avatar
+blender-live-objects-help = Selectați una dintre ele pentru a o plasa, sau importați-o din meniul său.
+blender-live-more = Mai mult
+blender-live-place = Locul
+blender-live-linked-prims = Afișarea sau ascunderea primelor legate
+blender-live-tag-rigged = Cu schelet
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Triunghiuri: { $triangles }
+       *[other] Triunghiuri: { $triangles }
+    }
+blender-live-card-static =
+    Static · { $triangles ->
+        [one] Triunghiuri: { $triangles }
+       *[other] Triunghiuri: { $triangles }
+    }
+blender-live-card-linkset =
+    Static · { $prims ->
+        [one] Primitive: { $prims }
+       *[other] Primitive: { $prims }
+    } · { $triangles ->
+        [one] Triunghiuri: { $triangles }
+       *[other] Triunghiuri: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Triunghiuri: { $triangles }
+       *[other] Triunghiuri: { $triangles }
+    }
+blender-live-place-help = Unde se află grila statică selectată. Grilele manipulate urmează întotdeauna avatarul tău.
+blender-live-place-none = Selectați un obiect static pentru a-l plasa.
+blender-live-where = Unde
+blender-live-transform = Poziția, rotația și dimensiunea
+blender-live-size-note = Dimensiunea multiplică ceea ce trimite Blender, astfel încât editările ulterioare din Blender o păstrează.
+blender-live-avatar-help = Pentru plase rigged: trimite forma ta la Blender pentru a modela pe ea.
+blender-live-shape-section = Forma ta în Blender
+blender-live-import-help = Îngheață un instantaneu al obiectului pentru importul normal: revizuire, preț, apoi confirmă.Editările ulterioare în Blender nu îl schimbă.
+blender-live-from = De la
+blender-live-plugins-help = Aurora instalează plugin-ul corespunzător în fiecare Blender, păstrează o copie de rezervă a celui anterior și nu instalează niciodată o versiune mai veche.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } min
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Timp de când Blender a schimbat ultima dată acest obiect
+blender-live-show-all = Arată toate produsele
+blender-live-hide-all = Ascunde toate
+blender-live-bend-section = Verificați greutățile
+blender-live-elbows = Coturi
+blender-live-knees = Genunchi
+blender-live-bend-hold = Ţine această poză în loc de animaţiile mele
+blender-live-bend-note = Doar tu vezi curba pe avatarul tău, animațiile tale, vizualizarea celorlalți rezidenți și importul rămân neschimbate.
+blender-live-levels = Niveluri de detaliu
+blender-live-levels-pending = Blender pregătește nivelurile de detaliu atunci când faceți clic pe Import.
+blender-live-levels-note = Pregătit în Blender din setările LiveMesh ale fiecărui obiect.
+blender-live-quick-look-tip = Privire rapida: vezi acest obiect mai mare
+blender-live-quick-look-drag = Trageți pentru a o roti, faceți dublu clic pentru a se confrunta cu ea din nou.
+blender-live-quick-look-changed = Schimbat în Blender { $ago } acum.
+blender-live-quick-look-bend = Îndoit ca în tab-ul Avatar: coate { $elbows }Genunchii { $knees }°.
+blender-live-undo = Anulează
+blender-live-undo-derez = Derezzed { $name } · încă în lista lui Blender
+blender-live-undo-detach = Detaşat { $name } · încă în lista lui Blender
+blender-live-undo-drop = A aruncat { $name } la pământ
+blender-live-undo-attach = { $name } a fost mutat la { $point }
+parcel-environment-apply-save = Aplicați doar pentru mine, pentru acest colet
+parcel-environment-save = Salvează acest mediu pentru acest pachet: se întoarce ori de câte ori ești aici
+parcel-environment-forget = Uită mediul salvat pentru acest colet
+parcel-environment-not-saved = Acest parcel nu a fost cunoscut încă, astfel încât mediul său nu este salvat.Încercați din nou într-o clipă.
+parcel-environment-left = Ai părăsit pachetul înainte ca mediul său să poată fi salvat, deci nu a fost salvat.
+parcel-environment-title = Medii salvate pentru parcele
+parcel-environment-help = Mediul tău propriu pentru un parcel: înlocuiește mediul local cât timp stai acolo, iar ceea ce ai avut înainte se întoarce când pleci. Doar tu îl vezi. Salvează unul din fereastra Mediu sau din meniul unui element de mediu din inventarul tăi.
+parcel-environment-empty = Niciun mediu salvat
+parcel-environment-remove-all = Eliminați toate
+parcel-environment-remove-all-title = Eliminați fiecare mediu salvat pentru un pachet?
+parcel-environment-remove-all-text = Mediile salvate pentru parcelele din această grilă vor fi eliminate. Mediile din celelalte grile rămân neschimbate. Acțiunea nu poate fi anulată.

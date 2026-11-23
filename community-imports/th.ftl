@@ -2190,9 +2190,7 @@ ui-options-chat-text-size-hint = ขนาดของจดหมายใน�
 ui-options-chat-beyond-range = ความสว่างเกินขอบเขตการสนทนา
 ui-options-chat-beyond-range-hint = เส้นทางจากผู้อยู่อาศัยและวัตถุที่อยู่ห่างออกไปกว่าระยะของการสนทนา (20 เมตร) เช่น เสียงเรียกจะถูกวาดด้วยความสว่างนี้: ค่า 1 จะทำให้มันสว่างเท่ากับอื่น ๆ ค่าต่ำกว่าจะทำให้มันมืดลงมากขึ้น ปริยายคือ 0. 8, เหมือนกับในตัวดูแบบเก่า
 ui-options-chat-keep-focus = เก็บแถบป้อนข้อความไว้ให้ทำงานหลังจากส่งแล้ว
-ui-options-chat-keep-focus-hint = กดปุ่ม Enter จะส่งจดหมาย และแถบจะยังคงพร้อมใช้งานสำหรับจดทะเบียนต่อไป; กด ปุ่ม Enter ในแถบอนุญาตที่ว่างหรือคลิกที่อื่น ๆ จะกลับไปยังการเคลื่อนย้าย หลังจากจดแจ้งแล้ว หน้าต่างการสนทนาใกล้เคียงของหน้าต่าง การสนทนาทีก็จะตามมาด้วยเช่นกัน
 ui-options-chat-enter-toggles = เปิด/ ปิดการพิมพ์ในบทสนทนา
-ui-options-chat-enter-toggles-hint = การกดปุ่ม Enter บนช่องว่าง จะกลับไปยังการเคลื่อนไหวในหน้าต่างการสนทนาเช่นกัน (การโต้ตอบที่อยู่ใกล้เคียง, การสื่อสารทางอิเล็กทรอนิกส์ และการโทรคุยกลุ่ม) เหมือนกับที่มันทำในแถบการพูดคุย; การกด ปุ่ม Enter จากทั่วโลก จะเริ่มพิมพ์อีกครั้ง
 ui-options-chat-enter-last-field = ป้อนกลับไปยังช่องการสนทนาที่ใช้ครั้งสุดท้าย
 ui-options-chat-enter-last-field-hint = จากโลก กดปุ่ม Enter จะกลับไปยังพื้นที่การสนทนาที่คุณใช้ครั้งสุดท้าย (คลิกเข้าไป หรือพูดคุย) ใกล้ๆ กลุ่มหรือ IM เมื่อเปิดหน้าต่างของมัน แทนที่จะใช้แถบชุมนุมตลอดเวลา ปุ่มปิด หรือเมื่อปิดหน้าต่างนั้น กด Enter จะใช้แผงชุมชน
 ui-options-gesture-autocomplete = การแสดงท่าทางเสร็จสมบูรณ์ในการสนทนาที่อยู่ใกล้เคียง
@@ -3730,7 +3728,6 @@ common-double-sided = พิมพ์ทั้งสองด้าน
 ui-minimap-double-click = คลิกสองครั้ง
 ui-inventory-controls-double-click-add-objects = คลิกสองครั้ง: เพิ่มวัตถุ
 ui-inventory-controls-double-click-add-clothes = คลิกสองครั้ง: เพิ่มเสื้อผ้า
-ui-profile-double-click-group-chat = คลิกสองครั้ง: การสนทนากลุ่ม
 ui-minimap-double-click-to-open-the-map = คลิกสองครั้งเพื่อเปิดแผนที่
 ui-minimap-double-click-to-teleport = คลิกสองครั้งเพื่อส่งข้อมูล
 build-ui-floaters-double-click-a-group = คลิกสองครั้งบนกลุ่ม
@@ -6177,7 +6174,6 @@ ui-minimap-near = ใกล้
 common-profile = โพรไฟล์
 ui-context-object-profile = โปรไฟล์ของวัตถุ
 ui-appearance-items-object-profile = โปรไฟล์ของวัตถุ
-ui-profile-group-profile-coming-soon = โพรไฟล์กลุ่ม (กำลังจะมาถึง)
 common-place-profile = โปรไฟล์สถานที่
 common-profile-2 = โปรไฟล์...
 ui-bars-profile = โพรไฟล์...
@@ -8191,7 +8187,6 @@ photo-looks = ตัวกรอง
 photo-looks-tip = ตัวกรอง: รูปภาพที่แสดงสด
 photo-look-none = ไม่มีตัวกรอง
 photo-look-strength = ความเข้ม
-photo-look-compare = ก่อน/ หลัง
 photo-look-compare-tip = ฉากที่อยู่ทางซ้ายของเส้น และมีตัวกรองอยู่ทางขวาของมัน โยนเส้นเพื่อย้าย
 photo-look-before = ก่อน
 photo-look-after = หลังจาก
@@ -8225,24 +8220,13 @@ photo-look-spotlight = จุดไฟ
 photo-look-the-matrix = เดอะเมทริกซ์
 photo-look-toy-camera = กล้องของเล่นName
 photo-look-video = วิดีโอ
-photo-looks-replace = แทนที่ข้อความที่เลือกไว้
-photo-looks-add = เพิ่มไว้ด้านบน
-photo-looks-stack = แสดงตัวอย่าง{ $count })
-photo-looks-empty = ยังไม่ได้ดู: เลือกหนึ่งด้านล่างนี้
-photo-looks-on-tip = วาดรูปแบบนี้ (ยกเลิกการเลือก: เก็บไว้ในรายการ ไม่วาด)
-photo-looks-choose-tip = แสดงการตั้งค่าของมัน คลิกที่รายการเพื่อแทนที่
-photo-looks-remove = เอาหน้านี้ออกไป
-photo-looks-up = ย้ายขึ้น (วาดก่อนหน้านี้)
-photo-looks-down = ย้ายลง (วาดภายหลัง)
 photo-looks-settings = ตั้งค่าของ { $name }
 photo-looks-reset = ค่าปริยาย
-photo-looks-legacy-note = ตัวกรองของ Legacy Viewer ไม่มีการตั้งค่าอะไรเลย เหมือนกับใน LegacyViewer มีเพียงความเข้มข้นเท่านั้น
 photo-looks-lut-note = LUT ถูกใช้ในแบบที่มันเป็น เพียงความแข็งแรงของมัน
 photo-knob-amount = จำนวน
 photo-knob-grain-size = ขนาดของเมล็ด
 photo-knob-contrast = ความแตกต่าง
 photo-knob-grain = เส้นใย
-photo-knob-strength = ความเข้ม
 photo-knob-shadows = เงา
 photo-knob-lights = ไฟ
 photo-knob-middle = ระดับกลาง
@@ -10373,7 +10357,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = ลิงค์
 build-compact-unlink-action = ยกเลิกการเชื่อมโยง
 build-compact-link-value = ลิงค์ { $number }
-build-compact-face-value = หน้า { $number }
 build-compact-move = ย้าย
 build-compact-rotate = หมุน (Ctrl)
 build-compact-stretch = ปรับขนาด (Ctrl+Shift)
@@ -16065,3 +16048,141 @@ toolbar-remove-from-menu = ลบจากแถบเครื่องมื�
 toolbar-command-build-edit = แก้ไขวัตถุ
 toolbar-command-build-create = สร้างตัวพิมพ์หลัก
 toolbar-command-build-land = แก้ไขประเทศ
+
+### Updated release translations
+
+inventory-search-no-copy = ไม่มีสำเนา
+inventory-search-no-modify = ไม่สามารถแก้ไขได้
+inventory-search-no-transfer = ไม่มีการส่งต่อ
+ui-options-chat-keep-focus-hint = Enter จะส่งข้อความและให้แถบแชตพร้อมพิมพ์ข้อความถัดไป แม้กด Enter ขณะช่องว่าง ให้กด Esc หรือคลิกในโลกเพื่อกลับไปควบคุมการเคลื่อนไหว
+ui-options-chat-enter-toggles-hint = ในหน้าต่างการสนทนา กด Enter ในช่องว่างเพื่อกลับไปควบคุมการเคลื่อนไหว ใช้ได้กับแชตใกล้เคียง ข้อความส่วนตัว และแชตกลุ่ม กด Enter ขณะอยู่ในโลกเพื่อเริ่มพิมพ์อีกครั้ง
+build-ui-features-physics-none-root-hint = มีเพียงลูกพริมของกลุ่มลิงค์เท่านั้นที่สามารถใช้รูปร่างฟิสิกส์ None ได้: รากพริมม์ หรือพริมพ์ในตัวมันเอง จะเก็บ Prim หรือ Convex hull
+controls-position-tip = ตำแหน่งกล้อง: ตั้งค่าที่อยู่ของกล้องหลังอวตาร
+camera-position-hint = จำนวนเมตรจากตัวอวกาศ: X ไปข้างหน้า, Y ไปทางซ้าย, Z ขึ้นไป Ctrl+วงล้อ จะยกกล้องขึ้น, Shift+วง ล้อ จะตั้งจุดโฟกัส
+camera-position-save = บันทึกเป็นตำแหน่งของกล้อง...
+photo-looks-replace = แทนที่
+photo-looks-empty = ยังไม่มีการปรับแต่งผลลัพธ์ โชว์ตัวกรองด้านล่างเพื่อทดลองใช้ จากนั้นคลิกหรือลากมันมาที่นี่
+photo-looks-active = ทำงาน
+photo-looks-count = { $count } ของ { $max }
+photo-looks-expand-all = ขยายทั้งหมด
+photo-looks-collapse-all = ปิดการใช้งานทั้งหมด
+photo-looks-hint = ใช้จากด้านบนไปด้านล่าง โยนไพ่เพื่อเปลี่ยนลำดับ หรือกด Alt + ↑ ↓ คลิกขวาบนไพ่นึงเพื่อเอาออก
+photo-looks-right-click-out = คลิกขวา: เอามันออกจากลูกเล่นที่ทำงานอยู่
+photo-looks-drop = โยนผลลัพธ์มาที่นี่ หรือคลิกบนหนึ่งในตัวเลือกด้านล่างนี้
+photo-looks-full = { $max } ของ { $max }: ลบตัวเลือกหนึ่งออกไป หรือเปิดใช้ตัวเลือก แทนที่ เพื่อเปลี่ยนตัวเลือก
+photo-looks-catalogue = แคตตาล็อกของลูกเล่น
+photo-looks-catalogue-tip = ชี้ไปที่ผลลัพธ์ เพื่อทดสอบมันบนภาพถ่าย คลิกเพื่อเพิ่มมัน หรือลากมันไปยังส่วนที่มีการทำงานอยู่
+photo-looks-catalogue-fold = ตั้งค่า...
+photo-looks-replace-tip = แทนที่: การคลิกในรายการจะเปลี่ยนไพ่ที่เลือกไว้ แทนที่จะเพิ่มไพ่นึงใหม่
+photo-looks-replacing = คลิกสลับ { $name }
+photo-looks-done = เสร็จแล้ว
+photo-looks-take-out-zone = ลงมาที่นี่เพื่อเอามันออก
+photo-looks-hide = ซ่อน { $name } (มันเก็บไว้ในที่)
+photo-looks-show = แสดง { $name }
+photo-looks-more = การกระทำเพิ่มเติม
+photo-looks-move-up = ย้ายขึ้น
+photo-looks-move-down = ย้ายลง
+photo-looks-replace-one = แทนที่...
+photo-looks-take-out = เอาออกไป
+photo-looks-not-in-360-tag = ไม่ใช่ใน360องศา
+photo-looks-all = ทั้งหมด
+photo-looks-favorites = โปรด: ทุกเอฟเฟกต์ที่คุณเล่นเป็นตัวละคร
+photo-looks-favorites-empty = ยังไม่มีรายการโปรด คลิกที่ผลลัพธ์ และคลิกบนดาวของมัน เพื่อแสดงตัวเลือกนี้เป็นครั้งแรกในรายการ
+photo-looks-favorite = เพิ่มไปยังรายการโปรด
+photo-looks-unfavorite = ลบจากรายการโปรด
+photo-looks-card = { $name }, { $place } ของ { $count }ปุ่ม Alt + ลูกศร ย้ายมัน
+photo-looks-legacy-note = ตัวกรองของเครื่องมือแสดงผลแบบเก่า ๆ จะไม่มีการตั้งค่าเพิ่มเติม
+photo-knob-toning = ปรับโทนสี
+photo-knob-local-contrast = ระดับความคมชัดภายใน
+build-face-button = หน้า { $number }: เลือกมันบนทุกๆ Prim ที่เลือกไว้ Shift+clickเพิ่มหรือลบมันออก
+build-face-invert = หมุนหน้าที่เลือกกลับด้าน
+build-face-all = เลือกหน้าต่างทั้งหมด
+ui-options-aurora-controls-compact = การควบคุมกล้องดิจิตอล
+ui-options-aurora-controls-compact-help = หน้าต่างการควบคุมจะถูกเปิดขึ้นมาในรูปแบบที่คมชัดบนกล้อง เช่น จอยสติ๊ก, การปรับขนาดและหมุน ปุ่มแถบหัวเรื่องของมัน จะเปลี่ยนระหว่างคม ชัด และเต็ม และตั้งค่านี้ด้วย
+ui-options-aurora-controls-compact-movement = ควบคุมการเคลื่อนไหวแบบบีบอัด
+ui-options-aurora-controls-compact-movement-help = เปิดแท็บการเคลื่อนไหวของหน้าต่างควบคุม เพื่อให้ดูคมชัดขึ้น: ปุ่มการเค ลื่อนที่ และปุ่มเดิน, วิ่ง และบิน ปุ่มบนแถบหัวเรื่องจะสลับระหว่างคม ชัด และเต็ม และตั้งค่าตัวเลือกนี้ด้วย
+poser-face-position-drag = ลากเพื่อย้ายข้อต่อ 0.1 มิลลิเมตรต่อพิกเซล หรือคลิกเพื่อพิมพ์ตำแหน่ง
+build-layout-clicks = คลิกบนวัตถุ
+build-ui-floaters-shift-click = Shift +คลิก
+build-ui-floaters-ctrl-click = ควบคุม+คลิก
+build-ui-floaters-click-object = เพิ่มหรือลบวัตถุ
+build-ui-floaters-click-face = เลือกหน้าต่าง
+build-ui-floaters-clicks-hint = ใช้เครื่องมือแก้ไข นอกจาก การจัดเรียง Ctrl + Shift + คลิ๊ก เพื่อเพิ่มหรือลบหน้าที่คลิก
+build-ui-floaters-ctrl-right-click = Ctrl +คลิกขวา
+build-ui-floaters-right-click-menu = เปิดเมนู
+build-ui-floaters-right-click-edit = แก้ไขวัตถุ
+build-ui-floaters-double-click-linked = คลิกสองครั้งบนส่วนหลัก: สลับ "แก้ไขส่วนที่เชื่อมโยง"
+blender-live-tab-place = สถานที่
+blender-live-tab-avatar = อวตาร
+blender-live-objects-help = เมชที่ Blender ส่งไป เลือกเมชหนึ่งเพื่อวางไว้ หรือนำเข้าจากเมนูของมัน
+blender-live-more = อีก
+blender-live-place = สถานที่
+blender-live-linked-prims = แสดงหรือซ่อนตัวเลขหลักที่เชื่อมโยงกัน
+blender-live-tag-rigged = ผูกโครงกระดูกแล้ว
+blender-live-card-rigged =
+    { $triangles ->
+        [one] สามเหลี่ยม: { $triangles }
+       *[other] สามเหลี่ยม: { $triangles }
+    }
+blender-live-card-static =
+    คงที่ · { $triangles ->
+        [one] สามเหลี่ยม: { $triangles }
+       *[other] สามเหลี่ยม: { $triangles }
+    }
+blender-live-card-linkset =
+    คงที่ · { $prims ->
+        [one] ไพรม์: { $prims }
+       *[other] ไพรม์: { $prims }
+    } · { $triangles ->
+        [one] สามเหลี่ยม: { $triangles }
+       *[other] สามเหลี่ยม: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] สามเหลี่ยม: { $triangles }
+       *[other] สามเหลี่ยม: { $triangles }
+    }
+blender-live-place-help = ที่อยู่ของเมชที่เลือกไว้ โดยเมชที่มีการปรับแต่งจะติดตามอวตารของคุณเสมอ
+blender-live-place-none = เลือกวัตถุที่จะวางไว้
+blender-live-where = ที่ไหน
+blender-live-transform = ตำแหน่ง การหมุน และขนาด
+blender-live-size-note = ขนาดคูณกับสิ่งที่ Blender ส่งไป ดังนั้นการแก้ไขในภายหลังใน Blender จะเก็บมันไว้
+blender-live-avatar-help = สำหรับเมชที่ถูกปรับแต่ง: ส่งรูปร่างของคุณไปยังเบลเดอร์ เพื่อทำโมเดลบนมัน
+blender-live-shape-section = รูปร่างของคุณใน Blender
+blender-live-import-help = เก็บภาพถ่ายชั่วคราวของวัตถุไว้สำหรับการนำเข้าตามปกติ: ตรวจสอบ, ราคา และยืนยัน การแก้ไขใน Blender ในภายหลัง จะไม่เปลี่ยนรูปภาพนี้
+blender-live-from = จาก
+blender-live-plugins-help = Aurora จะติดตั้งโปรแกรมเสริมที่ตรงกันใน Blender ทุกตัว และเก็บข้อมูลสำรองของรุ่นก่อนหน้านี้ไว้ และจะไม่ติดตั้งรุ่นเก่า
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } นาที
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = เวลาตั้งแต่ Blender เปลี่ยนวัตถุนี้ครั้งสุดท้าย
+blender-live-show-all = แสดงทั้งหมด
+blender-live-hide-all = ซ่อนทั้งหมด
+blender-live-bend-section = ตรวจสอบน้ำหนัก
+blender-live-elbows = ข้อศอก
+blender-live-knees = หัวเข่า
+blender-live-bend-hold = ทำท่านี้แทนการทำแอนิเมชั่นของฉัน
+blender-live-bend-note = มีแต่คุณเท่านั้นที่เห็น บนอวตารของคุณ การเคลื่อนไหวของคุณ มุมมองของผู้อยู่อาศัยอื่นๆ และการนำเข้า
+blender-live-levels = ระดับรายละเอียด
+blender-live-levels-pending = Blender จะเตรียมระดับรายละเอียดเมื่อคุณคลิกที่ นำเข้า
+blender-live-levels-note = เตรียมไว้ใน Blender จากการตั้งค่า LiveMesh ของแต่ละวัตถุ
+blender-live-quick-look-tip = ดูเร็ว ๆ นี้: แสดงวัตถุนี้ให้ใหญ่ขึ้น
+blender-live-quick-look-drag = ลากเพื่อหมุนมัน, คลิ๊กสองครั้งเพื่อมองหน้ามันอีกครั้ง
+blender-live-quick-look-changed = เปลี่ยนในเบลเดอร์ { $ago } ปีที่แล้ว
+blender-live-quick-look-bend = งอตัวเหมือนในแท็บภาพถ่าย: ข้อศอก { $elbows }°, เข่า { $knees }°.
+blender-live-undo = ยกเลิก
+blender-live-undo-derez = ระดับ { $name } ยังคงอยู่ในรายการของ Blender
+blender-live-undo-detach = แยกออก { $name } ยังคงอยู่ในรายการของ Blender
+blender-live-undo-drop = ทิ้ง { $name } ลงบนพื้น
+blender-live-undo-attach = ย้าย { $name } ไปยัง { $point }
+parcel-environment-apply-save = ใช้กับตัวผมเองเท่านั้น สำหรับแพ็คเกจนี้
+parcel-environment-save = เก็บสภาพแวดล้อมนี้ไว้สำหรับแพ็คเกจนี้ มันจะกลับมาทุกครั้งที่คุณอยู่ที่นี่
+parcel-environment-forget = ลืมสภาพแวดล้อมที่บันทึกไว้สำหรับแพ็คเกจนี้
+parcel-environment-not-saved = ยังไม่รู้จักแพ็คเกจนี้ ดังนั้น ระบบไม่สามารถบันทึกสภาพแวดล้อมของมันได้ โปรดลองใหม่อีกครั้งในอีกไม่นาน
+parcel-environment-left = คุณทิ้งพัสดุไว้ก่อนที่สภาพแวดล้อมของมันจะถูกปกป้อง ดังนั้นมันจึงไม่ได้ถูกปกปิด
+parcel-environment-title = สภาพแวดล้อมที่บันทึกไว้สำหรับแพ็คเกจ
+parcel-environment-help = สภาพแวดล้อมของตัวคุณเองสำหรับแพ็คเกจ: มันจะแทนที่สภาพแหล่งของคุณในขณะที่คุณยืนอยู่ตรงนั้น และสิ่งที่คุณมีก่อนหน้านี้ จะกลับมาเมื่อคุณออกไป คุณเท่านั้นที่เห็นมัน บันทึกหนึ่งจากหน้าต่างสภาพ แวดล้วน หรือเมนูของสิ่งของสภาพ ในอินวอยซ์ของคุณ
+parcel-environment-empty = ไม่มีสภาพแวดล้อมที่บันทึกไว้
+parcel-environment-remove-all = ลบทั้งหมด
+parcel-environment-remove-all-title = ลบสิ่งแวดล้อมทั้งหมดที่บันทึกไว้สำหรับแพ็คเกจ?
+parcel-environment-remove-all-text = ระบบจะลบสภาพแวดล้อมที่คุณบันทึกไว้สำหรับแปลงที่ดินบนกริดนี้ สภาพแวดล้อมบนกริดอื่นจะยังอยู่ การดำเนินการนี้ย้อนกลับไม่ได้

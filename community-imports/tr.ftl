@@ -2185,9 +2185,7 @@ ui-options-chat-text-size-hint = Yakındaki sohbet ve sohbetlerdeki iletilerin v
 ui-options-chat-beyond-range = Sohbet menzili dışında parlaklık
 ui-options-chat-beyond-range-hint = Sohbet menzilinden (20 m) uzaktaki sakinlerden ve nesnelerden gelen, örneğin bağırarak duyulan satırlar bu parlaklıkta çizilir: 1 onları diğerleri kadar parlak tutar, düşük değerler daha çok soldurur. Legacy Viewer'daki gibi varsayılan 0,8.
 ui-options-chat-keep-focus = Gönderdikten sonra sohbet çubuğunu etkin tut
-ui-options-chat-keep-focus-hint = Enter gönderir ve çubuk sonraki ileti için hazır kalır; boş çubukta Enter veya başka bir yere tıklama harekete döner. Bir iletiden sonra Sohbetler penceresinin yakındaki sohbeti de buna uyar.
 ui-options-chat-enter-toggles = Enter sohbetlerde yazmayı açar/kapatır
-ui-options-chat-enter-toggles-hint = Sohbet çubuğunda olduğu gibi Sohbetler penceresinde de (yakındaki sohbet, Aİ'ler ve grup sohbetleri) boş bir alanda Enter harekete döner; dünyadan Enter yeniden yazmaya başlatır.
 ui-options-chat-enter-last-field = Enter son kullanılan sohbet alanına döner
 ui-options-chat-enter-last-field-hint = Dünyadan Enter, her zaman sohbet çubuğu yerine, penceresi açıksa en son kullandığınız (tıkladığınız veya yazdığınız) sohbet alanına döner: yakındaki sohbet, bir grup veya bir Aİ. Kapalıyken veya o pencere kapalıysa Enter sohbet çubuğunu kullanır.
 ui-options-gesture-autocomplete = Yakındaki sohbette mimikleri tamamla
@@ -3740,7 +3738,6 @@ common-double-sided = Çift taraflı
 ui-minimap-double-click = Çift tıklama
 ui-inventory-controls-double-click-add-objects = Çift tıklama: nesne ekle
 ui-inventory-controls-double-click-add-clothes = Çift tıklama: giysi ekle
-ui-profile-double-click-group-chat = Çift tıklama: grup sohbeti
 ui-minimap-double-click-to-open-the-map = Haritayı açmak için çift tıklayın
 ui-minimap-double-click-to-teleport = Işınlanmak için çift tıklayın
 build-ui-floaters-double-click-a-group = Bir gruba çift tıklayın.
@@ -6187,7 +6184,6 @@ ui-minimap-near = Yakın
 common-profile = Profil
 ui-context-object-profile = Nesne profili
 ui-appearance-items-object-profile = Nesne profili
-ui-profile-group-profile-coming-soon = Grup profili (yakında)
 common-place-profile = Yer profili
 common-profile-2 = Profil...
 ui-bars-profile = Profil…
@@ -8201,7 +8197,6 @@ photo-looks = Filtreler
 photo-looks-tip = Filtreler: fotoğrafın görünümü, canlı gösterilir
 photo-look-none = Filtre yok
 photo-look-strength = Güç
-photo-look-compare = Önce/sonra
 photo-look-compare-tip = Çizginin solunda sahne olduğu gibi, sağında filtreyle; çizgiyi taşımak için sürükleyin
 photo-look-before = Önce
 photo-look-after = Sonra
@@ -8235,24 +8230,13 @@ photo-look-spotlight = Spot Işığı
 photo-look-the-matrix = The Matrix
 photo-look-toy-camera = Oyuncak Kamera
 photo-look-video = Video
-photo-looks-replace = Seçileni değiştir
-photo-looks-add = Üstüne Ekle
-photo-looks-stack = Etkin görünümler ({ $count })
-photo-looks-empty = Henüz görünüm yok: aşağıdan birini seçin.
-photo-looks-on-tip = Bu görünümü çiz (işaretsizken listede tutulur, çizilmez)
-photo-looks-choose-tip = Ayarlarını gösterir; listedeki bir tıklama onu değiştirir
-photo-looks-remove = Bu görünümü çıkar
-photo-looks-up = Yukarı taşı (daha önce çizilir)
-photo-looks-down = Aşağı taşı (daha sonra çizilir)
 photo-looks-settings = { $name } ayarları
 photo-looks-reset = Varsayılan değerler
-photo-looks-legacy-note = Legacy Viewer'ın filtrelerinin, Legacy Viewer'da olduğu gibi ayarı yoktur: yalnızca güçleri.
 photo-looks-lut-note = Bir LUT olduğu gibi uygulanır: yalnızca gücü.
 photo-knob-amount = Miktar
 photo-knob-grain-size = Tane boyutu
 photo-knob-contrast = Kontrast
 photo-knob-grain = Tane
-photo-knob-strength = Güç
 photo-knob-shadows = Gölgeler
 photo-knob-lights = Işıklar
 photo-knob-middle = Orta tonlar
@@ -10378,7 +10362,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Bağla
 build-compact-unlink-action = Bağlantıyı Kopar
 build-compact-link-value = Bağlantı { $number }
-build-compact-face-value = Yüz { $number }
 build-compact-move = Taşı
 build-compact-rotate = Döndür (Ctrl)
 build-compact-stretch = Uzat (Ctrl+Shift)
@@ -16035,3 +16018,141 @@ toolbar-remove-from-menu = Araç çubuğundan kaldır
 toolbar-command-build-edit = Nesneleri Düzenle
 toolbar-command-build-create = Primler oluştur
 toolbar-command-build-land = Araziyi Düzenle
+
+### Updated release translations
+
+inventory-search-no-copy = kopya yok
+inventory-search-no-modify = değiştirilemez
+inventory-search-no-transfer = aktarma yok
+ui-options-chat-keep-focus-hint = Enter mesajı gönderir ve sohbet çubuğunu sonraki mesaj için etkin tutar. Çubuk boşken Enter'a basmak da bunu değiştirmez. Hareket etmeye dönmek için Esc'ye basın veya dünyaya tıklayın.
+ui-options-chat-enter-toggles-hint = Konuşmalar penceresinde boş alanda Enter'a basmak, yakındaki sohbetten, özel mesajlardan ve grup sohbetinden hareket denetimine döndürür. Dünyadayken Enter'a basarak yeniden yazmaya başlayabilirsiniz.
+build-ui-features-physics-none-root-hint = Sadece bir bağlantı kümesinin çocuk primleri fizik şekli None'u kullanabilir: kök prim, ya da kendi başına bir prim, Prim veya Convex kabuğunu tutar.
+controls-position-tip = Kamera konumu: kameranın avatarın arkasında tam olarak nerede durduğunu belirler
+camera-position-hint = Avatar'dan metrelerce uzaklıkta: X ileri, Y sola, Z yukarı. Ctrl + tekerlek kamerayı kaldırır, Shift+tekerlek odak noktasını belirler.
+camera-position-save = Kamera konumu olarak kaydet...
+photo-looks-replace = Değiştir
+photo-looks-empty = Henüz etki yok. Denemek için aşağıda bir filtreyi işaretleyin, sonra ona tıklayın veya buraya çekin.
+photo-looks-active = Etkin
+photo-looks-count = { $count } ya da { $max }
+photo-looks-expand-all = Tümünü genişlet
+photo-looks-collapse-all = Tümünü daralt
+photo-looks-hint = Yukarıdan aşağıya uygulanır. Bir kartı yeniden düzenlemek için çekin veya Alt + ↑ ↓ tuşuna basın. Kartı çıkarmak için sağ tıklayın.
+photo-looks-right-click-out = Sağ tıklama: etkin efektlerden çıkar
+photo-looks-drop = Bir etkiyi buraya çekin ya da aşağıda birine tıklayın
+photo-looks-full = { $max } ya da { $max }: birini çıkarın, ya da değiştirmek için Değiştir' i açın.
+photo-looks-catalogue = Efekt kataloğu
+photo-looks-catalogue-tip = Fotoğrafta denemek için bir etkiyi işaretleyin; eklemek için ona tıklayın ya da etkin olanların arasına çekin
+photo-looks-catalogue-fold = Kataloğu göster veya gizle
+photo-looks-replace-tip = Değiştir: katalogda tıkladığınızda yeni bir kart eklemek yerine seçilen kartı değiştirir
+photo-looks-replacing = Bir tıklama { $name }'ü değiştirir.
+photo-looks-done = Bitti
+photo-looks-take-out-zone = Buradan çıkarmak için buraya bırakın.
+photo-looks-hide = Gizle { $name } (yerinde kalır)
+photo-looks-show = Göster { $name }
+photo-looks-more = Daha fazla eylem
+photo-looks-move-up = Yukarı taşı
+photo-looks-move-down = Aşağı taşı
+photo-looks-replace-one = Değiştir...
+photo-looks-take-out = Çıkar.
+photo-looks-not-in-360-tag = 360 derecede değil.
+photo-looks-all = Tümü
+photo-looks-favorites = Favoriler: Başrolünü oynadığınız her efekt
+photo-looks-favorites-empty = Henüz favori yok. Bir etkiyi işaretle ve yıldızına tıkla: listede ilk gösteriliyor, burada da.
+photo-looks-favorite = Favorilere Ekle
+photo-looks-unfavorite = Favorilerden sil
+photo-looks-card = { $name }, { $place } ya da { $count }Alt + ok tuşları hareket ettirir.
+photo-looks-legacy-note = Legacy Viewer filtrelerinin ek ayarları yoktur.
+photo-knob-toning = Tonlama
+photo-knob-local-contrast = Yerel kontrast
+build-face-button = Yüz { $number }: seçilen her prim üzerinde seç. Shift+click: ekle veya çıkar.
+build-face-invert = Seçilen yüzleri tersine çevir
+build-face-all = Tüm yüzleri seç
+ui-options-aurora-controls-compact = Kompakt kamera kontrolleri
+ui-options-aurora-controls-compact-help = Kontroller penceresi kamera üzerinde kompakt olarak açılır: joystickleri, zoom ve döndürme. Başlık çubuğu düğmesi kompakt ve tam arasında geçiş yapar ve bunu da ayarlar.
+ui-options-aurora-controls-compact-movement = Kompakt hareket kontrolleri
+ui-options-aurora-controls-compact-movement-help = Kontrol penceresinin Hareket sekmesi kompakt olarak açılır: hareket düğmeleri ve yürü, koş ve uç. Başlık çubuğu düğmesi kompakt ve tam arasında geçiş yapar ve bunu da ayarlar.
+poser-face-position-drag = Eklentiyi piksel başına 0,1 mm hareket ettirmek için çekin veya bir konum yazmak için tıklayınız.
+build-layout-clicks = Nesnelere tıkla
+build-ui-floaters-shift-click = Shift + tıklama
+build-ui-floaters-ctrl-click = Ctrl + tıklama
+build-ui-floaters-click-object = Nesneyi ekle veya kaldır
+build-ui-floaters-click-face = Yüzü seç
+build-ui-floaters-clicks-hint = Düzenleme aracı ile, Doğrulama'nın dışında. Ctrl + Shift + tıkla tıklanmış yüzeyi ekler veya çıkarır.
+build-ui-floaters-ctrl-right-click = Ctrl + sağ tıkla
+build-ui-floaters-right-click-menu = Menüyü aç
+build-ui-floaters-right-click-edit = Nesneyi Düzenle
+build-ui-floaters-double-click-linked = Bir prim'e çift tıklayın: "Bağlantılı parçaları düzenley" tuşu
+blender-live-tab-place = Yer
+blender-live-tab-avatar = Avatar
+blender-live-objects-help = Blender'ın gönderdiği ağlar. Bir tanesini yerleştirmek için seçin ya da menüden ithal edin.
+blender-live-more = Daha fazla
+blender-live-place = Yer
+blender-live-linked-prims = Bağlantılı primleri göster veya gizle
+blender-live-tag-rigged = İskeletli
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Üçgenler: { $triangles }
+       *[other] Üçgenler: { $triangles }
+    }
+blender-live-card-static =
+    Statik · { $triangles ->
+        [one] Üçgenler: { $triangles }
+       *[other] Üçgenler: { $triangles }
+    }
+blender-live-card-linkset =
+    Statik · { $prims ->
+        [one] Primler: { $prims }
+       *[other] Primler: { $prims }
+    } · { $triangles ->
+        [one] Üçgenler: { $triangles }
+       *[other] Üçgenler: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Üçgenler: { $triangles }
+       *[other] Üçgenler: { $triangles }
+    }
+blender-live-place-help = Seçilmiş statik ağın nerede olduğu. Yapıştırılmış ağlar her zaman avatarınızı takip eder.
+blender-live-place-none = Yerleştirmek için statik bir nesneyi seç.
+blender-live-where = Nerede
+blender-live-transform = Konum, dönme ve boyut
+blender-live-size-note = Boyut Blender'ın ne gönderdiğini çarpar, böylece daha sonraki düzenlemeler Blender onu tutar.
+blender-live-avatar-help = Rigged ağlar için: şekilinizi Blender'a modellemek için gönderin.
+blender-live-shape-section = Blender'daki şekliniz
+blender-live-import-help = Normal ithalat için nesnenin bir snapshot'unu dondurur: inceleme, fiyat, sonra onay. Blender'da daha sonraki düzenlemeler bunu değiştirmez.
+blender-live-from = Başlangıç
+blender-live-plugins-help = Aurora, her Blender'da eşleşen plug-ini yükler, önceki versiyonun bir kopyasını tutar ve asla eski bir sürümü yüklemez.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } dakika
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Blender'ın bu nesneyi son değiştirmesinden beri geçen zaman
+blender-live-show-all = Hepsini göster
+blender-live-hide-all = Hepsini Gizle
+blender-live-bend-section = Ağırlıkları kontrol et.
+blender-live-elbows = Dirsekler.
+blender-live-knees = Diz.
+blender-live-bend-hold = Animasyonum yerine bu pozunu tut.
+blender-live-bend-note = Animasyonlarınız, diğer sakinlerin görüşleri ve giriş değişmez.
+blender-live-levels = Detay seviyesi
+blender-live-levels-pending = Blender, İhraç'a tıkladığınızda detay seviyelerini hazırlar.
+blender-live-levels-note = Her nesnenin LiveMesh ayarlarından Blender'da hazırlanmıştır.
+blender-live-quick-look-tip = Hızlı bak: bu nesneyi daha büyük görün
+blender-live-quick-look-drag = Çevirmek için çek, tekrar yüzüne bakmak için çift tıkla.
+blender-live-quick-look-changed = Blender'da { $ago } yıl önce değiştirildi.
+blender-live-quick-look-bend = Avatar sekmesi gibi eğilmiş: dirsekler { $elbows }°, dizleri { $knees }°.
+blender-live-undo = Geri Al
+blender-live-undo-derez = Derezzed { $name } · hala Blender'ın listesinde
+blender-live-undo-detach = Detached { $name } · hala Blender'ın listesinde
+blender-live-undo-drop = { $name }'ü yere bıraktım.
+blender-live-undo-attach = { $name } nesnesi { $point } noktasına taşındı
+parcel-environment-apply-save = Bu paket için sadece kendime başvuruyorum.
+parcel-environment-save = Bu ortamı bu paket için sakla. Ne zaman buraya gelsen geri gelir.
+parcel-environment-forget = Bu paket için kaydedilen ortamı unut
+parcel-environment-not-saved = Bu paket henüz bilinmiyordu, bu yüzden çevresi kaydedilmedi. Bir an sonra tekrar deneyin.
+parcel-environment-left = Paketi çevresi kurtarılmadan bıraktınız, bu yüzden de kurtarılamadı.
+parcel-environment-title = Paketler için kaydedilen ortamlar
+parcel-environment-help = Bir paket için kendi çevreniz: orada dururken yerel çevrenin yerine geçer, ve ayrıldığınızda önceden sahip olduğunuz geri gelir. Sadece siz görürsünüz. Çevre penceresinden veya envanterinizdeki bir çevre öğesi menüsinden biri kaydedin.
+parcel-environment-empty = Çevre kaydedilmedi
+parcel-environment-remove-all = Hepsini sil
+parcel-environment-remove-all-title = Paket için kaydedilen her ortamı silmek ister misiniz?
+parcel-environment-remove-all-text = Bu griddeki parseller için kaydettiğiniz ortamlar kaldırılır. Diğer gridlerdeki ortamlar korunur. Bu işlem geri alınamaz.

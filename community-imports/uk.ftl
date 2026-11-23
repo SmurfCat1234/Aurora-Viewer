@@ -2243,9 +2243,7 @@ ui-options-chat-text-size-hint = Розмір повідомлень у чаті
 ui-options-chat-beyond-range = Яскравість за межами дальності чату
 ui-options-chat-beyond-range-hint = Рядки від мешканців і об'єктів, далі за дальність чату (20 м), почуті, наприклад, через вигук, показуються з цією яскравістю: 1 залишає їх такими ж яскравими, як інші, менші значення приглушують їх сильніше. За замовчуванням 0,8, як у класичному переглядачі.
 ui-options-chat-keep-focus = Лишати рядок чату активним після надсилання
-ui-options-chat-keep-focus-hint = Enter надсилає, а рядок лишається готовим до наступного повідомлення; Enter у порожньому рядку або клацання деінде повертає до руху. Після повідомлення чат поблизу у вікні «Розмови» поводиться так само.
 ui-options-chat-enter-toggles = Enter перемикає введення в розмовах
-ui-options-chat-enter-toggles-hint = Enter у порожньому полі повертає до руху й у вікні «Розмови» (чат поблизу, особисті повідомлення й групові чати), як у рядку чату; Enter зі світу знову починає введення.
 ui-options-chat-enter-last-field = Enter повертає до останнього використаного поля чату
 ui-options-chat-enter-last-field-hint = Зі світу Enter повертає до поля чату, яким ви користувалися останнім (клацали в ньому або писали): поблизу, група чи особисте повідомлення, коли його вікно відкрите, а не завжди до рядка чату. Якщо вимкнено або це вікно закрите, Enter використовує рядок чату.
 ui-options-gesture-autocomplete = Доповнювати жести в чаті поблизу
@@ -3808,7 +3806,6 @@ common-double-sided = Двобічна
 ui-minimap-double-click = Подвійне клацання
 ui-inventory-controls-double-click-add-objects = Подвійне клацання: додати об'єкти
 ui-inventory-controls-double-click-add-clothes = Подвійне клацання: додати одяг
-ui-profile-double-click-group-chat = Подвійне клацання: груповий чат
 ui-minimap-double-click-to-open-the-map = Двічі клацніть, щоб відкрити карту
 ui-minimap-double-click-to-teleport = Двічі клацніть, щоб телепортуватися
 build-ui-floaters-double-click-a-group = Двічі клацніть групу.
@@ -6301,7 +6298,6 @@ ui-minimap-near = Близько
 common-profile = Профіль
 ui-context-object-profile = Профіль об'єкта
 ui-appearance-items-object-profile = Профіль об'єкта
-ui-profile-group-profile-coming-soon = Профіль групи (незабаром)
 common-place-profile = Профіль місця
 common-profile-2 = Профіль...
 ui-bars-profile = Профіль…
@@ -8341,7 +8337,6 @@ photo-looks = Фільтри
 photo-looks-tip = Фільтри: вигляд фото наживо
 photo-look-none = Без фільтра
 photo-look-strength = Сила
-photo-look-compare = До / після
 photo-look-compare-tip = Ліворуч від лінії — сцена як є, праворуч — із фільтром; перетягніть лінію, щоб її посунути
 photo-look-before = До
 photo-look-after = Після
@@ -8375,24 +8370,13 @@ photo-look-spotlight = Прожектор
 photo-look-the-matrix = Матриця
 photo-look-toy-camera = Іграшкова камера
 photo-look-video = Відео
-photo-looks-replace = Замінити вибраний
-photo-looks-add = Додати поверх
-photo-looks-stack = Активні фільтри ({ $count })
-photo-looks-empty = Фільтрів ще немає: виберіть один нижче.
-photo-looks-on-tip = Відмальовувати цей фільтр (без позначки: залишається в списку, але не відмальовується)
-photo-looks-choose-tip = Показати його налаштування; клацання в списку замінює його
-photo-looks-remove = Прибрати цей фільтр
-photo-looks-up = Вище (відмальовується раніше)
-photo-looks-down = Нижче (відмальовується пізніше)
 photo-looks-settings = Налаштування: { $name }
 photo-looks-reset = Значення за замовчуванням
-photo-looks-legacy-note = Фільтри класичного переглядача не мають налаштувань, як і в класичному переглядачі: лише силу.
 photo-looks-lut-note = LUT застосовується як є: лише його сила.
 photo-knob-amount = Кількість
 photo-knob-grain-size = Розмір зерна
 photo-knob-contrast = Контрастність
 photo-knob-grain = Зерно
-photo-knob-strength = Сила
 photo-knob-shadows = Тіні
 photo-knob-lights = Світлі тони
 photo-knob-middle = Середні тони
@@ -10554,7 +10538,6 @@ build-compact-summary-details = { " - " }{ $capacity }    { $counts }
 build-compact-link-action = Зв'язати
 build-compact-unlink-action = Роз'єднати
 build-compact-link-value = Частина { $number }
-build-compact-face-value = Грань { $number }
 build-compact-move = Перемістити
 build-compact-rotate = Обернути (Ctrl)
 build-compact-stretch = Розтягнути (Ctrl+Shift)
@@ -16380,3 +16363,141 @@ toolbar-remove-from-menu = Вилучити з панелі інструмент
 toolbar-command-build-edit = Редагувати об’ єкти
 toolbar-command-build-create = Створити простий
 toolbar-command-build-land = Редагувати землю
+
+### Updated release translations
+
+inventory-search-no-copy = без копіювання
+inventory-search-no-modify = неможливо змінити
+inventory-search-no-transfer = без передавання
+ui-options-chat-keep-focus-hint = Enter надсилає повідомлення, і рядок чату залишається активним для наступного повідомлення, навіть якщо він порожній. Натисніть Esc або клацніть у світі, щоб повернутися до керування рухом.
+ui-options-chat-enter-toggles-hint = У вікні «Розмови» Enter у порожньому полі повертає керування рухом у чаті поблизу, приватних повідомленнях і групових чатах. Натисніть Enter у світі, щоб знову писати.
+build-ui-features-physics-none-root-hint = Тільки дочірні прості множини посилань можуть використовувати фізичну форму None: коренева проста множина або проста множина самостійно зберігає Prim або опуклу оболонку.
+controls-position-tip = Позиція камери: встановити, де саме камера буде розташована за аватаром
+camera-position-hint = У метрах від аватара: X вперед, Y ліворуч, Z вгору. Ctrl + коліщатко піднімає камеру, Shift + колесо фокусує точку.
+camera-position-save = Зберегти як позицію фотоапарата…
+photo-looks-replace = Замінити
+photo-looks-empty = Поки що ефекту немає. Вказівник миші вказує на фільтр нижче, щоб спробувати його, а потім клацніть або перетягніть його сюди.
+photo-looks-active = Активні
+photo-looks-count = { $count } з { $max }
+photo-looks-expand-all = Розгорнути все
+photo-looks-collapse-all = Згорнути все
+photo-looks-hint = Застосовано згори вниз. Перетягніть карту, щоб змінити її порядок, або натисніть Alt + ↑ ↓ на карті. Клацніть правою кнопкою миші на картці, щоб вилучити її.
+photo-looks-right-click-out = Клацання правою кнопкою миші: вилучити з активних ефектів
+photo-looks-drop = Перетягніть ефект сюди або натисніть на один з ефектів нижче
+photo-looks-full = { $max } з { $max }: вилучити одну або ввімкнути Замінити, щоб замінити одну.
+photo-looks-catalogue = Каталог ефектів
+photo-looks-catalogue-tip = Вказівка на ефект, щоб спробувати його на фотографії; клацніть, щоб додати ефект, або перетягніть його між активними ефектами
+photo-looks-catalogue-fold = Показати або сховати каталог
+photo-looks-replace-tip = Замінити: клацання у каталозі змінює вибрану картку замість додавання нової
+photo-looks-replacing = Клацання обмінює { $name }
+photo-looks-done = Готово
+photo-looks-take-out-zone = Покладіть сюди, щоб витягнути.
+photo-looks-hide = Сховати { $name } (зберігає своє місце)
+photo-looks-show = Показати { $name }
+photo-looks-more = Інші дії
+photo-looks-move-up = Вгору
+photo-looks-move-down = Вниз
+photo-looks-replace-one = Замінити…
+photo-looks-take-out = Видалити
+photo-looks-not-in-360-tag = Не на 360°
+photo-looks-all = Усе
+photo-looks-favorites = Улюблені: всі ефекти, які ви обрала
+photo-looks-favorites-empty = Поки що немає улюблених. Вказівник миші вказує на ефект, а потім клацніть його зіркою: ефект буде показано першим у списку, а також тут.
+photo-looks-favorite = Додати до улюблених
+photo-looks-unfavorite = Вилучити з улюблених
+photo-looks-card = { $name }, { $place } з { $count }. Alt + клавіші зі стрілками для пересування.
+photo-looks-legacy-note = Фільтри старого переглядача не мають додаткових параметрів.
+photo-knob-toning = Тонування
+photo-knob-local-contrast = Локальний контраст
+build-face-button = Лице { $number }: виберіть його на кожному з вибраних прим. Shift+click: додати або вилучити його.
+build-face-invert = Інвертувати вибрані обличчя
+build-face-all = Вибрати всі обличчя
+ui-options-aurora-controls-compact = Керування компактною камерою
+ui-options-aurora-controls-compact-help = Вікно Керування відкривається у компактному вигляді на фотоапараті: його джойстики, масштаб і перегортання. За допомогою кнопки заголовка можна перемикатися між компактним і повним режимом, а також встановити цей режим.
+ui-options-aurora-controls-compact-movement = Компактне керування рухом
+ui-options-aurora-controls-compact-movement-help = Вкладку Рух вікна Керування буде відкрито у компактному вигляді: кнопки руху, а також кнопки ходьби, бігу і польоту. За допомогою кнопки заголовка можна перемикатися між компактним і повним виглядом, а так само встановити цей параметр.
+poser-face-position-drag = Перетягніть, щоб пересунути з’ єднання на 0, 1 мм на піксель, або клацніть для введення позиції.
+build-layout-clicks = Клацання на об’ єктах
+build-ui-floaters-shift-click = Shift + клацання
+build-ui-floaters-ctrl-click = Ctrl + клацання
+build-ui-floaters-click-object = Додати або вилучити об’ єкт
+build-ui-floaters-click-face = Вибрати обличчя
+build-ui-floaters-clicks-hint = За допомогою інструменту Редагування, поза діапазоном Вирівняти. Натискання комбінації клавіш Ctrl + Shift + клацання додає або вилучає об’ єкт, який було клацнуто.
+build-ui-floaters-ctrl-right-click = Ctrl + клацання правою кнопкою
+build-ui-floaters-right-click-menu = Відкрити меню
+build-ui-floaters-right-click-edit = Редагувати об’ єкт
+build-ui-floaters-double-click-linked = Двічі клацніть на елементі: перемикач « Редагувати пов’ язані частини »
+blender-live-tab-place = Розташування
+blender-live-tab-avatar = Аватар
+blender-live-objects-help = Сітки, які надсилає Blender. Виберіть одну з них, щоб розмістити її, або імпортуйте її з меню програми.
+blender-live-more = Більше
+blender-live-place = Розташування
+blender-live-linked-prims = Показати або сховати пов’ язані первинні
+blender-live-tag-rigged = Зі скелетом
+blender-live-card-rigged =
+    { $triangles ->
+        [one] Трикутники: { $triangles }
+       *[other] Трикутники: { $triangles }
+    }
+blender-live-card-static =
+    Статичний · { $triangles ->
+        [one] Трикутники: { $triangles }
+       *[other] Трикутники: { $triangles }
+    }
+blender-live-card-linkset =
+    Статичний · { $prims ->
+        [one] Прими: { $prims }
+       *[other] Прими: { $prims }
+    } · { $triangles ->
+        [one] Трикутники: { $triangles }
+       *[other] Трикутники: { $triangles }
+    }
+blender-live-triangles =
+    { $triangles ->
+        [one] Трикутники: { $triangles }
+       *[other] Трикутники: { $triangles }
+    }
+blender-live-place-help = Місце розташування вибраної статичної сітки. Змінені сіточки завжди будуть слідувати за вашим аватаром.
+blender-live-place-none = Виберіть статичний об’ єкт, щоб розташувати його.
+blender-live-where = Де
+blender-live-transform = Розташування, обертання і розмір
+blender-live-size-note = Розмір множиться на те, що надсилає Blender, отже, при подальшому редагуванні у Blender він залишається незмінним.
+blender-live-avatar-help = Для сіток, що містять помилки: надішліть вашу форму до Blender для моделювання на ній.
+blender-live-shape-section = Ваша форма в Blender
+blender-live-import-help = Заморожує знімок об’ єкта для звичайного імпорту: перегляд, ціна, потім підтвердження. Пізніші редагування у Blender не змінять його.
+blender-live-from = З
+blender-live-plugins-help = Aurora встановить відповідний додаток у кожному Blender, зберігає резервну копію попереднього і ніколи не встановлює стару версію.
+blender-live-ago-seconds = { $count } s
+blender-live-ago-minutes = { $count } хв
+blender-live-ago-hours = { $count } h
+blender-live-changed-tip = Час з моменту останньої зміни цього об’ єкта в Blender
+blender-live-show-all = Показати все
+blender-live-hide-all = Сховати всі
+blender-live-bend-section = Перевірити ваги
+blender-live-elbows = Локті
+blender-live-knees = Коліна
+blender-live-bend-hold = Тримайте цю позу замість моїх анімацій
+blender-live-bend-note = Тільки ви бачите кривину на вашому аватарі. Ваша анімація, вигляд інших мешканців і імпорт залишаються незмінними.
+blender-live-levels = Рівні деталізації
+blender-live-levels-pending = Після натискання кнопки Імпортувати Blender підготує рівні деталізації.
+blender-live-levels-note = Підготовано у Blender з параметрів LiveMesh кожного об’ єкта.
+blender-live-quick-look-tip = Швидкий погляд: переглянути цей об’ єкт у більшому розмірі
+blender-live-quick-look-drag = Перетягніть, щоб перевернути його, двічі клацніть на ньому, щоб знову повернути його.
+blender-live-quick-look-changed = Змінено в Blender { $ago } років тому.
+blender-live-quick-look-bend = Нахилені, як на вкладці « Аватар »: лікті { $elbows }°, коліна { $knees }°.
+blender-live-undo = Скасувати
+blender-live-undo-derez = Derezzed { $name } · досі у списку Blender
+blender-live-undo-detach = Відокремлений { $name } · досі у списку Blender
+blender-live-undo-drop = Упав { $name } на землю.
+blender-live-undo-attach = { $name } переміщено до точки { $point }
+parcel-environment-apply-save = Застосувати тільки до себе, для цієї посилки
+parcel-environment-save = Зберегти це середовище для цього пакета: воно повернеться кожного разу, коли ви будете тут
+parcel-environment-forget = Забути середовище, збережене для цього пакета
+parcel-environment-not-saved = Цей пакет ще не відомий, тому його середовище не було збережено. Спробуйте ще раз за хвилину.
+parcel-environment-left = Ви покинули пакет до того, як його середовище вдалося зберегти, тому він не був збережений.
+parcel-environment-title = Середовище, збережене для пакетів
+parcel-environment-help = Ваше власне середовище для пакета: воно замінює ваше локальне середовищі, коли ви перебуваєте у цьому середовищі, і те, яке було раніше, повертається після того, як ви вийдете з цього середовища. Ви бачите його тільки ви. Зберегти його можна за допомогою вікна Середовище або пункту меню Середовища у вашому інвентарі.
+parcel-environment-empty = Середовище не збережено
+parcel-environment-remove-all = Вилучити всі
+parcel-environment-remove-all-title = Вилучити всі середовища, збережені для пакета?
+parcel-environment-remove-all-text = Збережені вами середовища для ділянок у цій мережі буде видалено. Середовища в інших мережах залишаться. Цю дію не можна скасувати.
