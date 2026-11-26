@@ -241,16 +241,6 @@ fn retry_backoff(attempt: u32, retry_after: Option<std::time::Duration>) -> std:
     base.min(RETRY_BACKOFF_MAX).max(asked)
 }
 
-/// Subtrees dispatched together can get the same 503 and be retried on
-/// the same timer. Stagger those retries within half a second without
-/// borrowing time from the backoff or the server's Retry-After.
-fn subtree_overload_backoff(url: &str, attempt: u32, retry_after: Option<std::time::Duration>) -> std::time::Duration {
-    use std::hash::{DefaultHasher, Hash, Hasher};
-    let mut hash = DefaultHasher::new();
-    (url, attempt).hash(&mut hash);
-    retry_backoff(attempt, retry_after) + std::time::Duration::from_millis(hash.finish() % 500)
-}
-
 /// The `Retry-After` header, in seconds (`PF_USE_RETRY_AFTER` in llcorehttp).
 fn retry_after(response: &reqwest::Response) -> Option<std::time::Duration> {
     let value = response.headers().get(reqwest::header::RETRY_AFTER)?.to_str().ok()?;
@@ -497,12 +487,7 @@ async fn get_with(
             let gateway = matches!(status, 502 | 504) && timeout_retries < RETRY_ATTEMPTS;
             if failure.kind == FetchFailure::Transient && attempt <= retries && !gateway {
                 log::debug!("AIS inventory read failed (status {status}); retry {attempt}");
-                let delay = if timeout_retries == 0 && matches!(status, 429 | 503) {
-                    subtree_overload_backoff(&url, attempt, wait)
-                } else {
-                    retry_backoff(attempt, wait)
-                };
-                tokio::time::sleep(delay).await;
+                tokio::time::sleep(retry_backoff(attempt, wait)).await;
                 continue;
             }
             return Err(failure);
@@ -693,22 +678,6 @@ mod tests {
 
     fn id(n: u128) -> Uuid {
         Uuid::from_u128(n)
-    }
-
-    #[test]
-    fn subtree_overload_retries_spread_without_shortening_retry_after() {
-        let retry_after = std::time::Duration::from_secs(9);
-        let delays: HashSet<_> = (0..19)
-            .map(|id| {
-                subtree_overload_backoff(
-                    &format!("https://example.test/category/{id}/children?depth=50"),
-                    2,
-                    Some(retry_after),
-                )
-            })
-            .collect();
-        assert!(delays.len() > 1);
-        assert!(delays.iter().all(|delay| (*delay - retry_after).as_millis() < 500));
     }
 
     #[tokio::test]
