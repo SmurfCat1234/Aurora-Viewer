@@ -154,6 +154,8 @@ pub const TREE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(180
 /// A subtree read's whole time, its retries and their waits included:
 /// under the walk's own deadline (background.rs TREE_DEADLINE, 240 s).
 pub const TREE_TOTAL: std::time::Duration = std::time::Duration::from_secs(210);
+/// Keep paced shallow reads under the walk's 1,200 second deadline.
+const WALK_FOLDER_TOTAL: std::time::Duration = std::time::Duration::from_secs(1100);
 
 /// Why an inventory read failed, enough for the background walk to decide.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -303,13 +305,13 @@ pub(crate) async fn fetch_tree(
     // reply takes longer than a folder's; one that times out, or that a
     // gateway gives up on, is never asked again as is: the walk reads it in
     // smaller parts)
+    let state = TryState {
+        pacer,
+        ..Default::default()
+    };
     let doc = if depth > 0 {
         // (one answer within TREE_TOTAL, retries and waits included: the
         // walk's deadline never frees a slot while its request still runs)
-        let state = TryState {
-            pacer,
-            ..Default::default()
-        };
         tokio::time::timeout(
             TREE_TOTAL,
             get_with(http, url, TREE_TIMEOUT, RETRY_ATTEMPTS, 0, Some(&state), InventoryRead::Subtree),
@@ -317,7 +319,20 @@ pub(crate) async fn fetch_tree(
         .await
         .unwrap_or_else(|_| Err(state.out_of_time()))?
     } else {
-        get(http, url).await?
+        tokio::time::timeout(
+            WALK_FOLDER_TOTAL,
+            get_with(
+                http,
+                url,
+                REQUEST_TIMEOUT,
+                RETRY_ATTEMPTS,
+                RETRY_ATTEMPTS,
+                Some(&state),
+                InventoryRead::WalkFolder,
+            ),
+        )
+        .await
+        .unwrap_or_else(|_| Err(state.out_of_time()))?
     };
     parse_tree_reply(&doc, owner, parent, children, depth).map_err(|_| FetchError::new(FetchFailure::Fatal, Some(200)))
 }
@@ -398,7 +413,7 @@ async fn get(http: &reqwest::Client, url: String) -> Result<Llsd, FetchError> {
         RETRY_ATTEMPTS,
         RETRY_ATTEMPTS,
         None,
-        InventoryRead::Folder,
+        InventoryRead::DirectFolder,
     )
     .await
 }
@@ -711,7 +726,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn an_overloaded_subtree_defers_the_next_subtree_on_its_capability() {
+    async fn an_overloaded_shallow_read_defers_a_subtree_on_the_same_capability() {
         use std::time::Duration;
         use tokio::time::Instant;
 
@@ -754,9 +769,9 @@ mod tests {
             ..Default::default()
         };
         let timeout = Duration::from_secs(4);
-        let rejected = get_with(&http, url.clone(), timeout, 0, 0, Some(&first), InventoryRead::Subtree)
+        let rejected = get_with(&http, url.clone(), timeout, 0, 0, Some(&first), InventoryRead::WalkFolder)
             .await
-            .expect_err("the first subtree is overloaded");
+            .expect_err("the shallow read is overloaded");
         assert_eq!(rejected.status, Some(503));
         let received = tokio::time::timeout(
             Duration::from_secs(5),

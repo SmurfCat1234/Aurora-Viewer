@@ -449,7 +449,8 @@ static QUEUE_PEAK: AtomicU32 = AtomicU32::new(0);
 #[derive(Clone, Copy)]
 pub(crate) enum InventoryRead {
     Item,
-    Folder,
+    DirectFolder,
+    WalkFolder,
     Subtree,
 }
 
@@ -461,7 +462,7 @@ struct InventoryReadCounters {
     other_failed: AtomicU64,
 }
 
-static INVENTORY_READS: [InventoryReadCounters; 3] = [const {
+static INVENTORY_READS: [InventoryReadCounters; 4] = [const {
     InventoryReadCounters {
         started: AtomicU64::new(0),
         received: AtomicU64::new(0),
@@ -469,20 +470,33 @@ static INVENTORY_READS: [InventoryReadCounters; 3] = [const {
         throttled: AtomicU64::new(0),
         other_failed: AtomicU64::new(0),
     }
-}; 3];
+}; 4];
 
 /// Cumulative HTTP attempt counts for the viewer's opted-in inventory report.
 pub fn inventory_http_line() -> String {
     let mut out = String::new();
-    for (label, counters) in ["item", "folder", "subtree"].iter().zip(&INVENTORY_READS) {
-        let _ = write!(
-            out,
-            " | {label} started={} received={} status503={} status429={} other_failed={}",
+    let values = INVENTORY_READS.each_ref().map(|counters| {
+        [
             counters.started.load(Relaxed),
             counters.received.load(Relaxed),
             counters.unavailable.load(Relaxed),
             counters.throttled.load(Relaxed),
-            counters.other_failed.load(Relaxed)
+            counters.other_failed.load(Relaxed),
+        ]
+    });
+    let direct = values[InventoryRead::DirectFolder as usize];
+    let walk = values[InventoryRead::WalkFolder as usize];
+    let folder = std::array::from_fn(|i| direct[i] + walk[i]);
+    for (label, [started, received, unavailable, throttled, other_failed]) in [
+        ("item", values[InventoryRead::Item as usize]),
+        ("folder", folder),
+        ("subtree", values[InventoryRead::Subtree as usize]),
+        ("folder-direct", direct),
+        ("folder-walk", walk),
+    ] {
+        let _ = write!(
+            out,
+            " | {label} started={started} received={received} status503={unavailable} status429={throttled} other_failed={other_failed}",
         );
     }
     out

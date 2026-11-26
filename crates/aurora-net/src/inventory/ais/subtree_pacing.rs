@@ -16,7 +16,7 @@ struct State {
     next_dispatch: Option<Instant>,
 }
 
-/// Shares overload feedback across background subtree attempts, including
+/// Shares overload feedback across background folder and subtree attempts, including
 /// retries, on one capability. Interactive folders and outfit reads have
 /// their own queue and do not wait here.
 pub(crate) struct SubtreePacer {

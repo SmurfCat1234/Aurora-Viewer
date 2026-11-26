@@ -3650,7 +3650,6 @@ impl Session<'_> {
         let ais = self.main_cap(if library { "LibraryAPIv3" } else { "InventoryAPIv3" });
         let pacer = ais
             .as_deref()
-            .filter(|_| depth > 0)
             .map(|cap| crate::inventory::ais::SubtreePacer::for_cap(&mut self.inventory_tree_pacing[usize::from(library)], cap));
         let legacy = self.main_cap(if library {
             "FetchLibDescendents2"
