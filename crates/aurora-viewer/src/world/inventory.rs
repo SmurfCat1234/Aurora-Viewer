@@ -242,12 +242,14 @@ impl Inventory {
     }
 
     fn sort_children(&mut self, id: Uuid) {
-        let Some(f) = self.folders.get(&id) else {
+        let Some(f) = self.folders.get_mut(&id) else {
             return;
         };
-        let mut kids = f.children.clone();
+        let mut kids = std::mem::take(&mut f.children);
+        let mut items = std::mem::take(&mut f.items);
         let mut seen = HashSet::new();
-        kids.retain(|child| self.folders.get(child).is_some_and(|f| f.info.parent == id) && seen.insert(*child));
+        let dedup_kids = kids.len() > 1;
+        kids.retain(|child| self.folders.get(child).is_some_and(|f| f.info.parent == id) && (!dedup_kids || seen.insert(*child)));
         // system folders first, then by name; one lowercase name per entry
         // (a background reply can list thousands of folders at once)
         kids.sort_by_cached_key(|id| {
@@ -255,11 +257,11 @@ impl Inventory {
             let sys = f.is_some_and(|f| f.info.type_default >= 0 && f.info.type_default != 8);
             (!sys, f.map(|f| crate::natural_order::key(&f.info.name)).unwrap_or_default())
         });
-        let mut items = f.items.clone();
         seen.clear();
         // FetchInventoryDescendents2 may include linked originals from other
         // folders. LLInventoryModel::updateItem indexes each by its parent.
-        items.retain(|item| self.items.get(item).is_some_and(|it| it.parent == id) && seen.insert(*item));
+        let dedup_items = items.len() > 1;
+        items.retain(|item| self.items.get(item).is_some_and(|it| it.parent == id) && (!dedup_items || seen.insert(*item)));
         items.sort_by_cached_key(|i| self.items.get(i).map(|it| crate::natural_order::key(&it.name)).unwrap_or_default());
         if let Some(f) = self.folders.get_mut(&id) {
             f.children = kids;
