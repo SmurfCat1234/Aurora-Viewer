@@ -280,8 +280,8 @@ impl BackgroundFetch {
             } else {
                 retry.children.clone()
             };
-            let mut unresolved = Vec::new();
-            let mut externally_active = false;
+            let mut ready = Vec::new();
+            let mut externally_active = Vec::new();
             for id in targets {
                 match inv.folders.get(&id).map(|folder| folder.state) {
                     Some(FetchState::Fetched) => {
@@ -295,34 +295,40 @@ impl BackgroundFetch {
                         inv.retrying_folders.remove(&id);
                         self.queue.push_back((id, Kind::ContentRecursive));
                     }
-                    state => {
-                        externally_active |= state == Some(FetchState::Fetching);
-                        unresolved.push(id);
-                    }
+                    Some(FetchState::Fetching) => externally_active.push(id),
+                    _ => ready.push(id),
                 }
             }
-            if unresolved.is_empty() {
+            if ready.is_empty() && externally_active.is_empty() {
                 continue;
             }
-            if !retry.children.is_empty() {
-                retry.children = unresolved.clone();
-            }
-            if externally_active || retry.due > now || self.in_flight.len() + usize::from(self.orphans_pending.is_some()) >= max {
-                waiting.push(retry);
-            } else {
-                for id in unresolved {
-                    inv.retrying_folders.remove(&id);
+            let subset = !retry.children.is_empty();
+            if ready.is_empty() || retry.due > now || self.in_flight.len() + usize::from(self.orphans_pending.is_some()) >= max {
+                if subset {
+                    ready.extend(externally_active);
+                    retry.children = ready;
                 }
-                self.send(
-                    inv,
-                    agent,
-                    retry.kind,
-                    retry.folder,
-                    retry.children,
-                    retry.depth,
-                    &mut out,
-                    retry.attempt,
-                );
+                waiting.push(retry);
+                continue;
+            }
+            for id in &ready {
+                inv.retrying_folders.remove(id);
+            }
+            // A subset may overlap an interactive read. Keep the owned
+            // children in this retry and send the other children on time.
+            self.send(
+                inv,
+                agent,
+                retry.kind,
+                retry.folder,
+                if subset { ready } else { Vec::new() },
+                retry.depth,
+                &mut out,
+                retry.attempt,
+            );
+            if !externally_active.is_empty() {
+                retry.children = externally_active;
+                waiting.push(retry);
             }
         }
         self.retries = waiting;

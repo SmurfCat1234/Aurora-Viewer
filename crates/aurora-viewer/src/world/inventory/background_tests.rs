@@ -121,6 +121,26 @@ fn recovery_a_due_retry_waits_for_an_external_read_instead_of_duplicating_it() {
 }
 
 #[test]
+fn recovery_busy_subset_child_does_not_delay_the_other_children() {
+    let mut inv = skeleton(&[(10, 1, -1), (11, 10, -1), (12, 10, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, vec![id(11), id(12)], now);
+    inv.folders.get_mut(&id(11)).unwrap().state = FetchState::Fetching;
+    assert!(fetch.pump_at(&mut inv, AGENT, now).is_empty());
+
+    let due = now + BACKGROUND_BACKOFF[0];
+    let reads = fetch.pump_at(&mut inv, AGENT, due);
+    assert!(matches!(&reads[..], [NetCommand::FetchInventoryTree { children, .. }] if children == &[id(12)]));
+    assert!(!fetch.pending.contains(&id(11)));
+    assert!(inv.retrying_folders.contains(&id(11)));
+    assert!(!inv.retrying_folders.contains(&id(12)));
+
+    inv.folders.get_mut(&id(11)).unwrap().state = FetchState::Fetched;
+    assert!(fetch.pump_at(&mut inv, AGENT, due).is_empty());
+    assert!(!inv.retrying_folders.contains(&id(11)));
+}
+
+#[test]
 fn recovery_automatic_readers_do_not_restart_failed_or_over_limit_folders() {
     let mut inv = skeleton(&[(10, 1, -1), (11, 1, -1)]);
     inv.folders.get_mut(&id(10)).unwrap().state = FetchState::Failed;
