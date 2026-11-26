@@ -445,11 +445,55 @@ static HTTP: [HttpCounters; HTTP_KINDS.len()] = [const { HttpCounters::new() }; 
 /// The most requests the fetcher had waiting for a slot.
 static QUEUE_PEAK: AtomicU32 = AtomicU32::new(0);
 
+/// AIS endpoint classes for aggregate inventory diagnostics.
+#[derive(Clone, Copy)]
+pub(crate) enum InventoryRead {
+    Item,
+    Folder,
+    Subtree,
+}
+
+struct InventoryReadCounters {
+    started: AtomicU64,
+    received: AtomicU64,
+    unavailable: AtomicU64,
+    throttled: AtomicU64,
+    other_failed: AtomicU64,
+}
+
+static INVENTORY_READS: [InventoryReadCounters; 3] = [const {
+    InventoryReadCounters {
+        started: AtomicU64::new(0),
+        received: AtomicU64::new(0),
+        unavailable: AtomicU64::new(0),
+        throttled: AtomicU64::new(0),
+        other_failed: AtomicU64::new(0),
+    }
+}; 3];
+
+/// Cumulative HTTP attempt counts for the viewer's opted-in inventory report.
+pub fn inventory_http_line() -> String {
+    let mut out = String::new();
+    for (label, counters) in ["item", "folder", "subtree"].iter().zip(&INVENTORY_READS) {
+        let _ = write!(
+            out,
+            " | {label} started={} received={} status503={} status429={} other_failed={}",
+            counters.started.load(Relaxed),
+            counters.received.load(Relaxed),
+            counters.unavailable.load(Relaxed),
+            counters.throttled.load(Relaxed),
+            counters.other_failed.load(Relaxed)
+        );
+    }
+    out
+}
+
 /// A request under way, counted from [`HttpRequest::start`] to
 /// [`HttpRequest::finish`] (or its drop, for a cancelled one: it then
 /// leaves the in-flight count without a result).
 pub struct HttpRequest {
     kind: HttpKind,
+    inventory_read: Option<InventoryRead>,
     at: Instant,
 }
 
@@ -463,7 +507,18 @@ impl HttpRequest {
         c.started.fetch_add(1, Relaxed);
         let n = c.in_flight.fetch_add(1, Relaxed) + 1;
         c.in_flight_peak.fetch_max(n, Relaxed);
-        Some(HttpRequest { kind, at: Instant::now() })
+        Some(HttpRequest {
+            kind,
+            inventory_read: None,
+            at: Instant::now(),
+        })
+    }
+
+    pub(crate) fn start_inventory(read: InventoryRead) -> Option<Self> {
+        let mut request = Self::start(HttpKind::Inventory)?;
+        request.inventory_read = Some(read);
+        INVENTORY_READS[read as usize].started.fetch_add(1, Relaxed);
+        Some(request)
     }
 
     /// The request ended with `status` (0: no response) and `bytes` of
@@ -472,6 +527,16 @@ impl HttpRequest {
         let c = &HTTP[self.kind as usize];
         c.latency.add(self.at.elapsed());
         c.bytes.fetch_add(bytes as u64, Relaxed);
+        if let Some(read) = self.inventory_read {
+            let counts = &INVENTORY_READS[read as usize];
+            let counter = match (status, ok) {
+                (_, true) => &counts.received,
+                (503, false) => &counts.unavailable,
+                (429, false) => &counts.throttled,
+                _ => &counts.other_failed,
+            };
+            counter.fetch_add(1, Relaxed);
+        }
         if ok {
             c.done.fetch_add(1, Relaxed);
         } else {

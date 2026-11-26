@@ -3701,6 +3701,7 @@ impl App {
         // login screen selects next time
         self.settings.last_login = Some(self.settings.login_key());
         self.settings.save();
+        log::info!("inventory timing: login submitted");
         self.net.send(NetCommand::Login(Box::new(req)));
     }
 

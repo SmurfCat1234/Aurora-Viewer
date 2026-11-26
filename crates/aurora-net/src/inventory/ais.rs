@@ -2,6 +2,7 @@
 //! AISUpdate::parseEmbedded (indra/newview/llaisapi.cpp).
 
 use super::{FolderContents, InvFolder, InvItem, folder_from_llsd, item_from_llsd};
+use crate::probe::InventoryRead;
 use aurora_llsd::Llsd;
 use std::collections::HashSet;
 use uuid::Uuid;
@@ -311,9 +312,12 @@ pub async fn fetch_tree(
         // (one answer within TREE_TOTAL, retries and waits included: the
         // walk's deadline never frees a slot while its request still runs)
         let state = TryState::default();
-        tokio::time::timeout(TREE_TOTAL, get_with(http, url, TREE_TIMEOUT, RETRY_ATTEMPTS, 0, Some(&state)))
-            .await
-            .unwrap_or_else(|_| Err(state.out_of_time()))?
+        tokio::time::timeout(
+            TREE_TOTAL,
+            get_with(http, url, TREE_TIMEOUT, RETRY_ATTEMPTS, 0, Some(&state), InventoryRead::Subtree),
+        )
+        .await
+        .unwrap_or_else(|_| Err(state.out_of_time()))?
     } else {
         get(http, url).await?
     };
@@ -388,7 +392,16 @@ impl TryState {
 /// One AIS read, retried on the conditions the Legacy Viewer's HTTP layer retries
 /// (timeout, 408/425/429 and 5xx), with its backoff and `Retry-After`.
 async fn get(http: &reqwest::Client, url: String) -> Result<Llsd, FetchError> {
-    get_with(http, url, REQUEST_TIMEOUT, RETRY_ATTEMPTS, RETRY_ATTEMPTS, None).await
+    get_with(
+        http,
+        url,
+        REQUEST_TIMEOUT,
+        RETRY_ATTEMPTS,
+        RETRY_ATTEMPTS,
+        None,
+        InventoryRead::Folder,
+    )
+    .await
 }
 
 /// [`get`] with its own timeout, how many times a failed attempt is tried
@@ -400,6 +413,7 @@ async fn get_with(
     retries: u32,
     timeout_retries: u32,
     state: Option<&TryState>,
+    read: InventoryRead,
 ) -> Result<Llsd, FetchError> {
     let mut attempt = 0;
     let mut timeouts = 0;
@@ -408,7 +422,7 @@ async fn get_with(
         if attempt > 1 {
             crate::probe::http_retry(crate::probe::HttpKind::Inventory);
         }
-        let timed = crate::probe::HttpRequest::start(crate::probe::HttpKind::Inventory);
+        let timed = crate::probe::HttpRequest::start_inventory(read);
         if let Some(state) = state {
             state.sending(Some(std::time::Instant::now()));
         }
@@ -586,7 +600,12 @@ pub(crate) async fn read_one_item(http: &reqwest::Client, cap: &str, owner: Uuid
     let mut result = ItemReads::default();
     let url = format!("{}/item/{id}", cap.trim_end_matches('/'));
     let state = TryState::default();
-    match tokio::time::timeout(TREE_TIMEOUT, get_with(http, url, TREE_TIMEOUT, 0, 0, Some(&state))).await {
+    match tokio::time::timeout(
+        TREE_TIMEOUT,
+        get_with(http, url, TREE_TIMEOUT, 0, 0, Some(&state), InventoryRead::Item),
+    )
+    .await
+    {
         Ok(Ok(doc)) => match parse_item_reply(&doc, id, owner) {
             Ok(item) => result.items.push(item),
             Err(reason) => {
@@ -629,11 +648,7 @@ pub async fn read_items(http: &reqwest::Client, cap: &str, owner: Uuid, ids: &[U
                 // (AISAPI::HTTP_TIMEOUT, as every AIS command: an item read
                 // always answers, so the viewer's one-read-at-a-time claim
                 // (world/inventory.rs ITEM_READ_DEADLINE) outlasts it)
-                let read = tokio::time::timeout(
-                    TREE_TIMEOUT,
-                    crate::caps::get_llsd_as(&http, &url, crate::probe::HttpKind::Inventory),
-                )
-                .await;
+                let read = tokio::time::timeout(TREE_TIMEOUT, crate::caps::get_inventory_item_llsd(&http, &url)).await;
                 (id, read.map(|read| read.map(|doc| parse_item_reply(&doc, id, owner).ok())))
             });
         }
@@ -1149,6 +1164,7 @@ mod tests {
             0,
             0,
             Some(&state),
+            InventoryRead::Subtree,
         )
         .await
         .expect_err("never answered");
@@ -1173,6 +1189,7 @@ mod tests {
             0,
             0,
             Some(&state),
+            InventoryRead::Subtree,
         )
         .await
         .expect_err("refused");

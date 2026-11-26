@@ -122,6 +122,7 @@ pub struct BackgroundFetch {
     /// Since when the current walk sends requests, and how many (logged
     /// when it ends).
     busy: Option<(Instant, usize)>,
+    progress_logged: Option<Instant>,
     /// The agent's region lacks InventoryAPIv3 / LibraryAPIv3: that tree is
     /// read level by level through the legacy capability.
     legacy: [bool; 2],
@@ -379,6 +380,33 @@ impl BackgroundFetch {
             }
         }
         self.queue.extend(self.waiting.drain(..));
+        if aurora_net::probe::enabled()
+            && let Some((since, _)) = self.busy
+            && (self.is_idle()
+                || self
+                    .progress_logged
+                    .is_none_or(|at| now.saturating_duration_since(at).as_secs() >= 3))
+        {
+            self.progress_logged = Some(now);
+            let oldest = self
+                .in_flight
+                .values()
+                .map(|request| now.saturating_duration_since(request.sent))
+                .max()
+                .unwrap_or_default();
+            let folders_ready = inv.folders.values().filter(|folder| folder.state == FetchState::Fetched).count();
+            log::info!(
+                "inventory progress: walk_s={:.1} items={} folders={} folders_ready={folders_ready} queued={} active={} retry_batches={} oldest_s={:.1}{}",
+                now.saturating_duration_since(since).as_secs_f32(),
+                inv.item_count(),
+                inv.folders.len(),
+                self.queue.len(),
+                self.in_flight.len(),
+                self.retries.len(),
+                oldest.as_secs_f32(),
+                aurora_net::probe::inventory_http_line(),
+            );
+        }
         if self.is_idle()
             && let Some((since, requests)) = self.busy.take()
         {
