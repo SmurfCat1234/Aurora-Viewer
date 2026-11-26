@@ -98,7 +98,7 @@ fn a_reply_after_the_deadline_cannot_complete_its_replacement() {
 
 #[test]
 fn a_received_large_reply_keeps_its_slot_until_the_last_slice() {
-    let folders: Vec<_> = (10..10 + SNAPSHOT_SLICE_FOLDERS as u128 + 1).map(|n| (n, 1, -1)).collect();
+    let folders: Vec<_> = (10..10 + 422).map(|n| (n, 1, -1)).collect();
     let mut inv = skeleton(&folders);
     let now = Instant::now();
     let mut fetch = BackgroundFetch {
@@ -126,32 +126,54 @@ fn a_received_large_reply_keeps_its_slot_until_the_last_slice() {
                 owner_id: AGENT,
                 version: 4,
                 folders: Vec::new(),
-                items: vec![InvItem {
-                    id: id(*n + 1000),
-                    parent: folder_id,
-                    ..Default::default()
-                }],
+                items: (0..129 + u128::from(*n < 144))
+                    .map(|i| InvItem {
+                        id: id(*n * 1000 + i),
+                        parent: folder_id,
+                        ..Default::default()
+                    })
+                    .collect(),
             }
         })
         .collect();
-    inv.claim_item_reads(&mut vec![id(1010)], false, now);
+    inv.claim_item_reads(&mut vec![id(10000)], false, now);
 
     assert!(fetch.on_reply(&mut inv, 0, Ok(snapshots)));
     assert!(inv.items.is_empty(), "receiving the reply does not apply it");
     assert!(!fetch.on_reply(&mut inv, 0, Ok(Vec::new())));
     assert!(fetch.apply_reply_slice(&mut inv));
-    assert_eq!(inv.take_accepted_snapshot_items(), vec![id(1010)]);
+    assert_eq!(inv.take_accepted_snapshot_items(), vec![id(10000)]);
     assert_eq!(inv.folders[&id_first].state, FetchState::Fetched);
     assert_ne!(inv.folders[&id_last].state, FetchState::Fetched);
     assert!(fetch.pump_at(&mut inv, AGENT, now + TREE_DEADLINE).is_empty());
     assert!(fetch.in_flight.contains_key(&0), "an already received reply cannot expire");
     assert!(!fetch.is_idle());
 
-    assert!(fetch.apply_reply_slice(&mut inv));
+    while fetch.apply_reply_slice(&mut inv) {}
     assert_eq!(inv.folders[&id_last].state, FetchState::Fetched);
-    assert_eq!(inv.items.len(), folders.len());
+    assert_eq!(inv.items.len(), 54_572);
     assert!(!fetch.in_flight.contains_key(&0));
     assert!(!fetch.apply_reply_slice(&mut inv));
+}
+
+#[test]
+fn ordinary_replies_do_not_wait_for_the_snapshot_queue() {
+    let snapshots: Vec<_> = (10..230)
+        .map(|n| FolderContents {
+            folder_id: id(n),
+            owner_id: AGENT,
+            version: 4,
+            folders: Vec::new(),
+            items: (0..11)
+                .map(|i| InvItem {
+                    id: id(n * 1000 + i),
+                    parent: id(n),
+                    ..Default::default()
+                })
+                .collect(),
+        })
+        .collect();
+    assert!(!can_slice(&snapshots));
 }
 
 #[test]

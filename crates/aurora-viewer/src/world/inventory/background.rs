@@ -64,6 +64,8 @@ const EXTRA_SCAN_BUDGET: std::time::Duration = std::time::Duration::from_millis(
 /// Apply one slice per frame, keeping an individual folder atomic.
 const SNAPSHOT_SLICE_RECORDS: usize = 2048;
 const SNAPSHOT_SLICE_FOLDERS: usize = 128;
+/// Ordinary replies are cheaper to apply than to queue behind a slice.
+const LARGE_SNAPSHOT_RECORDS: usize = 8192;
 /// Reads the HTTP layer's own retries (ais.rs) left failed are asked again
 /// later, so a throttled or briefly unavailable AIS server does not end the
 /// walk with folders missing.
@@ -1035,10 +1037,7 @@ impl BackgroundFetch {
 fn can_slice(contents: &[FolderContents]) -> bool {
     // A folder plus its listing is atomic. Replies with repeated listings or
     // links belonging to another folder need the original batch reconciliation.
-    if contents.len() < 2
-        || (contents.len() <= SNAPSHOT_SLICE_FOLDERS
-            && contents.iter().map(|c| c.items.len() + c.folders.len() + 1).sum::<usize>() <= SNAPSHOT_SLICE_RECORDS)
-    {
+    if contents.len() < 2 || contents.iter().map(|c| c.items.len() + c.folders.len() + 1).sum::<usize>() < LARGE_SNAPSHOT_RECORDS {
         return false;
     }
     let mut seen = HashSet::with_capacity(contents.len());
