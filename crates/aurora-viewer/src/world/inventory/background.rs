@@ -56,8 +56,11 @@ const FAILED_ROUNDS: u32 = 6;
 const UNREAD_ROUNDS: u32 = 6;
 /// LLFolderType::FT_MARKETPLACE_LISTINGS, loaded by its own window.
 const MARKETPLACE_LISTINGS: i32 = 53;
-/// Queue entries looked at per frame (bulkFetch stops after 6 ms).
-const STEPS_PER_FRAME: usize = 512;
+/// The walk is polled every 500 ms. Keep the original minimum work, then
+/// use spare CPU time to scan folders already returned by AIS.
+const MIN_QUEUE_STEPS: usize = 512;
+const MAX_QUEUE_STEPS: usize = 8192;
+const EXTRA_SCAN_BUDGET: std::time::Duration = std::time::Duration::from_millis(2);
 /// Reads the HTTP layer's own retries (ais.rs) left failed are asked again
 /// later, so a throttled or briefly unavailable AIS server does not end the
 /// walk with folders missing.
@@ -342,14 +345,8 @@ impl BackgroundFetch {
             self.orphans_failed = true;
         }
         self.watch(inv, now);
-        let mut steps = 0;
-        while self.in_flight.len() + usize::from(self.orphans_pending.is_some()) < max && steps < STEPS_PER_FRAME {
-            let Some((id, kind)) = self.queue.pop_front() else {
-                break;
-            };
-            steps += 1;
-            self.step(inv, agent, id, kind, &mut out);
-        }
+        let scanning = Instant::now();
+        self.step_queue(inv, agent, max, &mut out, || scanning.elapsed() < EXTRA_SCAN_BUDGET);
         for library in [false, true] {
             self.send_legacy(inv, agent, library, &mut out);
         }
@@ -395,6 +392,23 @@ impl BackgroundFetch {
             );
         }
         out
+    }
+
+    /// A large reply may already contain thousands of folders. Scan them
+    /// without forcing one half-second wait per 512 entries, while limiting
+    /// extra main-thread work and keeping the same request slots.
+    fn step_queue(&mut self, inv: &mut Inventory, agent: Uuid, max: usize, out: &mut Vec<NetCommand>, mut time_left: impl FnMut() -> bool) {
+        for step in 0..MAX_QUEUE_STEPS {
+            if self.in_flight.len() + usize::from(self.orphans_pending.is_some()) >= max
+                || (step >= MIN_QUEUE_STEPS && step.is_multiple_of(32) && !time_left())
+            {
+                break;
+            }
+            let Some((id, kind)) = self.queue.pop_front() else {
+                break;
+            };
+            self.step(inv, agent, id, kind, out);
+        }
     }
 
     /// The stall watchdog: an idle walk that left folders unread (a reply

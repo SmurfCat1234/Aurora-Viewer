@@ -1312,12 +1312,26 @@ fn a_read_tree_is_walked_in_one_step_per_folder() {
     assert_eq!(inv.folders.values().filter(|f| !f.library).count(), 401);
     let mut fetch = BackgroundFetch::default();
     fetch.start(&inv);
-    let reads = fetch.pump_at(&mut inv, AGENT, Instant::now());
-    assert!(
-        reads.iter().all(|r| matches!(r, NetCommand::FetchInventoryOrphans { .. })),
-        "nothing to read"
-    );
+    let mut reads = Vec::new();
+    fetch.step_queue(&mut inv, AGENT, MAX_IN_FLIGHT, &mut reads, || false);
+    assert!(reads.is_empty());
     assert!(fetch.queue.is_empty(), "{} steps left after one pump", fetch.queue.len());
+}
+
+#[test]
+fn a_large_read_tree_advances_with_spare_scan_time_and_no_extra_reads() {
+    let tree: Vec<_> = (10..3010).map(|n| (n, 1, -1)).collect();
+    let mut inv = skeleton(&tree);
+    inv.folders.values_mut().for_each(|f| f.state = FetchState::Fetched);
+
+    let mut fetch = BackgroundFetch::default();
+    fetch.start(&inv);
+    let mut reads = Vec::new();
+    fetch.step_queue(&mut inv, AGENT, MAX_IN_FLIGHT, &mut reads, || false);
+    assert!(fetch.queue.len() >= 3001 - MIN_QUEUE_STEPS);
+    fetch.step_queue(&mut inv, AGENT, MAX_IN_FLIGHT, &mut reads, || true);
+    assert!(fetch.queue.is_empty());
+    assert!(reads.is_empty());
 }
 
 /// N4 counts a folder over the server's limit on its own line, never as
