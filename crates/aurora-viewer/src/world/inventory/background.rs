@@ -19,7 +19,7 @@ use super::{FetchState, Inventory};
 use aurora_net::inventory::ais::{FetchError, FetchFailure, MAX_FOLDER_DEPTH};
 use aurora_net::{NetCommand, inventory::FolderContents};
 use std::collections::{HashMap, HashSet, VecDeque};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use uuid::Uuid;
 
 /// PoolSizeAIS (20) less the request it keeps for the user's own actions.
@@ -61,6 +61,9 @@ const MARKETPLACE_LISTINGS: i32 = 53;
 const MIN_QUEUE_STEPS: usize = 512;
 const MAX_QUEUE_STEPS: usize = 8192;
 const EXTRA_SCAN_BUDGET: std::time::Duration = std::time::Duration::from_millis(2);
+/// Apply one slice per frame, keeping an individual folder atomic.
+const SNAPSHOT_SLICE_RECORDS: usize = 2048;
+const SNAPSHOT_SLICE_FOLDERS: usize = 128;
 /// Reads the HTTP layer's own retries (ais.rs) left failed are asked again
 /// later, so a throttled or briefly unavailable AIS server does not end the
 /// walk with folders missing.
@@ -91,6 +94,17 @@ struct Request {
     attempt: u32,
     /// When it was sent ([`READ_DEADLINE`]).
     sent: Instant,
+    received: bool,
+}
+
+struct PendingReply {
+    request: u64,
+    contents: std::vec::IntoIter<FolderContents>,
+    stale: Vec<Uuid>,
+    started: Instant,
+    items: usize,
+    slices: usize,
+    slowest_slice: Duration,
 }
 
 /// A read waiting for its next attempt after a transient failure.
@@ -107,6 +121,7 @@ struct Retry {
 pub struct BackgroundFetch {
     queue: VecDeque<(Uuid, Kind)>,
     in_flight: HashMap<u64, Request>,
+    replies: VecDeque<PendingReply>,
     /// The folders those reads are fetching: their replies walk them.
     pending: HashSet<Uuid>,
     /// Folders the user's own reads are fetching, looked at again next frame.
@@ -165,6 +180,10 @@ pub struct BackgroundFetch {
 }
 
 impl BackgroundFetch {
+    pub fn started(&self) -> bool {
+        self.started
+    }
+
     /// LLInventoryModelBackgroundFetch::start(): the root alone first (it
     /// can be huge and its system folders are asked for on their own), the
     /// library with its subtree.
@@ -246,7 +265,9 @@ impl BackgroundFetch {
         let expired: Vec<u64> = self
             .in_flight
             .iter()
-            .filter(|(_, r)| now.saturating_duration_since(r.sent) >= if r.depth > 0 { TREE_DEADLINE } else { READ_DEADLINE })
+            .filter(|(_, r)| {
+                !r.received && now.saturating_duration_since(r.sent) >= if r.depth > 0 { TREE_DEADLINE } else { READ_DEADLINE }
+            })
             .map(|(request, _)| *request)
             .collect();
         if !expired.is_empty() {
@@ -813,6 +834,7 @@ impl BackgroundFetch {
                 depth,
                 attempt,
                 sent: self.clock.unwrap_or_else(Instant::now),
+                received: false,
             },
         );
         self.busy.get_or_insert_with(|| (Instant::now(), 0)).1 += 1;
@@ -821,14 +843,65 @@ impl BackgroundFetch {
     /// Apply results only while this request still owns the read. A reply
     /// that missed the deadline cannot complete or acknowledge its replacement.
     pub fn on_reply(&mut self, inv: &mut Inventory, request: u64, result: Result<Vec<FolderContents>, FetchError>) -> bool {
-        if !self.in_flight.contains_key(&request) {
+        let Some(read) = self.in_flight.get_mut(&request) else {
+            return false;
+        };
+        if read.received {
             return false;
         }
         let (stale, outcome) = match result {
+            Ok(contents) if read.depth > 0 && can_slice(&contents) => {
+                read.received = true;
+                self.replies.push_back(PendingReply {
+                    request,
+                    items: contents.iter().map(|c| c.items.len()).sum(),
+                    contents: contents.into_iter(),
+                    stale: Vec::new(),
+                    started: Instant::now(),
+                    slices: 0,
+                    slowest_slice: Duration::ZERO,
+                });
+                return true;
+            }
             Ok(contents) => (inv.apply_snapshots(contents, true), Ok(())),
             Err(error) => (Vec::new(), Err(error)),
         };
         self.on_reply_at(inv, request, &stale, outcome, Instant::now());
+        true
+    }
+
+    pub fn apply_reply_slice(&mut self, inv: &mut Inventory) -> bool {
+        let Some(reply) = self.replies.front_mut() else {
+            return false;
+        };
+        let mut count = 0;
+        let mut records = 0;
+        for folder in reply.contents.as_slice().iter().take(SNAPSHOT_SLICE_FOLDERS) {
+            records += folder.items.len() + folder.folders.len() + 1;
+            if count != 0 && records > SNAPSHOT_SLICE_RECORDS {
+                break;
+            }
+            count += 1;
+        }
+        let started = Instant::now();
+        reply
+            .stale
+            .extend(inv.apply_snapshots(reply.contents.by_ref().take(count).collect(), true));
+        reply.slices += 1;
+        reply.slowest_slice = reply.slowest_slice.max(started.elapsed());
+        if reply.contents.len() == 0 {
+            let reply = self.replies.pop_front().expect("the active reply");
+            if aurora_net::probe::enabled() {
+                log::info!(
+                    "inventory sliced reply: items={} slices={} peak_ms={:.2} wall_ms={:.2}",
+                    reply.items,
+                    reply.slices,
+                    reply.slowest_slice.as_secs_f64() * 1000.0,
+                    reply.started.elapsed().as_secs_f64() * 1000.0
+                );
+            }
+            self.on_reply_at(inv, reply.request, &reply.stale, Ok(()), Instant::now());
+        }
         true
     }
 
@@ -957,6 +1030,26 @@ impl BackgroundFetch {
             }
         }
     }
+}
+
+fn can_slice(contents: &[FolderContents]) -> bool {
+    // A folder plus its listing is atomic. Replies with repeated listings or
+    // links belonging to another folder need the original batch reconciliation.
+    if contents.len() < 2
+        || (contents.len() <= SNAPSHOT_SLICE_FOLDERS
+            && contents.iter().map(|c| c.items.len() + c.folders.len() + 1).sum::<usize>() <= SNAPSHOT_SLICE_RECORDS)
+    {
+        return false;
+    }
+    let mut seen = HashSet::with_capacity(contents.len());
+    contents.iter().all(|c| {
+        c.version >= 0
+            && seen.insert(c.folder_id)
+            && !c
+                .items
+                .iter()
+                .any(|item| matches!(item.asset_type, 24 | 25) && item.parent != c.folder_id)
+    })
 }
 
 #[cfg(test)]

@@ -97,6 +97,64 @@ fn a_reply_after_the_deadline_cannot_complete_its_replacement() {
 }
 
 #[test]
+fn a_received_large_reply_keeps_its_slot_until_the_last_slice() {
+    let folders: Vec<_> = (10..10 + SNAPSHOT_SLICE_FOLDERS as u128 + 1).map(|n| (n, 1, -1)).collect();
+    let mut inv = skeleton(&folders);
+    let now = Instant::now();
+    let mut fetch = BackgroundFetch {
+        clock: Some(now),
+        ..Default::default()
+    };
+    let id_first = id(folders.first().unwrap().0);
+    let id_last = id(folders.last().unwrap().0);
+    fetch.send(
+        &mut inv,
+        AGENT,
+        Kind::Recursive,
+        id_first,
+        Vec::new(),
+        MAX_FOLDER_DEPTH,
+        &mut Vec::new(),
+        0,
+    );
+    let snapshots = folders
+        .iter()
+        .map(|(n, _, _)| {
+            let folder_id = id(*n);
+            FolderContents {
+                folder_id,
+                owner_id: AGENT,
+                version: 4,
+                folders: Vec::new(),
+                items: vec![InvItem {
+                    id: id(*n + 1000),
+                    parent: folder_id,
+                    ..Default::default()
+                }],
+            }
+        })
+        .collect();
+    inv.claim_item_reads(&mut vec![id(1010)], false, now);
+
+    assert!(fetch.on_reply(&mut inv, 0, Ok(snapshots)));
+    assert!(inv.items.is_empty(), "receiving the reply does not apply it");
+    assert!(!fetch.on_reply(&mut inv, 0, Ok(Vec::new())));
+    assert!(fetch.apply_reply_slice(&mut inv));
+    assert_eq!(inv.take_accepted_snapshot_items(), vec![id(1010)]);
+    assert_eq!(inv.folders[&id_first].state, FetchState::Fetched);
+    assert_ne!(inv.folders[&id_last].state, FetchState::Fetched);
+    assert!(fetch.pump_at(&mut inv, AGENT, now + TREE_DEADLINE).is_empty());
+    assert!(fetch.in_flight.contains_key(&0), "an already received reply cannot expire");
+    assert!(!fetch.is_idle());
+
+    assert!(fetch.apply_reply_slice(&mut inv));
+    assert_eq!(inv.folders[&id_last].state, FetchState::Fetched);
+    assert_eq!(inv.items.len(), folders.len());
+    assert!(!fetch.in_flight.contains_key(&0));
+    assert!(!fetch.apply_reply_slice(&mut inv));
+}
+
+#[test]
 fn recovery_a_subset_retry_only_reads_children_that_still_need_it() {
     let mut inv = skeleton(&[(10, 1, -1), (11, 10, -1), (12, 10, -1)]);
     let now = Instant::now();
