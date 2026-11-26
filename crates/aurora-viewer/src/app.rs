@@ -109,6 +109,7 @@ mod hover_tips;
 mod hud_drag;
 mod imports;
 mod inspect;
+mod interest_list;
 mod inventory;
 mod inventory_drag;
 mod inventory_hover;
@@ -867,6 +868,10 @@ pub struct App {
     loading_frac: f32,
     loading_target: f32,
     frame_count: u64,
+    /// AURORA_DEMO_INVENTORY=ime, AURORA_DEMO_CHAT_INPUT=os-ime: frames whose
+    /// output told the input method to drop its composition, since the start
+    /// (scripts/test-ime-linux.py).
+    demo_ime_interrupts: u64,
     demo_rlva_frame: Option<u64>,
     rlva_login: crate::world::rlva::login::State,
     rlva_minimap: rlva::HiddenMinimap,
@@ -976,6 +981,8 @@ pub struct App {
     animation_explorer: animation_explorer::ExplorerState,
     avatar_render_settings_ui: ui::avatar_render_settings::AvatarRenderSettings,
     area_search_feed: area_search::Feed,
+    /// What the regions send (app/interest_list.rs).
+    interest_list: interest_list::InterestList,
     /// "Asset blacklist" (World menu).
     blacklist_ui: ui::blacklist::BlacklistUi,
     group_titles_ui: ui::group_titles::GroupTitlesUi,
@@ -2187,6 +2194,7 @@ impl App {
             loading_frac: 0.0,
             loading_target: 0.0,
             frame_count: 0,
+            demo_ime_interrupts: 0,
             demo_rlva_frame: None,
             rlva_minimap: Default::default(),
             rlva_login: if std::env::var("AURORA_DEMO").as_deref() == Ok("1") {
@@ -2265,6 +2273,7 @@ impl App {
             animation_explorer: Default::default(),
             avatar_render_settings_ui: Default::default(),
             area_search_feed: Default::default(),
+            interest_list: Default::default(),
             blacklist_ui: Default::default(),
             group_titles_ui: Default::default(),
             bumps_ui: Default::default(),
@@ -3900,6 +3909,8 @@ impl App {
         self.avatar_reloads = Default::default();
         self.interactions = Default::default();
         self.screen = Screen::Login;
+        // (the next session starts in the default mode: asked again there)
+        self.interest_list = Default::default();
         self.login_form.busy = false;
         self.login_form.transition = None;
         self.login_form.pending_connect = None;
@@ -5991,7 +6002,7 @@ impl App {
         // a rigged mesh, a worn mesh or a worn prim with an action shown
         // there: what the GPU drew at the click (scene/drawn.rs)
         let shown = (!alt)
-            .then(|| self.designate(crate::scene::drawn::Gesture::Touch, &picked, hit))
+            .then(|| self.designate(crate::scene::drawn::Gesture::Touch, &picked, hit, None))
             .flatten();
         let hit = shown.map_or(hit, |d| Some(d.hit.point));
         // Only our displayed body takes the press, not empty space inside
@@ -7439,6 +7450,7 @@ impl App {
     }
 
     fn pump_network_events(&mut self, t_ev: Instant) {
+        let covered = matches!(self.screen, Screen::Loading { .. }) || self.tp_overlay.as_ref().is_some_and(|o| o.end.is_none());
         while let Ok((sent, ev)) = self.net.events.try_recv() {
             let folder_reply = matches!(
                 &ev,
@@ -7458,8 +7470,11 @@ impl App {
             }
             let now = Instant::now();
             self.net_profile.event_applied(sent, now);
-            // (more per frame in gaming mode's slow loop, app/gaming_mode.rs)
-            if now.duration_since(t_ev) > gaming_mode::event_budget(self.gaming_mode.on, self.outside.focused()) {
+            // (more per frame in gaming mode's slow loop, app/gaming_mode.rs;
+            // less while everything around arrives, app/interest_list.rs)
+            let usual = gaming_mode::event_budget(self.gaming_mode.on, self.outside.focused());
+            let lag = now.saturating_duration_since(sent);
+            if now.duration_since(t_ev) > self.interest_list.event_budget(usual, lag, covered, now) {
                 break;
             }
         }
@@ -8656,6 +8671,7 @@ impl App {
             .then(|| self.scene.hud_edit_pick(&self.world, (x, y)))
             .flatten();
         let mut face_drawn: Option<crate::scene::drawn::DrawnObject> = None;
+        let mut surface_ray = None;
         let (hit, target, ray) = if let Some((idx, point, ray)) = hud {
             (Some(point), Some(idx), ray)
         } else if self.build.tool == crate::build::Tool::Create && !self.settings.build.copy_selection && !(self.shift || self.ctrl) {
@@ -8686,7 +8702,7 @@ impl App {
                 .first()
                 .copied();
             let cpu_point = cpu_target.and_then(|idx| self.scene.edit_hit_point(&self.world, idx, ray));
-            let drawn = self.designate(crate::scene::drawn::Gesture::Build, &picked, cpu_point);
+            let drawn = self.designate(crate::scene::drawn::Gesture::Build, &picked, cpu_point, None);
             let (hit, target) = match drawn {
                 Some(d) => {
                     face_drawn = Some(d);
@@ -8699,7 +8715,8 @@ impl App {
             let Some(picked) = self.click_pick() else {
                 return false;
             };
-            let (hit, target) = if matches!(self.build.tool, crate::build::Tool::Edit | crate::build::Tool::Grab) {
+            let searched = matches!(self.build.tool, crate::build::Tool::Edit | crate::build::Tool::Grab);
+            let (hit, target) = if searched {
                 self.scene.left_selection_pick(
                     &self.world,
                     picked.ray,
@@ -8714,19 +8731,27 @@ impl App {
                     picked.depth.and_then(|p| self.scene.pick_at(&self.world, p, Instant::now())),
                 )
             };
+            let ray = picked.ray.unwrap_or_else(|| self.build.cam.ray(x, y));
             // a rigged mesh is selected where it is shown (Legacy Viewer: with
             // the move tool only, LLToolCompTranslate)
-            let (hit, target) = match self.designate(crate::scene::drawn::Gesture::Build, &picked, hit) {
+            // a face the search met, not a box around the depth (`pick_at`)
+            let on_face = target.filter(|&idx| searched && self.scene.gpu.get(idx).is_some_and(|g| !g.is_avatar));
+            let (hit, target) = match self.designate(crate::scene::drawn::Gesture::Build, &picked, hit, on_face) {
                 Some(d) => (Some(d.hit.point), Some(d.idx)),
-                None => (hit, target),
+                None => {
+                    // a far face taken where it is drawn, beside the ray
+                    surface_ray = hit.filter(|_| on_face.is_some()).map(|p| crate::scene::Scene::surface_ray(ray, p));
+                    (hit, target)
+                }
             };
-            (hit, target, picked.ray.unwrap_or_else(|| self.build.cam.ray(x, y)))
+            (hit, target, ray)
         };
         let mods = self.build_mouse_mods();
         // the surface under the cursor: face tool, grab surface info
         let surface = if let Some(d) = face_drawn {
             self.scene.drawn_surface(&self.world, &d)
         } else {
+            let ray = surface_ray.unwrap_or(ray);
             match (self.build.tool, self.build.edit_mode, target) {
                 (crate::build::Tool::Edit, crate::build::EditMode::Face, Some(i)) => self.scene.edit_touch_surface(&self.world, i, ray),
                 (crate::build::Tool::Edit | crate::build::Tool::Grab, _, Some(i)) => self.scene.left_touch_surface(&self.world, i, ray),
@@ -10115,6 +10140,8 @@ impl App {
         wanted.extend(self.pay_ui.wanted_pics.drain());
         wanted.extend(self.inventory_ui.wanted_pics.drain());
         wanted.extend(self.conversation_log_ui.wanted_pics.drain());
+        wanted.extend(self.inspect_ui.wanted_pics.drain());
+        wanted.extend(self.area_search_ui.wanted_pics.get_mut().drain());
         let portrait = self.appearance_ui.wanted_outfit_portrait.take();
         self.scene.textures.show_outfit_portrait(portrait);
         if let Some(image) = portrait
@@ -11028,6 +11055,21 @@ impl App {
         {
             self.chat_ui.conv_focus_request = true;
         }
+        // AURORA_DEMO_CHAT_INPUT=os-ime (scripts/test-ime-linux.py): what the
+        // system's input method put in the empty field, once a second
+        if self.demo
+            && self.frame_count >= 700
+            && self.frame_count.is_multiple_of(60)
+            && std::env::var("AURORA_DEMO_CHAT_INPUT").is_ok_and(|mode| mode == "os-ime")
+        {
+            let field = egui::Id::unique(("conv_input", self.chat_ui.selected));
+            let focused = self.egui_ctx.memory(|m| m.has_focus(field));
+            log::info!(
+                "demo chat os-ime: frame={}, text={:?}, field_focus={focused}",
+                self.frame_count,
+                self.chat_ui.draft_mut(self.chat_ui.selected)
+            );
+        }
         // AURORA_DEMO_SPELLING=menu|replace: the chat bar takes the keyboard,
         // its caret at the end
         if self.demo
@@ -11549,6 +11591,7 @@ impl App {
         // part of it this frame draws, the height its details are chosen for
         // a 360° snapshot's face this frame: its camera swapped in, the
         // square photo frame asked (app/capture_360.rs)
+        self.interest_list_frame();
         self.capture_360_frame(&mut gfx.renderer);
         self.outfit_batch_frame();
         self.outfit_portrait_frame(&gfx.renderer);
@@ -13752,6 +13795,30 @@ impl App {
         full.platform_output.commands.splice(0..0, self.outside.take_commands());
         ui::chat::previews::clipboard_update(&ctx, &mut full.platform_output);
         self.inventory_ui.clipboard_output(&full.platform_output.commands);
+        // AURORA_DEMO_INVENTORY=ime, AURORA_DEMO_CHAT_INPUT=os-ime: what the
+        // viewer asks of the system's input method (scripts/test-ime-linux.py).
+        // A drop of the composition lasts one frame: every one is counted, and
+        // the count is logged once a second with this frame's request.
+        if self.demo
+            && (std::env::var("AURORA_DEMO_INVENTORY").is_ok_and(|mode| matches!(mode.as_str(), "ime" | "aurora-ime"))
+                || std::env::var("AURORA_DEMO_CHAT_INPUT").is_ok_and(|mode| mode == "os-ime"))
+        {
+            let ime = match &full.platform_output.ime {
+                None => "off",
+                Some(ime) if ime.should_interrupt_composition => "interrupt",
+                Some(_) => "on",
+            };
+            if ime == "interrupt" {
+                self.demo_ime_interrupts += 1;
+            }
+            if self.frame_count >= 700 && self.frame_count.is_multiple_of(60) {
+                log::info!(
+                    "demo ime output: frame={}, ime={ime}, interrupts={}",
+                    self.frame_count,
+                    self.demo_ime_interrupts
+                );
+            }
+        }
         // interface sounds of the widgets; the sounds are SL assets, loaded
         // once logged in
         let in_world_view = matches!(self.screen, Screen::World);
@@ -18702,6 +18769,9 @@ impl App {
             self.video_memory_notice(&ctx, &p);
             self.media_pack_card(&ctx, &p);
         }
+        // the far avatars posed for Inspect's 3D view, named again while it
+        // is drawn (not with the interface off)
+        self.scene.watched.clear();
         match self.screen {
             Screen::Login => {
                 if let Some(demo) = &mut self.update_demo {
@@ -21292,20 +21362,8 @@ impl App {
                 ) {
                     self.settings.save();
                 }
-                if self.inspect_ui.open {
-                    let (rows, totals) = self.inspect_rows();
-                    let mut columns = self.settings.inspect_columns;
-                    if let Some(id) = self.inspect_ui.show(&ctx, &p, &rows, &totals, &mut columns) {
-                        self.profile_ui.open(&mut self.world, id);
-                    }
-                    if columns != self.settings.inspect_columns {
-                        self.settings.inspect_columns = columns;
-                        self.settings.save();
-                    }
-                    if !self.inspect_ui.open {
-                        self.inspect_closed();
-                    }
-                }
+                self.demo_inspect();
+                self.inspect_window(&ctx, &p);
                 self.blacklist_window(&ctx, &p);
                 self.group_titles_window(&ctx, &p);
                 self.world_look_window(&ctx, &p);
@@ -25136,7 +25194,7 @@ impl ApplicationHandler for App {
                 self.panels.chat = true;
                 let text = if mode == "long" {
                     "A long paragraph with café and emoji 🙂 that wraps within the chat field.\n".repeat(12)
-                } else if mode == "ime" {
+                } else if matches!(mode.as_str(), "ime" | "os-ime") {
                     String::new()
                 } else {
                     "First paragraph with café 🙂\n\nSecond paragraph\nCtrl+Shift+Enter adds a new line".into()

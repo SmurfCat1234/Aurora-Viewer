@@ -6451,7 +6451,7 @@ both open states and the selection count. Capture at frame 620.
 | Variable | Effect |
 |---|---|
 | `AURORA_DEMO_TOOLBAR=1` | Open the "Toolbar buttons" window; the bars mockup's custom state, side toolbars, labels. |
-| `AURORA_DEMO_AREA_SEARCH=1\|filters\|ranges\|scope\|fields\|columns\|all-columns\|link\|parcel\|sale\|search\|menu` | Open Area Search with named objects and sale entries; `menu` opens its right-click menu. |
+| `AURORA_DEMO_AREA_SEARCH=1\|market,select\|card\|filters\|table\|owners\|…` | Open Area Search on the plaza or a market of 360 pieces; options separated by commas |
 | `AURORA_DEMO_TEXTURE_LIBRARY=<mode>` | Compact inventory library with synthetic folders, eight types and thumbnails. |
 | `AURORA_DEMO_UNINSTALL=confirm\|running\|result\|left` | "Remove Aurora from this computer" as a dry run: its confirmation, or the result window. |
 
@@ -6468,17 +6468,23 @@ read from or removed in the registry, the desktop files, the credential
 store or Blender: the log says what a real removal would do. Capture after
 frame 700 in English, French and Japanese.
 
-`AURORA_DEMO_AREA_SEARCH`: `1` opens the object list; `parcel` restricts it to
-the agent's parcel, `sale` shows sale entries, `filters` opens Filters (required/excluded properties, permissions, click action and scope), and
-`search` searches the localized fountain name, and `menu` right-clicks the
-second row to open the result menu. `fields` expands the six-field Search form,
-`ranges` opens distance and sale price, `scope` is an alias for Filters, `columns` opens the Columns popout, `all-columns` shows all ten result columns,
-and `link` round-trips a fountain search through the SLapp parser.
-Capture after frame 740 in English, French and Japanese, at normal and 150% UI scale. Check the column
-sorting, combined text and flag filters, the in-field crosses that clear only
-their filled text filter and return keyboard focus to it, Reset, Refresh preserving filters,
-selection, Inspect, Zoom/double click, Copy UUID, and the toolbar button reopening
-a minimized window. The right-click menu (`menu`): Ctrl and Shift clicks select
+`AURORA_DEMO_AREA_SEARCH`: options separated by commas. `1` opens the window;
+`market` adds 360 pieces of furniture of several owners, creators, land impacts
+and kinds; `select`
+takes the third row, `card` too with its card open; `parcel` restricts to the
+agent's parcel, `sale` to what is for sale, `search` searches the localized
+fountain name, `menu` right-clicks the second row, `filters` opens the filters,
+`regex` a wrong expression, `owners`, `table`, `all-columns`, `distance`,
+`sale-list` and `3d` grow that tile (or show that tab), and `link` round-trips a
+fountain search through the SLapp parser. Capture after frame 740 in English,
+French and Japanese, at `AURORA_TEXT_SIZE=1`, `1.5` and `2`, at its first and its least size. Check
+the chart's handles (drag, arrows, Shift + arrows), a drag over the bars, the
+kinds' three states and the chips, the sort of every column, the sideways scroll
+with the name in view, the folded and open card, Reset, Save as default, Copy as
+link, the separate resets of the "…" menu, Refresh preserving filters, Select
+several, Ctrl+A and the arrow keys in the list, Inspect, Zoom / double click,
+Copy UUID, the top row selected as the window opens and for each new search or order (kept while you walk, replaced by the first click even with Ctrl, and none after Clear selection until another search), the 3D view empty once nothing is, and the toolbar button
+reopening a minimized window. The right-click menu (`menu`): Ctrl and Shift clicks select
 several rows and every entry acts on all of them; Sit, Teleport to and Buy need
 one row (Buy one for sale), Zoom one within the draw distance; a right click
 outside the selection selects that row alone; Select all, Clear selection and
@@ -6825,7 +6831,7 @@ before (`amis`, `groupes`, `repere`, `historique`…) are still accepted.
 | `AURORA_DEMO_EMOJI_CODES=<text>` | Conversations input holding a text with the keyboard: emoji code suggestions |
 | `AURORA_DEMO_RECENT_EMOJIS=1\|<emojis>` | Recent emojis over the chat fields (under them with the Legacy chat style): a full row, or the emojis given |
 | `AURORA_DEMO_FAVORITE_EMOJIS=<emojis>` | Favourite emojis: first in that row, the picker opening on their tab |
-| `AURORA_DEMO_CHAT_INPUT=1\|long\|ime` | Paragraph drafts or Japanese IME composition in chat inputs |
+| `AURORA_DEMO_CHAT_INPUT=1\|long\|ime\|os-ime` | Paragraph drafts, Japanese IME composition in chat inputs, or an empty field for a real input method |
 | `AURORA_DEMO_SPELLING=1\|menu\|replace` | Misspelled words underlined in the chat bar and Conversations; their suggestions; auto-replace while typing |
 | `AURORA_DEMO_CONV_EMOJI=1` | Messages of emoji alone in the friend's conversation, drawn large (with `AURORA_DEMO_CONV`) |
 | `AURORA_DEMO_CONV_PREVIEWS=1\|states\|videos\|clips\|services\|links\|net` | Picture, GIF and YouTube cards; `clips` shows video files and an animated WebP; `links[:gif\|image\|video]` isolates URL actions; `services[:gyazo,…]` shows service pages and social posts; `net` uses real sites |
@@ -6847,6 +6853,7 @@ before (`amis`, `groupes`, `repere`, `historique`…) are still accepted.
 | `AURORA_DEMO_CONV_LINE_MENU=1\|object` | Open a visible message's context menu in Aurora or Compact (with `AURORA_DEMO_CONV`), or an object line's in any style (with `AURORA_DEMO_OBJECT_CHAT`) |
 | `AURORA_DEMO_CONV_MODERATE=menu\|eject\|ban\|banned\|error\|ban-all\|unban-all\|ban-all-run\|profile` | A group chat's moderator options on a member: the menu, the eject and ban questions, a ban sent, a refused text mute, a ban in all our groups and its report, the profile's menu (with `AURORA_DEMO_CONV=aurora:group`) |
 | `AURORA_DEMO_PROFILE=<avatar>[:tab\|edit\|compact\|classic\|form\|publish\|new-pick]` | An avatar's profile window |
+| `AURORA_DEMO_INSPECT=wolf\|self\|crowd\|objects\|glass\|market[:wide\|small,item\|open\|grow-…\|…]` | Inspect on what someone wears, or on objects, small or wide; options separated by commas |
 | `AURORA_DEMO_CONTENTS_DROP=world\|panel[:ctrl][:drop]` | A selection of four inventory entries carried over an object or onto its Contents tab, with or without Ctrl |
 | `AURORA_DEMO_SHARE=multi[:n=<count>]` | Dozens of Orion-like friends (default 80) for inventory Share multi-select (#3074) |
 | `AURORA_DEMO_GIVE=profile\|avatar\|texture[:over\|:drop]` | Inventory carried to a resident's profile window or to their avatar in the world: hint, outline, give confirmation (#991) |
@@ -6907,6 +6914,31 @@ before (`amis`, `groupes`, `repere`, `historique`…) are still accepted.
 | `AURORA_DEMO_POSE_STAND=open\|cycle` | The toolbar's pose stand: its window and the poses it plays |
 
 ### Details
+
+- **`AURORA_DEMO_INSPECT=wolf|self|objects|glass[:option]`** (`glass`: objects with see-through faces) opens Inspect once the objects
+  are in view: `wolf` (default) on Violet Wolf's hat and orb, `self` on the
+  demo agent's chest, facial and skull attachments, `objects` on the first six
+  objects of the plaza (Objects tab, Owned by on the cards, Owner and Created in
+  Details). Check the summary card, the body-area sections, an opened card
+  (grey outline, Made by, Worn on, the figure tiles with their share, the prims,
+  the outlined one in violet), the Profile button on the line pointed at, a
+  right click that looks at the item, the View panel and the Details table. `:open` opens the
+  third object's card, `:creators` and `:details` show those tabs, `:view` the
+  View panel. `worn` inspects one worn object and `piece` one object of the market (both open
+  wide), `crowd` takes someone of `AURORA_DEMO_CROWD`, `pbr` the objects with a PBR material
+  (`AURORA_DEMO_PBR_METAL=1`, `AURORA_DEMO_PBR_OVERRIDE=1`), `market` eight pieces
+  of the market below, of several owners. `:small` and `:wide` force a view (never
+  kept in the settings). In the wide one: `item` opens the third object, `hover`
+  outlines the fourth in 3D, `paused` and `light` its
+  animation and ground, `grow-3d`, `grow-items`, `grow-complexity`,
+  `grow-makers`, `grow-places`, `grow-figures` and `grow-prims` grow that tile.
+  Options go together, separated by commas (`wolf:wide,item,grow-prims`). Check
+  that nothing spins by itself, dragging, a right drag, the arrow keys and each button, the outline
+  and the name of what is pointed at, the shadows and the reflections, a click on an item in
+  3D, the violet on what is outlined in the world (the item, then a prim of it),
+  Set aside and Put back, a maker, an area and an owner picked (and their chips),
+  `AURORA_DEMO_CROWD=24` for the people of the strip, `AURORA_TEXT_SIZE=1.5` and
+  `2` (two columns), High contrast and Reduce motion.
 
 - **`AURORA_DEMO_RLVA`**: `enabled` opens Preferences > RLVa and
   applies synthetic object restrictions at frame 700. `disabled` delivers
@@ -7894,6 +7926,32 @@ failure. Grid validation and any paid upload are performed by the human.
   the selection, the prefix and the list focus. `aurora-…` opens the wide
   explorer, where the typed prefix shows in its label; `type-ahead-ime` the
   Legacy tree.
+- **`AURORA_DEMO_INVENTORY=ime|aurora-ime`**: the inventory for a real input
+  method, in the Legacy tree or the wide explorer. Adds the rows "マスク",
+  "ママ服" and "Zipper bag" at the root, clicks "Animations" at frames
+  650–651 so the list holds the keyboard, and sends nothing else: the keys
+  come from the system. From frame 700, once a second, the log says
+  `demo inventory ime:` with the selected row's number (`Some(9702)` is
+  "ママ服"), the type-ahead prefix and the list's focus, and
+  `demo ime output:` with what the viewer asks of the input method in that
+  frame (`on`, `off`, or `interrupt`, which drops a composition) and
+  `interrupts=`, the frames that dropped one since the start: a drop lasts
+  one frame, which the once-a-second sample would miss. Composing "ママ" must
+  keep the selection and end on "ママ服"; "マスク" means the composition was
+  cut short. On Linux, `python3 scripts/test-ime-linux.py` runs it, and
+  `AURORA_DEMO_CHAT_INPUT=os-ime`, against fcitx5 and Mozc without touching
+  the desktop: a headless sway on a private runtime folder and D-Bus, the
+  keys typed by wtype ("mama", F7, Enter), the checks read from the log
+  (`interrupts=` must not grow once the target holds the keyboard), and
+  grim's captures beside the logs in `.scratch/ime-test/<time>/`.
+  The list draws no preedit and a new Mozc dictionary opens no prediction
+  window, so the inventory's captures show no composition: the log is the
+  proof there; the chat field shows it underlined. `--only inventory|aurora-inventory|chat` picks scenarios, `--viewer` a
+  built binary. It exits 0 when every check passed, 1 when one failed and
+  2 when it could not run (a missing tool, a process that did not start).
+  On Arch: `sudo pacman -S --needed sway fcitx5 fcitx5-mozc wtype grim`.
+  Not covered: X11 with XIM, Windows (TSF, IMM32), other input methods,
+  and picking a candidate from the list.
 - **`AURORA_DEMO_INVENTORY=locked|aurora-locked`**: locks the demo folder
   holding the demo object, in the Legacy or Aurora inventory. Check its
   "Locked" tag after the name; the folder itself refuses Delete, Cut and a
@@ -9214,6 +9272,11 @@ failure. Grid validation and any paid upload are performed by the human.
   Windows QA still needs ATOK and Microsoft IME: compose, convert, move the
   active segment, commit and cancel in Conversations, nearby chat and search;
   also check Korean composition and ordinary selection/copy/paste.
+  `os-ime` starts with the same empty field and no synthetic event, for a
+  real input method: from frame 700, once a second, the log says
+  `demo chat os-ime:` with the field's text and focus, and
+  `demo ime output:` as for `AURORA_DEMO_INVENTORY=ime`, whose entry
+  describes `scripts/test-ime-linux.py`.
 - **`AURORA_DEMO_RECENT_EMOJIS=1|<emojis>`**: the row under the chat
   fields (the island's, the Conversations window's), `1` a full row of 20,
   or the emojis given, the last one first. Nothing is saved. A click adds
@@ -13241,6 +13304,7 @@ What the inventory must show with these scenarios:
 | `AURORA_WORN_RANK=own` | Meshes worn by other avatars downloaded in the rank of their own size, not their avatar's, as before |
 | `AURORA_FETCH_SLOTS=<n>` | Asset requests under way at once fixed for this launch (1 to 256), whatever Preferences › Network and cache › Download connections says |
 | `AURORA_DEMO_NET_ADAPTER=<description>` | This network adapter instead of the computer's, for the download connections (e.g. `Marvell AQtion 10Gbit Network Adapter`: always limited, "Follow the connection" greyed) |
+| `AURORA_AREA_SEARCH_360=0` | Area Search leaves the regions' interest list to the camera's view, as before, to compare the objects listed and the load |
 | `AURORA_SYNC_SLICE=1` or `alt` | Scene sync by slice of all the objects, as before |
 | `AURORA_PENDING_PARK=0` | Every object waiting for its geometry asked about by the sync's round, as before |
 | `AURORA_SYNC_CHECK=1` | What the scene sync visits each frame |
