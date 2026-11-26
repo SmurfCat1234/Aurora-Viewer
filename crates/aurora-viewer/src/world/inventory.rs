@@ -454,12 +454,17 @@ impl Inventory {
             self.repair_item_parents(&mut c.items, parents::ItemSource::Snapshot);
             if acknowledge && !library {
                 for item in &c.items {
+                    let id = item.id;
+                    let claimed = self.items_reading.remove(&(id, false)).is_some();
                     // A request for an item already in the model may be an
                     // explicit refresh. Folder versions don't order those reads.
-                    if !self.items.contains_key(&item.id) {
-                        self.accepted_snapshot_items.push(item.id);
+                    // Avoid sending the rest of a cold walk back to the reader:
+                    // it has no queued read or retry state for those records.
+                    if (claimed || self.item_failures.contains_key(&id) || self.give_up_rounds.contains_key(&id))
+                        && !self.items.contains_key(&id)
+                    {
+                        self.accepted_snapshot_items.push(id);
                     }
-                    self.items_reading.remove(&(item.id, false));
                 }
             }
             self.add_items_inner(c.items);

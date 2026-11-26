@@ -106,18 +106,22 @@ fn only_an_accepted_snapshot_can_acknowledge_a_previously_unknown_item() {
     let root = inv.root;
     let known = id(987_654);
     let unknown = id(987_655);
+    let never_requested = id(987_656);
+    let failed = id(987_657);
     inv.add_items(vec![InvItem {
         id: known,
         parent: root,
         ..Default::default()
     }]);
+    inv.claim_item_reads(&mut vec![unknown], false, std::time::Instant::now());
+    inv.items_failed(&[failed]);
     let version = inv.folders[&root].info.version;
     let snapshot = |version| FolderContents {
         folder_id: root,
         owner_id: Uuid::nil(),
         version,
         folders: vec![],
-        items: [known, unknown]
+        items: [known, unknown, never_requested, failed]
             .into_iter()
             .map(|id| InvItem {
                 id,
@@ -138,8 +142,8 @@ fn only_an_accepted_snapshot_can_acknowledge_a_previously_unknown_item() {
     assert!(inv.apply_snapshots(vec![snapshot(version)], true).is_empty());
     assert_eq!(
         inv.take_accepted_snapshot_items(),
-        vec![unknown],
-        "an accepted snapshot cannot cancel an explicit refresh"
+        vec![unknown, failed],
+        "acknowledge outstanding reads and cooldowns without canceling refreshes or forwarding unrelated items"
     );
 }
 

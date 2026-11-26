@@ -90,6 +90,7 @@ fn a_reply_after_the_deadline_cannot_complete_its_replacement() {
     assert_eq!(inv.folders[&folder].state, FetchState::Fetching);
     assert!(!inv.items.contains_key(&id(100)));
     assert!(inv.take_accepted_snapshot_items().is_empty());
+    inv.claim_item_reads(&mut vec![id(101)], false, now);
     assert!(fetch.on_reply(&mut inv, *request, Ok(vec![snapshot(id(101))])));
     assert_eq!(inv.folders[&folder].state, FetchState::Fetched);
     assert_eq!(inv.take_accepted_snapshot_items(), vec![id(101)]);
