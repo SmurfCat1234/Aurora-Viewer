@@ -387,6 +387,7 @@ struct Session<'a> {
     asset_imports: asset_imports::Imports,
     inventory_previews: inventory_preview::Previews,
     inventory_reads: Option<inventory_reads::Reader>,
+    inventory_tree_pacing: [Option<Arc<crate::inventory::ais::SubtreePacer>>; 2],
     script_transfers: scripts::ScriptTransfers,
     inventory_callbacks: HashMap<u32, (Instant, bool)>,
     inventory_copies: inventory_copies::Pending,
@@ -617,6 +618,7 @@ pub(crate) async fn run_session(sh: &Shared, req: LoginRequest, cmd_rx: &mut mps
         asset_imports: Default::default(),
         inventory_previews: Default::default(),
         inventory_reads: None,
+        inventory_tree_pacing: Default::default(),
         script_transfers: Default::default(),
         inventory_callbacks: HashMap::new(),
         inventory_copies: inventory_copies::Pending::default(),
@@ -3667,6 +3669,10 @@ impl Session<'_> {
         library: bool,
     ) {
         let ais = self.main_cap(if library { "LibraryAPIv3" } else { "InventoryAPIv3" });
+        let pacer = ais
+            .as_deref()
+            .filter(|_| depth > 0)
+            .map(|cap| crate::inventory::ais::SubtreePacer::for_cap(&mut self.inventory_tree_pacing[usize::from(library)], cap));
         let legacy = self.main_cap(if library {
             "FetchLibDescendents2"
         } else {
@@ -3677,7 +3683,7 @@ impl Session<'_> {
         tokio::spawn(async move {
             let count = if children.is_empty() { 1 } else { children.len() };
             let result = if let Some(cap) = ais {
-                crate::inventory::ais::fetch_tree(&http, &cap, owner, parent, &children, depth).await
+                crate::inventory::ais::fetch_tree(&http, &cap, owner, parent, &children, depth, pacer).await
             } else if let Some(url) = legacy {
                 let folders = if children.is_empty() { vec![parent] } else { children };
                 let body = crate::inventory::fetch_request_body(&folders, owner);
@@ -7209,6 +7215,7 @@ mod event_queue_tests {
             asset_imports: Default::default(),
             inventory_previews: Default::default(),
             inventory_reads: None,
+            inventory_tree_pacing: Default::default(),
             script_transfers: Default::default(),
             inventory_callbacks: HashMap::new(),
             inventory_copies: inventory_copies::Pending::default(),
@@ -7591,6 +7598,7 @@ mod script_dialog_tests {
             asset_imports: Default::default(),
             inventory_previews: Default::default(),
             inventory_reads: None,
+            inventory_tree_pacing: Default::default(),
             script_transfers: Default::default(),
             inventory_callbacks: HashMap::new(),
             inventory_copies: super::inventory_copies::Pending::default(),
