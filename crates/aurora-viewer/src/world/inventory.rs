@@ -385,6 +385,13 @@ impl Inventory {
     }
 
     pub(super) fn apply_snapshots(&mut self, contents: Vec<FolderContents>, acknowledge: bool) -> Vec<Uuid> {
+        let timing = aurora_net::probe::enabled().then(|| {
+            (
+                std::time::Instant::now(),
+                contents.len(),
+                contents.iter().map(|snapshot| snapshot.items.len()).sum::<usize>(),
+            )
+        });
         if acknowledge {
             self.accepted_snapshot_items.clear();
         }
@@ -467,7 +474,7 @@ impl Inventory {
                     }
                 }
             }
-            self.add_items_inner(c.items);
+            self.add_items_inner(c.items, Some(c.folder_id));
             self.sort_children(c.folder_id);
         }
         if !refreshed.is_empty() {
@@ -501,6 +508,15 @@ impl Inventory {
             }
             self.request(*id);
         }
+        if let Some((started, folders, items)) = timing
+            && started.elapsed().as_millis() >= 8
+        {
+            log::info!(
+                "inventory snapshot apply: folders={folders} items={items} stale={} elapsed_ms={:.2}",
+                stale.len(),
+                started.elapsed().as_secs_f64() * 1000.0
+            );
+        }
         stale
     }
 
@@ -513,22 +529,24 @@ impl Inventory {
     /// (#1580). Lists stay ordered like `sort_children`'s.
     pub fn add_items(&mut self, mut items: Vec<InvItem>) {
         self.repair_item_parents(&mut items, parents::ItemSource::Fetch);
-        self.add_items_inner(items);
+        self.add_items_inner(items, None);
     }
 
     /// A metadata read recovering a newly script-attached original retains
     /// LLInventoryModel::updateItem's creation rules across HTTP delays.
     pub fn add_attachment_items(&mut self, mut items: Vec<InvItem>) {
         self.repair_item_parents(&mut items, parents::ItemSource::Attachment);
-        self.add_items_inner(items);
+        self.add_items_inner(items, None);
     }
 
     pub fn add_orphan_items(&mut self, mut items: Vec<InvItem>) {
         self.repair_item_parents(&mut items, parents::ItemSource::Orphans);
-        self.add_items_inner(items);
+        self.add_items_inner(items, None);
     }
 
-    fn add_items_inner(&mut self, items: Vec<InvItem>) {
+    /// A complete snapshot has installed its own listing. Only incremental
+    /// records and originals under a different parent need a membership check.
+    fn add_items_inner(&mut self, items: Vec<InvItem>, listed_in: Option<Uuid>) {
         self.generation += 1;
         for mut it in items {
             self.item_failures.remove(&it.id);
@@ -543,13 +561,15 @@ impl Inventory {
                 self.pending_parent_repairs.remove(&it.id);
             }
             if let Some(old) = self.items.get(&it.id)
+                && Some(old.parent) != listed_in
                 && (old.parent != it.parent || old.name != it.name)
                 && let Some(folder) = self.folders.get_mut(&old.parent)
             {
                 folder.items.retain(|id| *id != it.id);
             }
             let items = &self.items;
-            if let Some(f) = self.folders.get_mut(&it.parent)
+            if Some(it.parent) != listed_in
+                && let Some(f) = self.folders.get_mut(&it.parent)
                 && (f.state == FetchState::Fetched || self.repaired_parents.get(&it.id) == Some(&it.parent))
                 && !f.items.contains(&it.id)
             {
@@ -646,7 +666,7 @@ impl Inventory {
                 folder.info.version = folder.info.version.saturating_add(1);
             }
         }
-        self.add_items_inner(items);
+        self.add_items_inner(items, None);
         for id in resort {
             self.sort_children(id);
         }

@@ -688,6 +688,30 @@ fn moved_and_renamed_items_take_their_sorted_place() {
 }
 
 #[test]
+fn snapshot_sorts_renamed_members_and_keeps_origins_in_their_own_folders() {
+    let mut inv = fixture();
+    let listed = id(8000);
+    let another = id(8001);
+    let mut renamed = inv.items[&id(8100)].clone();
+    renamed.name = "Zebra".into();
+    let mut sibling = inv.items[&id(8101)].clone();
+    sibling.name = "Apple".into();
+    let mut original = renamed.clone();
+    original.id = id(99999);
+    original.parent = another;
+    inv.apply(vec![FolderContents {
+        folder_id: listed,
+        owner_id: inv.owner,
+        version: inv.folders[&listed].info.version + 1,
+        folders: Vec::new(),
+        items: vec![renamed, original, sibling],
+    }]);
+    assert_eq!(inv.folders[&listed].items, [id(8101), id(8100)]);
+    assert!(inv.folders[&another].items.contains(&id(99999)));
+    assert_eq!(inv.items[&id(99999)].parent, another);
+}
+
+#[test]
 fn broken_and_cyclic_links_are_not_followed() {
     let mut inv = fixture();
     inv.items.get_mut(&id(8113)).expect("link").asset_id = id(8113);
