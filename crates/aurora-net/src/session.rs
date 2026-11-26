@@ -3561,40 +3561,19 @@ impl Session<'_> {
             let events = self.sh.events.clone();
             tokio::spawn(async move {
                 for chunk in folders.chunks(16) {
-                    match crate::inventory::ais::fetch_folders(&http, &cap, owner, chunk).await {
-                        Ok(contents) => {
-                            let _ = events.send(NetEvent::InventoryContents(contents));
-                        }
-                        // One refused folder fails the whole batch: read each
-                        // one alone, so that only the folder the server
-                        // refuses by itself is over the limit
-                        // (BGFolderHttpHandler::processFailure splits a 403).
-                        Err(error) if error.kind == crate::inventory::ais::FetchFailure::TooBig && chunk.len() > 1 => {
-                            for id in chunk {
-                                match crate::inventory::ais::fetch_folders(&http, &cap, owner, std::slice::from_ref(id)).await {
-                                    Ok(contents) => {
-                                        let _ = events.send(NetEvent::InventoryContents(contents));
-                                    }
-                                    Err(error) => {
-                                        log::warn!("inventory fetch of {id} failed: {error}");
-                                        let _ = events.send(NetEvent::InventoryFetchFailed {
-                                            folders: vec![*id],
-                                            too_big: error.kind == crate::inventory::ais::FetchFailure::TooBig,
-                                            status: error.status,
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        Err(error) => {
-                            log::warn!("inventory fetch failed: {error}");
-                            let too_big = error.kind == crate::inventory::ais::FetchFailure::TooBig;
-                            let _ = events.send(NetEvent::InventoryFetchFailed {
-                                folders: chunk.to_vec(),
-                                too_big,
-                                status: error.status,
-                            });
-                        }
+                    let reads = crate::inventory::ais::read_folders(&http, &cap, owner, chunk).await;
+                    if !reads.contents.is_empty() {
+                        let _ = events.send(NetEvent::InventoryContents(reads.contents));
+                    }
+                    // Each AIS GET already read a single folder. Preserve
+                    // successful siblings and report only real failures.
+                    for (id, error) in reads.failures {
+                        log::debug!("inventory folder read failed: {error}");
+                        let _ = events.send(NetEvent::InventoryFetchFailed {
+                            folders: vec![id],
+                            too_big: error.kind == crate::inventory::ais::FetchFailure::TooBig,
+                            status: error.status,
+                        });
                     }
                 }
             });

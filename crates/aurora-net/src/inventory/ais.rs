@@ -533,25 +533,55 @@ async fn get_with(
     }
 }
 
-/// Bounded parallel reads, outside the viewer thread. Never substitute a
-/// legacy listing: it may omit the favorites and thumbnails of siblings.
+#[derive(Default)]
+pub(crate) struct FolderReads {
+    pub contents: Vec<FolderContents>,
+    pub failures: Vec<(Uuid, FetchError)>,
+}
+
+/// Callers such as mutations need a complete readback before proceeding.
 pub async fn fetch_folders(http: &reqwest::Client, cap: &str, owner: Uuid, ids: &[Uuid]) -> Result<Vec<FolderContents>, FetchError> {
-    let mut contents = Vec::with_capacity(ids.len());
+    let reads = read_folders(http, cap, owner, ids).await;
+    match reads.failures.into_iter().next() {
+        Some((_, error)) => Err(error),
+        None => Ok(reads.contents),
+    }
+}
+
+/// Bounded parallel reads outside the viewer thread. A failure answers
+/// only its own folder. Keep good listings, including favorites and
+/// thumbnails that the legacy endpoint may omit.
+pub(crate) async fn read_folders(http: &reqwest::Client, cap: &str, owner: Uuid, ids: &[Uuid]) -> FolderReads {
+    let mut reads = FolderReads::default();
     for chunk in ids.chunks(16) {
         let mut tasks = tokio::task::JoinSet::new();
+        let mut answered = HashSet::with_capacity(chunk.len());
         for id in chunk.iter().copied() {
             let http = http.clone();
             let url = format!("{}/category/{id}/children?depth=0", cap.trim_end_matches('/'));
             tasks.spawn(async move {
-                let doc = get(&http, url).await?;
-                parse_folder(&doc, id, owner).map_err(|_| FetchError::new(FetchFailure::Fatal, Some(200)))
+                let result = get(&http, url)
+                    .await
+                    .and_then(|doc| parse_folder(&doc, id, owner).map_err(|_| FetchError::new(FetchFailure::Fatal, Some(200))));
+                (id, result)
             });
         }
         while let Some(result) = tasks.join_next().await {
-            contents.push(result.map_err(|_| FetchError::new(FetchFailure::Fatal, None))??);
+            let Ok((id, result)) = result else { continue };
+            answered.insert(id);
+            match result {
+                Ok(contents) => reads.contents.push(contents),
+                Err(error) => reads.failures.push((id, error)),
+            }
         }
+        reads.failures.extend(
+            chunk
+                .iter()
+                .filter(|id| !answered.contains(id))
+                .map(|id| (*id, FetchError::new(FetchFailure::Fatal, None))),
+        );
     }
-    Ok(contents)
+    reads
 }
 
 fn parse_item_reply(doc: &Llsd, id: Uuid, owner: Uuid) -> Result<InvItem, &'static str> {
@@ -839,6 +869,54 @@ mod tests {
             requests
         });
         (url, task)
+    }
+
+    #[tokio::test]
+    async fn a_refused_folder_does_not_discard_a_successful_sibling() {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.expect("local test server");
+        let cap = format!("http://{}", listener.local_addr().expect("address"));
+        let server = tokio::spawn(async move {
+            let mut requests = Vec::new();
+            for _ in 0..2 {
+                let (mut socket, _) = listener.accept().await.expect("connection");
+                let mut request = Vec::new();
+                while !request.windows(4).any(|bytes| bytes == b"\r\n\r\n") {
+                    let mut buffer = [0; 1024];
+                    let n = socket.read(&mut buffer).await.expect("read");
+                    assert_ne!(n, 0);
+                    request.extend_from_slice(&buffer[..n]);
+                }
+                requests.push((socket, request));
+            }
+            // The refusal reaches the client before the valid reply.
+            let good = format!("/category/{}/children", id(1));
+            requests.sort_by_key(|(_, bytes)| String::from_utf8_lossy(bytes).contains(&good));
+            let (mut refused, request) = requests.remove(0);
+            assert!(String::from_utf8_lossy(&request).contains(&format!("/category/{}/children", id(4))));
+            refused
+                .write_all(b"HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+                .await
+                .expect("refusal");
+            crate::test_http::finish(refused);
+            let (mut accepted, request) = requests.remove(0);
+            assert!(String::from_utf8_lossy(&request).contains(&good));
+            let body = aurora_llsd::to_xml(&snapshot(vec![record(3, false, 1, false)]));
+            let header = format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: application/llsd+xml\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+                body.len()
+            );
+            accepted.write_all(header.as_bytes()).await.expect("header");
+            accepted.write_all(&body).await.expect("body");
+            crate::test_http::finish(accepted);
+        });
+        let http = crate::test_http_client();
+        let reads = tokio::time::timeout(std::time::Duration::from_secs(5), read_folders(&http, &cap, id(2), &[id(4), id(1)]))
+            .await
+            .expect("independent folder results");
+        assert_eq!(reads.contents.len(), 1);
+        assert_eq!(reads.contents[0].folder_id, id(1));
+        assert_eq!(reads.failures, [(id(4), FetchError::status_of(403))]);
+        server.await.expect("server");
     }
 
     #[tokio::test]
