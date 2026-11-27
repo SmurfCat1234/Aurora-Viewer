@@ -1961,3 +1961,55 @@ fn rednote_distinguishes_a_public_post_from_the_login_card() {
     assert!(note.poster.is_some() && note.clip.is_none());
     assert!(rednote_post(page, &photo.replace("abc123", "other")).is_none());
 }
+
+pub(super) fn douyin_embed_endpoint(page: &str) -> Option<Url> {
+    let page = Url::parse(page).ok()?;
+    if page.scheme() != "https" || bare_host(&page).as_deref() != Some("douyin.com") {
+        return None;
+    }
+    let parts = segments(&page);
+    let ["video", id] = parts.as_slice() else { return None };
+    if !(15..=24).contains(&id.len()) || !id.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    Url::parse_with_params(
+        "https://open.douyin.com/api/douyin/v1/video/get_iframe_by_video",
+        [("video_id", *id)],
+    )
+    .ok()
+}
+
+pub(super) fn douyin_embed(page: &str, body: &[u8]) -> Option<FoundClip> {
+    let request = douyin_embed_endpoint(page)?;
+    let (_, id) = request.query_pairs().next()?;
+    let expected = format!("https://www.douyin.com/video/{id}");
+    let response: serde_json::Value = serde_json::from_slice(body).ok()?;
+    if response["err_no"].as_i64()? != 0 {
+        return None;
+    }
+    let video = &response["data"];
+    let (_, tag) = video["iframe_code"].as_str()?.split_once("<iframe ")?;
+    let src = unescape(attribute(&format!(" {}", tag.split_once('>')?.0), "src")?);
+    let url = Url::parse(&src).ok()?;
+    let player = super::hosted::Hosted::of(&url).filter(super::hosted::Hosted::regional)?;
+    if player.page() != expected {
+        return None;
+    }
+    Some(FoundClip {
+        clip: super::Clip::of(&src)?,
+        title: video["video_title"].as_str()?.chars().take(200).collect(),
+        channel: "Douyin".to_owned(),
+        posters: Vec::new(),
+        size: video["video_width"].as_f64().zip(video["video_height"].as_f64()),
+    })
+}
+
+#[test]
+fn official_douyin_embed_only_plays_the_requested_item() {
+    let page = "https://www.douyin.com/video/7616708656440085779";
+    let payload = br#"{"err_no":0,"data":{"video_title":"Official video","video_width":1920,"video_height":1080,
+        "iframe_code":"<iframe src=\"https://open.douyin.com/player/video?vid=7616708656440085779&amp;autoplay=0\"></iframe>"}}"#;
+    assert_eq!(douyin_embed(page, payload).unwrap().size, Some((1920.0, 1080.0)));
+    assert!(douyin_embed("https://www.douyin.com/video/7356906132482428172", payload).is_none());
+    assert!(douyin_embed(page, br#"{"err_no":28003004}"#).is_none());
+}

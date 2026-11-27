@@ -1310,6 +1310,12 @@ pub async fn fetch_page(client: &reqwest::Client, url: &str, trusted_only: bool)
                 };
                 return Ok(Content::Post(found.post, picture));
             }
+            if let Some(endpoint) = services::douyin_embed_endpoint(&page)
+                && let Ok((body, _)) = download(client, endpoint.as_str(), "application/json", 64 * 1024).await
+                && let Some(found) = services::douyin_embed(&page, &body)
+            {
+                return Ok(Content::Clip(fetch_found_clip(client, found).await));
+            }
             if let Some(endpoint) = services::dailymotion_oembed(&page)
                 && let Ok((body, _)) = download(client, endpoint.as_str(), "application/json", 64 * 1024).await
                 && let Some((post, poster)) = services::from_dailymotion_oembed(&page, &body)
