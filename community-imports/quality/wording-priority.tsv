@@ -1,5 +1,4 @@
 Area	Message ID	Matching preview locales	Locale count	English text to review
-Preferences	ui-options-preset-deluxe	cs, da, fi, fil, id, ms, nl, ro, sv, vi	10	Deluxe
 Preferences	ui-options-customize-animation	da, fi, fil, id, ms, nl, ro, sv, vi	9	A-Pose
 Chat	ui-chat-emoji	da, fi, fil, id, ms, nl, ro, sv	8	Emoji
 Chat	ui-chat-key-ooc	cs, da, fi, id, ms, ro, vi	7	for ((OOC))
@@ -25,6 +24,7 @@ Preferences	ui-options-folder	fil, id, ms, ro	4	Folder
 Preferences	ui-options-hud-media	cs, fi, nl, sv	4	HUD media
 Preferences	ui-options-layout	cs, da, fil, sv	4	Layout
 Preferences	ui-options-link-previews-medium	da, fil, nl, sv	4	Medium
+Preferences	ui-options-preset-deluxe	fil, id, ms, sv	4	Deluxe (RT)
 Preferences	ui-options-preset-medium	da, fil, nl, sv	4	Medium
 Preferences	ui-options-wireframe	fil, id, ms, nl	4	Wireframe
 Chat	ui-chat-tag-moderator	cs, ms, ro	3	Mod
@@ -76,7 +76,6 @@ Preferences	ui-options-auto-play-hud-media-mediaautoplayhuds	id, sv	2	Auto-play 
 Preferences	ui-options-auto-replace-filter-hint	id, nl	2	Filter
 Preferences	ui-options-blend-order-full	cs, sv	2	Full
 Preferences	ui-options-blend-order-stochastic	fil, ro	2	Stochastic
-Preferences	ui-options-blocked-chat-greyed	cs, id	2	Greyed
 Preferences	ui-options-content-general	cs, ro	2	General
 Preferences	ui-options-crosshair	fil, id	2	Crosshair
 Preferences	ui-options-crosshair-circle	fil, nl	2	Circle
