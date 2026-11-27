@@ -848,14 +848,19 @@ impl View {
             // the offset made while rows are measured
             let (bounds, align) = match player_reveal {
                 Some((_, bounds)) => {
-                    let align = (bounds.end - bounds.start > viewport.height()).then_some(egui::Align::Min);
+                    // Keep the full player clear of the edges of the resettled transcript.
+                    let align = if bounds.end - bounds.start > ui.clip_rect().height() {
+                        egui::Align::Min
+                    } else {
+                        egui::Align::Center
+                    };
                     (bounds, align)
                 }
-                None => (0.0..r.h, Some(egui::Align::Center)),
+                None => (0.0..r.h, egui::Align::Center),
             };
             let y = base + r.y;
             let to = egui::Rect::from_min_max(egui::pos2(rect.left(), y + bounds.start), egui::pos2(rect.right(), y + bounds.end));
-            ui.scroll_to_rect_animation(to, align, egui::style::ScrollAnimation::none());
+            ui.scroll_to_rect_animation(to, Some(align), egui::style::ScrollAnimation::none());
         }
         let mut i = self.rows.partition_point(|r| r.y + r.h <= view_top);
         let mut changed_from = usize::MAX;
@@ -1387,7 +1392,7 @@ mod tests {
                         });
                     });
                 player_in_view =
-                    player.is_some_and(|r| r.top() >= out.inner_rect.top() - 1.0 && r.bottom() <= out.inner_rect.bottom() + 1.0);
+                    player.is_some_and(|r| r.top() >= out.inner_rect.top() + 12.0 && r.bottom() <= out.inner_rect.bottom() - 12.0);
             });
         }
         assert!(opened, "the music card was visible before it expanded");
