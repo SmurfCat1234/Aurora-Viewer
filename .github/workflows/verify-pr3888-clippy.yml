@@ -1,0 +1,60 @@
+name: Verify #3888 Clippy on Linux and macOS
+
+on:
+  push:
+    branches: [ci/verify-pr3888-clippy-20261126]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  clippy:
+    name: Clippy (${{ matrix.platform.name }}, ${{ matrix.source.name }})
+    runs-on: ${{ matrix.platform.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Linux
+            runner: ubuntu-24.04
+          - name: macOS
+            runner: macos-15
+        source:
+          - name: recovery with main
+            ref: refs/pull/2/merge
+            sha: a6075d9ee044515ae3b7ccaae55e8d642dd12e82
+            tree: 8c39fe5d26a6cd876ee679c2897fca8f5def230f
+          - name: performance
+            ref: 1ee64b26eea1be5bc3eb3d991fd0622ee7085a2f
+            sha: 1ee64b26eea1be5bc3eb3d991fd0622ee7085a2f
+            tree: e184b2718f8642db89803951dbf659e8da09e005
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ matrix.source.ref }}
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+      - name: Check exact source
+        env:
+          EXPECTED_HEAD: ${{ matrix.source.sha }}
+          EXPECTED_TREE: ${{ matrix.source.tree }}
+        run: |
+          git log -1 --format='HEAD %H, tree %T'
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXPECTED_TREE"
+      - name: System libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libudev-dev libxkbcommon-dev libwayland-dev
+      - name: Rust stable
+        run: |
+          rustup toolchain install --profile minimal --no-self-update
+          rustup component add clippy
+      - name: Clippy (warnings are errors)
+        run: cargo clippy --profile ci --workspace --all-targets --locked -- -D warnings -A dead-code
