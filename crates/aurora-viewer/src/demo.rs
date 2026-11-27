@@ -1805,7 +1805,7 @@ pub fn bubbles_lines(world: &mut crate::world::World, view: Bubbles) {
                         ),
                         (
                             "youtube",
-                            "https://music.youtube.com/playlist?list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI",
+                            "https://music.youtube.com/playlist?list=PLRBp0Fe2Gpgmdybd_lCTM_lqLihVncsHT",
                         ),
                         ("suno", "https://suno.com/song/015e1b03-5f5e-428c-9a5b-4da71ae8338f"),
                         ("soundcloud", "https://soundcloud.com/odesza/say-my-name-feat-zyra"),
