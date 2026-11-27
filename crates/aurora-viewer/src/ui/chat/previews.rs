@@ -1315,6 +1315,7 @@ fn compact_card<R>(
 /// The card of a preview that waits for a click; true when "Show" is
 /// clicked.
 fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f32) -> bool {
+    let site = lp::host(url).unwrap_or_default();
     let (icon, title) = match target {
         Target::Picture | Target::Page(_) => (
             "photo-filled",
