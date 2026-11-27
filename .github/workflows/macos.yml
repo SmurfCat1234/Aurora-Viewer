@@ -185,7 +185,8 @@ jobs:
         with:
           key: ${{ steps.cache.outputs.key }}
       - name: Tests (rest)
-        if: github.event_name != 'pull_request'
+
+
         # every failure of the run at once: the Apple GPU is reached here only
         run: |
           cargo test --profile ci --workspace --locked --no-fail-fast -- --skip ui::
@@ -199,7 +200,8 @@ jobs:
       # shows, and the frames must go on behind it (on macOS it froze the
       # main thread until a click, which no runner gives)
       - name: A demo frame on Metal
-        if: github.event_name != 'pull_request'
+
+
         timeout-minutes: 15
         env:
           AURORA_DEMO: '1'
@@ -234,7 +236,7 @@ jobs:
             exit 1
           fi
       - name: Demo image and log
-        if: always() && github.event_name != 'pull_request'
+        if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: macos-demo
@@ -249,7 +251,7 @@ jobs:
     # runs in one job and only one.
     name: tests (macOS, interface)
     needs: [scope, mac-runner]
-    if: ${{ !cancelled() && github.event_name != 'pull_request' && needs.scope.result == 'success' && needs.scope.outputs.needed == 'true' }}
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.needed == 'true' }}
     runs-on: ${{ needs.mac-runner.outputs.interface && fromJSON(needs.mac-runner.outputs.interface) || 'macos-15' }}
     timeout-minutes: 60
     steps:
