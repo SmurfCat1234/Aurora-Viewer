@@ -472,8 +472,10 @@ mod tests {
             folders,
             items: Vec::new(),
         };
-        let mut inv = Inventory::default();
-        inv.root = root;
+        let mut inv = Inventory {
+            root,
+            ..Default::default()
+        };
         inv.apply(vec![
             listing(
                 root,
