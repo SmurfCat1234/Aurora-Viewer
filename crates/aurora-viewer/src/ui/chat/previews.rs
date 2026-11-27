@@ -1225,7 +1225,8 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         lp::MusicKind::Album => aurora_i18n::tr!("ui-chat-preview-music-album", provider = provider),
         lp::MusicKind::Playlist => aurora_i18n::tr!("ui-chat-preview-music-playlist", provider = provider),
     };
-    let size = Vec2::new(width, music.height());
+    let wide_enough = width >= music.minimum_width();
+    let size = Vec2::new(width.max(music.minimum_width()), music.height());
     let aspect = size.x / size.y;
     let mut open = false;
     let mut stop = false;
@@ -1261,7 +1262,7 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
             link: url.to_owned(),
             title,
             web,
-            window: pv.settings.player == lp::Player::Window,
+            window: pv.settings.player == lp::Player::Window || !wide_enough,
             drawn: pass,
             aspect,
             fitted: false,
@@ -1269,7 +1270,7 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         });
     }
     if let Some(player) = pv.playing.as_mut().filter(|player| player.key == k) {
-        if detach {
+        if detach || (!player.window && !wide_enough) {
             player.window = true;
             player.fitted = false;
         }
