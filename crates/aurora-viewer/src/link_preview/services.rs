@@ -441,16 +441,17 @@ pub(super) fn clip_from_oembed(service: Service, page: &str, body: &[u8]) -> Opt
 
 /// HTML's character references the services put in an attribute.
 fn unescape(s: &str) -> String {
-    s.replace("&amp;", "&")
-        .replace("&quot;", "\"")
+    s.replace("&quot;", "\"")
         .replace("&#39;", "'")
+        .replace("&#x27;", "'")
         .replace("&#x2F;", "/")
         .replace("&lt;", "<")
         .replace("&gt;", ">")
+        .replace("&amp;", "&")
 }
 
 /// The value of attribute `name` in the inside of a tag, quoted or not.
-fn attribute<'a>(tag: &'a str, name: &str) -> Option<&'a str> {
+pub(super) fn attribute<'a>(tag: &'a str, name: &str) -> Option<&'a str> {
     let lower = tag.to_ascii_lowercase();
     let mut from = 0;
     while let Some(at) = lower[from..].find(name) {
@@ -479,20 +480,21 @@ fn attribute<'a>(tag: &'a str, name: &str) -> Option<&'a str> {
 
 /// The picture a page announces for itself: its `og:image`, or
 /// `twitter:image` when it has none.
-pub(super) fn from_head(service: Service, html: &str) -> Option<String> {
-    let mut twitter = None;
-    for tag in html.split('<').skip(1) {
+pub(super) fn meta_tags(html: &str) -> impl Iterator<Item = (&str, String)> {
+    html.split('<').skip(1).filter_map(|tag| {
         let tag = tag.split('>').next().unwrap_or("");
         let is_meta =
             tag.get(..4).is_some_and(|t| t.eq_ignore_ascii_case("meta")) && tag[4..].starts_with(|c: char| c.is_ascii_whitespace());
-        if !is_meta {
-            continue;
-        }
-        let key = attribute(tag, "property").or_else(|| attribute(tag, "name")).unwrap_or("");
-        let Some(content) = attribute(tag, "content") else {
-            continue;
-        };
-        let url = cleaned(service, unescape(content));
+        is_meta.then_some(())?;
+        let key = attribute(tag, "property").or_else(|| attribute(tag, "name"))?;
+        Some((key, unescape(attribute(tag, "content")?)))
+    })
+}
+
+pub(super) fn from_head(service: Service, html: &str) -> Option<String> {
+    let mut twitter = None;
+    for (key, content) in meta_tags(html) {
+        let url = cleaned(service, content);
         if !picture_host_ok(service, &url) || (service == Service::Site && site_icon(&url)) {
             continue;
         }

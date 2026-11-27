@@ -6,7 +6,15 @@ use super::{Failure, Picture};
 
 pub struct Info {
     pub title: String,
+    pub detail: Option<String>,
     pub cover: Option<Picture>,
+}
+
+#[derive(Default)]
+struct Metadata {
+    title: Option<String>,
+    detail: Option<String>,
+    artwork: Option<Url>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -174,21 +182,80 @@ impl Music {
         }
     }
 
-    pub fn has_metadata(&self) -> bool {
-        self.provider == Provider::Spotify
+    pub fn app_uri(&self) -> Option<String> {
+        if self.provider != Provider::Spotify {
+            return None;
+        }
+        let (kind, id) = self.embed.path().strip_prefix("/embed/")?.split_once('/')?;
+        Some(format!("spotify:{kind}:{id}"))
+    }
+
+    fn public_page(&self) -> Option<Url> {
+        let path = self.embed.path();
+        match self.provider {
+            Provider::Spotify => Url::parse(&format!("https://open.spotify.com{}", path.strip_prefix("/embed")?)).ok(),
+            Provider::AppleMusic => {
+                let mut url = self.embed.clone();
+                url.set_host(Some("music.apple.com")).ok()?;
+                Some(url)
+            }
+            Provider::YouTubeMusic => {
+                let (_, list) = self.embed.query_pairs().find(|(key, _)| key == "list")?;
+                Url::parse_with_params("https://music.youtube.com/playlist", [("list", list)]).ok()
+            }
+            Provider::Suno => Url::parse(&format!("https://suno.com/song/{}", path.strip_prefix("/embed/")?)).ok(),
+            Provider::SoundCloud => {
+                let (_, page) = self.embed.query_pairs().find(|(key, _)| key == "url")?;
+                Url::parse(&page).ok()
+            }
+        }
     }
 
     pub async fn metadata(&self, client: &reqwest::Client) -> Result<Info, Failure> {
-        let catalog = self.embed.path().strip_prefix("/embed").ok_or(Failure::Unavailable)?;
-        let catalog = format!("https://open.spotify.com{catalog}");
-        let endpoint = Url::parse_with_params("https://open.spotify.com/oembed", [("url", &catalog)]).map_err(|_| Failure::Unavailable)?;
-        let (body, _) = super::download(client, endpoint.as_str(), "application/json", 32 * 1024).await?;
-        let (title, artwork) = spotify_metadata(&body).ok_or(Failure::Unavailable)?;
-        let cover = match artwork {
+        let page = self.public_page().ok_or(Failure::Unavailable)?;
+        let head = async {
+            super::text_head(client, page.as_str(), "text/html", "</head>")
+                .await
+                .0
+                .ok()
+                .map(|html| page_metadata(self.provider, &html))
+                .unwrap_or_default()
+        };
+        let oembed = async |url: &str| {
+            super::download(client, url, "application/json", 32 * 1024)
+                .await
+                .ok()
+                .and_then(|(body, _)| oembed_metadata(self.provider, &body))
+                .unwrap_or_default()
+        };
+        let data = match self.provider {
+            Provider::Spotify => {
+                let endpoint = Url::parse_with_params("https://open.spotify.com/oembed", [("url", page.as_str())])
+                    .map_err(|_| Failure::Unavailable)?;
+                let (embed, html) = tokio::join!(oembed(endpoint.as_str()), head);
+                Metadata {
+                    title: embed.title.or(html.title),
+                    detail: html.detail.or(embed.detail),
+                    artwork: embed.artwork.or(html.artwork),
+                }
+            }
+            Provider::SoundCloud => {
+                let endpoint = Url::parse_with_params("https://soundcloud.com/oembed", [("format", "json"), ("url", page.as_str())])
+                    .map_err(|_| Failure::Unavailable)?;
+                oembed(endpoint.as_str()).await
+            }
+            _ => head.await,
+        };
+        let title = data.title.ok_or(Failure::Unavailable)?;
+        let cover = match data.artwork {
             Some(url) => super::fetch_picture_sized(client, url.as_str(), 96).await.ok(),
             None => None,
         };
-        Ok(Info { title, cover })
+        Ok(Info {
+            title,
+            detail: data.detail,
+            cover,
+        })
     }
 
     pub fn player_page(&self, original: &str) -> String {
@@ -198,32 +265,91 @@ impl Music {
     }
 }
 
-fn spotify_metadata(body: &[u8]) -> Option<(String, Option<Url>)> {
-    let data: serde_json::Value = serde_json::from_slice(body).ok()?;
-    let title: String = data["title"].as_str()?.trim().chars().take(200).collect();
-    if title.is_empty() {
+fn display_text(value: &str) -> Option<String> {
+    let text: String = value.split_whitespace().collect::<Vec<_>>().join(" ").chars().take(200).collect();
+    (!text.is_empty()).then_some(text)
+}
+
+fn artwork_url(provider: Provider, value: &str) -> Option<Url> {
+    let url = Url::parse(value).ok()?;
+    if url.scheme() != "https" || !url.username().is_empty() || url.password().is_some() || url.port().is_some() {
         return None;
     }
-    let artwork = data["thumbnail_url"]
-        .as_str()
-        .and_then(|value| Url::parse(value).ok())
-        .filter(|url| {
-            url.scheme() == "https"
-                && url.username().is_empty()
-                && url.password().is_none()
-                && url.port().is_none()
-                && matches!(
-                    url.host_str(),
-                    Some(
-                        "i.scdn.co"
-                            | "mosaic.scdn.co"
-                            | "image-cdn-ak.spotifycdn.com"
-                            | "image-cdn-fa.spotifycdn.com"
-                            | "daylist.spotifycdn.com"
-                    )
-                )
+    let host = url.host_str()?;
+    let known = match provider {
+        Provider::Spotify => matches!(
+            host,
+            "i.scdn.co" | "mosaic.scdn.co" | "image-cdn-ak.spotifycdn.com" | "image-cdn-fa.spotifycdn.com" | "daylist.spotifycdn.com"
+        ),
+        Provider::AppleMusic => matches!(
+            host,
+            "is1-ssl.mzstatic.com" | "is2-ssl.mzstatic.com" | "is3-ssl.mzstatic.com" | "is4-ssl.mzstatic.com" | "is5-ssl.mzstatic.com"
+        ),
+        Provider::YouTubeMusic => matches!(host, "i.ytimg.com" | "yt3.googleusercontent.com" | "yt3.ggpht.com"),
+        Provider::Suno => matches!(host, "cdn.suno.ai" | "cdn1.suno.ai" | "cdn2.suno.ai"),
+        Provider::SoundCloud => matches!(host, "i1.sndcdn.com" | "i2.sndcdn.com"),
+    };
+    known.then_some(url)
+}
+
+fn oembed_metadata(provider: Provider, body: &[u8]) -> Option<Metadata> {
+    let data: serde_json::Value = serde_json::from_slice(body).ok()?;
+    let title = data["title"].as_str()?;
+    let detail = data["author_name"].as_str().and_then(display_text);
+    let suffix = detail.as_ref().map(|author| format!(" by {author}"));
+    let title = suffix.as_ref().and_then(|suffix| title.strip_suffix(suffix)).unwrap_or(title);
+    Some(Metadata {
+        title: Some(display_text(title)?),
+        detail,
+        artwork: data["thumbnail_url"].as_str().and_then(|value| artwork_url(provider, value)),
+    })
+}
+
+fn page_metadata(provider: Provider, html: &str) -> Metadata {
+    let mut tags = std::collections::HashMap::new();
+    for (key, value) in super::services::meta_tags(html) {
+        tags.entry(key).or_insert(value);
+    }
+    let field = |key| tags.get(key).and_then(|value| display_text(value));
+    let mut title = field("og:title");
+    let mut detail = field("og:description");
+    match provider {
+        Provider::AppleMusic => {
+            title = field("apple:title").or(title);
+            if let Some(artist) = apple_artist(html) {
+                detail = Some(detail.map_or_else(|| artist.clone(), |description| format!("{artist} · {description}")));
+            }
+        }
+        Provider::Suno => detail = field("music:musician_description"),
+        _ => {}
+    }
+    Metadata {
+        title,
+        detail,
+        artwork: tags.get("og:image").and_then(|value| artwork_url(provider, value)),
+    }
+}
+
+fn apple_artist(html: &str) -> Option<String> {
+    for script in html.split("<script").skip(1) {
+        let (attributes, body) = script.split_once('>')?;
+        if super::services::attribute(attributes, "type") != Some("application/ld+json") {
+            continue;
+        }
+        let Some((json, _)) = body.split_once("</script>") else { continue };
+        let Ok(data) = serde_json::from_str::<serde_json::Value>(json) else {
+            continue;
+        };
+        let artists = data.get("byArtist").or_else(|| data["audio"].get("byArtist"));
+        let name = artists.and_then(|by| {
+            let first = by.as_array().and_then(|list| list.first()).unwrap_or(by);
+            first["name"].as_str().and_then(display_text)
         });
-    Some((title, artwork))
+        if name.is_some() {
+            return name;
+        }
+    }
+    None
 }
 
 pub(super) fn player_answer(request: &str) -> Option<String> {
@@ -241,8 +367,7 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
         "<iframe src=\"{src}\" title=\"{name}\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" allowfullscreen></iframe>"
     );
     let (scripts, body) = if music.provider == Provider::Spotify {
-        let catalog = music.embed.path().strip_prefix("/embed/")?;
-        let (kind, id) = catalog.split_once('/')?;
+        let uri = music.app_uri()?;
         let nonce = uuid::Uuid::new_v4().simple();
         let api = "https://open.spotify.com/embed/iframe-api/v1";
         // Spotify's public loader fetches an eval-based bundle from this directory.
@@ -251,7 +376,7 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
         (
             format!("; script-src 'nonce-{nonce}' 'unsafe-eval' {api} {api_bundle}"),
             format!(
-                "<div id=\"spotify-player\" data-uri=\"spotify:{kind}:{id}\"></div>\
+                "<div id=\"spotify-player\" data-uri=\"{uri}\"></div>\
                  <template id=\"spotify-fallback\">{iframe}</template>\
                  <script nonce=\"{nonce}\">{}</script><script src=\"{api}\" async></script>",
                 include_str!("spotify_player.js")
@@ -291,13 +416,73 @@ mod tests {
 
     #[test]
     fn spotify_metadata_accepts_catalog_artwork_only() {
-        let (title, url) =
-            spotify_metadata(br#"{"title":" Pop Cube ","thumbnail_url":"https://image-cdn-fa.spotifycdn.com/image/example"}"#).unwrap();
-        assert_eq!(title, "Pop Cube");
-        assert!(url.is_some());
-        let (_, url) = spotify_metadata(br#"{"title":"Tune","thumbnail_url":"https://i.scdn.co.example.org/image/example"}"#).unwrap();
-        assert!(url.is_none());
-        assert!(spotify_metadata(br#"{"title":" "}"#).is_none());
+        let provider = Provider::Spotify;
+        let data = oembed_metadata(
+            provider,
+            br#"{"title":" Pop Cube ","thumbnail_url":"https://image-cdn-fa.spotifycdn.com/image/example"}"#,
+        )
+        .unwrap();
+        assert_eq!(data.title.as_deref(), Some("Pop Cube"));
+        assert!(data.artwork.is_some());
+        let data = oembed_metadata(
+            provider,
+            br#"{"title":"Tune","thumbnail_url":"https://i.scdn.co.example.org/image/example"}"#,
+        )
+        .unwrap();
+        assert!(data.artwork.is_none());
+        assert!(oembed_metadata(provider, br#"{"title":" "}"#).is_none());
+    }
+
+    #[test]
+    fn public_metadata_supplies_artist_and_catalog_details() {
+        let spotify = page_metadata(
+            Provider::Spotify,
+            r#"
+            <meta property="og:title" content="DAN DAN">
+            <meta property="og:description" content="ZARD · TODAY IS ANOTHER DAY · Song · 1996">
+        "#,
+        );
+        assert_eq!(spotify.detail.as_deref(), Some("ZARD · TODAY IS ANOTHER DAY · Song · 1996"));
+        let apple = page_metadata(
+            Provider::AppleMusic,
+            r#"
+            <meta name="apple:title" content="Dreams">
+            <meta property="og:description" content="Song · 1977 · Duration 4:17">
+            <script id=schema:song type="application/ld+json">{"audio":{"byArtist":[{"name":"Fleetwood Mac"}]}}</script>
+        "#,
+        );
+        assert_eq!(apple.title.as_deref(), Some("Dreams"));
+        assert_eq!(apple.detail.as_deref(), Some("Fleetwood Mac · Song · 1977 · Duration 4:17"));
+        let soundcloud = oembed_metadata(
+            Provider::SoundCloud,
+            br#"{"title":"Poland by Erased Tapes","author_name":"Erased Tapes"}"#,
+        )
+        .unwrap();
+        assert_eq!(soundcloud.title.as_deref(), Some("Poland"));
+        assert_eq!(soundcloud.detail.as_deref(), Some("Erased Tapes"));
+        let suno = page_metadata(
+            Provider::Suno,
+            r#"<meta property="og:title" content="Don&#x27;t"><meta property="og:description" content="Listen on Suno">"#,
+        );
+        assert_eq!(suno.title.as_deref(), Some("Don't"));
+        assert!(suno.detail.is_none());
+    }
+
+    #[test]
+    fn only_validated_spotify_catalog_links_produce_app_uris() {
+        let album = Url::parse("https://open.spotify.com/intl-de/album/3mlVZ7OTZgKJJAr275tHZX?si=ignored").unwrap();
+        assert_eq!(
+            Music::of(&album).unwrap().app_uri().as_deref(),
+            Some("spotify:album:3mlVZ7OTZgKJJAr275tHZX")
+        );
+        for url in [
+            "https://open.spotify.com.example.org/album/3mlVZ7OTZgKJJAr275tHZX",
+            "spotify:album:3mlVZ7OTZgKJJAr275tHZX",
+        ] {
+            assert!(Music::of(&Url::parse(url).unwrap()).is_none());
+        }
+        let apple = Url::parse("https://music.apple.com/us/song/dreams/594061856").unwrap();
+        assert!(Music::of(&apple).unwrap().app_uri().is_none());
     }
 
     #[test]

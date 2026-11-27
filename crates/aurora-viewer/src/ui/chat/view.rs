@@ -187,7 +187,7 @@ pub fn blocked_rows(lines: &VecDeque<ChatLine>, first: u64, blocked: Blocked, se
 
 /// The virtual transcript resolves the requested player after its row grows.
 pub(super) fn reveal_player(ui: &egui::Ui, rect: egui::Rect) {
-    let pass = ui.ctx().cumulative_pass_nr();
+    let pass = ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT);
     ui.ctx()
         .data_mut(|data| data.insert_temp(egui::Id::unique("chat_player_reveal"), (pass, rect)));
 }
@@ -893,7 +893,7 @@ impl View {
                     }
                     request
                 })
-                && pass == ui.ctx().cumulative_pass_nr()
+                && pass == ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT)
             {
                 self.player_reveal = Some((
                     first + row.line as u64,
