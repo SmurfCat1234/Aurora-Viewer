@@ -545,6 +545,7 @@ impl Previews {
                     aspect: None,
                 })),
                 Target::Page(_) => lp::fetch_page(&client, &url, trusted_only).await,
+                Target::Music(_) => Err(Failure::NotPicture),
             };
             let _ = tx.send((url, result));
         });
@@ -814,6 +815,10 @@ fn card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, ta
     let width = pv.settings.size.width().min(ui.available_width().max(80.0));
     if pv.hidden.contains(&k) {
         hidden_line(ui, p, pv, k);
+        return;
+    }
+    if let Target::Music(music) = target {
+        music_card(ui, p, pv, k, url, music, (width + VIDEO_EXTRA).min(ui.available_width().max(80.0)));
         return;
     }
     if start == Start::Ask && !pv.asked.contains(&k) {
@@ -1177,7 +1182,9 @@ fn compact_card<R>(
                     ui.set_width((ui.available_width() - end_w).max(60.0));
                     ui.spacing_mut().item_spacing.y = 2.0;
                     ui.add(egui::Label::new(RichText::new(title).size(13.0).strong().color(p.ink)).truncate());
-                    ui.add(egui::Label::new(RichText::new(note).size(11.5).color(p.muted)).wrap());
+                    if !note.is_empty() {
+                        ui.add(egui::Label::new(RichText::new(note).size(11.5).color(p.muted)).wrap());
+                    }
                 });
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), end).inner
             })
@@ -1200,11 +1207,83 @@ fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f
             aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str()),
         ),
         // no filled icon of a film strip
-        Target::Clip(_) => ("movie", aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str())),
+        Target::Clip(_) | Target::Music(_) => ("movie", aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str())),
     };
     compact_card(ui, p, width, icon, &title, aurora_i18n::tr!("ui-chat-preview-not-loaded"), |ui| {
         crate::ui::widgets::primary_button_sized(ui, p, aurora_i18n::tr!("ui-chat-preview-show"), Vec2::new(84.0, 28.0)).clicked()
     })
+}
+
+/// The embed only opens when clicked. The original share link stays available
+/// for catalog items that the provider cannot play in an embedded browser.
+fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, music: &lp::Music, width: f32) {
+    let pass = ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT);
+    let here = pv.playing.as_ref().filter(|player| player.key == k).map(|player| player.window);
+    let provider = music.provider.name();
+    let title = match music.kind {
+        lp::MusicKind::Track => aurora_i18n::tr!("ui-chat-preview-music-track", provider = provider),
+        lp::MusicKind::Album => aurora_i18n::tr!("ui-chat-preview-music-album", provider = provider),
+        lp::MusicKind::Playlist => aurora_i18n::tr!("ui-chat-preview-music-playlist", provider = provider),
+    };
+    let size = Vec2::new(width, music.height());
+    let aspect = size.x / size.y;
+    let mut open = false;
+    let mut stop = false;
+    let mut detach = false;
+    let resp = ui.vertical(|ui| {
+        compact_card(ui, p, width, "music", &title, "", |ui| {
+            open = crate::ui::widgets::icon_button(ui, p, "external-link-filled", &link_tip(url, false), true);
+            if let Some(window) = here {
+                stop = crate::ui::widgets::icon_button(ui, p, "player-stop-filled", aurora_i18n::tr!("ui-chat-preview-stop"), true);
+                if !window {
+                    detach = crate::ui::widgets::icon_button(
+                        ui,
+                        p,
+                        "picture-in-picture-filled",
+                        aurora_i18n::tr!("ui-chat-preview-detach"),
+                        true,
+                    );
+                }
+                false
+            } else {
+                crate::ui::widgets::icon_button(ui, p, "player-play-filled", aurora_i18n::tr!("ui-chat-preview-music-open"), true)
+            }
+        })
+    });
+    if open {
+        super::open_web_link(ui.ctx(), url);
+    }
+    if resp.inner {
+        let mut web = WebView::default();
+        web.navigate(&music.player_page(url));
+        pv.playing = Some(Playing {
+            key: k,
+            link: url.to_owned(),
+            title,
+            web,
+            window: pv.settings.player == lp::Player::Window,
+            drawn: pass,
+            aspect,
+            fitted: false,
+            chrome: Vec2::new(0.0, TITLE_BAR),
+        });
+    }
+    if let Some(player) = pv.playing.as_mut().filter(|player| player.key == k) {
+        if detach {
+            player.window = true;
+            player.fitted = false;
+        }
+        if !player.window
+            && let Some(web) = &pv.web
+        {
+            player.drawn = pass;
+            web.show(&mut player.web, ui, p, size);
+        }
+    }
+    if stop {
+        pv.playing = None;
+    }
+    card_menu(&resp.response, p, pv, k, url);
 }
 
 /// A picture too large to download: its size, and the link to open it.

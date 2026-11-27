@@ -7166,7 +7166,7 @@ before (`amis`, `groupes`, `repere`, `historique`…) are still accepted.
 | `AURORA_DEMO_CHAT_INPUT=1\|long\|ime\|os-ime` | Paragraph drafts, Japanese IME composition in chat inputs, or an empty field for a real input method |
 | `AURORA_DEMO_SPELLING=1\|menu\|replace` | Misspelled words underlined in the chat bar and Conversations; their suggestions; auto-replace while typing |
 | `AURORA_DEMO_CONV_EMOJI=1` | Messages of emoji alone in the friend's conversation, drawn large (with `AURORA_DEMO_CONV`) |
-| `AURORA_DEMO_CONV_PREVIEWS=1\|states\|videos\|clips\|services\|links\|net` | Picture, GIF and YouTube cards; `clips` shows video files and an animated WebP; `links[:gif\|image\|video]` isolates URL actions; `services[:gyazo,…]` shows service pages and social posts; `net` uses real sites |
+| `AURORA_DEMO_CONV_PREVIEWS=1\|states\|videos\|clips\|services\|links\|music\|net` | Picture, GIF and YouTube cards; `clips` shows video files and an animated WebP; `links[:gif\|image\|video]` isolates URL actions; `services[:gyazo,…]` shows service pages and social posts; `music` shows music links; `net` uses real sites |
 | `AURORA_DEMO_PREVIEW_PLAY=card\|window` | The first video card plays by itself, in its card or in the player window |
 | `AURORA_DEMO_VIDEO_VOLUME=<0-100>` | The level a playing video starts at, as if kept from an earlier one |
 | `AURORA_DEMO_GIFS=1\|klipy\|sent\|recent\|menu\|nokey\|net` | Conversations open on the GIF picker of the field, its results made here; `sent` sends the first GIF; `recent` its Recent tab; `menu` the button's right-click menu; `nokey` no button; `net` the real services |
@@ -9436,6 +9436,14 @@ failure. Grid validation and any paid upload are performed by the human.
   tall (2.4 times the text, sharp: the font's own bitmap), the messages
   that mix text and emoji at the text's size; in the Legacy lines every
   message at the text's size. Capture at frame 900.
+- **`AURORA_DEMO_CONV_PREVIEWS=music[:spotify|apple|youtube|suno|soundcloud]`**:
+  with `AURORA_DEMO_CONV=aurora`, open the demo private conversation and click
+  a music card's preview button, then Play in the provider's player. Check
+  the album or playlist track list, the Open link action, and that starting
+  another preview stops the first. Detach the player and check that it stays
+  open when switching conversations, then close it. The demo uses public
+  catalog links and contacts the provider once the player opens. Available
+  playback depends on the provider, item, account and region.
 - **`AURORA_DEMO_CONV_PREVIEWS=1|states|net`**: with `AURORA_DEMO_CONV`,
   links with their cards (`link_preview.rs`, `ui/chat/previews.rs`). `1`,
   in the friend's conversation: a picture of an unknown site (its card asks
