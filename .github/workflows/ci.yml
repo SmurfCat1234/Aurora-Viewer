@@ -184,7 +184,7 @@ jobs:
       # hand-over over the session bus) and the Linux paths of the others
       # cannot run on the agents' PCs. None needs a display or a session bus.
       - name: Tests
-        if: steps.changes.outputs.needed == 'true' && github.event_name != 'pull_request'
+        if: steps.changes.outputs.needed == 'true'
         run: cargo test --profile ci --workspace --locked
 
   windows-runner:
@@ -235,7 +235,7 @@ jobs:
     name: tests (Windows, ${{ matrix.part }})
     needs: windows-runner
     # windows-runner is skipped outside the queue: run anyway
-    if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+    if: ${{ !cancelled() }}
     runs-on: ${{ matrix.part == 'interface' && needs.windows-runner.outputs.interface && fromJSON(needs.windows-runner.outputs.interface) || 'windows-latest' }}
     timeout-minutes: 60
     strategy:
