@@ -426,6 +426,16 @@ fn regional_player(url: &Url, host: &str, parts: &[&str]) -> Option<(String, Str
         ("ok.ru" | "www.ok.ru" | "m.ok.ru", ["video" | "videoembed", id]) if digits(id, 1, 24) => {
             Some((format!("https://ok.ru/video/{id}"), format!("https://ok.ru/videoembed/{id}")))
         }
+        ("open.douyin.com", ["player", "video"]) => {
+            let id = url.query_pairs().find(|(key, _)| key == "vid")?.1;
+            if !digits(&id, 15, 24) {
+                return None;
+            }
+            Some((
+                format!("https://www.douyin.com/video/{id}"),
+                format!("https://open.douyin.com/player/video?vid={id}&autoplay=1"),
+            ))
+        }
         ("dzen.ru" | "www.dzen.ru", ["embed", id]) if id_ok(id, 80) => {
             let url = format!("https://dzen.ru/embed/{id}");
             Some((url.clone(), url))
