@@ -38,6 +38,48 @@ pub fn open(path: &Path) -> std::io::Result<()> {
     spawn(Command::new(program).arg(path))
 }
 
+/// Opens a validated Spotify catalog URI in its system-registered handler.
+/// The caller falls back to the original HTTPS link if the handoff fails.
+#[cfg(windows)]
+pub fn open_spotify(uri: &str) -> bool {
+    use windows::Win32::System::Com::{COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE, CoInitializeEx, CoUninitialize};
+    use windows_sys::Win32::UI::Shell::{SEE_MASK_FLAG_NO_UI, SEE_MASK_NOASYNC, SHELLEXECUTEINFOW, ShellExecuteExW};
+    use windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
+
+    let uri: Vec<u16> = uri.encode_utf16().chain(std::iter::once(0)).collect();
+    let mut info = SHELLEXECUTEINFOW {
+        cbSize: std::mem::size_of::<SHELLEXECUTEINFOW>() as u32,
+        fMask: SEE_MASK_FLAG_NO_UI | SEE_MASK_NOASYNC,
+        lpFile: uri.as_ptr(),
+        nShow: SW_SHOWNORMAL,
+        ..Default::default()
+    };
+    // SAFETY: this is a fresh worker thread. The structure and string live through
+    // the synchronous shell call, and successful COM initialization is balanced.
+    unsafe {
+        let initialized = CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE).is_ok();
+        let opened = ShellExecuteExW(&mut info) != 0;
+        if initialized {
+            CoUninitialize();
+        }
+        opened
+    }
+}
+
+#[cfg(not(windows))]
+pub fn open_spotify(uri: &str) -> bool {
+    if cfg!(target_os = "linux") {
+        let handler = Command::new("xdg-mime")
+            .args(["query", "default", "x-scheme-handler/spotify"])
+            .output();
+        if !handler.is_ok_and(|out| out.status.success() && !out.stdout.trim_ascii().is_empty()) {
+            return false;
+        }
+    }
+    let program = if cfg!(target_os = "macos") { "open" } else { "xdg-open" };
+    Command::new(program).arg(uri).status().is_ok_and(|status| status.success())
+}
+
 #[cfg(all(test, target_os = "linux"))]
 mod tests {
     /// Once the launcher exits it is waited for: its process entry goes

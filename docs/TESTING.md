@@ -9440,13 +9440,15 @@ failure. Grid validation and any paid upload are performed by the human.
   with `AURORA_DEMO_CONV=aurora:im` and `AURORA_DEMO_SOUND=1`, open the demo private conversation and click
   a music card's preview button. Spotify requests playback when its player is
   ready, with the provider's Play control available if it needs another click. Check
-  the album or playlist track list, the Open link action, and that starting
+  the album or playlist track list, the Open in browser action, and that starting
   another preview stops the first. Open a card while chat follows the
   newest messages and check that the expanded player scrolls into view.
   Narrow the chat and check that the
   player stays in the conversation and its controls remain clickable.
-  With Spotify, check that the title and cover appear under the normal
-  link preview settings. The demo uses public catalog links and loads the
+  Check the title, cover and available artist or catalog details under the
+  normal link preview settings. The Spotify desktop icon should open the
+  catalog item in Spotify or fall back to the browser if the app is unavailable.
+  The demo uses public catalog links and loads the
   player on demand. Available playback depends on the provider, item,
   account and region.
 - **`AURORA_DEMO_CONV_PREVIEWS=1|states|net`**: with `AURORA_DEMO_CONV`,

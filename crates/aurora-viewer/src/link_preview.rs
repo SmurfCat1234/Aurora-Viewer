@@ -208,7 +208,7 @@ pub enum Target {
 }
 
 mod music;
-pub use music::{Kind as MusicKind, Music};
+pub use music::{Kind as MusicKind, Music, Provider as MusicProvider};
 
 /// A video file the media plugins' browser plays in a video card (#983):
 /// an `.mp4` or `.webm` link, an Imgur `.gifv` (its `.mp4`), a Gyazo video

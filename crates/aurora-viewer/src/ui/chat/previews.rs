@@ -137,6 +137,7 @@ enum Entry {
     Picture(Shown),
     Music {
         title: String,
+        detail: Option<String>,
         cover: Option<Shown>,
     },
     Video {
@@ -421,6 +422,7 @@ impl Previews {
             let entry = match result {
                 Ok(Content::Music(info)) => Entry::Music {
                     title: info.title,
+                    detail: info.detail,
                     cover: info.cover.map(|cover| Shown::new(ctx, &url, cover)),
                 },
                 Ok(Content::Picture(p)) => Entry::Picture(Shown::new(ctx, &url, p)),
@@ -516,7 +518,7 @@ impl Previews {
         if let Some(c) = self.cache.get_mut(&url) {
             c.entry = Entry::Loading;
         }
-        if self.demo && !matches!(&target, Target::Music(music) if music.has_metadata()) {
+        if self.demo && !matches!(&target, Target::Music(_)) {
             // made here, no network; a "loading…" file never arrives
             if !url.rsplit('/').next().unwrap_or("").starts_with("loading") {
                 self.in_flight += 1;
@@ -831,7 +833,7 @@ fn card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, ta
         return;
     }
     if let Target::Music(music) = target {
-        if music.has_metadata() && (start == Start::Load || pv.asked.contains(&k)) {
+        if start == Start::Load || pv.asked.contains(&k) {
             pv.request(url, target, start == Start::Load && pv.settings.load == lp::Load::Trusted, pass);
         }
         music_card(ui, p, pv, k, url, music, (width + VIDEO_EXTRA).min(ui.available_width().max(80.0)));
@@ -1205,9 +1207,11 @@ fn compact_card<R>(
                 ui.vertical(|ui| {
                     ui.set_width((ui.available_width() - end_w).max(60.0));
                     ui.spacing_mut().item_spacing.y = 2.0;
-                    ui.add(egui::Label::new(RichText::new(title).size(13.0).strong().color(p.ink)).truncate());
+                    ui.add(egui::Label::new(RichText::new(title).size(13.0).strong().color(p.ink)).truncate())
+                        .on_hover_text(title);
                     if !note.is_empty() {
-                        ui.add(egui::Label::new(RichText::new(note).size(11.5).color(p.muted)).wrap());
+                        ui.add(egui::Label::new(RichText::new(note).size(11.5).color(p.muted)).truncate())
+                            .on_hover_text(note);
                     }
                 });
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), end).inner
@@ -1256,24 +1260,34 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         lp::MusicKind::Album => aurora_i18n::tr!("ui-chat-preview-music-album", provider = provider),
         lp::MusicKind::Playlist => aurora_i18n::tr!("ui-chat-preview-music-playlist", provider = provider),
     };
-    let (title, cover) = match pv.cache.get(url).map(|cached| &cached.entry) {
-        Some(Entry::Music { title, cover }) => (title.as_str(), cover.as_ref()),
-        _ => (label.as_str(), None),
+    let (title, detail, cover) = match pv.cache.get(url).map(|cached| &cached.entry) {
+        Some(Entry::Music { title, detail, cover }) => (title.as_str(), detail.as_deref(), cover.as_ref()),
+        _ => (label.as_str(), None, None),
     };
     let note = if here && pv.web.as_ref().is_some_and(|web| web.volume <= 0.0) {
         aurora_i18n::tr!("ui-chat-preview-music-muted")
     } else if title != label {
-        &label
+        detail.unwrap_or(&label)
     } else {
         ""
     };
     let minimum_width = music.minimum_width();
     let size = Vec2::new(width, music.height() * (width / minimum_width).min(1.0));
     let mut open = false;
+    let mut open_app = false;
     let mut stop = false;
     let resp = ui.vertical(|ui| {
         compact_card(ui, p, width, "music", cover, title, note, |ui| {
             open = crate::ui::widgets::icon_button(ui, p, "external-link-filled", &link_tip(url, false), true);
+            if music.provider == lp::MusicProvider::Spotify {
+                open_app = crate::ui::widgets::icon_button(
+                    ui,
+                    p,
+                    "device-desktop-filled",
+                    aurora_i18n::tr!("ui-chat-preview-music-open-spotify"),
+                    true,
+                );
+            }
             if here {
                 stop = crate::ui::widgets::icon_button(ui, p, "player-stop-filled", aurora_i18n::tr!("ui-chat-preview-stop"), true);
                 false
@@ -1283,7 +1297,10 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         })
     });
     if open {
-        super::open_web_link(ui.ctx(), url);
+        crate::ui::context::request(ui.ctx(), crate::ui::context::CtxAction::OpenUrlExternal(url.to_owned()));
+    }
+    if open_app {
+        crate::ui::context::request(ui.ctx(), crate::ui::context::CtxAction::OpenMusicApp(url.to_owned()));
     }
     if resp.inner {
         let title = title.to_owned();
