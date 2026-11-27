@@ -135,6 +135,7 @@ enum Entry {
     Queued,
     Loading,
     Picture(Shown),
+    Music { title: String, cover: Option<Shown> },
     Video {
         title: String,
         channel: String,
@@ -187,7 +188,11 @@ impl WebEnv {
     /// (MediaPluginCEF::mCurVolume), so it gets the volume every frame: the
     /// plugin sends it only when it changes.
     fn show(&self, web: &mut WebView, ui: &mut egui::Ui, p: &Palette, size: Vec2) {
-        web.show(ui, p, self.paths.as_ref(), &self.browser, None, size);
+        self.show_sized(web, ui, p, size, 0.0);
+    }
+
+    fn show_sized(&self, web: &mut WebView, ui: &mut egui::Ui, p: &Palette, size: Vec2, minimum_width: f32) {
+        web.show_sized(ui, p, self.paths.as_ref(), &self.browser, None, size, minimum_width);
         if let Some(plugin) = web.plugin_mut() {
             plugin.set_volume(self.volume);
         }
@@ -410,6 +415,10 @@ impl Previews {
         while let Ok((url, result)) = self.rx.try_recv() {
             self.in_flight = self.in_flight.saturating_sub(1);
             let entry = match result {
+                Ok(Content::Music(info)) => Entry::Music {
+                    title: info.title,
+                    cover: info.cover.map(|cover| Shown::new(ctx, &url, cover)),
+                },
                 Ok(Content::Picture(p)) => Entry::Picture(Shown::new(ctx, &url, p)),
                 Ok(Content::Page {
                     picture,
@@ -503,7 +512,7 @@ impl Previews {
         if let Some(c) = self.cache.get_mut(&url) {
             c.entry = Entry::Loading;
         }
-        if self.demo {
+        if self.demo && !matches!(&target, Target::Music(music) if music.has_metadata()) {
             // made here, no network; a "loading…" file never arrives
             if !url.rsplit('/').next().unwrap_or("").starts_with("loading") {
                 self.in_flight += 1;
@@ -545,7 +554,7 @@ impl Previews {
                     aspect: None,
                 })),
                 Target::Page(_) => lp::fetch_page(&client, &url, trusted_only).await,
-                Target::Music(_) => Err(Failure::NotPicture),
+                Target::Music(music) => music.metadata(&client).await.map(Content::Music),
             };
             let _ = tx.send((url, result));
         });
@@ -818,6 +827,9 @@ fn card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, ta
         return;
     }
     if let Target::Music(music) = target {
+        if music.has_metadata() && (start == Start::Load || pv.asked.contains(&k)) {
+            pv.request(url, target, start == Start::Load && pv.settings.load == lp::Load::Trusted, pass);
+        }
         music_card(ui, p, pv, k, url, music, (width + VIDEO_EXTRA).min(ui.available_width().max(80.0)));
         return;
     }
@@ -1157,6 +1169,7 @@ fn compact_card<R>(
     p: &Palette,
     width: f32,
     icon: &str,
+    cover: Option<&Shown>,
     title: &str,
     note: &str,
     end: impl FnOnce(&mut egui::Ui) -> R,
@@ -1171,12 +1184,19 @@ fn compact_card<R>(
                 ui.spacing_mut().item_spacing.x = 12.0;
                 let (r, _) = ui.allocate_exact_size(Vec2::splat(40.0), egui::Sense::hover());
                 ui.painter().rect_filled(r, ui.visuals().window_corner_radius, p.panel);
-                paint_icon(
-                    ui.painter(),
-                    icon,
-                    egui::Rect::from_center_size(r.center(), Vec2::splat(20.0)),
-                    p.muted,
-                );
+                if let Some(cover) = cover {
+                    egui::Image::new(&cover.frames[0].0)
+                        .uv(thumbnail_uv(cover.size, 1.0))
+                        .corner_radius(ui.visuals().window_corner_radius)
+                        .paint_at(ui, r);
+                } else {
+                    paint_icon(
+                        ui.painter(),
+                        icon,
+                        egui::Rect::from_center_size(r.center(), Vec2::splat(20.0)),
+                        p.muted,
+                    );
+                }
                 let end_w = 96.0;
                 ui.vertical(|ui| {
                     ui.set_width((ui.available_width() - end_w).max(60.0));
@@ -1209,7 +1229,7 @@ fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f
         // no filled icon of a film strip
         Target::Clip(_) | Target::Music(_) => ("movie", aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str())),
     };
-    compact_card(ui, p, width, icon, &title, aurora_i18n::tr!("ui-chat-preview-not-loaded"), |ui| {
+    compact_card(ui, p, width, icon, None, &title, aurora_i18n::tr!("ui-chat-preview-not-loaded"), |ui| {
         crate::ui::widgets::primary_button_sized(ui, p, aurora_i18n::tr!("ui-chat-preview-show"), Vec2::new(84.0, 28.0)).clicked()
     })
 }
@@ -1218,33 +1238,33 @@ fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f
 /// for catalog items that the provider cannot play in an embedded browser.
 fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, music: &lp::Music, width: f32) {
     let pass = ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT);
-    let here = pv.playing.as_ref().filter(|player| player.key == k).map(|player| player.window);
+    let here = pv.playing.as_ref().is_some_and(|player| player.key == k);
     let provider = music.provider.name();
-    let title = match music.kind {
+    let label = match music.kind {
         lp::MusicKind::Track => aurora_i18n::tr!("ui-chat-preview-music-track", provider = provider),
         lp::MusicKind::Album => aurora_i18n::tr!("ui-chat-preview-music-album", provider = provider),
         lp::MusicKind::Playlist => aurora_i18n::tr!("ui-chat-preview-music-playlist", provider = provider),
     };
-    let wide_enough = width >= music.minimum_width();
-    let size = Vec2::new(width.max(music.minimum_width()), music.height());
-    let aspect = size.x / size.y;
+    let (title, cover) = match pv.cache.get(url).map(|cached| &cached.entry) {
+        Some(Entry::Music { title, cover }) => (title.as_str(), cover.as_ref()),
+        _ => (label.as_str(), None),
+    };
+    let note = if here && pv.web.as_ref().is_some_and(|web| web.volume <= 0.0) {
+        aurora_i18n::tr!("ui-chat-preview-music-muted")
+    } else if title != label {
+        &label
+    } else {
+        ""
+    };
+    let minimum_width = music.minimum_width();
+    let size = Vec2::new(width, music.height() * (width / minimum_width).min(1.0));
     let mut open = false;
     let mut stop = false;
-    let mut detach = false;
     let resp = ui.vertical(|ui| {
-        compact_card(ui, p, width, "music", &title, "", |ui| {
+        compact_card(ui, p, width, "music", cover, title, note, |ui| {
             open = crate::ui::widgets::icon_button(ui, p, "external-link-filled", &link_tip(url, false), true);
-            if let Some(window) = here {
+            if here {
                 stop = crate::ui::widgets::icon_button(ui, p, "player-stop-filled", aurora_i18n::tr!("ui-chat-preview-stop"), true);
-                if !window {
-                    detach = crate::ui::widgets::icon_button(
-                        ui,
-                        p,
-                        "picture-in-picture-filled",
-                        aurora_i18n::tr!("ui-chat-preview-detach"),
-                        true,
-                    );
-                }
                 false
             } else {
                 crate::ui::widgets::icon_button(ui, p, "player-play-filled", aurora_i18n::tr!("ui-chat-preview-music-open"), true)
@@ -1255,6 +1275,8 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         super::open_web_link(ui.ctx(), url);
     }
     if resp.inner {
+        let title = title.to_owned();
+        pv.asked.insert(k);
         let mut web = WebView::default();
         web.navigate(&music.player_page(url));
         pv.playing = Some(Playing {
@@ -1262,23 +1284,23 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
             link: url.to_owned(),
             title,
             web,
-            window: pv.settings.player == lp::Player::Window || !wide_enough,
+            window: false,
             drawn: pass,
-            aspect,
+            aspect: size.x / size.y,
             fitted: false,
             chrome: Vec2::new(0.0, TITLE_BAR),
         });
     }
     if let Some(player) = pv.playing.as_mut().filter(|player| player.key == k) {
-        if detach || (!player.window && !wide_enough) {
-            player.window = true;
-            player.fitted = false;
-        }
-        if !player.window
-            && let Some(web) = &pv.web
-        {
+        if ui.is_visible() {
             player.drawn = pass;
-            web.show(&mut player.web, ui, p, size);
+        }
+        if let Some(web) = &pv.web
+            && ui.is_visible()
+        {
+            web.show_sized(&mut player.web, ui, p, size, minimum_width);
+        } else {
+            ui.allocate_space(size);
         }
     }
     if stop {
@@ -1295,7 +1317,7 @@ fn too_large(ui: &mut egui::Ui, p: &Palette, url: &str, size: Option<u64>, width
         None => aurora_i18n::tr!("ui-chat-preview-too-large-unknown", limit = limit.as_str()),
     };
     let note = aurora_i18n::tr!("ui-chat-preview-over-limit", limit = limit.as_str());
-    let open = compact_card(ui, p, width, "photo-filled", &title, &note, |ui| {
+    let open = compact_card(ui, p, width, "photo-filled", None, &title, &note, |ui| {
         crate::ui::widgets::icon_button(ui, p, "external-link-filled", aurora_i18n::tr!("ui-chat-preview-open"), true)
     });
     if open {

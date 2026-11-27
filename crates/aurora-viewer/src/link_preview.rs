@@ -763,6 +763,7 @@ pub struct ClipInfo {
 }
 
 pub enum Content {
+    Music(music::Info),
     Picture(Picture),
     Video(VideoInfo),
     Clip(ClipInfo),

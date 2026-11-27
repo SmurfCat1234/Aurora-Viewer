@@ -9440,10 +9440,12 @@ failure. Grid validation and any paid upload are performed by the human.
   with `AURORA_DEMO_CONV=aurora:im` and `AURORA_DEMO_SOUND=1`, open the demo private conversation and click
   a music card's preview button, then Play in the provider's player. Check
   the album or playlist track list, the Open link action, and that starting
-  another preview stops the first. Detach the player and check that it stays
-  open when switching conversations, then close it. The demo uses public
-  catalog links and contacts the provider once the player opens. Available
-  playback depends on the provider, item, account and region.
+  another preview stops the first. Narrow the chat and check that the
+  player stays in the conversation and its controls remain clickable.
+  With Spotify, check that the title and cover appear under the normal
+  link preview settings. The demo uses public catalog links and loads the
+  player on demand. Available playback depends on the provider, item,
+  account and region.
 - **`AURORA_DEMO_CONV_PREVIEWS=1|states|net`**: with `AURORA_DEMO_CONV`,
   links with their cards (`link_preview.rs`, `ui/chat/previews.rs`). `1`,
   in the friend's conversation: a picture of an unknown site (its card asks

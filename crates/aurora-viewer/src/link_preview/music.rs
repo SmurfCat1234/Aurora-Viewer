@@ -2,6 +2,13 @@
 
 use reqwest::Url;
 
+use super::{Failure, Picture};
+
+pub struct Info {
+    pub title: String,
+    pub cover: Option<Picture>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Provider {
     Spotify,
@@ -167,11 +174,51 @@ impl Music {
         }
     }
 
+    pub fn has_metadata(&self) -> bool {
+        self.provider == Provider::Spotify
+    }
+
+    pub async fn metadata(&self, client: &reqwest::Client) -> Result<Info, Failure> {
+        let catalog = self.embed.path().strip_prefix("/embed").ok_or(Failure::Unavailable)?;
+        let catalog = format!("https://open.spotify.com{catalog}");
+        let endpoint = Url::parse_with_params("https://open.spotify.com/oembed", [("url", &catalog)])
+            .map_err(|_| Failure::Unavailable)?;
+        let (body, _) = super::download(client, endpoint.as_str(), "application/json", 32 * 1024).await?;
+        let (title, artwork) = spotify_metadata(&body).ok_or(Failure::Unavailable)?;
+        let cover = match artwork {
+            Some(url) => super::fetch_picture_sized(client, url.as_str(), 96).await.ok(),
+            None => None,
+        };
+        Ok(Info { title, cover })
+    }
+
     pub fn player_page(&self, original: &str) -> String {
         super::player_server()
             .and_then(|port| Url::parse_with_params(&format!("http://127.0.0.1:{port}/music"), [("url", original)]).ok())
             .map_or_else(|| self.embed.to_string(), String::from)
     }
+}
+
+fn spotify_metadata(body: &[u8]) -> Option<(String, Option<Url>)> {
+    let data: serde_json::Value = serde_json::from_slice(body).ok()?;
+    let title: String = data["title"].as_str()?.trim().chars().take(200).collect();
+    if title.is_empty() {
+        return None;
+    }
+    let artwork = data["thumbnail_url"]
+        .as_str()
+        .and_then(|value| Url::parse(value).ok())
+        .filter(|url| {
+            url.scheme() == "https"
+                && url.username().is_empty()
+                && url.password().is_none()
+                && url.port().is_none()
+                && matches!(
+                    url.host_str(),
+                    Some("i.scdn.co" | "mosaic.scdn.co" | "image-cdn-ak.spotifycdn.com" | "image-cdn-fa.spotifycdn.com" | "daylist.spotifycdn.com")
+                )
+        });
+    Some((title, artwork))
 }
 
 pub(super) fn player_answer(request: &str) -> Option<String> {
@@ -191,7 +238,7 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
          <meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; frame-src {origin}\">\
          <style>html,body,iframe{{display:block;margin:0;border:0;width:100%;height:100%;background:#13141a}}</style>\
          </head><body><iframe src=\"{src}\" title=\"{name}\" \
-         allow=\"autoplay; encrypted-media; fullscreen; picture-in-picture\" allowfullscreen></iframe></body></html>"
+         allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" allowfullscreen></iframe></body></html>"
     ))
 }
 
@@ -199,6 +246,18 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
 mod tests {
     use super::*;
     use crate::link_preview::{Place, Sender, Settings, Start, Target, decide, target};
+
+    #[test]
+    fn spotify_metadata_accepts_catalog_artwork_only() {
+        let (title, url) =
+            spotify_metadata(br#"{"title":" Pop Cube ","thumbnail_url":"https://image-cdn-fa.spotifycdn.com/image/example"}"#).unwrap();
+        assert_eq!(title, "Pop Cube");
+        assert!(url.is_some());
+        let (_, url) =
+            spotify_metadata(br#"{"title":"Tune","thumbnail_url":"https://i.scdn.co.example.org/image/example"}"#).unwrap();
+        assert!(url.is_none());
+        assert!(spotify_metadata(br#"{"title":" "}"#).is_none());
+    }
 
     #[test]
     fn shared_catalog_links_map_to_provider_players() {
