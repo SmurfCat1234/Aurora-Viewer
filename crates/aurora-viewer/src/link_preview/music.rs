@@ -151,10 +151,19 @@ impl Music {
     pub fn height(&self) -> f32 {
         match (self.provider, self.kind) {
             (Provider::Spotify, Kind::Track) => 152.0,
+            (Provider::Spotify, _) => 352.0,
             (Provider::AppleMusic, Kind::Track) => 175.0,
             (Provider::Suno | Provider::SoundCloud, Kind::Track) => 166.0,
             (Provider::YouTubeMusic, _) => 240.0,
             _ => 450.0,
+        }
+    }
+
+    pub fn minimum_width(&self) -> f32 {
+        match self.provider {
+            // Spotify documents a 280-pixel minimum for audio embeds.
+            Provider::Spotify => 280.0,
+            _ => 200.0,
         }
     }
 

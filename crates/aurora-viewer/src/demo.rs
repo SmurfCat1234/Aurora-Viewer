@@ -1794,9 +1794,9 @@ pub fn bubbles_lines(world: &mut crate::world::World, view: Bubbles) {
                 } else if let Some(only) = mode.strip_prefix("music") {
                     let only = only.trim_start_matches(':');
                     [
-                        ("spotify", "https://open.spotify.com/track/4yQw7FR9IcvL6RHtegbJBh"),
+                        ("spotify", "https://open.spotify.com/track/0DiWol3AO6WpXZgp0goxAV"),
                         ("spotify", "https://open.spotify.com/album/2noRn2Aes5aoNVsU6iWThc"),
-                        ("spotify", "https://open.spotify.com/playlist/37i9dQZF1DX4JAvHpjipBk"),
+                        ("spotify", "https://open.spotify.com/playlist/05WafVZzHmQRlCWGipKU7d"),
                         ("apple", "https://music.apple.com/us/album/rumours/594061854?i=594061957"),
                         ("apple", "https://music.apple.com/us/album/1989/1440935467"),
                         (
