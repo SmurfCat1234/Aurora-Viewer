@@ -122,13 +122,13 @@ impl Music {
             Provider::YouTubeMusic => {
                 let playlist = query("list").filter(|value| id(value, 12, 128, b"-_"))?;
                 let embed = match path.as_slice() {
-                    ["playlist"] => format!("https://www.youtube-nocookie.com/embed/videoseries?list={playlist}"),
+                    ["playlist"] => format!("https://www.youtube-nocookie.com/embed/videoseries?list={playlist}&autoplay=1"),
                     ["watch"] => {
                         let video = query("v").filter(|value| id(value, 11, 11, b"-_"))?;
                         let start = query("t")
                             .or_else(|| query("start"))
                             .map_or(0, |value| super::start_seconds(&value));
-                        format!("https://www.youtube-nocookie.com/embed/{video}?list={playlist}&start={start}")
+                        format!("https://www.youtube-nocookie.com/embed/{video}?list={playlist}&start={start}&autoplay=1")
                     }
                     _ => return None,
                 };
@@ -152,7 +152,7 @@ impl Music {
                 };
                 let page = format!("https://soundcloud.com/{}", path.join("/"));
                 let embed =
-                    Url::parse_with_params("https://w.soundcloud.com/player/", [("url", page.as_str()), ("auto_play", "false")]).ok()?;
+                    Url::parse_with_params("https://w.soundcloud.com/player/", [("url", page.as_str()), ("auto_play", "true")]).ok()?;
                 (kind, embed.into())
             }
         };
@@ -522,13 +522,13 @@ mod tests {
                 "https://music.youtube.com/watch?v=jNQXAC9IVRw&list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI&t=1m2s",
                 Provider::YouTubeMusic,
                 Kind::Playlist,
-                "https://www.youtube-nocookie.com/embed/jNQXAC9IVRw?list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI&start=62",
+                "https://www.youtube-nocookie.com/embed/jNQXAC9IVRw?list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI&start=62&autoplay=1",
             ),
             (
                 "https://music.youtube.com/playlist?list=OLAK5uy_test_album_id",
                 Provider::YouTubeMusic,
                 Kind::Album,
-                "https://www.youtube-nocookie.com/embed/videoseries?list=OLAK5uy_test_album_id",
+                "https://www.youtube-nocookie.com/embed/videoseries?list=OLAK5uy_test_album_id&autoplay=1",
             ),
             (
                 "https://suno.com/song/015e1b03-5f5e-428c-9a5b-4da71ae8338f",
@@ -540,7 +540,7 @@ mod tests {
                 "https://m.soundcloud.com/djxerothehero/sets/monstercat",
                 Provider::SoundCloud,
                 Kind::Playlist,
-                "https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fdjxerothehero%2Fsets%2Fmonstercat&auto_play=false",
+                "https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fdjxerothehero%2Fsets%2Fmonstercat&auto_play=true",
             ),
         ] {
             let Some(Target::Music(music)) = target(url) else {

@@ -1808,7 +1808,7 @@ pub fn bubbles_lines(world: &mut crate::world::World, view: Bubbles) {
                             "https://music.youtube.com/playlist?list=PLRBp0Fe2Gpgmdybd_lCTM_lqLihVncsHT",
                         ),
                         ("suno", "https://suno.com/song/015e1b03-5f5e-428c-9a5b-4da71ae8338f"),
-                        ("soundcloud", "https://soundcloud.com/odesza/say-my-name-feat-zyra"),
+                        ("soundcloud", "https://soundcloud.com/erasedtapes/olafur-arnalds-poland"),
                     ]
                     .into_iter()
                     .filter(|(provider, _)| only.is_empty() || *provider == only)
