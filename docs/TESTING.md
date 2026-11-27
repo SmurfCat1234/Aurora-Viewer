@@ -9438,8 +9438,9 @@ failure. Grid validation and any paid upload are performed by the human.
   message at the text's size. Capture at frame 900.
 - **`AURORA_DEMO_CONV_PREVIEWS=music[:spotify|apple|youtube|suno|soundcloud]`**:
   with `AURORA_DEMO_CONV=aurora:im` and `AURORA_DEMO_SOUND=1`, open the demo private conversation and click
-  a music card's preview button. Spotify requests playback when its player is
-  ready, with the provider's Play control available if it needs another click. Check
+  a music card's preview button. Spotify, YouTube Music collections and
+  SoundCloud request playback when their players load. The provider's Play
+  control is available if a second click is needed. Check
   the album or playlist track list, the Open in browser action, and that starting
   another preview stops the first. Open a card while chat follows the
   newest messages and check that the expanded player scrolls into view.
