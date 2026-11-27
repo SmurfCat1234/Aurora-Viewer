@@ -245,8 +245,11 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
         let (kind, id) = catalog.split_once('/')?;
         let nonce = uuid::Uuid::new_v4().simple();
         let api = "https://open.spotify.com/embed/iframe-api/v1";
+        // Spotify's public loader fetches an eval-based bundle from this directory.
+        // Keep that exception on this Spotify-only player document.
+        let api_bundle = "https://embed-cdn.spotifycdn.com/_next/static/";
         (
-            format!("; script-src 'nonce-{nonce}' {api}"),
+            format!("; script-src 'nonce-{nonce}' 'unsafe-eval' {api} {api_bundle}"),
             format!(
                 "<div id=\"spotify-player\" data-uri=\"spotify:{kind}:{id}\"></div>\
                  <template id=\"spotify-fallback\">{iframe}</template>\
@@ -279,7 +282,11 @@ mod tests {
         assert!(page.contains("controller.play()"));
         assert!(page.contains("<template id=\"spotify-fallback\"><iframe"));
         assert!(page.contains("script-src 'nonce-"));
+        assert!(page.contains("'unsafe-eval'"));
         assert!(page.contains("https://open.spotify.com/embed/iframe-api/v1"));
+        assert!(page.contains("https://embed-cdn.spotifycdn.com/_next/static/"));
+        let apple = player_answer("GET /music?url=https%3A%2F%2Fmusic.apple.com%2Fus%2Falbum%2Fdreams%2F594061854 HTTP/1.1").unwrap();
+        assert!(!apple.contains("script-src"));
     }
 
     #[test]
