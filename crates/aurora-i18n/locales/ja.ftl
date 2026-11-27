@@ -7279,6 +7279,7 @@ ui-chat-preview-music-track = { $provider }の曲
 ui-chat-preview-music-album = { $provider }のアルバム
 ui-chat-preview-music-playlist = { $provider }のプレイリスト
 ui-chat-preview-music-open = 音楽プレビューを開く
+ui-chat-preview-music-muted = メディア音声がミュートされています。サウンド設定でマスター音量とメディア音量を確認してください。
 ui-chat-preview-not-loaded = 読み込んでいません：このサイトにＩＰアドレスが知られます。
 ui-chat-preview-megabytes = { $n }㎆
 ui-chat-preview-too-large = { $size }の画像

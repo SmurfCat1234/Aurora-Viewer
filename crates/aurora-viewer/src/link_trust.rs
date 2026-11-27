@@ -106,6 +106,7 @@ const TRUSTED: &[&str] = &[
     // well-known sites
     "github.com",
     "youtube.com",
+    "open.spotify.com",
     "youtu.be",
     "twitch.tv",
     "vimeo.com",

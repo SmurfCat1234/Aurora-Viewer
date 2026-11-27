@@ -7388,6 +7388,7 @@ ui-chat-preview-music-track = Titre { $provider }
 ui-chat-preview-music-album = Album { $provider }
 ui-chat-preview-music-playlist = Playlist { $provider }
 ui-chat-preview-music-open = Ouvrir l’aperçu musical
+ui-chat-preview-music-muted = Le son des médias est coupé. Vérifiez les volumes général et des médias dans Son.
 ui-chat-preview-not-loaded = Non chargée : ce site verrait votre adresse IP.
 ui-chat-preview-megabytes = { $n } Mo
 ui-chat-preview-too-large = Image de { $size }

@@ -7380,6 +7380,7 @@ ui-chat-preview-music-track = { $provider } track
 ui-chat-preview-music-album = { $provider } album
 ui-chat-preview-music-playlist = { $provider } playlist
 ui-chat-preview-music-open = Open music preview
+ui-chat-preview-music-muted = Media audio is muted. Check Master and Media in Sound.
 ui-chat-preview-not-loaded = Not loaded: this site would see your IP address.
 ui-chat-preview-megabytes = { $n } MB
 ui-chat-preview-too-large = Picture of { $size }
