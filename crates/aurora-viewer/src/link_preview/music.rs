@@ -222,10 +222,10 @@ mod tests {
                 "https://open.spotify.com/embed/playlist/37i9dQZF1DX4JAvHpjipBk",
             ),
             (
-                "https://music.apple.com/us/album/rumours/594061854?i=594061957&ls=1",
+                "https://music.apple.com/us/album/dreams/594061854?i=594061856&ls=1",
                 Provider::AppleMusic,
                 Kind::Track,
-                "https://embed.music.apple.com/us/album/594061854?i=594061957",
+                "https://embed.music.apple.com/us/album/594061854?i=594061856",
             ),
             (
                 "https://music.apple.com/jp/playlist/todays-hits/pl.f4d106fed2bd41149aaacabb233eb5eb",
