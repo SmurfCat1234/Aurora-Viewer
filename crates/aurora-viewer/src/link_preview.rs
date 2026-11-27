@@ -1324,7 +1324,6 @@ pub async fn fetch_page(client: &reqwest::Client, url: &str, trusted_only: bool)
             if let Some(found) = services::arte_clip(&page, &html)
                 .or_else(|| services::snapchat_clip(&page, &html))
                 .or_else(|| services::adult_clip(&page, &html))
-                .or_else(|| services::vk_clip(&page, &html))
                 .or_else(|| services::chinese_post_clip(&page, &html))
             {
                 return Ok(Content::Clip(fetch_found_clip(client, found).await));

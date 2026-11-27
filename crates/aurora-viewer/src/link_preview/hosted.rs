@@ -434,17 +434,27 @@ fn regional_player(url: &Url, host: &str, parts: &[&str]) -> Option<(String, Str
             let param = |name| url.query_pairs().find(|(key, _)| key == name).map(|(_, value)| value);
             let oid = param("oid")?;
             let id = param("id")?;
-            let hash = param("hash")?;
-            if !digits(oid.strip_prefix('-').unwrap_or(&oid), 1, 20) || !digits(&id, 1, 20) || !id_ok(&hash, 100) {
-                return None;
-            }
-            Some((
-                format!("https://vkvideo.ru/video{oid}_{id}"),
-                format!("https://{host}/video_ext.php?oid={oid}&id={id}&hash={hash}"),
-            ))
+            let hash = param("hash");
+            vk_player(host, &oid, &id, hash.as_deref())
+        }
+        ("vk.com" | "www.vk.com" | "m.vk.com" | "vkvideo.ru" | "www.vkvideo.ru", [video]) => {
+            let (owner, id) = video.strip_prefix("video")?.split_once('_')?;
+            let player_host = if host.ends_with("vkvideo.ru") { "vkvideo.ru" } else { "vk.com" };
+            vk_player(player_host, owner, id, None)
         }
         _ => None,
     }
+}
+
+fn vk_player(host: &str, owner: &str, id: &str, hash: Option<&str>) -> Option<(String, String)> {
+    if !digits(owner.strip_prefix('-').unwrap_or(owner), 1, 20) || !digits(id, 1, 20) || hash.is_some_and(|hash| !id_ok(hash, 100)) {
+        return None;
+    }
+    let hash = hash.map_or_else(String::new, |hash| format!("&hash={hash}"));
+    Some((
+        format!("https://vkvideo.ru/video{owner}_{id}"),
+        format!("https://{host}/video_ext.php?oid={owner}&id={id}{hash}"),
+    ))
 }
 
 #[test]
@@ -454,7 +464,11 @@ fn public_regional_players_rebuild_only_supported_urls() {
     assert_eq!(vk.page(), "https://vkvideo.ru/video-123_456");
     assert_eq!(vk.player(), "https://vkvideo.ru/video_ext.php?oid=-123&id=456&hash=abc123");
     assert!(vk.requires_player_click());
-    assert!(parse("https://vkvideo.ru/video_ext.php?oid=-123&id=456").is_none());
+    assert_eq!(
+        parse("https://vkvideo.ru/video-84793390_456239888").unwrap().player(),
+        "https://vkvideo.ru/video_ext.php?oid=-84793390&id=456239888"
+    );
+    assert!(parse("https://vkvideo.ru/video_ext.php?oid=-123&id=456&hash=bad%26hash").is_none());
     assert!(parse("https://vkvideo.ru.example/video_ext.php?oid=-123&id=456&hash=abc123").is_none());
     assert_eq!(
         parse("https://rutube.ru/video/6840af8411a8be4e7da9f82cb4a25103/").unwrap().player(),

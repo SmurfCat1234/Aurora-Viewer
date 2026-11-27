@@ -691,7 +691,6 @@ fn publisher_page(url: &Url) -> Option<(Service, Step)> {
                 && id.starts_with("Y3JpZDovL")
                 && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
         }
-        ("vk.com" | "vkvideo.ru", [id]) => id.strip_prefix("video").is_some_and(vk_video_id),
         ("dzen.ru", ["video", "watch", id]) => alnum(id, 6, 80),
         ("tver.jp", ["episodes", id]) => slug(id),
         ("nicovideo.jp" | "sp.nicovideo.jp", ["watch", id]) | ("nico.ms", [id]) => {
@@ -738,6 +737,7 @@ fn publisher_page(url: &Url) -> Option<(Service, Step)> {
         page.query_pairs_mut().append_pair("viewkey", &key);
     }
     if host == "xiaohongshu.com" {
+        page.set_host(Some("www.xiaohongshu.com")).ok()?;
         for (key, value) in url
             .query_pairs()
             .filter(|(key, value)| matches!(key.as_ref(), "xsec_token" | "xsec_source") && slug(value))
@@ -1735,36 +1735,6 @@ pub(super) fn demo_clip(url: &str) -> Option<FoundClip> {
 #[path = "services_tests.rs"]
 mod tests;
 
-fn vk_video_id(id: &str) -> bool {
-    id.split_once('_').is_some_and(|(owner, video)| {
-        [owner.strip_prefix('-').unwrap_or(owner), video]
-            .into_iter()
-            .all(|part| (1..=20).contains(&part.len()) && part.bytes().all(|b| b.is_ascii_digit()))
-    })
-}
-
-/// Only promote a VK watch page when it advertises a player for the same item.
-pub(super) fn vk_clip(page: &str, html: &str) -> Option<FoundClip> {
-    let watch = Url::parse(page).ok()?;
-    if !matches!(bare_host(&watch)?.as_str(), "vk.com" | "vkvideo.ru") {
-        return None;
-    }
-    let path = watch.path().trim_end_matches('/');
-    let player = metadata_url(html, &["og:video:secure_url", "og:video", "twitter:player"])?;
-    let url = Url::parse(&player).ok()?;
-    let hosted = super::hosted::Hosted::of(&url).filter(super::hosted::Hosted::regional)?;
-    if !hosted.page().starts_with("https://vkvideo.ru/") || Url::parse(&hosted.page()).ok()?.path() != path {
-        return None;
-    }
-    Some(FoundClip {
-        clip: super::Clip::of(&player)?,
-        title: metadata(html, &["og:title", "twitter:title"])?,
-        channel: metadata(html, &["author", "og:site_name"]).unwrap_or_default(),
-        posters: publisher_poster(page, html).into_iter().collect(),
-        size: None,
-    })
-}
-
 pub(super) fn public_post_video_source(url: &Url) -> bool {
     if url.scheme() != "https"
         || !url.username().is_empty()
@@ -1823,6 +1793,7 @@ pub(super) fn telegram_post(page: &str, html: &str) -> Option<PublicMediaPost> {
     let [channel, post] = parts.as_slice() else { return None };
     let id = format!("{channel}/{post}");
     let (_, body) = html.split_once(&format!("data-post=\"{id}\""))?;
+    let body = body.split_once("tgme_widget_message_footer").map_or(body, |(body, _)| body);
     let summary = body
         .split_once("class=\"tgme_widget_message_text ")
         .and_then(|(_, text)| text.split_once('>'))
@@ -1869,9 +1840,14 @@ pub(super) fn telegram_post(page: &str, html: &str) -> Option<PublicMediaPost> {
     if summary.is_empty() && poster.is_none() && clip.is_none() {
         return None;
     }
+    let title = if clip.is_some() && !summary.is_empty() {
+        summary.chars().take(120).collect()
+    } else {
+        format!("@{id}")
+    };
     Some(PublicMediaPost {
         post: super::PostInfo {
-            title: format!("@{id}"),
+            title,
             channel: "Telegram".to_owned(),
             summary,
         },
