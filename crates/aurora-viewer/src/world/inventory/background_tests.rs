@@ -1,6 +1,249 @@
 use super::*;
 use aurora_net::inventory::{FolderContents, InvFolder, InvItem};
 
+fn cooling_read(inv: &mut Inventory, children: Vec<Uuid>, now: Instant) -> BackgroundFetch {
+    let mut fetch = BackgroundFetch::default();
+    let mut out = Vec::new();
+    fetch.send(inv, AGENT, Kind::Recursive, id(10), children, MAX_FOLDER_DEPTH, &mut out, 0);
+    fetch.on_reply_at(inv, 0, &[], Err(FetchError::new(FetchFailure::Transient, Some(503))), now);
+    fetch
+}
+
+#[test]
+fn recovery_automatic_folder_reads_cannot_bypass_background_cooldown() {
+    let mut inv = skeleton(&[(10, 1, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, Vec::new(), now);
+    for _ in 0..60 {
+        inv.request(id(10));
+    }
+    assert!(inv.queue.is_empty(), "Appearance must not bypass the 15-second backoff");
+    assert!(fetch.pump_at(&mut inv, AGENT, now).is_empty());
+    assert_eq!(fetch.pump_at(&mut inv, AGENT, now + BACKGROUND_BACKOFF[0]).len(), 1);
+}
+
+#[test]
+fn a_split_step_consumes_its_mark_without_stealing_a_cooling_retry() {
+    let mut inv = skeleton(&[(10, 1, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, Vec::new(), now);
+    let folder = id(10);
+    fetch.split.insert(folder);
+    fetch.queue.push_back((folder, Kind::FolderAndContent));
+
+    let reads = fetch.pump_at(&mut inv, AGENT, now);
+    assert!(reads.is_empty(), "the split step cannot bypass the pending cooldown");
+    assert!(!fetch.split.contains(&folder));
+    assert!(inv.retrying_folders.contains(&folder));
+
+    let reads = fetch.pump_at(&mut inv, AGENT, now + BACKGROUND_BACKOFF[0]);
+    assert!(matches!(&reads[..], [NetCommand::FetchInventoryTree { parent, .. }] if *parent == folder));
+}
+
+#[test]
+fn recovery_a_recovered_folder_is_not_reissued_by_a_delayed_retry() {
+    let mut inv = skeleton(&[(10, 1, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, Vec::new(), now);
+    inv.folders.get_mut(&id(10)).unwrap().state = FetchState::Fetched;
+    assert!(fetch.pump_at(&mut inv, AGENT, now + BACKGROUND_BACKOFF[0]).is_empty());
+    assert_eq!(inv.folders[&id(10)].state, FetchState::Fetched);
+    assert!(fetch.is_idle());
+}
+
+#[test]
+fn a_reply_after_the_deadline_cannot_complete_its_replacement() {
+    let mut inv = skeleton(&[(10, 1, -1)]);
+    let now = Instant::now();
+    let folder = id(10);
+    let mut fetch = BackgroundFetch {
+        clock: Some(now),
+        ..Default::default()
+    };
+    fetch.send(
+        &mut inv,
+        AGENT,
+        Kind::Recursive,
+        folder,
+        Vec::new(),
+        MAX_FOLDER_DEPTH,
+        &mut Vec::new(),
+        0,
+    );
+    let reads = fetch.pump_at(&mut inv, AGENT, now + TREE_DEADLINE);
+    let [NetCommand::FetchInventoryTree { request, .. }] = reads.as_slice() else {
+        panic!("expected the timed-out read to be split: {reads:?}");
+    };
+    assert_ne!(*request, 0);
+    let snapshot = |item| FolderContents {
+        folder_id: folder,
+        owner_id: AGENT,
+        version: 3,
+        folders: Vec::new(),
+        items: vec![InvItem {
+            id: item,
+            parent: folder,
+            ..Default::default()
+        }],
+    };
+    assert!(!fetch.on_reply(&mut inv, 0, Ok(vec![snapshot(id(100))])));
+    assert_eq!(inv.folders[&folder].state, FetchState::Fetching);
+    assert!(!inv.items.contains_key(&id(100)));
+    assert!(inv.take_accepted_snapshot_items().is_empty());
+    inv.claim_item_reads(&mut vec![id(101)], false, now);
+    assert!(fetch.on_reply(&mut inv, *request, Ok(vec![snapshot(id(101))])));
+    assert_eq!(inv.folders[&folder].state, FetchState::Fetched);
+    assert_eq!(inv.take_accepted_snapshot_items(), vec![id(101)]);
+}
+
+#[test]
+fn a_received_large_reply_keeps_its_slot_until_the_last_slice() {
+    let folders: Vec<_> = (10..10 + 422).map(|n| (n, 1, -1)).collect();
+    let mut inv = skeleton(&folders);
+    let now = Instant::now();
+    let mut fetch = BackgroundFetch {
+        clock: Some(now),
+        ..Default::default()
+    };
+    let id_first = id(folders.first().unwrap().0);
+    let id_last = id(folders.last().unwrap().0);
+    fetch.send(
+        &mut inv,
+        AGENT,
+        Kind::Recursive,
+        id_first,
+        Vec::new(),
+        MAX_FOLDER_DEPTH,
+        &mut Vec::new(),
+        0,
+    );
+    let snapshots = folders
+        .iter()
+        .map(|(n, _, _)| {
+            let folder_id = id(*n);
+            FolderContents {
+                folder_id,
+                owner_id: AGENT,
+                version: 4,
+                folders: Vec::new(),
+                items: (0..129 + u128::from(*n < 144))
+                    .map(|i| InvItem {
+                        id: id(*n * 1000 + i),
+                        parent: folder_id,
+                        ..Default::default()
+                    })
+                    .collect(),
+            }
+        })
+        .collect();
+    inv.claim_item_reads(&mut vec![id(10000)], false, now);
+
+    assert!(fetch.on_reply(&mut inv, 0, Ok(snapshots)));
+    assert!(inv.items.is_empty(), "receiving the reply does not apply it");
+    assert!(!fetch.on_reply(&mut inv, 0, Ok(Vec::new())));
+    assert!(fetch.apply_reply_slice(&mut inv));
+    assert_eq!(inv.take_accepted_snapshot_items(), vec![id(10000)]);
+    assert_eq!(inv.folders[&id_first].state, FetchState::Fetched);
+    assert_ne!(inv.folders[&id_last].state, FetchState::Fetched);
+    assert!(fetch.pump_at(&mut inv, AGENT, now + TREE_DEADLINE).is_empty());
+    assert!(fetch.in_flight.contains_key(&0), "an already received reply cannot expire");
+    assert!(!fetch.is_idle());
+
+    while fetch.apply_reply_slice(&mut inv) {}
+    assert_eq!(inv.folders[&id_last].state, FetchState::Fetched);
+    assert_eq!(inv.items.len(), 54_572);
+    assert!(!fetch.in_flight.contains_key(&0));
+    assert!(!fetch.apply_reply_slice(&mut inv));
+}
+
+#[test]
+fn ordinary_replies_do_not_wait_for_the_snapshot_queue() {
+    let snapshots: Vec<_> = (10..230)
+        .map(|n| FolderContents {
+            folder_id: id(n),
+            owner_id: AGENT,
+            version: 4,
+            folders: Vec::new(),
+            items: (0..11)
+                .map(|i| InvItem {
+                    id: id(n * 1000 + i),
+                    parent: id(n),
+                    ..Default::default()
+                })
+                .collect(),
+        })
+        .collect();
+    assert!(!can_slice(&snapshots));
+}
+
+#[test]
+fn recovery_a_subset_retry_only_reads_children_that_still_need_it() {
+    let mut inv = skeleton(&[(10, 1, -1), (11, 10, -1), (12, 10, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, vec![id(11), id(12)], now);
+    inv.folders.get_mut(&id(11)).unwrap().state = FetchState::Fetched;
+    let reads = fetch.pump_at(&mut inv, AGENT, now + BACKGROUND_BACKOFF[0]);
+    assert!(matches!(&reads[..], [NetCommand::FetchInventoryTree { children, .. }] if children == &[id(12)]));
+    assert_eq!(inv.folders[&id(11)].state, FetchState::Fetched);
+}
+
+#[test]
+fn recovery_a_due_retry_waits_for_an_external_read_instead_of_duplicating_it() {
+    let mut inv = skeleton(&[(10, 1, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, Vec::new(), now);
+    inv.folders.get_mut(&id(10)).unwrap().state = FetchState::Fetching;
+    assert!(fetch.pump_at(&mut inv, AGENT, now + BACKGROUND_BACKOFF[0]).is_empty());
+    assert!(!fetch.is_idle());
+    inv.folders.get_mut(&id(10)).unwrap().state = FetchState::Fetched;
+    assert!(fetch.pump_at(&mut inv, AGENT, now + BACKGROUND_BACKOFF[0]).is_empty());
+    assert!(fetch.is_idle());
+}
+
+#[test]
+fn recovery_busy_subset_child_does_not_delay_the_other_children() {
+    let mut inv = skeleton(&[(10, 1, -1), (11, 10, -1), (12, 10, -1)]);
+    let now = Instant::now();
+    let mut fetch = cooling_read(&mut inv, vec![id(11), id(12)], now);
+    inv.folders.get_mut(&id(11)).unwrap().state = FetchState::Fetching;
+    assert!(fetch.pump_at(&mut inv, AGENT, now).is_empty());
+
+    let due = now + BACKGROUND_BACKOFF[0];
+    let reads = fetch.pump_at(&mut inv, AGENT, due);
+    assert!(matches!(&reads[..], [NetCommand::FetchInventoryTree { children, .. }] if children == &[id(12)]));
+    assert!(!fetch.pending.contains(&id(11)));
+    assert!(inv.retrying_folders.contains(&id(11)));
+    assert!(!inv.retrying_folders.contains(&id(12)));
+
+    inv.folders.get_mut(&id(11)).unwrap().state = FetchState::Fetched;
+    assert!(fetch.pump_at(&mut inv, AGENT, due).is_empty());
+    assert!(!inv.retrying_folders.contains(&id(11)));
+}
+
+#[test]
+fn recovery_automatic_readers_do_not_restart_failed_or_over_limit_folders() {
+    let mut inv = skeleton(&[(10, 1, -1), (11, 1, -1)]);
+    inv.folders.get_mut(&id(10)).unwrap().state = FetchState::Failed;
+    inv.too_big.insert(id(11));
+    for _ in 0..60 {
+        inv.request(id(10));
+        inv.request(id(11));
+    }
+    assert!(inv.queue.is_empty());
+}
+
+#[test]
+fn recovery_region_retry_rearms_only_failed_folders_without_an_existing_owner() {
+    let mut inv = skeleton(&[(10, 1, -1), (11, 1, -1), (12, 1, -1)]);
+    for id in [id(10), id(11), id(12)] {
+        inv.folders.get_mut(&id).unwrap().state = FetchState::Failed;
+    }
+    inv.retrying_folders.insert(id(11));
+    inv.too_big.insert(id(12));
+    inv.retry_failed();
+    assert_eq!(inv.queue, [(id(10), false)]);
+}
+
 const AGENT: Uuid = Uuid::from_u128(2);
 
 fn id(n: u128) -> Uuid {
@@ -556,6 +799,29 @@ fn a_large_inventory_recovers_from_a_transient_failed_read() {
     assert_eq!(inv.item_count(), (tree.len() + 2) * 100, "every folder's items survived");
     let batches = reads.iter().filter(|r| r.parent == id(1) && !r.children.is_empty()).count();
     assert!(batches >= 3, "the failed batch is asked again, then the rest: {batches}");
+}
+
+#[test]
+fn recovery_a_240k_inventory_keeps_all_items_after_multiple_failed_batches() {
+    let tree: Vec<(u128, u128, i32)> = (0..2400).map(|n| (1000 + n, 1, -1)).collect();
+    let mut inv = skeleton(&tree);
+    let attempts = std::sync::atomic::AtomicU32::new(0);
+    let failure = |read: &Read| {
+        let batch = read.depth > 0 && !read.children.is_empty();
+        (batch && attempts.fetch_add(1, std::sync::atomic::Ordering::Relaxed) < 10).then_some(FetchFailure::Transient)
+    };
+    run(
+        &mut inv,
+        &Server {
+            tree: &tree,
+            cap: MAX_FOLDER_DEPTH,
+            items: 100,
+            failure: &failure,
+        },
+    );
+    assert!(unfetched(&inv).is_empty());
+    assert_eq!(inv.item_count(), 240_200);
+    assert!(inv.retrying_folders.is_empty());
 }
 
 #[test]
@@ -1126,12 +1392,26 @@ fn a_read_tree_is_walked_in_one_step_per_folder() {
     assert_eq!(inv.folders.values().filter(|f| !f.library).count(), 401);
     let mut fetch = BackgroundFetch::default();
     fetch.start(&inv);
-    let reads = fetch.pump_at(&mut inv, AGENT, Instant::now());
-    assert!(
-        reads.iter().all(|r| matches!(r, NetCommand::FetchInventoryOrphans { .. })),
-        "nothing to read"
-    );
+    let mut reads = Vec::new();
+    fetch.step_queue(&mut inv, AGENT, MAX_IN_FLIGHT, &mut reads, || false);
+    assert!(reads.is_empty());
     assert!(fetch.queue.is_empty(), "{} steps left after one pump", fetch.queue.len());
+}
+
+#[test]
+fn a_large_read_tree_advances_with_spare_scan_time_and_no_extra_reads() {
+    let tree: Vec<_> = (10..3010).map(|n| (n, 1, -1)).collect();
+    let mut inv = skeleton(&tree);
+    inv.folders.values_mut().for_each(|f| f.state = FetchState::Fetched);
+
+    let mut fetch = BackgroundFetch::default();
+    fetch.start(&inv);
+    let mut reads = Vec::new();
+    fetch.step_queue(&mut inv, AGENT, MAX_IN_FLIGHT, &mut reads, || false);
+    assert!(fetch.queue.len() >= 3001 - MIN_QUEUE_STEPS);
+    fetch.step_queue(&mut inv, AGENT, MAX_IN_FLIGHT, &mut reads, || true);
+    assert!(fetch.queue.is_empty());
+    assert!(reads.is_empty());
 }
 
 /// N4 counts a folder over the server's limit on its own line, never as

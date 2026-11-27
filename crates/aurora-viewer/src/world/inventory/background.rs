@@ -16,10 +16,10 @@
 //! parent, at most [`LEGACY_IN_FLIGHT`] reads at once.
 
 use super::{FetchState, Inventory};
-use aurora_net::NetCommand;
 use aurora_net::inventory::ais::{FetchError, FetchFailure, MAX_FOLDER_DEPTH};
+use aurora_net::{NetCommand, inventory::FolderContents};
 use std::collections::{HashMap, HashSet, VecDeque};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use uuid::Uuid;
 
 /// PoolSizeAIS (20) less the request it keeps for the user's own actions.
@@ -56,8 +56,16 @@ const FAILED_ROUNDS: u32 = 6;
 const UNREAD_ROUNDS: u32 = 6;
 /// LLFolderType::FT_MARKETPLACE_LISTINGS, loaded by its own window.
 const MARKETPLACE_LISTINGS: i32 = 53;
-/// Queue entries looked at per frame (bulkFetch stops after 6 ms).
-const STEPS_PER_FRAME: usize = 512;
+/// The walk is polled every 500 ms. Keep the original minimum work, then
+/// use spare CPU time to scan folders already returned by AIS.
+const MIN_QUEUE_STEPS: usize = 512;
+const MAX_QUEUE_STEPS: usize = 8192;
+const EXTRA_SCAN_BUDGET: std::time::Duration = std::time::Duration::from_millis(2);
+/// Apply one slice per frame, keeping an individual folder atomic.
+const SNAPSHOT_SLICE_RECORDS: usize = 2048;
+const SNAPSHOT_SLICE_FOLDERS: usize = 128;
+/// Ordinary replies are cheaper to apply than to queue behind a slice.
+const LARGE_SNAPSHOT_RECORDS: usize = 8192;
 /// Reads the HTTP layer's own retries (ais.rs) left failed are asked again
 /// later, so a throttled or briefly unavailable AIS server does not end the
 /// walk with folders missing.
@@ -88,6 +96,17 @@ struct Request {
     attempt: u32,
     /// When it was sent ([`READ_DEADLINE`]).
     sent: Instant,
+    received: bool,
+}
+
+struct PendingReply {
+    request: u64,
+    contents: std::vec::IntoIter<FolderContents>,
+    stale: Vec<Uuid>,
+    started: Instant,
+    items: usize,
+    slices: usize,
+    slowest_slice: Duration,
 }
 
 /// A read waiting for its next attempt after a transient failure.
@@ -104,6 +123,7 @@ struct Retry {
 pub struct BackgroundFetch {
     queue: VecDeque<(Uuid, Kind)>,
     in_flight: HashMap<u64, Request>,
+    replies: VecDeque<PendingReply>,
     /// The folders those reads are fetching: their replies walk them.
     pending: HashSet<Uuid>,
     /// Folders the user's own reads are fetching, looked at again next frame.
@@ -119,6 +139,7 @@ pub struct BackgroundFetch {
     /// Since when the current walk sends requests, and how many (logged
     /// when it ends).
     busy: Option<(Instant, usize)>,
+    progress_logged: Option<Instant>,
     /// The agent's region lacks InventoryAPIv3 / LibraryAPIv3: that tree is
     /// read level by level through the legacy capability.
     legacy: [bool; 2],
@@ -161,6 +182,10 @@ pub struct BackgroundFetch {
 }
 
 impl BackgroundFetch {
+    pub fn started(&self) -> bool {
+        self.started
+    }
+
     /// LLInventoryModelBackgroundFetch::start(): the root alone first (it
     /// can be huge and its system folders are asked for on their own), the
     /// library with its subtree.
@@ -242,7 +267,9 @@ impl BackgroundFetch {
         let expired: Vec<u64> = self
             .in_flight
             .iter()
-            .filter(|(_, r)| now.saturating_duration_since(r.sent) >= if r.depth > 0 { TREE_DEADLINE } else { READ_DEADLINE })
+            .filter(|(_, r)| {
+                !r.received && now.saturating_duration_since(r.sent) >= if r.depth > 0 { TREE_DEADLINE } else { READ_DEADLINE }
+            })
             .map(|(request, _)| *request)
             .collect();
         if !expired.is_empty() {
@@ -274,20 +301,61 @@ impl BackgroundFetch {
         // already known to the model.
         let mut retries = std::mem::take(&mut self.retries);
         let mut waiting = Vec::new();
-        for retry in retries.drain(..) {
-            if retry.due > now || self.in_flight.len() + usize::from(self.orphans_pending.is_some()) >= max {
-                waiting.push(retry);
+        for mut retry in retries.drain(..) {
+            let targets = if retry.children.is_empty() {
+                vec![retry.folder]
             } else {
-                self.send(
-                    inv,
-                    agent,
-                    retry.kind,
-                    retry.folder,
-                    retry.children,
-                    retry.depth,
-                    &mut out,
-                    retry.attempt,
-                );
+                retry.children.clone()
+            };
+            let mut ready = Vec::new();
+            let mut externally_active = Vec::new();
+            for id in targets {
+                match inv.folders.get(&id).map(|folder| folder.state) {
+                    Some(FetchState::Fetched) => {
+                        inv.retrying_folders.remove(&id);
+                        self.queue.push_back((id, Kind::Recursive));
+                    }
+                    None => {
+                        inv.retrying_folders.remove(&id);
+                    }
+                    _ if inv.too_big.contains(&id) => {
+                        inv.retrying_folders.remove(&id);
+                        self.queue.push_back((id, Kind::ContentRecursive));
+                    }
+                    Some(FetchState::Fetching) => externally_active.push(id),
+                    _ => ready.push(id),
+                }
+            }
+            if ready.is_empty() && externally_active.is_empty() {
+                continue;
+            }
+            let subset = !retry.children.is_empty();
+            if ready.is_empty() || retry.due > now || self.in_flight.len() + usize::from(self.orphans_pending.is_some()) >= max {
+                if subset {
+                    ready.extend(externally_active);
+                    retry.children = ready;
+                }
+                waiting.push(retry);
+                continue;
+            }
+            for id in &ready {
+                inv.retrying_folders.remove(id);
+            }
+            // A subset may overlap an interactive read. Keep the owned
+            // children in this retry and send the other children on time.
+            self.send(
+                inv,
+                agent,
+                retry.kind,
+                retry.folder,
+                if subset { ready } else { Vec::new() },
+                retry.depth,
+                &mut out,
+                retry.attempt,
+            );
+            if !externally_active.is_empty() {
+                retry.children = externally_active;
+                waiting.push(retry);
             }
         }
         self.retries = waiting;
@@ -301,14 +369,8 @@ impl BackgroundFetch {
             self.orphans_failed = true;
         }
         self.watch(inv, now);
-        let mut steps = 0;
-        while self.in_flight.len() + usize::from(self.orphans_pending.is_some()) < max && steps < STEPS_PER_FRAME {
-            let Some((id, kind)) = self.queue.pop_front() else {
-                break;
-            };
-            steps += 1;
-            self.step(inv, agent, id, kind, &mut out);
-        }
+        let scanning = Instant::now();
+        self.step_queue(inv, agent, max, &mut out, || scanning.elapsed() < EXTRA_SCAN_BUDGET);
         for library in [false, true] {
             self.send_legacy(inv, agent, library, &mut out);
         }
@@ -341,6 +403,33 @@ impl BackgroundFetch {
             }
         }
         self.queue.extend(self.waiting.drain(..));
+        if aurora_net::probe::enabled()
+            && let Some((since, _)) = self.busy
+            && (self.is_idle()
+                || self
+                    .progress_logged
+                    .is_none_or(|at| now.saturating_duration_since(at).as_secs() >= 3))
+        {
+            self.progress_logged = Some(now);
+            let oldest = self
+                .in_flight
+                .values()
+                .map(|request| now.saturating_duration_since(request.sent))
+                .max()
+                .unwrap_or_default();
+            let folders_ready = inv.folders.values().filter(|folder| folder.state == FetchState::Fetched).count();
+            log::info!(
+                "inventory progress: walk_s={:.1} items={} folders={} folders_ready={folders_ready} queued={} active={} retry_batches={} oldest_s={:.1}{}",
+                now.saturating_duration_since(since).as_secs_f32(),
+                inv.item_count(),
+                inv.folders.len(),
+                self.queue.len(),
+                self.in_flight.len(),
+                self.retries.len(),
+                oldest.as_secs_f32(),
+                aurora_net::probe::inventory_http_line(),
+            );
+        }
         if self.is_idle()
             && let Some((since, requests)) = self.busy.take()
         {
@@ -354,6 +443,23 @@ impl BackgroundFetch {
             );
         }
         out
+    }
+
+    /// A large reply may already contain thousands of folders. Scan them
+    /// without forcing one half-second wait per 512 entries, while limiting
+    /// extra main-thread work and keeping the same request slots.
+    fn step_queue(&mut self, inv: &mut Inventory, agent: Uuid, max: usize, out: &mut Vec<NetCommand>, mut time_left: impl FnMut() -> bool) {
+        for step in 0..MAX_QUEUE_STEPS {
+            if self.in_flight.len() + usize::from(self.orphans_pending.is_some()) >= max
+                || (step >= MIN_QUEUE_STEPS && step.is_multiple_of(32) && !time_left())
+            {
+                break;
+            }
+            let Some((id, kind)) = self.queue.pop_front() else {
+                break;
+            };
+            self.step(inv, agent, id, kind, out);
+        }
     }
 
     /// The stall watchdog: an idle walk that left folders unread (a reply
@@ -386,7 +492,7 @@ impl BackgroundFetch {
                 continue;
             }
             let Some(f) = inv.folders.get(&id) else { continue };
-            if f.info.type_default == MARKETPLACE_LISTINGS || inv.too_big.contains(&id) {
+            if f.info.type_default == MARKETPLACE_LISTINGS || inv.too_big.contains(&id) || inv.retrying_folders.contains(&id) {
                 continue;
             }
             match f.state {
@@ -533,7 +639,7 @@ impl BackgroundFetch {
             inv.too_big.len(),
             inv.items.len(),
             inv.unreadable_items(),
-            inv.confirmed_missing.iter().filter(|id| !inv.items.contains_key(id)).count(),
+            inv.missing_items.len(),
             if !self.started {
                 "not started"
             } else if self.is_idle() {
@@ -566,9 +672,13 @@ impl BackgroundFetch {
     }
 
     fn step(&mut self, inv: &mut Inventory, agent: Uuid, id: Uuid, kind: Kind, out: &mut Vec<NetCommand>) {
-        // (a split part's own read: its parent's batches may take it again)
+        // Consume the split marker with its queue entry, even when another
+        // retry owns the folder. That retry still excludes it from batches.
         if kind == Kind::FolderAndContent {
             self.split.remove(&id);
+        }
+        if inv.retrying_folders.contains(&id) {
+            return;
         }
         let Some(folder) = inv.folders.get(&id) else {
             return;
@@ -618,7 +728,7 @@ impl BackgroundFetch {
             match c.state {
                 _ if c.info.type_default == MARKETPLACE_LISTINGS => {}
                 // (read in parts after a timeout, on its own)
-                _ if self.split.contains(child) => {}
+                _ if self.split.contains(child) || inv.retrying_folders.contains(child) => {}
                 FetchState::Unknown | FetchState::Failed if batch.len() < BATCH => batch.push(*child),
                 FetchState::Unknown | FetchState::Failed => done = false,
                 FetchState::Fetching if self.pending.contains(child) => {}
@@ -726,16 +836,75 @@ impl BackgroundFetch {
                 depth,
                 attempt,
                 sent: self.clock.unwrap_or_else(Instant::now),
+                received: false,
             },
         );
         self.busy.get_or_insert_with(|| (Instant::now(), 0)).1 += 1;
     }
 
-    /// onAISFolderCalback / onAISContentCalback, once the reply's snapshots
-    /// are applied. `stale` are the folders `Inventory::apply` queued again;
-    /// `outcome` is why the read failed, when it did.
-    pub fn on_reply(&mut self, inv: &mut Inventory, request: u64, stale: &[Uuid], outcome: Result<(), FetchError>) {
-        self.on_reply_at(inv, request, stale, outcome, Instant::now())
+    /// Apply results only while this request still owns the read. A reply
+    /// that missed the deadline cannot complete or acknowledge its replacement.
+    pub fn on_reply(&mut self, inv: &mut Inventory, request: u64, result: Result<Vec<FolderContents>, FetchError>) -> bool {
+        let Some(read) = self.in_flight.get_mut(&request) else {
+            return false;
+        };
+        if read.received {
+            return false;
+        }
+        let (stale, outcome) = match result {
+            Ok(contents) if read.depth > 0 && can_slice(&contents) => {
+                read.received = true;
+                self.replies.push_back(PendingReply {
+                    request,
+                    items: contents.iter().map(|c| c.items.len()).sum(),
+                    contents: contents.into_iter(),
+                    stale: Vec::new(),
+                    started: Instant::now(),
+                    slices: 0,
+                    slowest_slice: Duration::ZERO,
+                });
+                return true;
+            }
+            Ok(contents) => (inv.apply_snapshots(contents, true), Ok(())),
+            Err(error) => (Vec::new(), Err(error)),
+        };
+        self.on_reply_at(inv, request, &stale, outcome, Instant::now());
+        true
+    }
+
+    pub fn apply_reply_slice(&mut self, inv: &mut Inventory) -> bool {
+        let Some(reply) = self.replies.front_mut() else {
+            return false;
+        };
+        let mut count = 0;
+        let mut records = 0;
+        for folder in reply.contents.as_slice().iter().take(SNAPSHOT_SLICE_FOLDERS) {
+            records += folder.items.len() + folder.folders.len() + 1;
+            if count != 0 && records > SNAPSHOT_SLICE_RECORDS {
+                break;
+            }
+            count += 1;
+        }
+        let started = Instant::now();
+        reply
+            .stale
+            .extend(inv.apply_snapshots(reply.contents.by_ref().take(count).collect(), true));
+        reply.slices += 1;
+        reply.slowest_slice = reply.slowest_slice.max(started.elapsed());
+        if reply.contents.len() == 0 {
+            let reply = self.replies.pop_front().expect("the active reply");
+            if aurora_net::probe::enabled() {
+                log::info!(
+                    "inventory sliced reply: items={} slices={} peak_ms={:.2} wall_ms={:.2}",
+                    reply.items,
+                    reply.slices,
+                    reply.slowest_slice.as_secs_f64() * 1000.0,
+                    reply.started.elapsed().as_secs_f64() * 1000.0
+                );
+            }
+            self.on_reply_at(inv, reply.request, &reply.stale, Ok(()), Instant::now());
+        }
+        true
     }
 
     /// [`on_reply`] with the clock given (the tests drive the retries).
@@ -800,6 +969,7 @@ impl BackgroundFetch {
                         && f.state == FetchState::Fetching
                     {
                         f.state = FetchState::Unknown;
+                        inv.retrying_folders.insert(*id);
                     }
                 }
                 let delay = BACKGROUND_BACKOFF[attempt.min(BACKGROUND_BACKOFF.len() as u32 - 1) as usize];
@@ -862,6 +1032,23 @@ impl BackgroundFetch {
             }
         }
     }
+}
+
+fn can_slice(contents: &[FolderContents]) -> bool {
+    // A folder plus its listing is atomic. Replies with repeated listings or
+    // links belonging to another folder need the original batch reconciliation.
+    if contents.len() < 2 || contents.iter().map(|c| c.items.len() + c.folders.len() + 1).sum::<usize>() < LARGE_SNAPSHOT_RECORDS {
+        return false;
+    }
+    let mut seen = HashSet::with_capacity(contents.len());
+    contents.iter().all(|c| {
+        c.version >= 0
+            && seen.insert(c.folder_id)
+            && !c
+                .items
+                .iter()
+                .any(|item| matches!(item.asset_type, 24 | 25) && item.parent != c.folder_id)
+    })
 }
 
 #[cfg(test)]
