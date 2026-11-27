@@ -189,7 +189,7 @@ pub fn blocked_rows(lines: &VecDeque<ChatLine>, first: u64, blocked: Blocked, se
 pub(super) fn reveal_player(ui: &egui::Ui, rect: egui::Rect) {
     let pass = ui.ctx().cumulative_pass_nr();
     ui.ctx()
-        .data_mut(|data| data.insert_temp(egui::Id::new("chat_player_reveal"), (pass, rect)));
+        .data_mut(|data| data.insert_temp(egui::Id::unique("chat_player_reveal"), (pass, rect)));
 }
 
 #[derive(Default)]
@@ -697,10 +697,8 @@ impl View {
                 Some((index, bounds))
             })
         };
-        let target = player_reveal
-            .as_ref()
-            .map(|(row, _)| *row)
-            .or_else(|| self.scroll_to.take().filter(|&t| t < self.rows.len()));
+        let scroll_to = self.scroll_to.take().filter(|&t| t < self.rows.len());
+        let target = player_reveal.as_ref().map(|(row, _)| *row).or(scroll_to);
         let anchored = at_end && target.is_none();
 
         // ---- heights that must be exact before anything is placed: the
@@ -883,7 +881,7 @@ impl View {
             draw(&mut child, &row, true);
             if real_pass
                 && let Some((pass, rect)) = ui.ctx().data_mut(|data| {
-                    let id = egui::Id::new("chat_player_reveal");
+                    let id = egui::Id::unique("chat_player_reveal");
                     let request = data.get_temp::<(u64, egui::Rect)>(id);
                     if request.is_some() {
                         data.remove::<(u64, egui::Rect)>(id);
