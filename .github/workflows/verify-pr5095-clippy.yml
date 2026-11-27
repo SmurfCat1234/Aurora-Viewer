@@ -1,0 +1,56 @@
+name: "Verify #5095 Clippy on Linux and macOS"
+
+on:
+  push:
+    branches: [ci/verify-pr5095-rebase]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  clippy:
+    name: Clippy (${{ matrix.platform.name }}, ${{ matrix.source.name }})
+    runs-on: ${{ matrix.platform.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Linux
+            runner: ubuntu-24.04
+          - name: macOS
+            runner: macos-15
+        source:
+          - name: performance rebased onto main
+            ref: 8e007c1bbca2ddb963045c2e6ce6cd34d1eac4ee
+            sha: 8e007c1bbca2ddb963045c2e6ce6cd34d1eac4ee
+            tree: a02d97d650841cba43138a9c148ff71163838a06
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ matrix.source.ref }}
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+      - name: Check exact source
+        env:
+          EXPECTED_HEAD: ${{ matrix.source.sha }}
+          EXPECTED_TREE: ${{ matrix.source.tree }}
+        run: |
+          git log -1 --format='HEAD %H, tree %T'
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXPECTED_TREE"
+      - name: System libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libudev-dev libxkbcommon-dev libwayland-dev
+      - name: Rust stable
+        run: |
+          rustup toolchain install --profile minimal --no-self-update
+          rustup component add clippy
+      - name: Clippy (warnings are errors)
+        run: cargo clippy --profile ci --workspace --all-targets --locked -- -D warnings -A dead-code
