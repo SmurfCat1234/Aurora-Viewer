@@ -237,13 +237,32 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
     let src = super::attribute_text(music.embed.as_str());
     let origin = music.embed.origin().ascii_serialization();
     let name = music.provider.name();
+    let iframe = format!(
+        "<iframe src=\"{src}\" title=\"{name}\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" allowfullscreen></iframe>"
+    );
+    let (scripts, body) = if music.provider == Provider::Spotify {
+        let catalog = music.embed.path().strip_prefix("/embed/")?;
+        let (kind, id) = catalog.split_once('/')?;
+        let nonce = uuid::Uuid::new_v4().simple();
+        let api = "https://open.spotify.com/embed/iframe-api/v1";
+        (
+            format!("; script-src 'nonce-{nonce}' {api}"),
+            format!(
+                "<div id=\"spotify-player\" data-uri=\"spotify:{kind}:{id}\"></div>\
+                 <template id=\"spotify-fallback\">{iframe}</template>\
+                 <script nonce=\"{nonce}\">{}</script><script src=\"{api}\" async></script>",
+                include_str!("spotify_player.js")
+            ),
+        )
+    } else {
+        (String::new(), iframe)
+    };
     Some(format!(
         "<!doctype html><html><head><meta charset=\"utf-8\">\
          <meta name=\"referrer\" content=\"strict-origin-when-cross-origin\">\
-         <meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; frame-src {origin}\">\
+         <meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; frame-src {origin}{scripts}\">\
          <style>html,body,iframe{{display:block;margin:0;border:0;width:100%;height:100%;background:#13141a}}</style>\
-         </head><body><iframe src=\"{src}\" title=\"{name}\" \
-         allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" allowfullscreen></iframe></body></html>"
+         </head><body>{body}</body></html>"
     ))
 }
 
@@ -251,6 +270,17 @@ pub(super) fn player_answer(request: &str) -> Option<String> {
 mod tests {
     use super::*;
     use crate::link_preview::{Place, Sender, Settings, Start, Target, decide, target};
+
+    #[test]
+    fn spotify_page_requests_playback_and_keeps_a_manual_player_fallback() {
+        let url = "https%3A%2F%2Fopen.spotify.com%2Ftrack%2F0F1G4ssr0RMdm9h0GEbt40";
+        let page = player_answer(&format!("GET /music?url={url} HTTP/1.1")).unwrap();
+        assert!(page.contains("data-uri=\"spotify:track:0F1G4ssr0RMdm9h0GEbt40\""));
+        assert!(page.contains("controller.play()"));
+        assert!(page.contains("<template id=\"spotify-fallback\"><iframe"));
+        assert!(page.contains("script-src 'nonce-"));
+        assert!(page.contains("https://open.spotify.com/embed/iframe-api/v1"));
+    }
 
     #[test]
     fn spotify_metadata_accepts_catalog_artwork_only() {

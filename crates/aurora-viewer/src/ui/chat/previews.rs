@@ -194,11 +194,12 @@ impl WebEnv {
         self.show_sized(web, ui, p, size, 0.0);
     }
 
-    fn show_sized(&self, web: &mut WebView, ui: &mut egui::Ui, p: &Palette, size: Vec2, minimum_width: f32) {
-        web.show_sized(ui, p, self.paths.as_ref(), &self.browser, None, size, minimum_width);
+    fn show_sized(&self, web: &mut WebView, ui: &mut egui::Ui, p: &Palette, size: Vec2, minimum_width: f32) -> egui::Response {
+        let response = web.show_sized(ui, p, self.paths.as_ref(), &self.browser, None, size, minimum_width);
         if let Some(plugin) = web.plugin_mut() {
             plugin.set_volume(self.volume);
         }
+        response
     }
 }
 
@@ -1305,12 +1306,15 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         if ui.is_visible() {
             player.drawn = pass;
         }
-        if let Some(web) = &pv.web
+        let rect = if let Some(web) = &pv.web
             && ui.is_visible()
         {
-            web.show_sized(&mut player.web, ui, p, size, minimum_width);
+            web.show_sized(&mut player.web, ui, p, size, minimum_width).rect
         } else {
-            ui.allocate_space(size);
+            ui.allocate_space(size).1
+        };
+        if resp.inner && ui.is_visible() {
+            super::view::reveal_player(ui, rect);
         }
     }
     if stop {
