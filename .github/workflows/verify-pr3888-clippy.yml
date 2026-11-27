@@ -1,4 +1,4 @@
-name: Verify #3888 Clippy on Linux and macOS
+name: "Verify #3888 Clippy on Linux and macOS"
 
 on:
   push:
@@ -25,13 +25,13 @@ jobs:
             runner: macos-15
         source:
           - name: recovery with main
-            ref: refs/pull/2/merge
-            sha: a6075d9ee044515ae3b7ccaae55e8d642dd12e82
-            tree: 8c39fe5d26a6cd876ee679c2897fca8f5def230f
+            ref: 5444df84392a77770fb2dd3f238f717b05ab7083
+            sha: 5444df84392a77770fb2dd3f238f717b05ab7083
+            tree: e4c3e199c2564825da29241368eeaad59a84dbbb
           - name: performance
-            ref: 1ee64b26eea1be5bc3eb3d991fd0622ee7085a2f
-            sha: 1ee64b26eea1be5bc3eb3d991fd0622ee7085a2f
-            tree: e184b2718f8642db89803951dbf659e8da09e005
+            ref: cb11d5e77b27aee41b2771c90c281209ef5b342d
+            sha: cb11d5e77b27aee41b2771c90c281209ef5b342d
+            tree: b78f5bbc9bcd4db63b6042ebe0de8faed817da99
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
