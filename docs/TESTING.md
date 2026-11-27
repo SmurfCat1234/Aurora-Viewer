@@ -9437,7 +9437,7 @@ failure. Grid validation and any paid upload are performed by the human.
   that mix text and emoji at the text's size; in the Legacy lines every
   message at the text's size. Capture at frame 900.
 - **`AURORA_DEMO_CONV_PREVIEWS=music[:spotify|apple|youtube|suno|soundcloud]`**:
-  with `AURORA_DEMO_CONV=aurora`, open the demo private conversation and click
+  with `AURORA_DEMO_CONV=aurora:im` and `AURORA_DEMO_SOUND=1`, open the demo private conversation and click
   a music card's preview button, then Play in the provider's player. Check
   the album or playlist track list, the Open link action, and that starting
   another preview stops the first. Detach the player and check that it stays
