@@ -20,6 +20,7 @@ pub(super) enum Hosted {
     Arte { language: String, id: String },
     AdultEmbed { domain: &'static str, id: String },
     Youku { id: String, client: String },
+    Regional { page: String, player: String },
 }
 
 fn id_ok(id: &str, max: usize) -> bool {
@@ -115,8 +116,13 @@ impl Hosted {
                 | Self::Arte { .. }
                 | Self::AdultEmbed { .. }
                 | Self::Youku { .. }
+                | Self::Regional { .. }
         )
     }
+    pub(super) fn regional(&self) -> bool {
+        matches!(self, Self::Regional { .. })
+    }
+
     pub(super) fn adult(&self) -> bool {
         matches!(self, Self::AdultEmbed { .. })
     }
@@ -138,6 +144,9 @@ impl Hosted {
     pub(super) fn of(url: &Url) -> Option<Self> {
         let parts: Vec<_> = url.path().trim_end_matches('/').strip_prefix('/')?.split('/').collect();
         let host = url.host_str()?;
+        if let Some((page, player)) = regional_player(url, host, &parts) {
+            return Some(Self::Regional { page, player });
+        }
         match (host, parts.as_slice()) {
             ("www.redgifs.com" | "redgifs.com", ["ifr", id]) if id_ok(id, 80) => {
                 return Some(Self::AdultEmbed {
@@ -278,6 +287,7 @@ impl Hosted {
     pub(super) fn page(&self) -> String {
         match self {
             Self::Dailymotion { .. } | Self::Arte { .. } | Self::AdultEmbed { .. } => self.player(),
+            Self::Regional { page, .. } => page.clone(),
             Self::Youku { id, .. } => format!("https://v.youku.com/v_show/id_{id}.html"),
             Self::InstagramReel(id) => format!("https://www.instagram.com/reel/{id}/"),
             Self::FacebookReel(id) => format!("https://www.facebook.com/reel/{id}/"),
@@ -306,6 +316,7 @@ impl Hosted {
                 };
                 format!("https://www.{domain}/{path}/{id}")
             }
+            Self::Regional { player, .. } => player.clone(),
             Self::Youku { id, client } => format!("https://player.youku.com/embed/{id}?client_id={client}"),
             Self::InstagramReel(id) => format!("https://www.instagram.com/reel/{id}/embed/"),
             Self::FacebookReel(id) => {
@@ -357,6 +368,7 @@ impl Hosted {
             | Self::FacebookReel(_)
             | Self::Arte { .. }
             | Self::AdultEmbed { .. }
+            | Self::Regional { .. }
             | Self::Youku { .. } => {
                 return None;
             }
@@ -394,8 +406,63 @@ impl Hosted {
             | Self::FacebookReel(_)
             | Self::Arte { .. }
             | Self::AdultEmbed { .. } => false,
+            Self::Regional { page, .. } => super::services::publisher_image_url(page, &url).is_some(),
             Self::Youku { .. } => super::in_domain(host, "ykimg.com"),
         };
         permitted.then_some(url)
     }
+}
+
+fn regional_player(url: &Url, host: &str, parts: &[&str]) -> Option<(String, String)> {
+    match (host, parts) {
+        ("rutube.ru" | "www.rutube.ru", ["video", id] | ["play", "embed", id])
+            if id.len() == 32 && id.bytes().all(|b| b.is_ascii_hexdigit()) =>
+        {
+            Some((
+                format!("https://rutube.ru/video/{id}/"),
+                format!("https://rutube.ru/play/embed/{id}/"),
+            ))
+        }
+        ("ok.ru" | "www.ok.ru" | "m.ok.ru", ["video" | "videoembed", id]) if digits(id, 1, 24) => {
+            Some((format!("https://ok.ru/video/{id}"), format!("https://ok.ru/videoembed/{id}")))
+        }
+        ("dzen.ru" | "www.dzen.ru", ["embed", id]) if id_ok(id, 80) => {
+            let url = format!("https://dzen.ru/embed/{id}");
+            Some((url.clone(), url))
+        }
+        ("vk.com" | "www.vk.com" | "vkvideo.ru" | "www.vkvideo.ru", ["video_ext.php"]) => {
+            let param = |name| url.query_pairs().find(|(key, _)| key == name).map(|(_, value)| value);
+            let oid = param("oid")?;
+            let id = param("id")?;
+            let hash = param("hash")?;
+            if !digits(oid.strip_prefix('-').unwrap_or(&oid), 1, 20) || !digits(&id, 1, 20) || !id_ok(&hash, 100) {
+                return None;
+            }
+            Some((
+                format!("https://vkvideo.ru/video{oid}_{id}"),
+                format!("https://{host}/video_ext.php?oid={oid}&id={id}&hash={hash}"),
+            ))
+        }
+        _ => None,
+    }
+}
+
+#[test]
+fn public_regional_players_rebuild_only_supported_urls() {
+    let parse = |url| Hosted::of(&Url::parse(url).unwrap());
+    let vk = parse("https://vkvideo.ru/video_ext.php?oid=-123&id=456&hash=abc123&tracking=example").unwrap();
+    assert_eq!(vk.page(), "https://vkvideo.ru/video-123_456");
+    assert_eq!(vk.player(), "https://vkvideo.ru/video_ext.php?oid=-123&id=456&hash=abc123");
+    assert!(vk.requires_player_click());
+    assert!(parse("https://vkvideo.ru/video_ext.php?oid=-123&id=456").is_none());
+    assert!(parse("https://vkvideo.ru.example/video_ext.php?oid=-123&id=456&hash=abc123").is_none());
+    assert_eq!(
+        parse("https://rutube.ru/video/6840af8411a8be4e7da9f82cb4a25103/").unwrap().player(),
+        "https://rutube.ru/play/embed/6840af8411a8be4e7da9f82cb4a25103/"
+    );
+    assert_eq!(
+        parse("https://m.ok.ru/video/8069521017563").unwrap().player(),
+        "https://ok.ru/videoembed/8069521017563"
+    );
+    assert!(parse("https://dzen.ru/embed/example123").is_some());
 }

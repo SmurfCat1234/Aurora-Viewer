@@ -430,7 +430,7 @@ pub(super) fn adult_clip(page: &str, html: &str) -> Option<FoundClip> {
     if !matches!(domain.as_str(), "redgifs.com" | "pornhub.com" | "xvideos.com") {
         return None;
     }
-    let player = metadata(html, &["og:video:secure_url", "og:video", "twitter:player"])?;
+    let player = metadata_url(html, &["og:video:secure_url", "og:video", "twitter:player"])?;
     let player_url = page_url.join(&player).ok()?;
     if bare_host(&player_url)? != domain {
         return None;
@@ -641,6 +641,20 @@ fn publisher_page(url: &Url) -> Option<(Service, Step)> {
         return None;
     }
     let host = bare_host(url)?;
+    if host == "t.me" {
+        let parts = segments(url);
+        let ([channel, post] | ["s", channel, post]) = parts.as_slice() else {
+            return None;
+        };
+        if !(5..=32).contains(&channel.len())
+            || !channel.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_')
+            || !(1..=12).contains(&post.len())
+            || !post.bytes().all(|b| b.is_ascii_digit())
+        {
+            return None;
+        }
+        return Some((Service::Site, Step::Publisher(format!("https://t.me/{channel}/{post}?embed=1"))));
+    }
     if host == "clip.naver.com" {
         return Some((Service::Site, Step::Publisher(naver_clip_page(url)?)));
     }
@@ -677,6 +691,8 @@ fn publisher_page(url: &Url) -> Option<(Service, Step)> {
                 && id.starts_with("Y3JpZDovL")
                 && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
         }
+        ("vk.com" | "vkvideo.ru", [id]) => id.strip_prefix("video").is_some_and(vk_video_id),
+        ("dzen.ru", ["video", "watch", id]) => alnum(id, 6, 80),
         ("tver.jp", ["episodes", id]) => slug(id),
         ("nicovideo.jp" | "sp.nicovideo.jp", ["watch", id]) | ("nico.ms", [id]) => {
             ["sm", "so", "nm"].iter().any(|prefix| id.strip_prefix(prefix).is_some_and(digits))
@@ -770,9 +786,22 @@ fn arte_plays_only_the_embed_advertised_for_that_programme() {
 
 /// A public poster at the publisher or one of its own media hosts.
 pub(super) fn publisher_poster(page: &str, html: &str) -> Option<String> {
+    head_meta(html).find_map(|(key, value)| {
+        matches!(key.to_ascii_lowercase().as_str(), "og:image" | "og:image:url" | "twitter:image")
+            .then(|| publisher_image_url(page, &unescape(value)))
+            .flatten()
+    })
+}
+
+pub(super) fn publisher_image_url(page: &str, value: &str) -> Option<String> {
     let page = Url::parse(page).ok()?;
     let owner = bare_host(&page)?;
     let allowed: &[&str] = match owner.as_str() {
+        "vk.com" | "vkvideo.ru" => &["vkuser.net", "vk-cdn.net", "userapi.com", "vkvideo.ru"],
+        "rutube.ru" => &["rutube.ru", "rtbcdn.ru"],
+        "ok.ru" => &["okcdn.ru"],
+        "dzen.ru" => &["dzeninfra.ru", "yastatic.net"],
+        "t.me" => &["telesco.pe", "cdn-telegram.org", "cdn.telegram.org"],
         "pornhub.com" => &["phncdn.com"],
         "xvideos.com" => &["xvideos-cdn.com", "xvideos-cdn.net"],
         "onlyfans.com" => &["ofstatic.com"],
@@ -788,18 +817,14 @@ pub(super) fn publisher_poster(page: &str, html: &str) -> Option<String> {
         "tv.kakao.com" => &["kakaocdn.net"],
         "douyin.com" => &["douyinpic.com", "pstatp.com"],
         "kuaishou.com" => &["kwaicdn.com", "gifshow.com"],
-        "xiaohongshu.com" => &["xhscdn.com"],
+        "xiaohongshu.com" => &["xhscdn.com", "rednotecdn.com"],
         "v.qq.com" => &["qpic.cn", "gtimg.cn"],
         "iqiyi.com" => &["qiyi.com", "iqiyipic.com"],
         "v.youku.com" => &["ykimg.com"],
         "mgtv.com" => &["mgtv.com", "hunantv.com"],
         _ => &[],
     };
-    head_meta(html).find_map(|(key, value)| {
-        matches!(key.to_ascii_lowercase().as_str(), "og:image" | "og:image:url" | "twitter:image")
-            .then(|| publisher_image(&page, &owner, allowed, &unescape(value)))
-            .flatten()
-    })
+    publisher_image(&page, &owner, allowed, value)
 }
 
 fn publisher_image(page: &Url, owner: &str, allowed: &[&str], value: &str) -> Option<String> {
@@ -1028,6 +1053,14 @@ pub(super) fn metadata(html: &str, keys: &[&str]) -> Option<String> {
             .take(200)
             .collect();
         (!value.is_empty()).then_some(value)
+    })
+}
+
+fn metadata_url(html: &str, keys: &[&str]) -> Option<String> {
+    keys.iter().find_map(|key| {
+        let (_, value) = head_meta(html).find(|(name, _)| name.eq_ignore_ascii_case(key))?;
+        let value = value.trim();
+        (!value.is_empty() && value.len() <= 4096).then(|| unescape(value))
     })
 }
 
@@ -1701,3 +1734,254 @@ pub(super) fn demo_clip(url: &str) -> Option<FoundClip> {
 #[cfg(test)]
 #[path = "services_tests.rs"]
 mod tests;
+
+fn vk_video_id(id: &str) -> bool {
+    id.split_once('_').is_some_and(|(owner, video)| {
+        [owner.strip_prefix('-').unwrap_or(owner), video]
+            .into_iter()
+            .all(|part| (1..=20).contains(&part.len()) && part.bytes().all(|b| b.is_ascii_digit()))
+    })
+}
+
+/// Only promote a VK watch page when it advertises a player for the same item.
+pub(super) fn vk_clip(page: &str, html: &str) -> Option<FoundClip> {
+    let watch = Url::parse(page).ok()?;
+    if !matches!(bare_host(&watch)?.as_str(), "vk.com" | "vkvideo.ru") {
+        return None;
+    }
+    let path = watch.path().trim_end_matches('/');
+    let player = metadata_url(html, &["og:video:secure_url", "og:video", "twitter:player"])?;
+    let url = Url::parse(&player).ok()?;
+    let hosted = super::hosted::Hosted::of(&url).filter(super::hosted::Hosted::regional)?;
+    if !hosted.page().starts_with("https://vkvideo.ru/") || Url::parse(&hosted.page()).ok()?.path() != path {
+        return None;
+    }
+    Some(FoundClip {
+        clip: super::Clip::of(&player)?,
+        title: metadata(html, &["og:title", "twitter:title"])?,
+        channel: metadata(html, &["author", "og:site_name"]).unwrap_or_default(),
+        posters: publisher_poster(page, html).into_iter().collect(),
+        size: None,
+    })
+}
+
+pub(super) fn public_post_video_source(url: &Url) -> bool {
+    if url.scheme() != "https"
+        || !url.username().is_empty()
+        || url.password().is_some()
+        || url.port().is_some()
+        || !url.path().ends_with(".mp4")
+    {
+        return false;
+    }
+    let host = url.host_str().unwrap_or_default();
+    (["telesco.pe", "cdn-telegram.org", "cdn.telegram.org"]
+        .iter()
+        .any(|domain| super::in_domain(host, domain))
+        && url.path().starts_with("/file/"))
+        || ["xhscdn.com", "douyinvod.com", "kwaicdn.com"]
+            .iter()
+            .any(|domain| super::in_domain(host, domain))
+}
+
+pub(super) fn chinese_post_clip(page: &str, html: &str) -> Option<FoundClip> {
+    let host = bare_host(&Url::parse(page).ok()?)?;
+    let cdn = match host.as_str() {
+        "xiaohongshu.com" => "xhscdn.com",
+        "douyin.com" => "douyinvod.com",
+        "kuaishou.com" => "kwaicdn.com",
+        _ => return None,
+    };
+    let candidate = metadata_url(html, &["og:video:secure_url", "og:video:url", "og:video", "twitter:player:stream"])?;
+    let url = Url::parse(&candidate).ok()?;
+    if !super::in_domain(url.host_str()?, cdn) || !public_post_video_source(&url) {
+        return None;
+    }
+    Some(FoundClip {
+        clip: super::Clip::of(&candidate)?,
+        title: metadata(html, &["og:title", "twitter:title"])?,
+        channel: metadata(html, &["author", "og:site_name"]).unwrap_or_default(),
+        posters: publisher_poster(page, html).into_iter().collect(),
+        size: metadata(html, &["og:video:width"])
+            .and_then(|width| width.parse().ok())
+            .zip(metadata(html, &["og:video:height"]).and_then(|height| height.parse().ok())),
+    })
+}
+
+pub(super) struct PublicMediaPost {
+    pub post: super::PostInfo,
+    pub poster: Option<String>,
+    pub clip: Option<super::Clip>,
+}
+
+pub(super) fn telegram_post(page: &str, html: &str) -> Option<PublicMediaPost> {
+    let url = Url::parse(page).ok()?;
+    if url.host_str()? != "t.me" {
+        return None;
+    }
+    let parts = segments(&url);
+    let [channel, post] = parts.as_slice() else { return None };
+    let id = format!("{channel}/{post}");
+    let (_, body) = html.split_once(&format!("data-post=\"{id}\""))?;
+    let summary = body
+        .split_once("class=\"tgme_widget_message_text ")
+        .and_then(|(_, text)| text.split_once('>'))
+        .and_then(|(_, text)| text.split_once("</div>"))
+        .map(|(text, _)| {
+            let mut parts = text.split('<');
+            let first = parts.next().unwrap_or_default();
+            let content = std::iter::once(first)
+                .chain(parts.filter_map(|part| part.split_once('>').map(|(_, value)| value)))
+                .collect::<Vec<_>>()
+                .join(" ");
+            unescape(&content)
+                .split_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ")
+                .chars()
+                .take(320)
+                .collect::<String>()
+        })
+        .unwrap_or_default();
+    let poster = body
+        .split('<')
+        .filter(|tag| tag.contains("tgme_widget_message_photo_wrap") || tag.contains("tgme_widget_message_video_thumb"))
+        .filter_map(|tag| attribute(tag.split_once('>')?.0, "style"))
+        .filter_map(|style| style.split_once("background-image:url('")?.1.split_once("')").map(|(src, _)| src))
+        .find_map(|src| publisher_image_url(page, &unescape(src)));
+    let clip = body
+        .split("<video ")
+        .skip(1)
+        .filter_map(|tag| {
+            tag.split_once('>')
+                .and_then(|(tag, _)| attribute(&format!(" {tag}"), "src").map(unescape))
+        })
+        .find_map(|src| {
+            let parsed = Url::parse(&src).ok()?;
+            let host = parsed.host_str()?;
+            (["telesco.pe", "cdn-telegram.org", "cdn.telegram.org"]
+                .iter()
+                .any(|domain| super::in_domain(host, domain))
+                && public_post_video_source(&parsed))
+            .then(|| super::Clip::of(&src))
+            .flatten()
+        });
+    if summary.is_empty() && poster.is_none() && clip.is_none() {
+        return None;
+    }
+    Some(PublicMediaPost {
+        post: super::PostInfo {
+            title: format!("@{id}"),
+            channel: "Telegram".to_owned(),
+            summary,
+        },
+        poster,
+        clip,
+    })
+}
+
+#[test]
+fn regional_post_media_matches_its_publisher() {
+    let html = r#"<div data-post="test_public/123"><video src="https://cdn1.telesco.pe/file/sample.mp4"></video>
+        <div class="tgme_widget_message_text js-message_text"><b>A public update</b> for everyone.</div>"#;
+    let post = telegram_post("https://t.me/test_public/123?embed=1", html).unwrap();
+    assert_eq!(post.post.summary, "A public update for everyone.");
+    assert!(post.clip.is_some());
+    assert!(telegram_post("https://t.me/test_public/124?embed=1", html).is_none());
+    assert!(
+        telegram_post("https://t.me/test_public/123?embed=1", &html.replace("telesco.pe", "example.net"))
+            .unwrap()
+            .clip
+            .is_none()
+    );
+
+    let html =
+        r#"<meta property="og:title" content="Travel note"><meta property="og:video" content="https://sns-video.xhscdn.com/demo.mp4">"#;
+    assert!(chinese_post_clip("https://www.xiaohongshu.com/explore/123abc", html).is_some());
+    assert!(chinese_post_clip("https://www.douyin.com/video/123", html).is_none());
+}
+
+/// Ignore the generic login page returned for expired or restricted note links.
+pub(super) fn rednote_post(page: &str, html: &str) -> Option<PublicMediaPost> {
+    let page_url = Url::parse(page).ok()?;
+    if bare_host(&page_url).as_deref() != Some("xiaohongshu.com") {
+        return None;
+    }
+    let same_note = |link: &str| {
+        let Ok(link) = page_url.join(link) else { return false };
+        if link.scheme() != "https" || bare_host(&link).as_deref() != Some("xiaohongshu.com") {
+            return false;
+        }
+        let original = segments(&page_url);
+        let other = segments(&link);
+        matches!(other.as_slice(), ["explore", _] | ["discovery", "item", _]) && original.last() == other.last()
+    };
+    if metadata_url(html, &["og:url"]).is_some_and(|url| !same_note(&url)) {
+        return None;
+    }
+    let structured = html.split("<script ").skip(1).find_map(|script| {
+        let (tag, rest) = script.split_once('>')?;
+        if attribute(&format!(" {tag}"), "type") != Some("application/ld+json") {
+            return None;
+        }
+        let item: serde_json::Value = serde_json::from_str(rest.split_once("</script>")?.0).ok()?;
+        matches!(item["@type"].as_str(), Some("VideoObject" | "SocialMediaPosting" | "Article"))
+            .then_some(item)
+            .filter(|item| item["url"].as_str().is_some_and(same_note))
+    });
+    let text = |key: &str, limit: usize| -> Option<String> {
+        let value = structured.as_ref()?.get(key)?.as_str()?.trim();
+        (!value.is_empty()).then(|| value.chars().take(limit).collect())
+    };
+    let title = text("headline", 200)
+        .or_else(|| text("name", 200))
+        .or_else(|| metadata(html, &["og:title", "twitter:title"]))?;
+    let lower = title.to_ascii_lowercase();
+    if lower.starts_with("log in") || lower.starts_with("sign in") || title.contains("登录") {
+        return None;
+    }
+    let summary = text("description", 320)
+        .or_else(|| metadata(html, &["og:description", "twitter:description"]))
+        .unwrap_or_default();
+    let channel = structured
+        .as_ref()
+        .and_then(|note| note["author"]["name"].as_str())
+        .map(|name| name.chars().take(80).collect())
+        .or_else(|| metadata(html, &["author", "og:site_name"]))
+        .unwrap_or_else(|| "RedNote".to_owned());
+    let poster = structured
+        .as_ref()
+        .and_then(|note| {
+            let image = note.get("image").or_else(|| note.get("thumbnailUrl"))?;
+            image
+                .as_str()
+                .or_else(|| image.get(0)?.as_str())
+                .or_else(|| image.get("url")?.as_str())
+        })
+        .and_then(|image| publisher_image_url(page, image))
+        .or_else(|| publisher_poster(page, html));
+    let clip = structured
+        .as_ref()
+        .filter(|note| note["@type"].as_str() == Some("VideoObject"))
+        .and_then(|note| Url::parse(note["contentUrl"].as_str()?).ok())
+        .filter(|url| url.host_str().is_some_and(|host| super::in_domain(host, "xhscdn.com")) && public_post_video_source(url))
+        .and_then(|url| super::Clip::of(url.as_str()))
+        .or_else(|| chinese_post_clip(page, html).map(|found| found.clip));
+    Some(PublicMediaPost {
+        post: super::PostInfo { title, channel, summary },
+        poster,
+        clip,
+    })
+}
+
+#[test]
+fn rednote_distinguishes_a_public_post_from_the_login_card() {
+    let page = "https://www.xiaohongshu.com/explore/abc123";
+    let login = r#"<meta property="og:title" content="Log in - rednote">"#;
+    assert!(rednote_post(page, login).is_none());
+    let photo = r#"<script type="application/ld+json">{"@type":"SocialMediaPosting","url":"https://www.xiaohongshu.com/discovery/item/abc123","headline":"A walk","description":"A text note","image":["https://img.xhscdn.com/photo.webp"]}</script>"#;
+    let note = rednote_post(page, photo).unwrap();
+    assert_eq!(note.post.summary, "A text note");
+    assert!(note.poster.is_some() && note.clip.is_none());
+    assert!(rednote_post(page, &photo.replace("abc123", "other")).is_none());
+}

@@ -20963,13 +20963,6 @@ impl App {
                 if let Some((group, minutes)) = ui::chat::snooze::dialog(&ctx, &p, &self.world, &mut self.chat_ui) {
                     Self::snooze_group_chat(&mut self.world, &mut self.chat_ui, group, minutes.saturating_mul(60));
                 }
-                // a link's menu hid the previews of its site
-                if let Some(site) = self.chat_ui.previews.hide_site.take()
-                    && !self.settings.link_previews.hidden_sites.contains(&site)
-                {
-                    self.settings.link_previews.hidden_sites.push(site);
-                    self.settings.save();
-                }
                 if let Some(autoplay) = self.chat_ui.previews.autoplay_change.take() {
                     self.settings.link_previews.autoplay_video = autoplay;
                     self.settings.save();
@@ -21437,6 +21430,12 @@ impl App {
                         }
                         self.route_web_link(url, entry);
                     }
+                }
+                if let Some(site) = ui::chat::site_trust_confirmation(&ctx, &p)
+                    && self.settings.trusted_sites.add(&site)
+                {
+                    crate::link_trust::configure(&self.settings.trusted_sites);
+                    self.settings.save();
                 }
                 ui::media::show(
                     &ctx,

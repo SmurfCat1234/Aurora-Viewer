@@ -148,6 +148,10 @@ impl Default for Settings {
 }
 
 impl Settings {
+    pub fn site_hidden(&self, host: &str) -> bool {
+        self.hidden_sites.iter().any(|site| in_domain(host, site))
+    }
+
     /// What the player starts with, in the viewer's `language`.
     pub fn player_options(&self, language: &str) -> PlayerOptions {
         let language = language_code(language).unwrap_or_else(|| "en".to_owned());
@@ -236,6 +240,7 @@ impl Clip {
         }
         if let Some(video) = hosted::Hosted::of(&parsed) {
             return (video.adult()
+                || video.regional()
                 || (crate::link_trust::classify(url) == Trust::Trusted && crate::link_trust::classify(&video.page()) == Trust::Trusted))
                 .then_some(Self(ClipSource::Hosted(video)));
         }
@@ -270,13 +275,15 @@ impl Clip {
         } else if !(path.ends_with(".mp4")
             || path.ends_with(".webm")
             || services::snapchat_video_source(&parsed)
-            || services::reddit_gif_video_source(&parsed))
+            || services::reddit_gif_video_source(&parsed)
+            || services::public_post_video_source(&parsed))
         {
             return None;
         }
         parsed.set_fragment(None);
+        let published = services::public_post_video_source(&parsed);
         let file = String::from(parsed);
-        (crate::link_trust::classify(&file) == Trust::Trusted).then_some(Self(ClipSource::File(file)))
+        (crate::link_trust::classify(&file) == Trust::Trusted || published).then_some(Self(ClipSource::File(file)))
     }
 
     /// The media response of a configured site can supply the file type.
@@ -293,6 +300,7 @@ impl Clip {
         match &self.0 {
             ClipSource::File(file) => std::borrow::Cow::Borrowed(file),
             ClipSource::Reddit(id) => std::borrow::Cow::Owned(format!("https://v.redd.it/{id}")),
+            ClipSource::Hosted(video) if video.regional() => std::borrow::Cow::Owned(video.player()),
             ClipSource::Hosted(video) => std::borrow::Cow::Owned(video.page()),
         }
     }
@@ -875,7 +883,7 @@ pub fn decide(s: &Settings, place: Place, from: Sender, url: &str) -> Option<(Ta
     let target = target(url)?;
     let host = host(url)?;
     let adult = services::adult_media_site(&host);
-    if (adult && !s.adult_previews) || s.hidden_sites.iter().any(|d| in_domain(&host, d)) {
+    if (adult && !s.adult_previews) || s.site_hidden(&host) {
         return None;
     }
     let start = match crate::link_trust::classify(url) {
@@ -1277,6 +1285,31 @@ pub async fn fetch_page(client: &reqwest::Client, url: &str, trusted_only: bool)
         }
         Step::PublisherLink(_) => return Err(Failure::Unavailable),
         Step::Publisher(page) => {
+            let owner = host(&page);
+            if matches!(owner.as_deref(), Some("t.me" | "xiaohongshu.com")) {
+                let html = text_head(client, &page, "text/html", "</html>").await.0?;
+                let found = if owner.as_deref() == Some("t.me") {
+                    services::telegram_post(&page, &html)
+                } else {
+                    services::rednote_post(&page, &html)
+                }
+                .ok_or(Failure::Unavailable)?;
+                if let Some(clip) = found.clip {
+                    let video = services::FoundClip {
+                        clip,
+                        title: found.post.title,
+                        channel: found.post.channel,
+                        posters: found.poster.into_iter().collect(),
+                        size: None,
+                    };
+                    return Ok(Content::Clip(fetch_found_clip(client, video).await));
+                }
+                let picture = match found.poster {
+                    Some(source) => post_picture(client, source).await,
+                    None => None,
+                };
+                return Ok(Content::Post(found.post, picture));
+            }
             if let Some(endpoint) = services::dailymotion_oembed(&page)
                 && let Ok((body, _)) = download(client, endpoint.as_str(), "application/json", 64 * 1024).await
                 && let Some((post, poster)) = services::from_dailymotion_oembed(&page, &body)
@@ -1291,6 +1324,8 @@ pub async fn fetch_page(client: &reqwest::Client, url: &str, trusted_only: bool)
             if let Some(found) = services::arte_clip(&page, &html)
                 .or_else(|| services::snapchat_clip(&page, &html))
                 .or_else(|| services::adult_clip(&page, &html))
+                .or_else(|| services::vk_clip(&page, &html))
+                .or_else(|| services::chinese_post_clip(&page, &html))
             {
                 return Ok(Content::Clip(fetch_found_clip(client, found).await));
             }

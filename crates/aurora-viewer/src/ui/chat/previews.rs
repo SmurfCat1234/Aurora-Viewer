@@ -216,7 +216,6 @@ pub struct Previews {
     pub web: Option<WebEnv>,
     /// A site whose previews the resident hid from a card's menu, for the
     /// app to add to the settings.
-    pub hide_site: Option<String>,
     /// The persisted autoplay preference changed from a card's menu.
     pub autoplay_change: Option<bool>,
     /// `AURORA_DEMO_PREVIEW_PLAY=card|window`: the first video card drawn
@@ -254,7 +253,6 @@ impl Default for Previews {
             place: Place::Im,
             demo: false,
             web: None,
-            hide_site: None,
             autoplay_change: None,
             demo_play: None,
             open_settings: false,
@@ -644,6 +642,7 @@ impl Previews {
         let pass = ctx.cumulative_pass_nr_for(egui::ViewportId::ROOT);
         if self.playing.as_ref().is_some_and(|v| {
             (!self.settings.adult_previews && lp::adult_link(&v.link))
+                || lp::host(&v.link).is_some_and(|host| self.settings.site_hidden(&host))
                 || (!v.window && (pass > v.drawn + 2 || (v.automatic && !self.settings.autoplay_video)))
         }) {
             self.playing = None;
@@ -1316,7 +1315,6 @@ fn compact_card<R>(
 /// The card of a preview that waits for a click; true when "Show" is
 /// clicked.
 fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f32) -> bool {
-    let site = lp::host(url).unwrap_or_default();
     let (icon, title) = match target {
         Target::Picture | Target::Page(_) => (
             "photo-filled",
@@ -1828,7 +1826,6 @@ fn demo_video_volume() -> Option<u8> {
 /// Right click on a card: open, copy the link, hide this preview, hide the
 /// previews of its site.
 fn card_menu(resp: &egui::Response, p: &Palette, pv: &mut Previews, k: u64, url: &str, video: bool, right_click: bool) {
-    let site = lp::host(url).unwrap_or_default();
     let direct = pv
         .cache
         .get(url)
@@ -1884,16 +1881,7 @@ fn card_menu(resp: &egui::Response, p: &Palette, pv: &mut Previews, k: u64, url:
         if crate::ui::menu::item(ui, p, "eye-off", aurora_i18n::tr!("ui-chat-preview-hide")) {
             pv.hidden.insert(k);
         }
-        if !site.is_empty()
-            && crate::ui::menu::item(
-                ui,
-                p,
-                "eye-off",
-                &aurora_i18n::tr!("ui-chat-preview-hide-site", site = site.as_str()),
-            )
-        {
-            pv.hide_site = Some(site.clone());
-        }
+        super::site_preview_actions(ui, p, url);
     });
     super::line_menu::inline_popup(&resp.ctx, resp.id.with("context_menu"));
 }
