@@ -135,7 +135,10 @@ enum Entry {
     Queued,
     Loading,
     Picture(Shown),
-    Music { title: String, cover: Option<Shown> },
+    Music {
+        title: String,
+        cover: Option<Shown>,
+    },
     Video {
         title: String,
         channel: String,
@@ -1229,9 +1232,16 @@ fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f
         // no filled icon of a film strip
         Target::Clip(_) | Target::Music(_) => ("movie", aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str())),
     };
-    compact_card(ui, p, width, icon, None, &title, aurora_i18n::tr!("ui-chat-preview-not-loaded"), |ui| {
-        crate::ui::widgets::primary_button_sized(ui, p, aurora_i18n::tr!("ui-chat-preview-show"), Vec2::new(84.0, 28.0)).clicked()
-    })
+    compact_card(
+        ui,
+        p,
+        width,
+        icon,
+        None,
+        &title,
+        aurora_i18n::tr!("ui-chat-preview-not-loaded"),
+        |ui| crate::ui::widgets::primary_button_sized(ui, p, aurora_i18n::tr!("ui-chat-preview-show"), Vec2::new(84.0, 28.0)).clicked(),
+    )
 }
 
 /// The embed only opens when clicked. The original share link stays available

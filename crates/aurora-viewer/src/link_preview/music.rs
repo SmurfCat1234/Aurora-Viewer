@@ -181,8 +181,7 @@ impl Music {
     pub async fn metadata(&self, client: &reqwest::Client) -> Result<Info, Failure> {
         let catalog = self.embed.path().strip_prefix("/embed").ok_or(Failure::Unavailable)?;
         let catalog = format!("https://open.spotify.com{catalog}");
-        let endpoint = Url::parse_with_params("https://open.spotify.com/oembed", [("url", &catalog)])
-            .map_err(|_| Failure::Unavailable)?;
+        let endpoint = Url::parse_with_params("https://open.spotify.com/oembed", [("url", &catalog)]).map_err(|_| Failure::Unavailable)?;
         let (body, _) = super::download(client, endpoint.as_str(), "application/json", 32 * 1024).await?;
         let (title, artwork) = spotify_metadata(&body).ok_or(Failure::Unavailable)?;
         let cover = match artwork {
@@ -215,7 +214,13 @@ fn spotify_metadata(body: &[u8]) -> Option<(String, Option<Url>)> {
                 && url.port().is_none()
                 && matches!(
                     url.host_str(),
-                    Some("i.scdn.co" | "mosaic.scdn.co" | "image-cdn-ak.spotifycdn.com" | "image-cdn-fa.spotifycdn.com" | "daylist.spotifycdn.com")
+                    Some(
+                        "i.scdn.co"
+                            | "mosaic.scdn.co"
+                            | "image-cdn-ak.spotifycdn.com"
+                            | "image-cdn-fa.spotifycdn.com"
+                            | "daylist.spotifycdn.com"
+                    )
                 )
         });
     Some((title, artwork))
@@ -253,8 +258,7 @@ mod tests {
             spotify_metadata(br#"{"title":" Pop Cube ","thumbnail_url":"https://image-cdn-fa.spotifycdn.com/image/example"}"#).unwrap();
         assert_eq!(title, "Pop Cube");
         assert!(url.is_some());
-        let (_, url) =
-            spotify_metadata(br#"{"title":"Tune","thumbnail_url":"https://i.scdn.co.example.org/image/example"}"#).unwrap();
+        let (_, url) = spotify_metadata(br#"{"title":"Tune","thumbnail_url":"https://i.scdn.co.example.org/image/example"}"#).unwrap();
         assert!(url.is_none());
         assert!(spotify_metadata(br#"{"title":" "}"#).is_none());
     }
