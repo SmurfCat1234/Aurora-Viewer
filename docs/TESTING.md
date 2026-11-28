@@ -7171,7 +7171,7 @@ before (`amis`, `groupes`, `repere`, `historique`…) are still accepted.
 | `AURORA_DEMO_CHAT_INPUT=1\|long\|ime\|os-ime` | Paragraph drafts, Japanese IME composition in chat inputs, or an empty field for a real input method |
 | `AURORA_DEMO_SPELLING=1\|menu\|replace` | Misspelled words underlined in the chat bar and Conversations; their suggestions; auto-replace while typing |
 | `AURORA_DEMO_CONV_EMOJI=1` | Messages of emoji alone in the friend's conversation, drawn large (with `AURORA_DEMO_CONV`) |
-| `AURORA_DEMO_CONV_PREVIEWS=1\|states\|videos\|clips\|services\|links\|net` | Picture, GIF and YouTube cards; `clips` shows video files and an animated WebP; `links[:gif\|image\|video]` isolates URL actions; `services[:gyazo,…]` shows service pages and social posts; `net` uses real sites |
+| `AURORA_DEMO_CONV_PREVIEWS=1\|states\|videos\|clips\|services\|links\|site-controls\|net` | Picture, GIF and video cards, URL actions, offline site controls or real previews |
 | `AURORA_DEMO_PREVIEW_PLAY=card\|window` | The first video card plays by itself, in its card or in the player window |
 | `AURORA_DEMO_VIDEO_VOLUME=<0-100>` | The level a playing video starts at, as if kept from an earlier one |
 | `AURORA_DEMO_GIFS=1\|klipy\|sent\|recent\|menu\|nokey\|net` | Conversations open on the GIF picker of the field, its results made here; `sent` sends the first GIF; `recent` its Recent tab; `menu` the button's right-click menu; `nokey` no button; `net` the real services |
@@ -9441,7 +9441,7 @@ failure. Grid validation and any paid upload are performed by the human.
   tall (2.4 times the text, sharp: the font's own bitmap), the messages
   that mix text and emoji at the text's size; in the Legacy lines every
   message at the text's size. Capture at frame 900.
-- **`AURORA_DEMO_CONV_PREVIEWS=1|states|net`**: with `AURORA_DEMO_CONV`,
+- **`AURORA_DEMO_CONV_PREVIEWS=1|states|videos|clips|services|links|site-controls|net`**: with `AURORA_DEMO_CONV`,
   links with their cards (`link_preview.rs`, `ui/chat/previews.rs`). `1`,
   in the friend's conversation: a picture of an unknown site (its card asks
   "Show": nothing loaded before), an animated GIF (its "GIF" mark, the frames
@@ -9489,6 +9489,18 @@ failure. Grid validation and any paid upload are performed by the human.
   visible. Hidden, blurred, loading, failed and disabled previews keep their link.
   `AURORA_DEMO_CONV_PREVIEWS=links` shows URL-only GIF/video messages and an image
   with a caption; `links:gif`, `links:image` or `links:video` keeps one of them.
+  `site-controls`: start the viewer with `AURORA_DEMO=1` and
+  `AURORA_DEMO_CONV=aurora:im`. In Nova's conversation, right-click
+  `https://preview-example.example/demo` to open the site menu. Choose
+  **Trust preview-example.example** and check that the confirmation identifies
+  the domain and its subdomains, explains the warning and network effects,
+  and defaults to **Cancel**. Cancel leaves the warning badge in place.
+  Confirming changes it to a trusted badge. **Manage trusted sites** opens
+  the Trusted sites row in Protections, and **Manage link previews** opens
+  the Link previews controls in Chat. The menu also offers
+  **No previews from preview-example.example**. This offline fixture uses a
+  reserved hostname. The `net` scenario above can test the same menu on a
+  video preview card and check that hiding site previews restores the URL.
 - **`AURORA_DEMO_PREVIEW_ZOOM=1|gif|zoom|pan|window|copy|links`**: with `AURORA_DEMO_CONV`
   and `AURORA_DEMO_CONV_PREVIEWS=1`, enlarge the first loaded still picture
   (`1`), or animated picture (`gif`); `zoom` starts at twice its fitted size,
