@@ -140,8 +140,7 @@ jobs:
     # 44 minutes for the whole job with unoptimised dependencies; optimised
     # ones add several minutes of build (44 minutes of clippy and build
     # alone at opt-level 3, measured once)
-    # Allow the Metal demo to finish after a full cold workspace test run on QA.
-    timeout-minutes: 105
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
