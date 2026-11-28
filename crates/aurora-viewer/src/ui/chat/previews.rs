@@ -1273,21 +1273,17 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
     };
     let minimum_width = music.minimum_width();
     let size = Vec2::new(width, music.height() * (width / minimum_width).min(1.0));
+    let spotify = music.provider == lp::MusicProvider::Spotify;
+    let open_tip = if spotify {
+        format!("{}\n{url}", aurora_i18n::tr!("ui-chat-preview-music-open-spotify-and-web"))
+    } else {
+        link_tip(url, false)
+    };
     let mut open = false;
-    let mut open_app = false;
     let mut stop = false;
     let resp = ui.vertical(|ui| {
         compact_card(ui, p, width, "music", cover, title, note, |ui| {
-            open = crate::ui::widgets::icon_button(ui, p, "external-link-filled", &link_tip(url, false), true);
-            if music.provider == lp::MusicProvider::Spotify {
-                open_app = crate::ui::widgets::icon_button(
-                    ui,
-                    p,
-                    "device-desktop-filled",
-                    aurora_i18n::tr!("ui-chat-preview-music-open-spotify"),
-                    true,
-                );
-            }
+            open = crate::ui::widgets::icon_button(ui, p, "external-link-filled", &open_tip, true);
             if here {
                 stop = crate::ui::widgets::icon_button(ui, p, "player-stop-filled", aurora_i18n::tr!("ui-chat-preview-stop"), true);
                 false
@@ -1297,10 +1293,12 @@ fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &s
         })
     });
     if open {
-        crate::ui::context::request(ui.ctx(), crate::ui::context::CtxAction::OpenUrlExternal(url.to_owned()));
-    }
-    if open_app {
-        crate::ui::context::request(ui.ctx(), crate::ui::context::CtxAction::OpenMusicApp(url.to_owned()));
+        let action = if spotify {
+            crate::ui::context::CtxAction::OpenSpotifyAndWeb(url.to_owned())
+        } else {
+            crate::ui::context::CtxAction::OpenUrlExternal(url.to_owned())
+        };
+        crate::ui::context::request(ui.ctx(), action);
     }
     if resp.inner {
         let title = title.to_owned();

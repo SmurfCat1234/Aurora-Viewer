@@ -1170,20 +1170,17 @@ impl App {
             CtxAction::AppLink(link) => self.run_app_link(link),
             CtxAction::OpenUrl(url) => self.open_web_link(url, None),
             CtxAction::OpenUrlExternal(url) => self.open_web_link(url, Some(crate::link_trust::BrowserEntryPoint::ExplicitExternal)),
-            CtxAction::OpenMusicApp(url) => {
+            CtxAction::OpenSpotifyAndWeb(url) => {
                 if let Some(crate::link_preview::Target::Music(music)) = crate::link_preview::target(&url)
                     && let Some(uri) = music.app_uri()
                 {
-                    let ctx = self.egui_ctx.clone();
-                    let fallback = url.clone();
-                    let worker = std::thread::Builder::new().name("aurora-music-app".into()).spawn(move || {
+                    self.open_web_link(url, Some(crate::link_trust::BrowserEntryPoint::ExplicitExternal));
+                    if let Err(error) = std::thread::Builder::new().name("aurora-spotify-app".into()).spawn(move || {
                         if !crate::open_path::open_spotify(&uri) {
-                            ui::context::request(&ctx, CtxAction::OpenUrlExternal(fallback));
-                            ctx.request_repaint();
+                            log::debug!("Spotify desktop handoff unavailable");
                         }
-                    });
-                    if worker.is_err() {
-                        self.open_web_link(url, Some(crate::link_trust::BrowserEntryPoint::ExplicitExternal));
+                    }) {
+                        log::debug!("Spotify desktop handoff: {error}");
                     }
                 }
             }

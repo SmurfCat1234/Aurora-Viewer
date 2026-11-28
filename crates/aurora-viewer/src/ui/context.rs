@@ -608,8 +608,8 @@ pub enum CtxAction {
     /// An "Open in browser" button (LLWeb::loadURLExternal): the system
     /// browser whatever the browser choice, after the same link checks.
     OpenUrlExternal(String),
-    /// The original HTTPS link of a music card with a supported desktop app.
-    OpenMusicApp(String),
+    /// Open a Spotify catalog link in the system browser and its desktop app.
+    OpenSpotifyAndWeb(String),
     /// A `secondlife:///app/...` command clicked in a text (`slapp.rs`).
     AppLink(crate::slapp::AppLink),
     TeleportToPlace(String, glam::Vec3),
