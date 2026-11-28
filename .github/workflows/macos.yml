@@ -130,7 +130,7 @@ jobs:
           echo "interface=$interface" >> "$GITHUB_OUTPUT"
 
   macos:
-    name: clippy, tests, demo (macOS, rest)
+    name: clippy and tests (macOS, rest)
     needs: [scope, mac-runner]
     # mac-runner is skipped on pull requests: run anyway
     if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.needed == 'true' }}
@@ -185,11 +185,36 @@ jobs:
         with:
           key: ${{ steps.cache.outputs.key }}
       - name: Tests (rest)
-
-
-        # every failure of the run at once: the Apple GPU is reached here only
+        # Report every failure in this shard.
         run: |
           cargo test --profile ci --workspace --locked --no-fail-fast -- --skip ui::
+
+  macos-interface:
+    # The interface and rest filters are exact complements, so each test runs once.
+    name: tests and Metal demo (macOS, interface)
+    needs: [scope, mac-runner]
+    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.needed == 'true' }}
+    runs-on: ${{ needs.mac-runner.outputs.interface && fromJSON(needs.mac-runner.outputs.interface) || 'macos-15' }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - name: Self-hosted runner
+        if: runner.environment == 'self-hosted'
+        uses: ./.github/actions/mac-runner
+      - name: Rust stable
+        run: rustup toolchain install --profile minimal --no-self-update
+      - uses: ./.github/actions/rust-cache
+        if: runner.environment == 'github-hosted'
+        with:
+          name: macos-tests
+      - name: Tests (interface)
+        run: |
+          cargo test --profile ci --workspace --locked --no-fail-fast -- ui::
+      # The interface shard has no Clippy step. Run the same Metal check here so the
+      # cold rest build and the viewer demo no longer share one job deadline.
       # the offline demo past its loading fade, then quit: a missing image,
       # a non-zero exit or a wgpu error in its log (a pipeline Metal
       # refused, a GPU fault) fails.
@@ -245,38 +270,10 @@ jobs:
             ~/Library/Application Support/org.Aurora.AuroraViewer/logs/aurora-demo-*.log
           if-no-files-found: warn
 
-  macos-interface:
-    # The queue and main only: no runner is taken on a pull request. A
-    # libtest filter and its `--skip` are exact complements, so every test
-    # runs in one job and only one.
-    name: tests (macOS, interface)
-    needs: [scope, mac-runner]
-    if: ${{ !cancelled() && needs.scope.result == 'success' && needs.scope.outputs.needed == 'true' }}
-    runs-on: ${{ needs.mac-runner.outputs.interface && fromJSON(needs.mac-runner.outputs.interface) || 'macos-15' }}
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          filter: blob:none
-      - name: Self-hosted runner
-        if: runner.environment == 'self-hosted'
-        uses: ./.github/actions/mac-runner
-      - name: Rust stable
-        run: rustup toolchain install --profile minimal --no-self-update
-      - uses: ./.github/actions/rust-cache
-        if: runner.environment == 'github-hosted'
-        with:
-          name: macos-tests
-      - name: Tests (interface)
-        run: |
-          cargo test --profile ci --workspace --locked --no-fail-fast -- ui::
-
   macos-result:
     # The check that main requires (its name is the one of the single job
     # it replaced): green when the scope was decided and every job that had
-    # to run passed (both are skipped when the change does not need macOS,
-    # the interface one on a pull request), red otherwise.
+    # to run passed, including Metal on the interface shard.
     name: clippy, tests, demo (macOS)
     if: always()
     needs: [scope, macos, macos-interface]
@@ -296,4 +293,4 @@ jobs:
             exit 0
           fi
           [ "$REST" = success ] || exit 1
-          case "$INTERFACE" in success|skipped) ;; *) exit 1 ;; esac
+          [ "$INTERFACE" = success ] || exit 1
