@@ -9447,8 +9447,9 @@ failure. Grid validation and any paid upload are performed by the human.
   Narrow the chat and check that the
   player stays in the conversation and its controls remain clickable.
   Check the title, cover and available artist or catalog details under the
-  normal link preview settings. The Spotify desktop icon should open the
-  catalog item in Spotify or fall back to the browser if the app is unavailable.
+  normal link preview settings. Click Spotify's external-link icon once: the
+  system browser opens the catalog page, and the Spotify app opens the same
+  item if it is installed. With no app, only the browser opens.
   The demo uses public catalog links and loads the
   player on demand. Available playback depends on the provider, item,
   account and region.

@@ -39,7 +39,7 @@ pub fn open(path: &Path) -> std::io::Result<()> {
 }
 
 /// Opens a validated Spotify catalog URI in its system-registered handler.
-/// The caller falls back to the original HTTPS link if the handoff fails.
+/// The caller opens the HTTPS link independently of this handoff.
 #[cfg(windows)]
 pub fn open_spotify(uri: &str) -> bool {
     use windows::Win32::System::Com::{COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE, CoInitializeEx, CoUninitialize};
