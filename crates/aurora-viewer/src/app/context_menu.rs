@@ -1170,6 +1170,20 @@ impl App {
             CtxAction::AppLink(link) => self.run_app_link(link),
             CtxAction::OpenUrl(url) => self.open_web_link(url, None),
             CtxAction::OpenUrlExternal(url) => self.open_web_link(url, Some(crate::link_trust::BrowserEntryPoint::ExplicitExternal)),
+            CtxAction::OpenSpotifyAndWeb(url) => {
+                if let Some(crate::link_preview::Target::Music(music)) = crate::link_preview::target(&url)
+                    && let Some(uri) = music.app_uri()
+                {
+                    self.open_web_link(url, Some(crate::link_trust::BrowserEntryPoint::ExplicitExternal));
+                    if let Err(error) = std::thread::Builder::new().name("aurora-spotify-app".into()).spawn(move || {
+                        if !crate::open_path::open_spotify(&uri) {
+                            log::debug!("Spotify desktop handoff unavailable");
+                        }
+                    }) {
+                        log::debug!("Spotify desktop handoff: {error}");
+                    }
+                }
+            }
             CtxAction::TeleportToPlaceConfirmed(region, pos) => {
                 self.teleport_to_location(region, pos);
             }

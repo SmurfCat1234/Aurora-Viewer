@@ -1766,7 +1766,7 @@ pub fn bubbles_lines(world: &mut crate::world::World, view: Bubbles) {
             if let Some(extra) = emoji_lines {
                 lines.splice(4..4, extra);
             }
-            // AURORA_DEMO_CONV_PREVIEWS=1|states|videos|clips: links with their
+            // AURORA_DEMO_CONV_PREVIEWS=1|states|videos|clips|music: links with their
             // cards (#538, #739, #848), made here without network
             // (`link_preview::demo`)
             let preview_lines = std::env::var("AURORA_DEMO_CONV_PREVIEWS").ok().map(|mode| {
@@ -1796,6 +1796,30 @@ pub fn bubbles_lines(world: &mut crate::world::World, view: Bubbles) {
                             "https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5s",
                         ),
                     ]
+                } else if let Some(only) = mode.strip_prefix("music") {
+                    let only = only.trim_start_matches(':');
+                    [
+                        ("spotify", "https://open.spotify.com/track/0F1G4ssr0RMdm9h0GEbt40"),
+                        ("spotify", "https://open.spotify.com/album/3mlVZ7OTZgKJJAr275tHZX"),
+                        ("spotify", "https://open.spotify.com/playlist/37i9dQZF1FbFyZZpzoqPTf"),
+                        ("apple", "https://music.apple.com/us/album/dreams/594061854?i=594061856"),
+                        ("apple", "https://music.apple.com/us/album/1989/1440935467"),
+                        (
+                            "apple",
+                            "https://music.apple.com/us/playlist/todays-hits/pl.f4d106fed2bd41149aaacabb233eb5eb",
+                        ),
+                        (
+                            "youtube",
+                            "https://music.youtube.com/playlist?list=PLRBp0Fe2Gpgmdybd_lCTM_lqLihVncsHT",
+                        ),
+                        ("suno", "https://suno.com/song/015e1b03-5f5e-428c-9a5b-4da71ae8338f"),
+                        ("soundcloud", "https://soundcloud.com/erasedtapes/olafur-arnalds-poland"),
+                    ]
+                    .into_iter()
+                    .filter(|(provider, _)| only.is_empty() || *provider == only)
+                    .enumerate()
+                    .map(|(i, (_, url))| line(ago(12 - i as u64), name, friend, ChatKind::Im, url))
+                    .collect()
                 } else if let Some(only) = mode.strip_prefix("links") {
                     let only = only.trim_start_matches(':');
                     [

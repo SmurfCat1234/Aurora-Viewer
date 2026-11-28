@@ -202,9 +202,13 @@ pub enum Target {
     Video(Video),
     /// A video file on a trusted site.
     Clip(Clip),
+    Music(Music),
     /// The page of an image service, which leads to its picture.
     Page(Service),
 }
+
+mod music;
+pub use music::{Kind as MusicKind, Music, Provider as MusicProvider};
 
 /// A video file the media plugins' browser plays in a video card (#983):
 /// an `.mp4` or `.webm` link, an Imgur `.gifv` (its `.mp4`), a Gyazo video
@@ -536,7 +540,10 @@ fn player_server() -> Option<u16> {
                     let _ = stream.write_all(b"HTTP/1.1 204 No Content\r\nConnection: close\r\n\r\n");
                     continue;
                 }
-                let answer = match player_answer(line, port).or_else(|| clip_answer(line)) {
+                let answer = match player_answer(line, port)
+                    .or_else(|| clip_answer(line))
+                    .or_else(|| music::player_answer(line))
+                {
                     Some(page) => format!(
                         "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nCache-Control: no-store\r\n\
                          Content-Length: {}\r\nConnection: close\r\n\r\n{page}",
@@ -608,6 +615,9 @@ pub fn target(url: &str) -> Option<Target> {
     let parsed = reqwest::Url::parse(url).ok()?;
     if !matches!(parsed.scheme(), "http" | "https") {
         return None;
+    }
+    if let Some(music) = Music::of(&parsed) {
+        return Some(Target::Music(music));
     }
     let host = host(url)?;
     let host = host.strip_prefix("m.").or_else(|| host.strip_prefix("music.")).unwrap_or(&host);
@@ -753,6 +763,7 @@ pub struct ClipInfo {
 }
 
 pub enum Content {
+    Music(music::Info),
     Picture(Picture),
     Video(VideoInfo),
     Clip(ClipInfo),
@@ -1238,6 +1249,7 @@ pub fn demo(target: &Target, url: &str) -> Result<Content, Failure> {
             thumbnail: None,
             aspect: None,
         })),
+        Target::Music(_) => Err(Failure::NotPicture),
         Target::Picture if file.ends_with(".gif") || file.ends_with(".webp") => Ok(Content::Picture(demo_gif())),
         Target::Picture => Ok(Content::Picture(demo_still(640, 480, 0))),
         // the saved answers of each service lead to the picture's address,

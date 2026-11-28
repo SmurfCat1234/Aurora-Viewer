@@ -135,6 +135,11 @@ enum Entry {
     Queued,
     Loading,
     Picture(Shown),
+    Music {
+        title: String,
+        detail: Option<String>,
+        cover: Option<Shown>,
+    },
     Video {
         title: String,
         channel: String,
@@ -187,10 +192,15 @@ impl WebEnv {
     /// (MediaPluginCEF::mCurVolume), so it gets the volume every frame: the
     /// plugin sends it only when it changes.
     fn show(&self, web: &mut WebView, ui: &mut egui::Ui, p: &Palette, size: Vec2) {
-        web.show(ui, p, self.paths.as_ref(), &self.browser, None, size);
+        self.show_sized(web, ui, p, size, 0.0);
+    }
+
+    fn show_sized(&self, web: &mut WebView, ui: &mut egui::Ui, p: &Palette, size: Vec2, minimum_width: f32) -> egui::Response {
+        let response = web.show_sized(ui, p, self.paths.as_ref(), &self.browser, None, size, minimum_width);
         if let Some(plugin) = web.plugin_mut() {
             plugin.set_volume(self.volume);
         }
+        response
     }
 }
 
@@ -410,6 +420,11 @@ impl Previews {
         while let Ok((url, result)) = self.rx.try_recv() {
             self.in_flight = self.in_flight.saturating_sub(1);
             let entry = match result {
+                Ok(Content::Music(info)) => Entry::Music {
+                    title: info.title,
+                    detail: info.detail,
+                    cover: info.cover.map(|cover| Shown::new(ctx, &url, cover)),
+                },
                 Ok(Content::Picture(p)) => Entry::Picture(Shown::new(ctx, &url, p)),
                 Ok(Content::Page {
                     picture,
@@ -503,7 +518,7 @@ impl Previews {
         if let Some(c) = self.cache.get_mut(&url) {
             c.entry = Entry::Loading;
         }
-        if self.demo {
+        if self.demo && !matches!(&target, Target::Music(_)) {
             // made here, no network; a "loading…" file never arrives
             if !url.rsplit('/').next().unwrap_or("").starts_with("loading") {
                 self.in_flight += 1;
@@ -545,6 +560,7 @@ impl Previews {
                     aspect: None,
                 })),
                 Target::Page(_) => lp::fetch_page(&client, &url, trusted_only).await,
+                Target::Music(music) => music.metadata(&client).await.map(Content::Music),
             };
             let _ = tx.send((url, result));
         });
@@ -814,6 +830,13 @@ fn card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, ta
     let width = pv.settings.size.width().min(ui.available_width().max(80.0));
     if pv.hidden.contains(&k) {
         hidden_line(ui, p, pv, k);
+        return;
+    }
+    if let Target::Music(music) = target {
+        if start == Start::Load || pv.asked.contains(&k) {
+            pv.request(url, target, start == Start::Load && pv.settings.load == lp::Load::Trusted, pass);
+        }
+        music_card(ui, p, pv, k, url, music, (width + VIDEO_EXTRA).min(ui.available_width().max(80.0)));
         return;
     }
     if start == Start::Ask && !pv.asked.contains(&k) {
@@ -1152,6 +1175,7 @@ fn compact_card<R>(
     p: &Palette,
     width: f32,
     icon: &str,
+    cover: Option<&Shown>,
     title: &str,
     note: &str,
     end: impl FnOnce(&mut egui::Ui) -> R,
@@ -1166,18 +1190,29 @@ fn compact_card<R>(
                 ui.spacing_mut().item_spacing.x = 12.0;
                 let (r, _) = ui.allocate_exact_size(Vec2::splat(40.0), egui::Sense::hover());
                 ui.painter().rect_filled(r, ui.visuals().window_corner_radius, p.panel);
-                paint_icon(
-                    ui.painter(),
-                    icon,
-                    egui::Rect::from_center_size(r.center(), Vec2::splat(20.0)),
-                    p.muted,
-                );
+                if let Some(cover) = cover {
+                    egui::Image::new(&cover.frames[0].0)
+                        .uv(thumbnail_uv(cover.size, 1.0))
+                        .corner_radius(ui.visuals().window_corner_radius)
+                        .paint_at(ui, r);
+                } else {
+                    paint_icon(
+                        ui.painter(),
+                        icon,
+                        egui::Rect::from_center_size(r.center(), Vec2::splat(20.0)),
+                        p.muted,
+                    );
+                }
                 let end_w = 96.0;
                 ui.vertical(|ui| {
                     ui.set_width((ui.available_width() - end_w).max(60.0));
                     ui.spacing_mut().item_spacing.y = 2.0;
-                    ui.add(egui::Label::new(RichText::new(title).size(13.0).strong().color(p.ink)).truncate());
-                    ui.add(egui::Label::new(RichText::new(note).size(11.5).color(p.muted)).wrap());
+                    ui.add(egui::Label::new(RichText::new(title).size(13.0).strong().color(p.ink)).truncate())
+                        .on_hover_text(title);
+                    if !note.is_empty() {
+                        ui.add(egui::Label::new(RichText::new(note).size(11.5).color(p.muted)).truncate())
+                            .on_hover_text(note);
+                    }
                 });
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), end).inner
             })
@@ -1200,11 +1235,107 @@ fn ask_card(ui: &mut egui::Ui, p: &Palette, url: &str, target: &Target, width: f
             aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str()),
         ),
         // no filled icon of a film strip
-        Target::Clip(_) => ("movie", aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str())),
+        Target::Clip(_) | Target::Music(_) => ("movie", aurora_i18n::tr!("ui-chat-preview-video-from", site = site.as_str())),
     };
-    compact_card(ui, p, width, icon, &title, aurora_i18n::tr!("ui-chat-preview-not-loaded"), |ui| {
-        crate::ui::widgets::primary_button_sized(ui, p, aurora_i18n::tr!("ui-chat-preview-show"), Vec2::new(84.0, 28.0)).clicked()
-    })
+    compact_card(
+        ui,
+        p,
+        width,
+        icon,
+        None,
+        &title,
+        aurora_i18n::tr!("ui-chat-preview-not-loaded"),
+        |ui| crate::ui::widgets::primary_button_sized(ui, p, aurora_i18n::tr!("ui-chat-preview-show"), Vec2::new(84.0, 28.0)).clicked(),
+    )
+}
+
+/// The embed only opens when clicked. The original share link stays available
+/// for catalog items that the provider cannot play in an embedded browser.
+fn music_card(ui: &mut egui::Ui, p: &Palette, pv: &mut Previews, k: u64, url: &str, music: &lp::Music, width: f32) {
+    let pass = ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT);
+    let here = pv.playing.as_ref().is_some_and(|player| player.key == k);
+    let provider = music.provider.name();
+    let label = match music.kind {
+        lp::MusicKind::Track => aurora_i18n::tr!("ui-chat-preview-music-track", provider = provider),
+        lp::MusicKind::Album => aurora_i18n::tr!("ui-chat-preview-music-album", provider = provider),
+        lp::MusicKind::Playlist => aurora_i18n::tr!("ui-chat-preview-music-playlist", provider = provider),
+    };
+    let (title, detail, cover) = match pv.cache.get(url).map(|cached| &cached.entry) {
+        Some(Entry::Music { title, detail, cover }) => (title.as_str(), detail.as_deref(), cover.as_ref()),
+        _ => (label.as_str(), None, None),
+    };
+    let note = if here && pv.web.as_ref().is_some_and(|web| web.volume <= 0.0) {
+        aurora_i18n::tr!("ui-chat-preview-music-muted")
+    } else if title != label {
+        detail.unwrap_or(&label)
+    } else {
+        ""
+    };
+    let minimum_width = music.minimum_width();
+    let size = Vec2::new(width, music.height() * (width / minimum_width).min(1.0));
+    let spotify = music.provider == lp::MusicProvider::Spotify;
+    let open_tip = if spotify {
+        format!("{}\n{url}", aurora_i18n::tr!("ui-chat-preview-music-open-spotify-and-web"))
+    } else {
+        link_tip(url, false)
+    };
+    let mut open = false;
+    let mut stop = false;
+    let resp = ui.vertical(|ui| {
+        compact_card(ui, p, width, "music", cover, title, note, |ui| {
+            open = crate::ui::widgets::icon_button(ui, p, "external-link-filled", &open_tip, true);
+            if here {
+                stop = crate::ui::widgets::icon_button(ui, p, "player-stop-filled", aurora_i18n::tr!("ui-chat-preview-stop"), true);
+                false
+            } else {
+                crate::ui::widgets::icon_button(ui, p, "player-play-filled", aurora_i18n::tr!("ui-chat-preview-music-open"), true)
+            }
+        })
+    });
+    if open {
+        let action = if spotify {
+            crate::ui::context::CtxAction::OpenSpotifyAndWeb(url.to_owned())
+        } else {
+            crate::ui::context::CtxAction::OpenUrlExternal(url.to_owned())
+        };
+        crate::ui::context::request(ui.ctx(), action);
+    }
+    if resp.inner {
+        let title = title.to_owned();
+        pv.asked.insert(k);
+        let mut web = WebView::default();
+        web.navigate(&music.player_page(url));
+        pv.playing = Some(Playing {
+            key: k,
+            link: url.to_owned(),
+            title,
+            web,
+            window: false,
+            drawn: pass,
+            aspect: size.x / size.y,
+            fitted: false,
+            chrome: Vec2::new(0.0, TITLE_BAR),
+        });
+    }
+    if let Some(player) = pv.playing.as_mut().filter(|player| player.key == k) {
+        if ui.is_visible() {
+            player.drawn = pass;
+        }
+        let rect = if let Some(web) = &pv.web
+            && ui.is_visible()
+        {
+            web.show_sized(&mut player.web, ui, p, size, minimum_width).rect
+        } else {
+            ui.allocate_space(size).1
+        };
+        if resp.inner && ui.is_visible() {
+            super::view::reveal_player(ui, rect);
+        }
+    }
+    if stop {
+        pv.playing = None;
+    }
+    card_menu(&resp.response, p, pv, k, url);
 }
 
 /// A picture too large to download: its size, and the link to open it.
@@ -1215,7 +1346,7 @@ fn too_large(ui: &mut egui::Ui, p: &Palette, url: &str, size: Option<u64>, width
         None => aurora_i18n::tr!("ui-chat-preview-too-large-unknown", limit = limit.as_str()),
     };
     let note = aurora_i18n::tr!("ui-chat-preview-over-limit", limit = limit.as_str());
-    let open = compact_card(ui, p, width, "photo-filled", &title, &note, |ui| {
+    let open = compact_card(ui, p, width, "photo-filled", None, &title, &note, |ui| {
         crate::ui::widgets::icon_button(ui, p, "external-link-filled", aurora_i18n::tr!("ui-chat-preview-open"), true)
     });
     if open {

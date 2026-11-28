@@ -185,6 +185,13 @@ pub fn blocked_rows(lines: &VecDeque<ChatLine>, first: u64, blocked: Blocked, se
     rows
 }
 
+/// The virtual transcript resolves the requested player after its row grows.
+pub(super) fn reveal_player(ui: &egui::Ui, rect: egui::Rect) {
+    let pass = ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT);
+    ui.ctx()
+        .data_mut(|data| data.insert_temp(egui::Id::unique("chat_player_reveal"), (pass, rect)));
+}
+
 #[derive(Default)]
 pub struct View {
     token: u64,
@@ -219,6 +226,8 @@ pub struct View {
     /// window got shorter (its bottom then short of the end) and nobody
     /// scrolled.
     anchored_top: Option<f32>,
+    /// Stable line number and the expanded player's bounds within its row.
+    player_reveal: Option<(u64, std::ops::Range<f32>)>,
     /// How far the viewport's bottom stood above the end at the last `show`
     /// (0 against the end).
     below: f32,
@@ -680,7 +689,16 @@ impl View {
         let at_end = self.resume_following
             || (self.paused.is_none()
                 && (viewport.bottom() >= self.shown_height - 1.0 || self.anchored_top.is_some_and(|t| (viewport.top() - t).abs() < 0.5)));
-        let target = self.scroll_to.take().filter(|&t| t < self.rows.len());
+        let player_reveal = if ui.is_sizing_pass() {
+            None
+        } else {
+            self.player_reveal.take().and_then(|(seq, bounds)| {
+                let index = self.rows.iter().position(|row| first + row.line as u64 == seq)?;
+                Some((index, bounds))
+            })
+        };
+        let scroll_to = self.scroll_to.take().filter(|&t| t < self.rows.len());
+        let target = player_reveal.as_ref().map(|(row, _)| *row).or(scroll_to);
         let anchored = at_end && target.is_none();
 
         // ---- heights that must be exact before anything is placed: the
@@ -828,8 +846,21 @@ impl View {
         if let Some(r) = target.and_then(|t| self.rows.get(t)) {
             // at once: an animated scroll would run over the corrections of
             // the offset made while rows are measured
-            let to = egui::Rect::from_min_size(egui::pos2(rect.left(), base + r.y), egui::vec2(width, r.h));
-            ui.scroll_to_rect_animation(to, Some(egui::Align::Center), egui::style::ScrollAnimation::none());
+            let (bounds, align) = match player_reveal {
+                Some((_, bounds)) => {
+                    // Keep the full player clear of the edges of the resettled transcript.
+                    let align = if bounds.end - bounds.start > ui.clip_rect().height() {
+                        egui::Align::Min
+                    } else {
+                        egui::Align::Center
+                    };
+                    (bounds, align)
+                }
+                None => (0.0..r.h, egui::Align::Center),
+            };
+            let y = base + r.y;
+            let to = egui::Rect::from_min_max(egui::pos2(rect.left(), y + bounds.start), egui::pos2(rect.right(), y + bounds.end));
+            ui.scroll_to_rect_animation(to, Some(align), egui::style::ScrollAnimation::none());
         }
         let mut i = self.rows.partition_point(|r| r.y + r.h <= view_top);
         let mut changed_from = usize::MAX;
@@ -853,6 +884,23 @@ impl View {
                     .max_rect(row_rect),
             );
             draw(&mut child, &row, true);
+            if real_pass
+                && let Some((pass, rect)) = ui.ctx().data_mut(|data| {
+                    let id = egui::Id::unique("chat_player_reveal");
+                    let request = data.get_temp::<(u64, egui::Rect)>(id);
+                    if request.is_some() {
+                        data.remove::<(u64, egui::Rect)>(id);
+                    }
+                    request
+                })
+                && pass == ui.ctx().cumulative_pass_nr_for(egui::ViewportId::ROOT)
+            {
+                self.player_reveal = Some((
+                    first + row.line as u64,
+                    (rect.top() - row_rect.top())..(rect.bottom() - row_rect.top()),
+                ));
+                ui.ctx().request_repaint();
+            }
             let h = child.min_rect().height() + GAP;
             if (h - row.h).abs() > 0.25 || !row.measured {
                 self.set_height(first, i, h);
@@ -1296,6 +1344,59 @@ mod tests {
         }
         let first = bottoms[1];
         assert!(bottoms[1..].iter().all(|b| (b - first).abs() < 0.5), "{bottoms:?}");
+    }
+
+    #[test]
+    fn expanding_a_music_player_reveals_it_while_following_live_chat() {
+        let lines: VecDeque<ChatLine> = (0..40).map(|i| line("Jane", &format!("line {i}"), i * 600)).collect();
+        let clock = LineClock::default();
+        let mut view = View::default();
+        let mut frames = crate::ui::widgets::elide_tests::Frames::new();
+        let mut opened = false;
+        let mut player_in_view = false;
+        for frame in 0..7 {
+            frames.run(Vec::new(), |ui| {
+                let mut player = None;
+                let out = crate::ui::widgets::scroll_offset::show(ui, egui::ScrollArea::vertical(), "music")
+                    .stick_to_bottom(true)
+                    .animated(false)
+                    .auto_shrink([false, false])
+                    .max_height(300.0)
+                    .min_scrolled_height(300.0)
+                    .show_viewport(ui, |ui, viewport| {
+                        let source = Source {
+                            lines: &lines,
+                            clock,
+                            filter: "",
+                            find: "",
+                            layout: Layout::Aurora,
+                            first_unread: None,
+                            blocked: Blocked::default(),
+                        };
+                        view.sync(&source, 400.0);
+                        view.show(ui, viewport, clock.first, &mut |ui, row, painted| {
+                            ui.allocate_space(egui::vec2(400.0, 20.0));
+                            if row.line == 32 {
+                                let clicked = painted && frame == 2;
+                                opened |= clicked;
+                                if opened {
+                                    let rect = ui.allocate_space(egui::vec2(280.0, 220.0)).1;
+                                    if clicked {
+                                        reveal_player(ui, rect);
+                                    }
+                                    if painted {
+                                        player = Some(rect);
+                                    }
+                                }
+                            }
+                        });
+                    });
+                player_in_view =
+                    player.is_some_and(|r| r.top() >= out.inner_rect.top() + 12.0 && r.bottom() <= out.inner_rect.bottom() - 12.0);
+            });
+        }
+        assert!(opened, "the music card was visible before it expanded");
+        assert!(player_in_view, "the expanded player should stay fully in the viewport");
     }
 
     /// A conversation just opened measures its rows out of sight a few per

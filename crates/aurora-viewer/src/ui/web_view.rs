@@ -291,8 +291,23 @@ impl WebView {
         cookie: Option<&Cookie>,
         size: Vec2,
     ) -> egui::Response {
+        self.show_sized(ui, pal, paths, browser, cookie, size, 0.0)
+    }
+
+    /// Render at the provider's minimum width and scale both the texture and
+    /// pointer coordinates to the space available in the conversation.
+    pub(super) fn show_sized(
+        &mut self,
+        ui: &mut egui::Ui,
+        pal: &crate::theme::Palette,
+        paths: Option<&PluginPaths>,
+        browser: &BrowserSettings,
+        cookie: Option<&Cookie>,
+        size: Vec2,
+        minimum_width: f32,
+    ) -> egui::Response {
         let (rect, resp) = ui.allocate_exact_size(size, egui::Sense::click_and_drag());
-        let ppp = ui.ctx().pixels_per_point();
+        let ppp = ui.ctx().pixels_per_point() * (minimum_width / size.x.max(1.0)).max(1.0);
         let px = ((size.x * ppp).round().max(16.0) as i32, (size.y * ppp).round().max(16.0) as i32);
         ui.painter().rect_filled(rect, 0.0, pal.field);
         if self.plugin.is_none()
