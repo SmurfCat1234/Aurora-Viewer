@@ -1,0 +1,64 @@
+name: Trust Site Metal smoke test
+on:
+  push:
+    branches: [qa/chat-link-site-controls-metal]
+permissions:
+  contents: read
+jobs:
+  metal:
+    name: Metal demo on Apple Silicon
+    runs-on: macos-15
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - name: Rust stable
+        run: rustup toolchain install --profile minimal --no-self-update
+      - uses: ./.github/actions/rust-cache
+        with:
+          name: macos-tests
+      - name: A demo frame on Metal
+        timeout-minutes: 50
+        env:
+          AURORA_DEMO: '1'
+          AURORA_DEMO_GPU_STALL: '300:10'
+          AURORA_CAPTURE: ${{ runner.temp }}/metal-demo.png
+          AURORA_CAPTURE_FRAMES: '620'
+          AURORA_CAPTURE_EXIT: '1'
+        run: |
+          # The team's Mac mini has nobody at its keyboard: once its display
+          # sleeps, macOS presents no frame of the window, which then never
+          # shows, and the capture never comes (the step ran into its time
+          # limit on every run from 2026-11-05 17:00 UTC). Wake the display
+          # (a user-activity assertion), then keep it awake while the viewer
+          # runs. A locked screen is the runner owner's setting to change.
+          if [ "${{ runner.environment }}" = self-hosted ]; then
+            caffeinate -u -t 5
+            caffeinate -d -i -w $$ &
+          fi
+          cargo run --profile ci --locked -p aurora-viewer -- --title "CI macOS"
+          test -s "$AURORA_CAPTURE"
+          log="$HOME/Library/Application Support/org.Aurora.AuroraViewer/logs/aurora-demo-ci-macos.log"
+          if ! grep -q "notice shown" "$log" || ! grep -q "the graphics card answered again" "$log"; then
+            echo "::error::the GPU stall and its notice did not happen as expected (see the demo log)"
+            exit 1
+          fi
+          # A module Metal refuses still leaves an image, the interface over
+          # a black world (#3751, from 0.9.10-beta.20261114.2 to the fix):
+          # a clean run writes no wgpu error at all
+          if grep -q "wgpu error" "$log"; then
+            grep -A8 "wgpu error" "$log" | head -60
+            echo "::error::wgpu errors in the demo log (a shader or a pipeline Metal refused?)"
+            exit 1
+          fi
+      - name: Demo image and log
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: macos-demo
+          path: |
+            ${{ runner.temp }}/metal-demo.png
+            ~/Library/Application Support/org.Aurora.AuroraViewer/logs/aurora-demo-*.log
+          if-no-files-found: warn
